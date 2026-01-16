@@ -66,12 +66,14 @@ img {
   padding: 0 20px;
 }
 
-/* Top Bar */
+/* Top Bar - CLS Fix */
 .top-bar {
   background: var(--black);
   color: var(--white);
   padding: 10px 0;
   border-bottom: 1px solid #333;
+  height: 40px;
+  min-height: 40px;
 }
 
 .top-bar .container {
@@ -100,8 +102,13 @@ img {
 }
 
 .top-bar svg {
-  width: 14px;
-  height: 14px;
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  max-width: 14px !important;
+  min-height: 14px !important;
+  max-height: 14px !important;
+  flex-shrink: 0;
 }
 
 /* Header */
@@ -112,12 +119,15 @@ header {
   right: 0;
   z-index: 1000;
   background: var(--black);
+  height: 100px;
+  contain: layout style;
 }
 
 nav {
   background: var(--black);
   color: var(--white);
   padding: 20px 0;
+  height: 60px;
 }
 
 nav .container {
@@ -166,17 +176,20 @@ main {
   padding-top: 100px;
 }
 
-/* Hero Section */
+/* Hero Section - CLS Fix */
 .hero {
   background: var(--black);
   color: var(--white);
   padding: 50px 0;
   text-align: center;
   position: relative;
-  min-height: 300px;
+  height: 500px;
+  min-height: 500px;
+  max-height: 500px;
   display: flex;
   align-items: center;
   overflow: hidden;
+  contain: layout style;
 }
 
 .hero-bg {
@@ -189,6 +202,7 @@ main {
   object-position: center;
   z-index: 0;
   opacity: 0.85;
+  aspect-ratio: 1920 / 1080;
 }
 
 .hero .container {
@@ -222,6 +236,7 @@ main {
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
   letter-spacing: -1px;
   line-height: 1.2;
+  min-height: 96px;
 }
 
 .hero p {
@@ -232,6 +247,7 @@ main {
   line-height: 1.6;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
   font-weight: 400;
+  min-height: 58px;
 }
 
 /* Buttons */
@@ -284,6 +300,7 @@ main {
   flex-wrap: wrap;
   margin-top: 30px;
   animation: fadeInUp 1s ease-out 0.3s both;
+  min-height: 60px;
 }
 
 @keyframes fadeInUp {
@@ -1160,9 +1177,11 @@ footer a:hover {
     align-items: center;
   }
 
-  /* Hero Mobile - IMPROVED */
+  /* Hero Mobile - CLS Fix */
   .hero {
-    min-height: 500px;
+    height: 550px;
+    min-height: 550px;
+    max-height: 550px;
     padding: 60px 0;
   }
 
@@ -1179,6 +1198,7 @@ footer a:hover {
     padding: 0 25px;
     font-weight: 800;
     word-wrap: break-word;
+    min-height: auto;
   }
 
   .hero p {
@@ -1187,6 +1207,7 @@ footer a:hover {
     margin-bottom: 40px;
     padding: 0 25px;
     font-weight: 400;
+    min-height: auto;
   }
 
   /* CTA Buttons Mobile - IMPROVED */
@@ -1535,9 +1556,11 @@ footer a:hover {
     padding: 0 16px;
   }
 
-  /* Hero Extra Small */
+  /* Hero Extra Small - CLS Fix */
   .hero {
-    min-height: 450px;
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
     padding: 50px 0;
   }
 
@@ -1553,6 +1576,7 @@ footer a:hover {
     padding: 0 20px;
     font-weight: 800;
     word-wrap: break-word;
+    min-height: auto;
   }
 
   .hero p {
@@ -1560,6 +1584,7 @@ footer a:hover {
     line-height: 1.75;
     padding: 0 20px;
     margin-bottom: 35px;
+    min-height: auto;
   }
 
   .cta-buttons {
