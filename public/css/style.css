@@ -101,16 +101,6 @@ img {
   color: var(--yellow);
 }
 
-.top-bar svg {
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  max-width: 14px !important;
-  min-height: 14px !important;
-  max-height: 14px !important;
-  flex-shrink: 0;
-}
-
 /* Header */
 header {
   position: fixed;
