@@ -1,0 +1,125 @@
+/* ========== VUE LECTURE ========== */
+
+.lecture-container { display: none; max-width: 800px; margin: 0 auto; }
+.lecture-container.active { display: block; }
+
+.lecture-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.lecture-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.lecture-title {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.lecture-meta { font-size: 12px; color: var(--text-muted); }
+.lecture-meta span { margin-right: 20px; }
+.lecture-section { margin-bottom: 40px; }
+
+.lecture-section h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.summary-box {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: 10px;
+    border-left: 3px solid var(--text-muted);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.lecture-card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+}
+
+.lecture-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.lecture-keyword { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+
+.lecture-decision {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+}
+
+.lecture-section-inner { margin-bottom: 16px; }
+
+.lecture-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.lecture-section-content { font-size: 13px; color: var(--text-secondary); }
+.lecture-section-content ul { list-style: none; padding: 0; }
+.lecture-section-content li { padding: 4px 0; }
+.lecture-section-content li::before { content: "•"; color: var(--text-muted); margin-right: 8px; }
+
+.ai-quote {
+    font-style: italic;
+    color: var(--text-secondary);
+    padding: 14px 18px;
+    background: var(--bg-elevated);
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.reassurance-box {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.reassurance-list { list-style: none; }
+
+.reassurance-list li {
+    padding: 10px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+}
+
+.reassurance-list li::before {
+    content: "✓";
+    color: var(--success);
+    font-weight: bold;
+    margin-right: 12px;
+    font-size: 14px;
+}

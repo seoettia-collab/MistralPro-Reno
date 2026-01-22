@@ -1,0 +1,13 @@
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 1200px) {
+    .main-grid { grid-template-columns: 1fr 1fr; }
+    .security-rules { display: none; }
+}
+
+@media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .kpis-grid { grid-template-columns: repeat(2, 1fr); }
+    .cockpit-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+    .nav-brand { display: none; }
+}

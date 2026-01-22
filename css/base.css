@@ -1,0 +1,19 @@
+/* ========== BASE STYLES ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.view-container {
+    display: none;
+    padding: 80px 24px 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.view-container.active { display: block; }

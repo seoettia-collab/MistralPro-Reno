@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /landing.html
+Disallow: /merci.html
+Disallow: /404.html
+Disallow: /stats-gads.html
+
+Sitemap: https://www.mistralpro-reno.fr/sitemap.xml

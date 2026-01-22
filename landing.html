@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devis Gratuit Rénovation Paris & IDF | Mistral Pro Reno</title>
+  <meta name="description" content="Devis gratuit en 24h. Travaux de rénovation et construction à Paris et Île-de-France. Garantie décennale.">
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Préchargement fonts critiques -->
+  <link rel="preload" href="/fonts/raleway-bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/raleway-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS Critique Inline -->
+  <style>
+    :root{--yellow:#f4c430;--yellow-dark:#e5b520;--black:#1a1a1a;--white:#fff;--gray-light:#f5f5f5;--gray-text:#666;--gray-dark:#111}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:Raleway,'Open Sans',sans-serif;line-height:1.6;color:var(--black)}
+    h1,h2,h3,h4,h5,h6{font-family:Raleway,sans-serif;font-weight:700;line-height:1.2}
+    a{text-decoration:none;color:inherit}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+    .btn{display:inline-block;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none;transition:transform 0.2s, box-shadow 0.2s}
+    .btn-primary{background:var(--yellow);color:var(--black)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(244,196,48,0.4)}
+    @media(max-width:768px){.btn{padding:17px 40px;font-size:17px;min-height:56px}}
+    @media(max-width:480px){.btn{padding:16px 35px;font-size:16px;min-height:54px;width:100%}}
+    .bg-dark{background:var(--black)}
+    .text-center{text-align:center}
+
+    /* Header Minimal */
+    .header-minimal{background:var(--black);padding:15px 0;border-bottom:1px solid #333}
+    .header-minimal .container{display:flex;justify-content:space-between;align-items:center}
+    .header-minimal .logo{color:#F5B041;font-size:24px;font-weight:700}
+    .header-minimal .phone{display:flex;align-items:center;gap:8px;color:var(--white);font-weight:600;font-size:18px}
+    .header-minimal .phone:hover{color:var(--yellow)}
+    .header-minimal .phone svg{width:20px;height:20px}
+    @media(max-width:768px){.header-minimal{padding:16px 0}.header-minimal .logo{font-size:22px}.header-minimal .phone{font-size:16px;gap:6px}.header-minimal .phone svg{width:18px;height:18px}.header-minimal .phone span{display:inline}}
+    @media(max-width:480px){.header-minimal .logo{font-size:20px}.header-minimal .phone{font-size:15px}.header-minimal .phone span{display:none}}
+
+    /* Hero Section */
+    .landing-hero{background:linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);padding:60px 0 80px}
+    .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+    @media(max-width:768px){.landing-hero{padding:50px 0 60px}.hero-grid{gap:45px}}
+    @media(max-width:480px){.landing-hero{padding:40px 0 50px}.hero-grid{gap:40px}}
+
+    .hero-content{color:white}
+    .hero-content h1{font-size:42px;margin-bottom:20px;line-height:1.2}
+    .hero-content h1 span{color:#F5B041}
+    .hero-content .subtitle{font-size:20px;color:#d0d0d0;margin-bottom:30px}
+    @media(max-width:768px){.hero-content h1{font-size:28px;line-height:1.4;margin-bottom:25px;font-weight:800}.hero-content .subtitle{font-size:18px;line-height:1.7;margin-bottom:28px}}
+    @media(max-width:480px){.hero-content h1{font-size:26px;line-height:1.45;padding:0 10px}.hero-content .subtitle{font-size:17px;padding:0 10px}}
+
+    /* Checkmark List */
+    .checkmark-list{list-style:none;margin-bottom:30px}
+    .checkmark-list li{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:16px;color:rgba(255,255,255,0.9)}
+    .checkmark-list .checkmark{display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:#27ae60;color:white;border-radius:50%;font-size:14px;font-weight:700;flex-shrink:0}
+    @media(max-width:768px){.checkmark-list li{font-size:16px;gap:14px;margin-bottom:14px}.checkmark-list .checkmark{width:28px;height:28px;font-size:15px}}
+    @media(max-width:480px){.checkmark-list{padding:0 10px}.checkmark-list li{font-size:15px}}
+
+    /* Form Card */
+    .landing-form{background:white;border-radius:16px;padding:35px 30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+    .landing-form h2{font-size:24px;color:var(--black);margin-bottom:25px;text-align:center}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;margin-bottom:6px;font-weight:600;color:#333;font-size:14px}
+    .form-group input,
+    .form-group select,
+    .form-group textarea{width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:inherit;transition:border-color 0.2s,box-shadow 0.2s}
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus{outline:none;border-color:#f4c430;box-shadow:0 0 0 3px rgba(244,196,48,0.2)}
+    .form-group select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;background-color:white}
+    /* Multi-select dropdown */
+    .multi-select-dropdown{position:relative;width:100%}
+    .multi-select-trigger{width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;background:white;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:border-color 0.2s,box-shadow 0.2s}
+    .multi-select-trigger:hover{border-color:#ccc}
+    .multi-select-trigger.active{border-color:#f4c430;box-shadow:0 0 0 3px rgba(244,196,48,0.2)}
+    .multi-select-text{color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+    .multi-select-text.placeholder{color:#999}
+    .multi-select-arrow{font-size:12px;color:#666;transition:transform 0.2s}
+    .multi-select-trigger.active .multi-select-arrow{transform:rotate(180deg)}
+    .multi-select-options{position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #e0e0e0;border-top:none;border-radius:0 0 10px 10px;max-height:250px;overflow-y:auto;z-index:100;display:none;box-shadow:0 8px 20px rgba(0,0,0,0.15)}
+    .multi-select-options.show{display:block}
+    .multi-select-option{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;font-size:15px;color:#333;transition:background 0.15s}
+    .multi-select-option:hover{background:#f8f9fa}
+    .multi-select-option input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:#f4c430}
+    @media(max-width:480px){.multi-select-option{padding:14px 16px;font-size:16px}}
+    .form-group textarea{resize:vertical;min-height:80px}
+    .form-submit{width:100%;padding:18px;background:linear-gradient(135deg,#f4c430 0%,#e5b520 100%);color:var(--black);border:none;border-radius:10px;font-size:18px;font-weight:700;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
+    .form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(244,196,48,0.4)}
+    .form-footer{text-align:center;margin-top:15px;color:#888;font-size:13px}
+    @media(max-width:768px){.landing-form{padding:30px 25px}.landing-form h2{font-size:22px;font-weight:800;line-height:1.4}.form-group{margin-bottom:20px}.form-group label{font-size:15px;margin-bottom:8px}.form-group input,.form-group select,.form-group textarea{font-size:16px;padding:15px;min-height:52px}.form-submit{padding:18px;font-size:17px;min-height:56px}}
+    @media(max-width:480px){.landing-form{padding:25px 20px}.landing-form h2{font-size:20px}.form-group input,.form-group select,.form-group textarea{padding:14px;min-height:50px}.form-submit{font-size:16px;min-height:54px}}
+
+    /* Trust Section */
+    .trust-section{background:linear-gradient(to bottom,#f8f9fa 0%,#ffffff 100%);padding:40px 0;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0}
+    .trust-grid{display:flex;justify-content:center;align-items:center;gap:50px;flex-wrap:wrap}
+    .trust-item{display:flex;align-items:center;gap:15px}
+    .trust-icon{width:50px;height:50px;background:#f4c430;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .trust-icon svg{width:28px;height:28px}
+    .trust-text strong{display:block;font-size:16px;color:#1a1a1a;margin-bottom:2px}
+    .trust-text span{font-size:13px;color:#666}
+    @media(max-width:768px){.trust-section{padding:35px 0}.trust-grid{flex-direction:column;gap:30px}.trust-item{width:100%;justify-content:flex-start;gap:15px}.trust-icon{width:55px;height:55px}.trust-icon svg{width:28px;height:28px}.trust-text strong{font-size:17px;font-weight:700}.trust-text span{font-size:14px}}
+    @media(max-width:480px){.trust-section{padding:30px 0}.trust-grid{gap:25px}.trust-icon{width:50px;height:50px}.trust-icon svg{width:26px;height:26px}.trust-text strong{font-size:16px}.trust-text span{font-size:13px}}
+
+    /* Stats Section */
+    .stats-section{background:var(--black);padding:40px 0;border-top:1px solid #333;border-bottom:1px solid #333}
+    .stats-grid{display:flex;justify-content:center;gap:60px;flex-wrap:wrap}
+    .stat-item{text-align:center;color:white}
+    .stat-value{font-size:32px;font-weight:700;color:#f4c430;margin-bottom:5px}
+    .stat-label{font-size:14px;color:#d0d0d0}
+    @media(max-width:768px){.stats-section{padding:35px 0}.stats-grid{flex-direction:column;gap:30px}.stat-item{text-align:center}.stat-value{font-size:36px}.stat-label{font-size:15px}}
+    @media(max-width:480px){.stats-section{padding:30px 0}.stats-grid{gap:25px}.stat-value{font-size:32px}.stat-label{font-size:14px}}
+
+    /* Reviews Section */
+    .reviews-section{background:#f8f9fa;padding:50px 0}
+    .reviews-section h2{text-align:center;margin-bottom:40px;font-size:28px}
+    .reviews-grid{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;max-width:900px;margin:0 auto}
+    .review-card{background:white;border-radius:12px;padding:30px;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex:1;min-width:280px;max-width:400px;text-align:center}
+    .review-header{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:15px}
+    .review-header svg{width:32px;height:32px}
+    .review-source{text-align:left}
+    .review-source strong{display:block;font-size:18px;color:#1a1a1a}
+    .review-source span{font-size:13px;color:#666}
+    .review-stars{display:flex;justify-content:center;gap:4px;margin-bottom:15px}
+    .review-stars svg{width:24px;height:24px}
+    .review-score{font-size:28px;font-weight:700;color:#1a1a1a}
+    @media(max-width:768px){.reviews-section{padding:45px 20px}.reviews-section h2{font-size:26px;margin-bottom:35px;font-weight:800;line-height:1.4}.reviews-grid{gap:25px}.review-card{padding:28px 25px;min-width:100%}.review-source strong{font-size:17px}.review-source span{font-size:14px}.review-score{font-size:26px}}
+    @media(max-width:480px){.reviews-section{padding:40px 15px}.reviews-section h2{font-size:24px}.review-card{padding:25px 20px}.review-source strong{font-size:16px}.review-score{font-size:24px}}
+
+    /* Footer Minimal */
+    .footer-minimal{background:#111;padding:40px 20px;text-align:center}
+    .footer-minimal .phone-btn{display:inline-flex;align-items:center;gap:10px;padding:18px 40px;background:#f4c430;color:#1a1a1a;border-radius:50px;font-size:18px;font-weight:700;margin-bottom:25px;transition:transform 0.2s}
+    .footer-minimal .phone-btn:hover{transform:translateY(-2px)}
+    .footer-minimal .phone-btn svg{width:20px;height:20px}
+    .footer-minimal .company-info{color:white;margin-bottom:15px;line-height:1.8}
+    .footer-minimal .copyright{color:#999;font-size:14px}
+    @media(max-width:768px){.footer-minimal{padding:35px 20px}.footer-minimal .phone-btn{padding:17px 35px;font-size:17px;min-height:54px}.footer-minimal .company-info{font-size:15px;line-height:1.8}.footer-minimal .copyright{font-size:14px}}
+    @media(max-width:480px){.footer-minimal{padding:30px 15px}.footer-minimal .phone-btn{padding:16px 30px;font-size:16px;min-height:52px}.footer-minimal .company-info{font-size:14px}.footer-minimal .copyright{font-size:13px}}
+
+    /* Mobile Phone CTA */
+    .mobile-phone-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:#f4c430;padding:15px;text-align:center;z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.2)}
+    .mobile-phone-cta a{display:flex;align-items:center;justify-content:center;gap:10px;color:#1a1a1a;font-weight:700;font-size:18px}
+    @media(max-width:768px){.mobile-phone-cta{display:block;padding:16px}.mobile-phone-cta a{font-size:17px;min-height:54px}body{padding-bottom:70px}}
+    @media(max-width:480px){.mobile-phone-cta{padding:14px}.mobile-phone-cta a{font-size:16px;min-height:52px}body{padding-bottom:65px}}
+  </style>
+
+  <!-- CSS Fonts - Chargement asynchrone -->
+  <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
+</head>
+<body>
+
+  <!-- HEADER MINIMAL - Pas de menu -->
+  <header class="header-minimal">
+    <div class="container">
+      <div class="logo">MISTRAL PRO RENO</div>
+      <a href="tel:0755188937" class="phone" data-location="header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        <span>07 55 18 89 37</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO + FORMULAIRE -->
+    <section class="landing-hero">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <!-- Contenu gauche -->
+          <div class="hero-content">
+            <h1>Devis Gratuit en 24h<br><span>Rénovation & Construction</span></h1>
+            <p class="subtitle">Artisans qualifiés à Paris & Île-de-France — Tous corps d'état</p>
+
+            <ul class="checkmark-list">
+              <li>
+                <span class="checkmark">✓</span>
+                <span>Devis gratuit et sans engagement</span>
+              </li>
+              <li>
+                <span class="checkmark">✓</span>
+                <span>Réponse garantie sous 24 heures</span>
+              </li>
+              <li>
+                <span class="checkmark">✓</span>
+                <span>Garantie décennale sur tous travaux</span>
+              </li>
+              <li>
+                <span class="checkmark">✓</span>
+                <span>Accompagnement aides financières</span>
+              </li>
+              <li>
+                <span class="checkmark">✓</span>
+                <span>Équipe locale Paris & Île-de-France</span>
+              </li>
+            </ul>
+
+            <a href="tel:0755188937" class="btn btn-primary" data-location="hero" style="padding:18px 40px;font-size:18px;display:inline-flex;align-items:center;gap:10px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              Appelez-nous maintenant
+            </a>
+          </div>
+
+          <!-- Formulaire -->
+          <div class="landing-form">
+            <h2>Recevez votre devis gratuit</h2>
+            <form id="landing-form" data-form-name="devis_landing" data-form-location="landing_page_ads">
+              
+              <div class="form-group">
+                <label>Nom complet *</label>
+                <input type="text" name="name" required placeholder="Votre nom">
+              </div>
+
+              <div class="form-group">
+                <label>Téléphone *</label>
+                <input type="tel" name="phone" required placeholder="06 00 00 00 00">
+              </div>
+
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="votre@email.com">
+              </div>
+
+              <div class="form-group">
+                <label>Type de travaux *</label>
+                <div class="multi-select-dropdown" id="travaux-dropdown">
+                  <div class="multi-select-trigger" id="travaux-trigger">
+                    <span class="multi-select-text">-- Sélectionnez vos travaux --</span>
+                    <span class="multi-select-arrow">▼</span>
+                  </div>
+                  <div class="multi-select-options" id="travaux-options">
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Plomberie"> Plomberie</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Électricité"> Électricité</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Peinture"> Peinture</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Salle de bain"> Salle de bain</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Cuisine"> Cuisine</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Carrelage / Parquet"> Carrelage / Parquet</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Plâtrerie / Plaquiste"> Plâtrerie / Plaquiste</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Toiture / Couverture"> Toiture / Couverture</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Isolation"> Isolation</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Construction"> Construction</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Rénovation appartement"> Rénovation appartement</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Rénovation maison"> Rénovation maison</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Dégât des eaux"> Dégât des eaux</label>
+                    <label class="multi-select-option"><input type="checkbox" name="travaux" value="Autre"> Autre</label>
+                  </div>
+                  <input type="hidden" name="travaux_combined" id="travaux-hidden">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Message (optionnel)</label>
+                <textarea name="message" rows="3" placeholder="Décrivez brièvement votre projet..."></textarea>
+              </div>
+
+              <button type="submit" class="form-submit">RECEVOIR MON DEVIS GRATUIT</button>
+              
+              <p id="form-error" style="text-align:center;font-size:14px;color:#dc3545;margin-top:10px;display:none;"></p>
+              <p class="form-footer">🔒 Vos données restent confidentielles • Réponse sous 24h</p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST BADGES -->
+    <section class="trust-section">
+      <div class="container">
+        <div class="trust-grid">
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Garantie Décennale</strong>
+              <span>Protection totale</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0110 0v4"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Assurance Pro</strong>
+              <span>Tous risques couverts</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2">
+                <circle cx="12" cy="8" r="7"/>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>30 Ans d'Expérience</strong>
+              <span>Expertise reconnue</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">4.8/5</div>
+            <div class="stat-label">Satisfaction client</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">IDF</div>
+            <div class="stat-label">Équipe locale</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">10 ans</div>
+            <div class="stat-label">Garantie décennale</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">24h</div>
+            <div class="stat-label">Réponse garantie</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AVIS CLIENTS -->
+    <section class="reviews-section">
+      <div class="container">
+        <h2>Ils nous font confiance</h2>
+        <div class="reviews-grid">
+          
+          <!-- Google -->
+          <div class="review-card">
+            <div class="review-header">
+              <svg viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <div class="review-source">
+                <strong>Google</strong>
+                <span>10 avis clients</span>
+              </div>
+            </div>
+            <div class="review-stars">
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#e0e0e0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="review-score">4.2/5</div>
+          </div>
+
+          <!-- PagesJaunes -->
+          <div class="review-card">
+            <div class="review-header">
+              <svg viewBox="0 0 48 48" width="32" height="32">
+                <rect fill="#FFC107" width="48" height="48" rx="8"/>
+                <path fill="#1a1a1a" d="M14 18h6v12h-6V18zm8 0h6v12h-6V18zm8 0h6v12h-6V18z" opacity="0.8"/>
+              </svg>
+              <div class="review-source">
+                <strong>PagesJaunes</strong>
+                <span>24 avis clients</span>
+              </div>
+            </div>
+            <div class="review-stars">
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="#f4c430"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="review-score">5/5</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER MINIMAL -->
+  <footer class="footer-minimal">
+    <a href="tel:0755188937" class="phone-btn" data-location="footer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+      07 55 18 89 37
+    </a>
+    <p class="company-info">
+      <strong>MISTRAL PRO RENO – Entreprise Générale de Bâtiment</strong><br>
+      9 rue Anatole de la Forge, 75017 Paris<br>
+      Garantie Décennale
+    </p>
+    <p class="copyright">© 2025 Mistral Pro Reno. Tous droits réservés.</p>
+  </footer>
+
+  <!-- BOUTON MOBILE FIXE -->
+  <div class="mobile-phone-cta">
+    <a href="tel:0755188937" data-location="mobile_sticky">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+      Appelez maintenant : 07 55 18 89 37
+    </a>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/main.js" type="module"></script>
+  
+  <!-- Multi-Select Dropdown Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const trigger = document.getElementById('travaux-trigger');
+      const options = document.getElementById('travaux-options');
+      const textSpan = trigger.querySelector('.multi-select-text');
+      const hiddenInput = document.getElementById('travaux-hidden');
+      const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+      
+      // Toggle dropdown
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        trigger.classList.toggle('active');
+        options.classList.toggle('show');
+      });
+      
+      // Close when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.multi-select-dropdown')) {
+          trigger.classList.remove('active');
+          options.classList.remove('show');
+        }
+      });
+      
+      // Update text when checkboxes change
+      function updateSelection() {
+        const selected = Array.from(checkboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
+        
+        if (selected.length === 0) {
+          textSpan.textContent = '-- Sélectionnez vos travaux --';
+          textSpan.classList.add('placeholder');
+        } else if (selected.length <= 2) {
+          textSpan.textContent = selected.join(', ');
+          textSpan.classList.remove('placeholder');
+        } else {
+          textSpan.textContent = selected.slice(0, 2).join(', ') + ' +' + (selected.length - 2);
+          textSpan.classList.remove('placeholder');
+        }
+        
+        hiddenInput.value = selected.join(', ');
+      }
+      
+      checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelection);
+      });
+      
+      // Prevent dropdown from closing when clicking on options
+      options.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
+  </script>
+  
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5MZSVPL');
+  </script>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5MZSVPL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+</body>
+</html>
