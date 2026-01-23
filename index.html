@@ -40,50 +40,58 @@
   <style>
     :root{--yellow:#f4c430;--black:#1a1a1a;--white:#fff;--gray-text:#666}
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.6;color:var(--black)}
-    body.fonts-loaded{font-family:'Raleway',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+    
+    /* Font fallback avec métriques ajustées pour éviter CLS */
+    @font-face{font-family:'Raleway Fallback';src:local('Arial');size-adjust:105%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
+    
+    body{font-family:'Raleway Fallback',Arial,sans-serif;line-height:1.6;color:var(--black)}
+    body.fonts-loaded{font-family:'Raleway','Raleway Fallback',Arial,sans-serif}
     h1,h2,h3,h4,h5,h6{font-family:inherit;font-weight:700;line-height:1.2}
     a{text-decoration:none;color:inherit}
     .container{max-width:1200px;margin:0 auto;padding:0 20px}
     
-    /* Header FIXE */
-    header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--black);height:120px}
-    .top-bar{background:var(--black);color:var(--white);padding:10px 0;height:44px}
-    .top-bar .container{display:flex;justify-content:space-between;align-items:center}
-    .top-bar-left{display:flex;align-items:center;gap:20px}
-    .top-bar-left a,.top-bar-left div{display:flex;align-items:center;gap:5px;font-size:13px}
-    nav{background:var(--black);color:var(--white);padding:20px 0;height:76px}
-    nav .container{display:flex;justify-content:space-between;align-items:center}
-    .logo{font-size:24px;font-weight:bold;color:var(--yellow)}
-    .nav-menu{display:flex;list-style:none;gap:25px}
-    .nav-menu a{color:var(--white);font-size:14px;font-weight:500}
+    /* Header FIXE - dimensions réservées */
+    header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--black);height:120px;contain:layout style}
+    .top-bar{background:var(--black);color:var(--white);padding:10px 0;height:44px;contain:layout}
+    .top-bar .container{display:flex;justify-content:space-between;align-items:center;height:24px}
+    .top-bar-left{display:flex;align-items:center;gap:20px;height:24px}
+    .top-bar-left a,.top-bar-left div{display:flex;align-items:center;gap:5px;font-size:13px;height:24px}
+    .top-bar-left svg{flex-shrink:0;width:14px;height:14px}
+    nav{background:var(--black);color:var(--white);padding:20px 0;height:76px;contain:layout}
+    nav .container{display:flex;justify-content:space-between;align-items:center;height:36px}
+    .logo{font-size:24px;font-weight:bold;color:var(--yellow);line-height:36px}
+    .nav-menu{display:flex;list-style:none;gap:25px;height:36px;align-items:center}
+    .nav-menu a{color:var(--white);font-size:14px;font-weight:500;line-height:36px}
     .menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:24px;cursor:pointer}
     
     main{padding-top:120px}
     
-    /* HERO ZERO CLS */
-    .hero{background:var(--black);color:var(--white);padding:80px 0 60px;text-align:center;position:relative;height:500px;overflow:hidden}
+    /* HERO ZERO CLS - dimensions et contain */
+    .hero{background:var(--black);color:var(--white);padding:80px 0 60px;text-align:center;position:relative;height:500px;overflow:hidden;contain:layout style paint}
     .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.85}
-    .hero .container{position:relative;z-index:1}
-    .hero h1{font-size:52px;margin-bottom:25px;font-weight:900;line-height:1.1}
-    .hero p{font-size:22px;max-width:850px;margin:0 auto 40px;line-height:1.5}
-    .cta-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px}
-    .btn{display:inline-block;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none}
+    .hero .container{position:relative;z-index:1;height:360px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+    .hero h1{font-size:52px;margin-bottom:25px;font-weight:900;line-height:1.1;min-height:115px;display:flex;align-items:center;justify-content:center}
+    .hero p{font-size:22px;max-width:850px;margin:0 auto 40px;line-height:1.5;min-height:66px}
+    .cta-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;min-height:54px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none;min-height:54px}
     .btn-primary{background:var(--yellow);color:var(--black)}
     .btn-secondary{background:transparent;color:var(--white);border:2px solid var(--white)}
     .btn-dark{background:var(--black);color:var(--white);border:2px solid var(--yellow)}
     
-    /* Sticky button FIXE */
-    .sticky-devis-btn{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:8px;background:var(--yellow);color:var(--black);padding:12px 20px;border-radius:50px;font-weight:bold;border:none;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);width:160px;height:48px}
+    /* Sticky button - position initiale stable */
+    .sticky-devis-btn{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:8px;background:var(--yellow);color:var(--black);padding:12px 20px;border-radius:50px;font-weight:bold;border:none;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);width:160px;height:48px;contain:layout style}
+    .sticky-devis-btn svg{flex-shrink:0;width:20px;height:20px}
     
     @media(max-width:768px){
       header{height:60px}
       .top-bar{display:none}
       nav{height:60px;padding:15px 0}
       main{padding-top:60px}
-      .hero{height:auto;padding:60px 0 40px}
-      .hero h1{font-size:28px}
-      .hero p{font-size:16px}
+      .hero{height:auto;min-height:350px;padding:60px 0 40px}
+      .hero .container{height:auto;min-height:230px}
+      .hero h1{font-size:28px;min-height:62px}
+      .hero p{font-size:16px;min-height:48px}
+      .cta-buttons{min-height:140px}
       .nav-menu{display:none}
       .menu-toggle{display:block}
       .hide-mobile{display:none}
@@ -110,11 +118,11 @@
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
             <span>07 55 18 89 37</span>
           </a>
-          <a href="/cdn-cgi/l/email-protection#e88b87869c898b9ca885819b9c9a8984c59a8d86879ec68b8785">
+          <a href="/cdn-cgi/l/email-protection#e48789889285879084898dc6898a8784c98a8684">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             <span class="hide-mobile"><span class="__cf_email__" data-cfemail="14777b7a6075776054797d67606675783966717a7b623a777b79">[email&#160;protected]</span></span>
           </a>
-          <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:center;gap:5px;height:24px">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>Lun-Ven 08h00-18h00, Sam 09h00-12h00</span>
           </div>
@@ -146,7 +154,7 @@
     <section class="hero">
       <img src="/images/renovation_general_(9).webp" alt="Rénovation Paris" class="hero-bg" width="1920" height="1080" fetchpriority="high">
       <div class="container">
-        <h1>RICARDO Rénovation Paris – Mistral Pro Reno, Expert Tous Corps d'État</h1>
+        <h1>Rénovation Paris – Mistral Pro Reno, Expert Tous Corps d'État</h1>
         <p>Avec plus de 30 ans d'expérience et un véritable accent sur la satisfaction client, vous pouvez compter sur nous pour votre prochaine rénovation à Paris et en Île-de-France.</p>
         <div class="cta-buttons">
           <a href="cost_calculator.html" class="btn btn-primary">Calculateur de Devis</a>
@@ -487,7 +495,13 @@
   
   <!-- FONT CHARGÉE APRÈS LE RENDU - ZERO CLS -->
   <script>
-  if('fonts'in document){document.fonts.load('1em Raleway').then(function(){}).catch(function(){});var link=document.createElement('link');link.rel='stylesheet';link.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;900&display=swap';document.head.appendChild(link);link.onload=function(){document.body.classList.add('fonts-loaded')};}
+  if('fonts'in document){
+    var link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;900&display=optional';
+    document.head.appendChild(link);
+    document.fonts.ready.then(function(){document.body.classList.add('fonts-loaded');});
+  }
   </script>
 </body>
 </html>
