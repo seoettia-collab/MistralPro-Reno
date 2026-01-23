@@ -11,6 +11,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
+  <!-- Preload Hero Image - CRITICAL pour éviter CLS -->
+  <link rel="preload" as="image" href="/images/renovation_general_(9).webp" fetchpriority="high">
+  
   <!-- Preconnect pour améliorer les performances (GTmetrix) -->
   <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
   <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
@@ -21,7 +24,7 @@
   <meta name="robots" content="index, follow">
   <title>Rénovation Paris 17 | Entreprise Mistral Pro Reno - Devis Gratuit</title>
   <meta name="description" content="Rénovation Paris : Mistral Pro Reno, entreprise de rénovation à Paris 17 et Île-de-France. 30 ans d'expérience. Devis gratuit 24h. Garantie décennale, assurance pro. Construction, dégât des eaux.">
-<meta name="google-site-verification" content="lZi7tH0LyBiRuHUsncriOyDEG2-PISxKub4Pp8ujQDE">
+  <meta name="google-site-verification" content="lZi7tH0LyBiRuHUsncriOyDEG2-PISxKub4Pp8ujQDE">
   <link rel="canonical" href="https://www.mistralpro-reno.fr/">
 
   <meta name="twitter:card" content="summary_large_image">
@@ -36,13 +39,96 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
 
-  <!-- Google Fonts - Raleway -->
+  <!-- Google Fonts - Raleway avec font-display: optional pour éviter CLS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;900&display=optional" rel="stylesheet">
 
-  <!-- CSS Critique Inline -->
-  <style>:root{--yellow:#f4c430;--yellow-dark:#e5b520;--black:#1a1a1a;--white:#fff;--gray-light:#f5f5f5;--gray-text:#666;--gray-dark:#111}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Raleway',sans-serif;line-height:1.6;color:var(--black)}h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;font-weight:700;line-height:1.2}a{text-decoration:none;color:inherit}.container{max-width:1200px;margin:0 auto;padding:0 20px}header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--black)}.top-bar{background:var(--black);color:var(--white);padding:10px 0}nav{background:var(--black);color:var(--white);padding:20px 0}.logo{font-size:24px;font-weight:bold;color:var(--yellow)}main{padding-top:120px}.hero{background:var(--black);color:var(--white);padding:80px 0 60px;text-align:center;position:relative;height:500px;max-height:500px;display:flex;align-items:center;overflow:hidden}.hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;opacity:.85}.hero .container{position:relative;z-index:1}.hero h1{font-size:52px;margin-bottom:25px;font-weight:900}.hero p{font-size:22px;max-width:850px;margin:0 auto 40px}.btn{display:inline-block;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none}.btn-primary{background:var(--yellow);color:var(--black)}</style>
+  <!-- CSS Critique Inline - OPTIMISÉ pour CLS -->
+  <style>
+    :root{--yellow:#f4c430;--yellow-dark:#e5b520;--black:#1a1a1a;--white:#fff;--gray-light:#f5f5f5;--gray-text:#666;--gray-dark:#111}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Raleway',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:var(--black)}
+    h1,h2,h3,h4,h5,h6{font-family:'Raleway',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;line-height:1.2}
+    a{text-decoration:none;color:inherit}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+    
+    /* Header - Hauteur fixe pour éviter CLS */
+    header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--black);height:120px}
+    .top-bar{background:var(--black);color:var(--white);padding:10px 0;height:44px}
+    .top-bar .container{display:flex;justify-content:space-between;align-items:center}
+    .top-bar-left{display:flex;align-items:center;gap:20px}
+    .top-bar-left a,.top-bar-left div{display:flex;align-items:center;gap:5px;font-size:13px}
+    nav{background:var(--black);color:var(--white);padding:20px 0;height:76px}
+    nav .container{display:flex;justify-content:space-between;align-items:center}
+    .logo{font-size:24px;font-weight:bold;color:var(--yellow)}
+    .nav-menu{display:flex;list-style:none;gap:25px}
+    .nav-menu a{color:var(--white);font-size:14px;font-weight:500}
+    .menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:24px;cursor:pointer}
+    
+    /* Main avec padding-top exact */
+    main{padding-top:120px}
+    
+    /* HERO - Dimensions fixes pour éviter CLS */
+    .hero{
+      background:var(--black);
+      color:var(--white);
+      padding:80px 0 60px;
+      text-align:center;
+      position:relative;
+      min-height:500px;
+      height:500px;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      contain:layout style paint;
+    }
+    .hero-bg{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      z-index:0;
+      opacity:.85;
+    }
+    .hero .container{position:relative;z-index:1}
+    .hero h1{
+      font-size:52px;
+      margin-bottom:25px;
+      font-weight:900;
+      line-height:1.1;
+      min-height:115px;
+    }
+    .hero p{
+      font-size:22px;
+      max-width:850px;
+      margin:0 auto 40px;
+      line-height:1.5;
+      min-height:66px;
+    }
+    .cta-buttons{min-height:54px;display:flex;flex-wrap:wrap;justify-content:center;gap:15px}
+    .btn{display:inline-block;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s}
+    .btn-primary{background:var(--yellow);color:var(--black)}
+    .btn-secondary{background:transparent;color:var(--white);border:2px solid var(--white)}
+    .btn-dark{background:var(--black);color:var(--white);border:2px solid var(--yellow)}
+    
+    /* Responsive */
+    @media(max-width:768px){
+      header{height:auto}
+      .top-bar{display:none}
+      nav{height:60px;padding:15px 0}
+      main{padding-top:60px}
+      .hero{min-height:400px;height:auto;padding:60px 0 40px}
+      .hero h1{font-size:28px;min-height:auto}
+      .hero p{font-size:16px;min-height:auto}
+      .nav-menu{display:none}
+      .menu-toggle{display:block}
+      .hide-mobile{display:none}
+    }
+  </style>
 
   <!-- CSS Principal - Chargement asynchrone -->
   <link rel="preload" href="css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -125,7 +211,7 @@
           <li><a href="cost_calculator.html">CALCULATEUR</a></li>
           <li><a href="contact.html">CONTACT</a></li>
         </ul>
-        <button class="menu-toggle">☰</button>
+        <button class="menu-toggle" aria-label="Menu">☰</button>
       </div>
     </nav>
   </header>
@@ -276,7 +362,7 @@
             <div class="service-card-content">
               <h3>Rénovation Intérieure</h3>
               <p>Transformation complète de vos espaces de vie : appartements, maisons, aménagement intérieur sur-mesure.</p>
-              <a href="services.html" style="color: var(--yellow); font-weight: bold;" aria-label="En savoir plus sur la rénovation intérieure">En savoir plus →</a>
+              <a href="services.html" style="color: var(--yellow); font-weight: bold;">En savoir plus →</a>
             </div>
           </div>
           <div class="service-card">
@@ -286,7 +372,7 @@
             <div class="service-card-content">
               <h3>Construction</h3>
               <p>Extensions, surélévations et construction neuve. Agrandissez votre espace de vie.</p>
-              <a href="services.html" style="color: var(--yellow); font-weight: bold;" aria-label="En savoir plus sur la construction">En savoir plus →</a>
+              <a href="services.html" style="color: var(--yellow); font-weight: bold;">En savoir plus →</a>
             </div>
           </div>
           <div class="service-card">
@@ -296,7 +382,7 @@
             <div class="service-card-content">
               <h3>Carrelage & Peinture</h3>
               <p>Pose de carrelage, peinture intérieure et extérieure, finitions haut de gamme.</p>
-              <a href="services.html" style="color: var(--yellow); font-weight: bold;" aria-label="En savoir plus sur le carrelage et la peinture">En savoir plus →</a>
+              <a href="services.html" style="color: var(--yellow); font-weight: bold;">En savoir plus →</a>
             </div>
           </div>
           <div class="service-card">
@@ -306,7 +392,7 @@
             <div class="service-card-content">
               <h3>Dégât des Eaux</h3>
               <p>Intervention rapide pour tous types de dégâts des eaux. Recherche de fuite, réparation et remise en état.</p>
-              <a href="degat-des-eaux.html" style="color: var(--yellow); font-weight: bold;" aria-label="En savoir plus sur les dégâts des eaux">En savoir plus →</a>
+              <a href="degat-des-eaux.html" style="color: var(--yellow); font-weight: bold;">En savoir plus →</a>
             </div>
           </div>
           <div class="service-card">
@@ -316,7 +402,7 @@
             <div class="service-card-content">
               <h3>Menuiserie</h3>
               <p>Installation et pose de portes, fenêtres, placards sur-mesure, escaliers.</p>
-              <a href="services.html" style="color: var(--yellow); font-weight: bold;" aria-label="En savoir plus sur la menuiserie">En savoir plus →</a>
+              <a href="services.html" style="color: var(--yellow); font-weight: bold;">En savoir plus →</a>
             </div>
           </div>
           <div class="service-card">
@@ -326,7 +412,7 @@
             <div class="service-card-content">
               <h3>Toiture & Couverture</h3>
               <p>Réfection complète de toiture, isolation, zinguerie, travaux de charpente.</p>
-              <a href="services.html" style="color: var(--yellow); font-weight: bold;" aria-label="En savoir plus sur la toiture">En savoir plus →</a>
+              <a href="services.html" style="color: var(--yellow); font-weight: bold;">En savoir plus →</a>
             </div>
           </div>
         </div>
@@ -335,9 +421,9 @@
 
     <section class="bg-white">
       <div class="container">
-      <h2 class="section-title">Nos Dernières Réalisations</h2>
+        <h2 class="section-title">Nos Dernières Réalisations</h2>
         <p style="text-align: center; max-width: 800px; margin: 0 auto 40px; color: var(--gray-text); font-size: 18px;">
-          Consultez <a href="projets.html" style="color: var(--primary-color); font-weight: 600;">tous nos projets</a> réalisés à Paris et en Île-de-France. Besoin d'informations ? Visitez notre <a href="landing.html" style="color: var(--primary-color); font-weight: 600;">page informations pratiques</a>.
+          Consultez <a href="projets.html" style="color: var(--primary-color); font-weight: 600;">tous nos projets</a> réalisés à Paris et en Île-de-France.
         </p>
         <div class="hero-slider">
           <div class="slide active">
@@ -355,7 +441,7 @@
             </div>
           </div>
           <div class="slide">
-            <img height="250" width="400" src="/images/peinture_interieur.webp" alt="Peinture intérieure Rénovation Paris" loading="lazy">
+            <img height="250" width="400" src="/images/peinture_interieur.webp" alt="Peinture intérieure" loading="lazy">
             <div class="slide-content">
               <h3>Peinture & Décoration</h3>
               <p>Rénovation intérieure avec finitions haut de gamme</p>
@@ -369,8 +455,8 @@
             </div>
           </div>
           <div class="slider-controls">
-            <button class="slider-btn slider-prev">‹</button>
-            <button class="slider-btn slider-next">›</button>
+            <button class="slider-btn slider-prev" aria-label="Précédent">‹</button>
+            <button class="slider-btn slider-next" aria-label="Suivant">›</button>
           </div>
         </div>
       </div>
@@ -379,16 +465,13 @@
     <section class="bg-gray">
       <div class="container">
         <h2 class="section-title">Pourquoi Nous Choisir</h2>
-        <p style="text-align: center; max-width: 800px; margin: 0 auto 40px; color: var(--gray-text); font-size: 18px;">
-          Entreprise générale de bâtiment, nous proposons <a href="services.html" style="color: var(--primary-color); font-weight: 600;">tous les services</a> nécessaires à la réussite de votre projet de rénovation ou construction.
-        </p>
         <div class="grid grid-3">
           <div class="text-center">
             <div class="icon-circle">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
             </div>
             <h3>30 ans d'expérience</h3>
-            <p>Expertise reconnue en rénovation en Île-de-France. <a href="projets.html" style="color: #f4c430; text-decoration: underline;">Découvrez nos réalisations</a>. Besoin d'aide suite à un <a href="degat-des-eaux.html" style="color: #f4c430; text-decoration: underline;">dégât des eaux</a> ?</p>
+            <p>Expertise reconnue en rénovation en Île-de-France.</p>
           </div>
           <div class="text-center">
             <div class="icon-circle">
@@ -402,7 +485,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
             </div>
             <h3>Normes Professionnelles</h3>
-            <p>Respect strict des normes et garantie décennale. <a href="contact.html" style="color: #f4c430; text-decoration: underline;">Contactez-nous</a> pour en savoir plus</p>
+            <p>Respect strict des normes et garantie décennale.</p>
           </div>
         </div>
       </div>
@@ -412,7 +495,7 @@
       <div class="container">
         <div style="font-size: 60px; margin-bottom: 20px;">"</div>
         <blockquote>
-          Nous tenons à remercier Mistral Pro Reno pour le travail exceptionnel réalisé sur ce projet récemment achevé à Paris. Le projet comportait un calendrier très serré et il a été achevé dans les temps. Nous ferons certainement de nouveau appel à leurs services professionnels.
+          Nous tenons à remercier Mistral Pro Reno pour le travail exceptionnel réalisé sur ce projet récemment achevé à Paris. Le projet comportait un calendrier très serré et il a été achevé dans les temps.
         </blockquote>
         <cite>— Michel Bernard, PDG</cite>
       </div>
@@ -449,50 +532,18 @@
     <section class="bg-gray">
       <div class="container text-center">
         <h2 class="section-title">Prêt à démarrer votre projet ?</h2>
-<p style="font-size: 20px; margin-bottom: 30px; color: var(--gray-text);">Utilisez notre <a href="cost_calculator.html" style="color: var(--primary-color); font-weight: 600;">calculateur en ligne</a> pour estimer votre budget, ou <a href="contact.html" style="color: var(--primary-color); font-weight: 600;">contactez-nous</a> pour un devis gratuit et sans engagement</p>
+        <p style="font-size: 20px; margin-bottom: 30px; color: var(--gray-text);">Devis gratuit et sans engagement</p>
         <a href="devis.html" class="btn btn-primary">Demander un Devis</a>
       </div>
     </section>
   </main>
-
-  <section class="bg-gray" style="padding: 60px 0;">
-    <div class="container">
-      <h3 class="section-title">Découvrez Mistral Pro Reno</h3>
-      <div class="grid grid-2" style="gap: 30px; max-width: 900px; margin: 0 auto;">
-        <div>
-          <h3 style="color: #f4c430; margin-bottom: 15px;">Nos expertises</h3>
-          <p style="line-height: 1.8;">
-            Explorez l'ensemble de <a href="services.html" style="color: #f4c430; text-decoration: underline;">nos services de rénovation</a>
-            et découvrez <a href="projets.html" style="color: #f4c430; text-decoration: underline;">nos réalisations</a> à Paris et en Île-de-France.
-            Spécialistes en <a href="degat-des-eaux.html" style="color: #f4c430; text-decoration: underline;">réparation de dégâts des eaux</a>,
-            nous intervenons rapidement pour tous vos travaux.
-          </p>
-        </div>
-        <div>
-          <h3 style="color: #f4c430; margin-bottom: 15px;">Votre projet</h3>
-          <p style="line-height: 1.8;">
-            Utilisez notre <a href="cost_calculator.html" style="color: #f4c430; text-decoration: underline;">calculateur de devis en ligne</a>
-            pour estimer votre budget ou <a href="devis.html" style="color: #f4c430; text-decoration: underline;">demandez un devis personnalisé</a>.
-            Pour plus d'informations, consultez <a href="landing.html" style="color: #f4c430; text-decoration: underline;">notre page informations</a>
-            ou <a href="contact.html" style="color: #f4c430; text-decoration: underline;">contactez-nous directement</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <footer>
     <div class="container">
       <div class="grid grid-4">
         <div>
           <h3>À Propos</h3>
-          <p style="color: #d0d0d0; font-size: 14px; line-height: 1.6;">Mistral Pro Reno est une entreprise générale de bâtiment et rénovation basée à Paris, avec plus de 30 ans d'expérience dans le domaine.</p>
-          <div style="margin-top: 20px;">
-            <a href="https://www.facebook.com/mistralcontacts/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px;">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              Suivez-nous
-            </a>
-          </div>
+          <p style="color: #d0d0d0; font-size: 14px; line-height: 1.6;">Mistral Pro Reno est une entreprise générale de bâtiment et rénovation basée à Paris, avec plus de 30 ans d'expérience.</p>
         </div>
         <div>
           <h3>Nos Services</h3>
@@ -502,7 +553,6 @@
             <li><a href="services.html">Carrelage & Peinture</a></li>
             <li><a href="services.html">Menuiserie</a></li>
             <li><a href="services.html">Toiture & Couverture</a></li>
-            <li><a href="services.html">Plomberie & Électricité</a></li>
           </ul>
         </div>
         <div>
@@ -539,8 +589,7 @@
       </div>
       <div class="footer-bottom">
         <p style="margin-bottom: 15px;"><strong>MISTRAL PRO RENO – Entreprise Générale de Bâtiment</strong><br>
-        9 rue Anatole de la Forge, 75017 Paris<br>
-        Garantie Décennale</p>
+        9 rue Anatole de la Forge, 75017 Paris | Garantie Décennale</p>
         <p>© 2025 Mistral Pro Reno. Tous droits réservés.</p>
       </div>
     </div>
@@ -554,22 +603,21 @@
   </div>
 
   <button class="sticky-devis-btn" aria-label="Demander un devis gratuit">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
       <polyline points="14 2 14 8 20 8"/>
       <line x1="16" y1="13" x2="8" y2="13"/>
       <line x1="16" y1="17" x2="8" y2="17"/>
-      <polyline points="10 9 9 9 8 9"/>
     </svg>
     <span>Devis gratuit</span>
   </button>
 
   <div class="devis-popup-overlay">
     <div class="devis-popup">
-      <button class="devis-popup-close">&times;</button>
+      <button class="devis-popup-close" aria-label="Fermer">&times;</button>
       <h3 style="font-size: 24px; font-weight: 700;">Devis gratuit</h3>
       <p>Remplissez ce formulaire et nous vous rappelons rapidement</p>
-      <form id="popup-devis-form" action="merci.html" method="GET" data-form-name="popup_devis_rapide" data-form-location="sticky_button">
+      <form id="popup-devis-form" action="merci.html" method="GET">
         <div class="form-group">
           <label for="popup-nom">Nom *</label>
           <input type="text" id="popup-nom" name="nom" required>
@@ -588,4 +636,19 @@
             <option value="peinture">Peinture</option>
             <option value="carrelage">Carrelage</option>
             <option value="plomberie">Plomberie</option>
-            <option value="elec
+            <option value="electricite">Électricité</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer ma demande</button>
+      </form>
+    </div>
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script src="js/renovation_general_(9).js" defer></script>
+  <script src="js/slider.js" defer></script>
+  <script src="js/popup-devis.js" defer></script>
+  <script src="js/phone-tracking.js" defer></script>
+</body>
+</html>
