@@ -15,18 +15,10 @@
   box-sizing: border-box;
 }
 
-@font-face {
-  font-family: 'Raleway';
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-display: swap;
-}
+/* Google Fonts Raleway est chargé via le HTML */
 
 body {
-  font-family: 'Raleway', 'Open Sans', sans-serif;
+  font-family: 'Raleway', sans-serif;
   line-height: 1.6;
   color: var(--black);
   font-size: 16px;
