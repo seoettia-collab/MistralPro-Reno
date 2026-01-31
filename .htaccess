@@ -1,144 +1,62 @@
-RewriteEngine On
+# =========================================
+# CACHE OPTIMIZATION - Mistral Pro Reno
+# =========================================
 
-# =====================================================
-# REDIRECTIONS CANONIQUES
-# =====================================================
-
-# 1. Forcer HTTPS ET www ensemble
-RewriteCond %{HTTPS} off [OR]
-RewriteCond %{HTTP_HOST} !^www\.mistralpro-reno\.fr$ [NC]
-RewriteRule ^(.*)$ https://www.mistralpro-reno.fr/$1 [L,R=301]
-
-# 2. REDIRECTIONS 301 SPÉCIFIQUES VERS .HTML (SEO FIX)
-
-# Services
-RewriteCond %{REQUEST_URI} ^/services$
-RewriteRule ^services$ /services.html [L,R=301]
-
-# Projets
-RewriteCond %{REQUEST_URI} ^/projets$
-RewriteRule ^projets$ /projets.html [L,R=301]
-
-# Devis
-RewriteCond %{REQUEST_URI} ^/devis$
-RewriteRule ^devis$ /devis.html [L,R=301]
-
-# Cost Calculator
-RewriteCond %{REQUEST_URI} ^/cost_calculator$
-RewriteRule ^cost_calculator$ /cost_calculator.html [L,R=301]
-
-# Dégât des Eaux
-RewriteCond %{REQUEST_URI} ^/degat-des-eaux$
-RewriteRule ^degat-des-eaux$ /degat-des-eaux.html [L,R=301]
-
-# Contact
-RewriteCond %{REQUEST_URI} ^/contact$
-RewriteRule ^contact$ /contact.html [L,R=301]
-
-# Landing
-RewriteCond %{REQUEST_URI} ^/landing$
-RewriteRule ^landing$ /landing.html [L,R=301]
-
-# Mentions Légales
-RewriteCond %{REQUEST_URI} ^/mentions-legales$
-RewriteRule ^mentions-legales$ /mentions-legales.html [L,R=301]
-
-# 3. Page 404
-ErrorDocument 404 /404.html
-
-# =====================================================
-# TYPES MIME POUR LES POLICES
-# =====================================================
-<IfModule mod_mime.c>
-    AddType font/woff2 .woff2
-    AddType font/woff .woff
-    AddType font/ttf .ttf
-    AddType font/otf .otf
-    AddType application/font-woff2 .woff2
-</IfModule>
-
-# =====================================================
-# COMPRESSION BROTLI (Prioritaire si disponible)
-# =====================================================
-<IfModule mod_brotli.c>
-    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css
-    AddOutputFilterByType BROTLI_COMPRESS application/javascript application/json
-    AddOutputFilterByType BROTLI_COMPRESS application/xml application/xhtml+xml
-    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
-    AddOutputFilterByType BROTLI_COMPRESS font/woff2 font/woff application/font-woff2
-</IfModule>
-
-# =====================================================
-# COMPRESSION GZIP (Fallback si Brotli indisponible)
-# =====================================================
+# Enable GZIP compression
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
-    AddOutputFilterByType DEFLATE application/javascript application/json
-    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml
-    AddOutputFilterByType DEFLATE image/svg+xml
-
-    <FilesMatch "\.(css|js)$">
-        SetOutputFilter DEFLATE
-    </FilesMatch>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml
 </IfModule>
 
-# Headers pour vérifier la compression
-<IfModule mod_headers.c>
-    <FilesMatch "\.(css|js|html|xml|txt)$">
-        Header append Vary Accept-Encoding
-    </FilesMatch>
-</IfModule>
-
-# =====================================================
-# CACHE NAVIGATEUR
-# =====================================================
+# Cache Control - 1 YEAR for static assets
 <IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType image/x-icon "access plus 1 year"
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType text/javascript "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType font/woff "access plus 1 year"
-    ExpiresByType font/woff2 "access plus 1 year"
-    ExpiresByType application/font-woff2 "access plus 1 year"
-    ExpiresByType font/ttf "access plus 1 year"
-    ExpiresByType font/otf "access plus 1 year"
-    ExpiresByType text/html "access plus 0 seconds"
+  ExpiresActive On
+  
+  # Default
+  ExpiresDefault "access plus 1 month"
+  
+  # CSS - 1 year
+  ExpiresByType text/css "access plus 1 year"
+  
+  # JavaScript - 1 year
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+  
+  # Images - 1 year
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  
+  # Fonts - 1 year
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  
+  # HTML - no cache (always fresh)
+  ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 
+# Cache-Control Headers
 <IfModule mod_headers.c>
-    # Images - Cache 1 an
-    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
-        Header set Cache-Control "public, max-age=31536000, immutable"
-    </FilesMatch>
-    
-    # CSS et JS - Cache 1 an (GTmetrix optimisé)
-    <FilesMatch "\.(css|js)$">
-        Header set Cache-Control "public, max-age=31536000, immutable"
-    </FilesMatch>
-    
-    # POLICES - Cache 1 an (CORRECTION GTmetrix)
-    <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
-        Header set Cache-Control "public, max-age=31536000, immutable"
-        Header set Access-Control-Allow-Origin "*"
-    </FilesMatch>
+  # CSS, JS, Fonts, Images - 1 year immutable
+  <FilesMatch "\.(css|js|woff|woff2|ttf|eot|ico|jpg|jpeg|png|gif|webp|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  
+  # HTML - no cache
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
 </IfModule>
 
-# =====================================================
-# SECURITE
-# =====================================================
-<FilesMatch "(^\.htaccess|\.htpasswd|\.git|\.env)">
-    Order Allow,Deny
-    Deny from all
-</FilesMatch>
-Options -Indexes
+# Security Headers
 <IfModule mod_headers.c>
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-Content-Type-Options "nosniff"
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
 </IfModule>
