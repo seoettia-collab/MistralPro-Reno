@@ -1014,8 +1014,8 @@ select:focus {
     
     .calc-content {
         order: 1;
-        padding: 5px 10px 10px !important;
-        margin-top: 50px !important; /* Espace pour header fixe */
+        padding: 0 10px 10px !important;
+        margin-top: 35px !important; /* Réduit - espace pour header fixe */
     }
     
     /* Formulaire client compact en 2 colonnes */
@@ -1053,13 +1053,13 @@ select:focus {
     .tabs-container {
         position: relative !important;
         top: 0 !important;
-        padding: 5px 0 !important;
-        margin-bottom: 8px !important;
+        padding: 3px 0 !important;
+        margin-bottom: 3px !important;
         border-bottom: none !important;
     }
     
     .tabs {
-        gap: 5px !important;
+        gap: 4px !important;
     }
     
     .tab-button {
@@ -1081,9 +1081,14 @@ select:focus {
     /* Options prestations compactes */
     .tab-content h2 {
         font-size: 14px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 5px !important;
         margin-top: 0 !important;
-        padding-bottom: 5px !important;
+        padding-bottom: 3px !important;
+        padding-top: 0 !important;
+    }
+    
+    .tab-content {
+        padding-top: 0 !important;
     }
     
     .options-columns {
@@ -1234,7 +1239,7 @@ select:focus {
 
 @media (max-width: 480px) {
     .calc-content {
-        margin-top: 45px !important;
+        margin-top: 32px !important;
     }
     
     .tab-button {
