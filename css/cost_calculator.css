@@ -907,6 +907,157 @@ select:focus {
 }
 
 /* =====================================================
+   DESKTOP (≥1024px) - 3 colonnes, textes normaux
+   ===================================================== */
+@media (min-width: 1024px) {
+    /* Masquer le bouton sticky devis sur desktop */
+    .sticky-devis-btn {
+        display: none !important;
+    }
+    
+    /* Hero - plus d'espace en haut pour éviter superposition header */
+    .hero {
+        padding-top: 160px;
+    }
+    
+    .options-columns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .options-columns .column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .form-item {
+        padding: 12px 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-item > label {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .slider-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .slider-group input[type="range"] {
+        flex: 1;
+        height: 6px;
+    }
+    
+    .number-input {
+        width: 70px;
+        padding: 8px;
+        font-size: 14px;
+        min-height: 36px;
+    }
+    
+    select {
+        padding: 10px;
+        font-size: 13px;
+        min-height: 40px;
+    }
+    
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .checkbox-group label {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+    }
+    
+    .tab-content h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+}
+
+/* =====================================================
+   TABLETTE (768px - 1024px) - 2 colonnes
+   ===================================================== */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .options-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .options-columns .column {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-item {
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .form-item > label {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    
+    .slider-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .number-input {
+        width: 60px;
+        padding: 6px;
+        font-size: 13px;
+        min-height: 32px;
+    }
+    
+    select {
+        padding: 8px;
+        font-size: 12px;
+        min-height: 36px;
+    }
+    
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .checkbox-group label {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    
+    .tab-content h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+}
+
+/* =====================================================
    HERO COMPACT - Mobile Optimisation
    Réduit la hauteur du hero pour afficher le formulaire
    ===================================================== */

@@ -10,19 +10,19 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur de Devis Rénovation | Mistral Pro Reno</title>
+    <title>Simulateur de Devis Rénovation | Mistral Pro Reno</title>
     <meta name="description" content="Estimez le coût de vos travaux avec notre calculateur en ligne. Rénovation, peinture, carrelage, plomberie. Résultat instantané et gratuit.">
     <meta name="keywords" content="devis rénovation, calculateur travaux, estimation rénovation Paris, plomberie, électricité, peinture, isolation">
     <meta name="author" content="Mistral Pro Reno">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.mistralpro-reno.fr/cost_calculator.html">
-    <meta property="og:title" content="Calculateur de Devis - Mistral Pro Reno">
+    <meta property="og:title" content="Simulateur de Devis - Mistral Pro Reno">
     <meta property="og:description" content="Estimez gratuitement le coût de vos travaux de rénovation en quelques clics.">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="fr_FR">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@MistralProReno">
-    <meta name="twitter:title" content="Calculateur de Devis - Mistral Pro Reno">
+    <meta name="twitter:title" content="Simulateur de Devis - Mistral Pro Reno">
     <meta name="twitter:description" content="Estimez gratuitement vos travaux de rénovation en ligne.">
     <meta name="twitter:image" content="https://www.mistralpro-reno.fr/images/og-image.jpg">
     <meta name="theme-color" content="#4a90e2">
@@ -102,7 +102,7 @@
     <main>
         <section class="hero">
             <div class="container text-center">
-                <h1><span class="hide-mobile">Calculateur de Devis</span><span class="show-mobile-only">Calculateur</span></h1>
+                <h1>Simulateur de devis Mistral Pro Reno</h1>
                 <p>Estimation détaillée et gratuite de votre projet de rénovation. <a href="services.html" style="color: #f4c430; font-weight: 600;">Découvrez nos services</a> pour connaître toutes nos prestations ou consultez nos <a href="landing.html" style="color: #f4c430; font-weight: 600;">informations pratiques</a>.</p>
             </div>
         </section>
@@ -375,7 +375,7 @@
                         <div class="form-item">
                             <label for="surface-sol">Surface sol (m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="surface-sol" min="0" max="9999" value="0" data-label="Revetement de sol avec preparation support">
+                                <input type="range" id="surface-sol" min="0" max="9999" value="0" data-label="Revetement de sol avec preparation support selon DTU">
                                 <input type="number" class="number-input" id="surface-sol-number" min="0" max="9999" value="0" aria-label="Surface sol en m²" inputmode="numeric">
                             </div>
                         </div>
@@ -384,12 +384,38 @@
                             <label for="revetement-sol">Type de revêtement sol</label>
                             <select id="revetement-sol" data-label="Type sol">
                                 <option value="0">-- Sélectionner --</option>
-                                <option value="35" data-label="Fourniture et pose carrelage gres cerame format standard avec preparation support et joints">Carrelage standard (35 €/m²)</option>
-                                <option value="55" data-label="Fourniture et pose carrelage grand format avec ragreage et double encollage">Carrelage premium (55 €/m²)</option>
-                                <option value="60" data-label="Fourniture et pose parquet stratifie avec sous-couche acoustique et plinthes assorties">Parquet flottant (60 €/m²)</option>
-                                <option value="90" data-label="Fourniture et pose parquet massif chene avec pose collee et vitrification 2 couches">Parquet massif (90 €/m²)</option>
-                                <option value="25" data-label="Fourniture et pose revetement vinyle/PVC avec preparation support et soudure a chaud">Vinyle (25 €/m²)</option>
+                                <option value="parquet-stratifie" data-label="Fourniture et pose parquet stratifie classe 23/32, sous-couche acoustique 3mm, pose flottante clipsee, joints peripheriques, plinthes assorties">Parquet Stratifié</option>
+                                <option value="parquet-massif" data-label="Fourniture et pose parquet massif chene, pose collee en plein sur ragreage, poncage 3 grains, vitrification 2 couches polyurethane, plinthes massives">Parquet Massif</option>
+                                <option value="parquet-contrecolle" data-label="Fourniture et pose parquet contrecolle 3 plis chene, sous-couche pare-vapeur, pose flottante ou collee, joints peripheriques, plinthes assorties">Parquet Contrecollé</option>
+                                <option value="carrelage" data-label="Fourniture et pose carrelage gres cerame, double encollage, joints souples peripheriques, joints coulis ciment, nettoyage fin de chantier">Carrelage</option>
+                                <option value="lino" data-label="Fourniture et pose revetement linoleum naturel, collage plein, soudure a chaud des les, remontee en plinthe ou baguette de finition">Lino</option>
+                                <option value="dalle-pvc" data-label="Fourniture et pose dalles PVC clipsables ou collees, sous-couche si necessaire, plinthes de finition, nettoyage fin de chantier">Dalle PVC</option>
                             </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="gamme-sol">Gamme</label>
+                            <select id="gamme-sol" data-label="Gamme revetement">
+                                <option value="25" data-label="Gamme Standard - materiaux entree de gamme, finition soignee">Standard (25€/m²)</option>
+                                <option value="40" data-label="Gamme Confort - materiaux milieu de gamme, finition qualite">Confort (40€/m²)</option>
+                                <option value="80" data-label="Gamme Premium - materiaux haut de gamme, finition superieure">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="depose-sol">Dépose (15€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="depose-sol" min="0" max="9999" value="0" data-price="15" data-label="Depose ancien revetement de sol, grattage colle residuelle, evacuation gravats en decharge agreee">
+                                <input type="number" class="number-input" id="depose-sol-number" min="0" max="9999" value="0" aria-label="Surface dépose en m²" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="reagreage">Réagréage (45€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="reagreage" min="0" max="9999" value="0" data-price="45" data-label="Ragreage autolissant P3, primaire d'accrochage, epaisseur 3 a 10mm, temps de sechage selon DTU">
+                                <input type="number" class="number-input" id="reagreage-number" min="0" max="9999" value="0" aria-label="Surface réagréage en m²" inputmode="numeric">
+                            </div>
                         </div>
                     </div>
 
@@ -397,7 +423,7 @@
                         <div class="form-item">
                             <label for="surface-mur-rev">Surface mur (m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="surface-mur-rev" min="0" max="9999" value="0" data-label="Revetement mural avec preparation support">
+                                <input type="range" id="surface-mur-rev" min="0" max="9999" value="0" data-label="Revetement mural avec preparation support selon DTU">
                                 <input type="number" class="number-input" id="surface-mur-rev-number" min="0" max="9999" value="0" aria-label="Surface murale en m²" inputmode="numeric">
                             </div>
                         </div>
@@ -406,10 +432,26 @@
                             <label for="revetement-mur">Type de revêtement mural</label>
                             <select id="revetement-mur" data-label="Type mur">
                                 <option value="0">-- Sélectionner --</option>
-                                <option value="40" data-label="Fourniture et pose faience murale format standard avec preparation support et joints">Faïence standard (40 €/m²)</option>
-                                <option value="65" data-label="Fourniture et pose faience grand format avec double encollage et joints fins">Faïence premium (65 €/m²)</option>
-                                <option value="80" data-label="Fourniture et pose mosaique sur trame avec joints epoxy et finition soignee">Mosaïque (80 €/m²)</option>
+                                <option value="40" data-label="Fourniture et pose faience murale format standard, simple encollage, joints ciment, finition soignee">Faïence standard (40€/m²)</option>
+                                <option value="65" data-label="Fourniture et pose faience grand format, double encollage, joints fins epoxy, decoupes soignees">Faïence premium (65€/m²)</option>
+                                <option value="80" data-label="Fourniture et pose mosaique sur trame, double encollage, joints epoxy, finition et nettoyage soigne">Mosaïque (80€/m²)</option>
                             </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="chape-sol">Chape (45€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="chape-sol" min="0" max="9999" value="0" data-price="45" data-label="Realisation chape fluide ou traditionnelle, armature treillis soude si necessaire, planeite selon DTU 26.2">
+                                <input type="number" class="number-input" id="chape-sol-number" min="0" max="9999" value="0" aria-label="Surface chape en m²" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="primaire-sol">Primaire (15€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="primaire-sol" min="0" max="9999" value="0" data-price="15" data-label="Application primaire d'accrochage adapte au support, temps de sechage selon preconisations fabricant">
+                                <input type="number" class="number-input" id="primaire-sol-number" min="0" max="9999" value="0" aria-label="Surface primaire en m²" inputmode="numeric">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1053,7 +1095,7 @@
     {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "Calculateur de Devis Mistral Pro Reno",
+        "name": "Simulateur de Devis Mistral Pro Reno",
         "description": "Outil gratuit d'estimation de devis pour travaux de rénovation à Paris",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
