@@ -962,7 +962,7 @@ select:focus {
         height: 12px !important;
     }
     
-    /* Nav avec Calculateur inline */
+    /* Nav avec titre centré */
     nav {
         padding: 5px 0 !important;
     }
@@ -971,21 +971,26 @@ select:focus {
         padding: 0 10px !important;
         min-height: auto !important;
         display: flex !important;
-        justify-content: space-between !important;
+        justify-content: center !important;
         align-items: center !important;
+        position: relative !important;
     }
     
-    /* Afficher "Calculateur" dans la nav sur mobile */
+    /* Titre centré sur mobile */
     nav .container::before {
-        content: "Calculateur";
+        content: "Simulateur de devis Mistral Pro Reno";
         color: #f4c430;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 700;
+        text-align: center;
     }
     
+    /* Menu hamburger à droite */
     .menu-toggle {
         font-size: 18px !important;
         padding: 3px 8px !important;
+        position: absolute !important;
+        right: 10px !important;
     }
     
     /* MASQUER COMPLETEMENT le hero sur mobile */
@@ -1134,27 +1139,34 @@ select:focus {
         gap: 3px 6px !important;
     }
     
-    /* Checkboxes en 2 colonnes */
+    /* Colonne unique pour les items avec checkboxes (span 2 colonnes) */
+    .options-columns .column:has(.checkbox-group) {
+        grid-column: span 2 !important;
+    }
+    
+    /* Checkboxes en 3 colonnes */
     .checkbox-group {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(3, 1fr) !important;
         gap: 2px 4px !important;
         width: 100% !important;
     }
     
     .checkbox-group label {
-        font-size: 9px !important;
-        padding: 4px 5px !important;
+        font-size: 7px !important;
+        padding: 3px 2px !important;
         margin: 0 !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
+        display: flex !important;
+        align-items: center !important;
     }
     
     .checkbox-group input[type="checkbox"] {
-        width: 14px !important;
-        height: 14px !important;
-        margin-right: 4px !important;
+        width: 12px !important;
+        height: 12px !important;
+        margin-right: 2px !important;
         flex-shrink: 0 !important;
     }
     
