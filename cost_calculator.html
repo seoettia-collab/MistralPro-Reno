@@ -373,32 +373,108 @@
                 <div class="options-columns">
                     <div class="column">
                         <div class="form-item">
-                            <label for="surface-sol">Surface sol (m²)</label>
+                            <label for="parquet-stratifie">Parquet Stratifié (m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="surface-sol" min="0" max="9999" value="0" data-label="Revetement de sol avec preparation support selon DTU">
-                                <input type="number" class="number-input" id="surface-sol-number" min="0" max="9999" value="0" aria-label="Surface sol en m²" inputmode="numeric">
+                                <input type="range" id="parquet-stratifie" min="0" max="9999" value="0" data-label="Fourniture et pose parquet stratifie classe 23/32, sous-couche acoustique 3mm, pose flottante clipsee, joints peripheriques, plinthes assorties">
+                                <input type="number" class="number-input" id="parquet-stratifie-number" min="0" max="9999" value="0" aria-label="Surface parquet stratifié en m²" inputmode="numeric">
                             </div>
-                        </div>
-
-                        <div class="form-item">
-                            <label for="revetement-sol">Type de revêtement sol</label>
-                            <select id="revetement-sol" data-label="Type sol">
-                                <option value="0">-- Sélectionner --</option>
-                                <option value="parquet-stratifie" data-label="Fourniture et pose parquet stratifie classe 23/32, sous-couche acoustique 3mm, pose flottante clipsee, joints peripheriques, plinthes assorties">Parquet Stratifié</option>
-                                <option value="parquet-massif" data-label="Fourniture et pose parquet massif chene, pose collee en plein sur ragreage, poncage 3 grains, vitrification 2 couches polyurethane, plinthes massives">Parquet Massif</option>
-                                <option value="parquet-contrecolle" data-label="Fourniture et pose parquet contrecolle 3 plis chene, sous-couche pare-vapeur, pose flottante ou collee, joints peripheriques, plinthes assorties">Parquet Contrecollé</option>
-                                <option value="carrelage" data-label="Fourniture et pose carrelage gres cerame, double encollage, joints souples peripheriques, joints coulis ciment, nettoyage fin de chantier">Carrelage</option>
-                                <option value="lino" data-label="Fourniture et pose revetement linoleum naturel, collage plein, soudure a chaud des les, remontee en plinthe ou baguette de finition">Lino</option>
-                                <option value="dalle-pvc" data-label="Fourniture et pose dalles PVC clipsables ou collees, sous-couche si necessaire, plinthes de finition, nettoyage fin de chantier">Dalle PVC</option>
+                            <select id="gamme-parquet-stratifie" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
                             </select>
                         </div>
 
                         <div class="form-item">
-                            <label for="gamme-sol">Gamme</label>
-                            <select id="gamme-sol" data-label="Gamme revetement">
-                                <option value="25" data-label="Gamme Standard - materiaux entree de gamme, finition soignee">Standard (25€/m²)</option>
-                                <option value="40" data-label="Gamme Confort - materiaux milieu de gamme, finition qualite">Confort (40€/m²)</option>
-                                <option value="80" data-label="Gamme Premium - materiaux haut de gamme, finition superieure">Premium (80€/m²)</option>
+                            <label for="parquet-massif">Parquet Massif (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="parquet-massif" min="0" max="9999" value="0" data-label="Fourniture et pose parquet massif chene, pose collee en plein sur ragreage, poncage 3 grains, vitrification 2 couches polyurethane, plinthes massives">
+                                <input type="number" class="number-input" id="parquet-massif-number" min="0" max="9999" value="0" aria-label="Surface parquet massif en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-parquet-massif" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="parquet-contrecolle">Parquet Contrecollé (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="parquet-contrecolle" min="0" max="9999" value="0" data-label="Fourniture et pose parquet contrecolle 3 plis chene, sous-couche pare-vapeur, pose flottante ou collee, joints peripheriques, plinthes assorties">
+                                <input type="number" class="number-input" id="parquet-contrecolle-number" min="0" max="9999" value="0" aria-label="Surface parquet contrecollé en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-parquet-contrecolle" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="carrelage-sol">Carrelage (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="carrelage-sol" min="0" max="9999" value="0" data-label="Fourniture et pose carrelage gres cerame, double encollage, joints souples peripheriques, joints coulis ciment, nettoyage fin de chantier">
+                                <input type="number" class="number-input" id="carrelage-sol-number" min="0" max="9999" value="0" aria-label="Surface carrelage en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-carrelage-sol" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="lino-sol">Lino (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="lino-sol" min="0" max="9999" value="0" data-label="Fourniture et pose revetement linoleum naturel, collage plein, soudure a chaud des les, remontee en plinthe ou baguette de finition">
+                                <input type="number" class="number-input" id="lino-sol-number" min="0" max="9999" value="0" aria-label="Surface lino en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-lino-sol" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="dalle-pvc">Dalle PVC (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="dalle-pvc" min="0" max="9999" value="0" data-label="Fourniture et pose dalles PVC clipsables ou collees, sous-couche si necessaire, plinthes de finition, nettoyage fin de chantier">
+                                <input type="number" class="number-input" id="dalle-pvc-number" min="0" max="9999" value="0" aria-label="Surface dalle PVC en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-dalle-pvc" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="form-item">
+                            <label for="faience-mur">Faïence (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="faience-mur" min="0" max="9999" value="0" data-label="Fourniture et pose faience murale, simple ou double encollage selon format, joints ciment ou epoxy, finition soignee">
+                                <input type="number" class="number-input" id="faience-mur-number" min="0" max="9999" value="0" aria-label="Surface faïence en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-faience-mur" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="credence-mur">Crédence (m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="credence-mur" min="0" max="9999" value="0" data-label="Fourniture et pose credence cuisine ou salle de bain, decoupe et ajustement, joints silicone, finition soignee">
+                                <input type="number" class="number-input" id="credence-mur-number" min="0" max="9999" value="0" aria-label="Surface crédence en m²" inputmode="numeric">
+                            </div>
+                            <select id="gamme-credence-mur" data-label="Gamme">
+                                <option value="25">Standard (25€/m²)</option>
+                                <option value="40">Confort (40€/m²)</option>
+                                <option value="80">Premium (80€/m²)</option>
                             </select>
                         </div>
 
@@ -416,26 +492,6 @@
                                 <input type="range" id="reagreage" min="0" max="9999" value="0" data-price="45" data-label="Ragreage autolissant P3, primaire d'accrochage, epaisseur 3 a 10mm, temps de sechage selon DTU">
                                 <input type="number" class="number-input" id="reagreage-number" min="0" max="9999" value="0" aria-label="Surface réagréage en m²" inputmode="numeric">
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="column">
-                        <div class="form-item">
-                            <label for="surface-mur-rev">Surface mur (m²)</label>
-                            <div class="slider-group">
-                                <input type="range" id="surface-mur-rev" min="0" max="9999" value="0" data-label="Revetement mural avec preparation support selon DTU">
-                                <input type="number" class="number-input" id="surface-mur-rev-number" min="0" max="9999" value="0" aria-label="Surface murale en m²" inputmode="numeric">
-                            </div>
-                        </div>
-
-                        <div class="form-item">
-                            <label for="revetement-mur">Type de revêtement mural</label>
-                            <select id="revetement-mur" data-label="Type mur">
-                                <option value="0">-- Sélectionner --</option>
-                                <option value="40" data-label="Fourniture et pose faience murale format standard, simple encollage, joints ciment, finition soignee">Faïence standard (40€/m²)</option>
-                                <option value="65" data-label="Fourniture et pose faience grand format, double encollage, joints fins epoxy, decoupes soignees">Faïence premium (65€/m²)</option>
-                                <option value="80" data-label="Fourniture et pose mosaique sur trame, double encollage, joints epoxy, finition et nettoyage soigne">Mosaïque (80€/m²)</option>
-                            </select>
                         </div>
 
                         <div class="form-item">
