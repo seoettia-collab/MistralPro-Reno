@@ -709,6 +709,23 @@ select:focus {
    Gauche: Formulaire Client | Droite: Corps de Métier
    ===================================================== */
 @media (min-width: 1024px) {
+    /* Hero compact desktop */
+    .hero {
+        min-height: auto !important;
+        height: auto !important;
+        padding: 15px 20px !important;
+    }
+    
+    .hero h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+    
+    .hero p {
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+    
     /* Container principal en 2 colonnes */
     .calc-container {
         display: grid;
@@ -779,6 +796,24 @@ select:focus {
     .tab-button {
         padding: 5px 10px;
         font-size: 10px;
+        background: #1a1a1a;
+        color: #fff;
+        border: 2px solid #f4c430;
+        transition: all 0.3s ease;
+    }
+    
+    .tab-button:hover {
+        background: #f4c430;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(244, 196, 48, 0.4);
+    }
+    
+    .tab-button.active {
+        background: #f4c430;
+        color: #1a1a1a;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(244, 196, 48, 0.4);
     }
     
     /* Contenu des onglets compact */
@@ -876,34 +911,138 @@ select:focus {
    Réduit la hauteur du hero pour afficher le formulaire
    ===================================================== */
 @media (max-width: 768px) {
+    /* Hero ultra compact */
     .hero {
         min-height: auto !important;
         height: auto !important;
-        padding: 100px 20px 30px !important;
+        padding: 75px 15px 10px !important;
     }
     
     .hero h1 {
-        font-size: 1.6rem;
-        margin-bottom: 10px;
+        font-size: 1.3rem;
+        margin-bottom: 5px;
     }
     
     .hero p {
-        font-size: 0.9rem;
-        line-height: 1.4;
-        margin-bottom: 0;
+        display: none; /* Masquer description sur mobile */
+    }
+    
+    /* Masquer numéro téléphone dans top-bar */
+    .top-bar-left > a:first-child span {
+        display: none;
+    }
+    
+    /* Formulaire client en 2 colonnes */
+    .client-form {
+        padding: 12px 15px !important;
+    }
+    
+    .client-form h2 {
+        font-size: 16px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .client-form > p {
+        font-size: 11px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .client-form-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px 8px !important;
+    }
+    
+    .client-form .form-group label {
+        font-size: 10px !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .client-form .form-group input {
+        padding: 6px 8px !important;
+        font-size: 13px !important;
+        min-height: 36px !important;
+    }
+    
+    .form-note {
+        font-size: 9px !important;
+        margin-top: 6px !important;
+    }
+    
+    /* Onglets métiers compacts */
+    .tabs-container {
+        padding: 8px 0 !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .tabs {
+        gap: 4px !important;
+    }
+    
+    .tab-button {
+        font-size: 10px !important;
+        padding: 6px 8px !important;
+        min-height: 32px !important;
+    }
+    
+    /* Barre total compacte */
+    .summary {
+        padding: 10px 12px !important;
+    }
+    
+    .summary-item span {
+        font-size: 11px !important;
+    }
+    
+    .summary-item strong {
+        font-size: 14px !important;
+    }
+    
+    .summary-item.total strong {
+        font-size: 18px !important;
+    }
+    
+    .summary-actions {
+        gap: 6px !important;
+    }
+    
+    .summary-actions button {
+        padding: 8px 10px !important;
+        font-size: 11px !important;
+        min-height: 36px !important;
+    }
+    
+    /* Contenu calc compact */
+    .calc-content {
+        padding: 15px 12px 120px !important;
     }
 }
 
 @media (max-width: 480px) {
     .hero {
-        padding: 90px 15px 25px !important;
+        padding: 70px 10px 8px !important;
     }
     
     .hero h1 {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
     
-    .hero p {
-        font-size: 0.85rem;
+    .client-form {
+        padding: 10px 12px !important;
+    }
+    
+    .client-form h2 {
+        font-size: 14px !important;
+    }
+    
+    .client-form .form-group input {
+        padding: 5px 6px !important;
+        font-size: 12px !important;
+        min-height: 32px !important;
+    }
+    
+    .summary-actions button {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        min-height: 32px !important;
     }
 }
