@@ -933,32 +933,62 @@ select:focus {
         display: none !important;
     }
     
-    /* Header ultra compact */
+    /* Masquer icône Facebook sur mobile */
+    .top-bar .container > a[href*="facebook"] {
+        display: none !important;
+    }
+    
+    /* =====================================================
+       HEADER ULTRA COMPACT - Tout sur 1-2 lignes
+       ===================================================== */
     .top-bar {
-        padding: 3px 0 !important;
+        padding: 2px 0 !important;
     }
     
     .top-bar .container {
         padding: 0 10px !important;
     }
     
+    .top-bar-left {
+        gap: 5px !important;
+    }
+    
+    .top-bar-left a {
+        font-size: 11px !important;
+    }
+    
+    .top-bar-left svg {
+        width: 12px !important;
+        height: 12px !important;
+    }
+    
     nav {
-        padding: 5px 0 !important;
+        padding: 3px 0 !important;
     }
     
     nav .container {
         padding: 0 10px !important;
+        min-height: auto !important;
+    }
+    
+    .menu-toggle {
+        font-size: 18px !important;
+        padding: 3px 8px !important;
     }
     
     /* Hero ultra compact - juste le titre */
     .hero {
         min-height: auto !important;
         height: auto !important;
-        padding: 60px 10px 5px !important;
+        padding: 50px 10px 5px !important;
+    }
+    
+    .hero .container {
+        padding: 0 !important;
     }
     
     .hero h1 {
-        font-size: 1rem;
+        font-size: 0.95rem;
         margin-bottom: 0;
     }
     
@@ -1134,11 +1164,11 @@ select:focus {
 
 @media (max-width: 480px) {
     .hero {
-        padding: 55px 8px 3px !important;
+        padding: 45px 8px 3px !important;
     }
     
     .hero h1 {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     .tab-button {
