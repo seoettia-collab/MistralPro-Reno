@@ -203,16 +203,16 @@
                         <div class="form-item">
                             <label for="robinets">Qté robinets (150€)</label>
                             <div class="slider-group">
-                                <input type="range" id="robinets" min="0" max="15" value="0" data-price="150" data-label="Fourniture et pose robinetterie mitigeur chrome avec flexibles et raccordements">
-                                <input type="number" class="number-input" id="robinets-number" min="0" max="15" value="0" aria-label="Nombre de robinets" inputmode="numeric">
+                                <input type="range" id="robinets" min="0" max="999" value="0" data-price="150" data-label="Fourniture et pose robinetterie mitigeur chrome avec flexibles et raccordements">
+                                <input type="number" class="number-input" id="robinets-number" min="0" max="999" value="0" aria-label="Nombre de robinets" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="tuyauterie">Tuyauterie ml (35€)</label>
                             <div class="slider-group">
-                                <input type="range" id="tuyauterie" min="0" max="100" value="0" data-price="35" data-label="Fourniture et pose canalisation PER/Multicouche avec raccords et colliers de fixation">
-                                <input type="number" class="number-input" id="tuyauterie-number" min="0" max="100" value="0" aria-label="Mètres linéaires de tuyauterie" inputmode="numeric">
+                                <input type="range" id="tuyauterie" min="0" max="9999" value="0" data-price="35" data-label="Fourniture et pose canalisation PER/Multicouche avec raccords et colliers de fixation">
+                                <input type="number" class="number-input" id="tuyauterie-number" min="0" max="9999" value="0" aria-label="Mètres linéaires de tuyauterie" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -240,16 +240,16 @@
                         <div class="form-item">
                             <label for="points-lumineux">Pts lumineux (80€)</label>
                             <div class="slider-group">
-                                <input type="range" id="points-lumineux" min="0" max="50" value="0" data-price="80" data-label="Creation point lumineux avec saignee, passage de gaine, boite DCL et raccordement">
-                                <input type="number" class="number-input" id="points-lumineux-number" min="0" max="50" value="0" aria-label="Nombre de points lumineux" inputmode="numeric">
+                                <input type="range" id="points-lumineux" min="0" max="999" value="0" data-price="80" data-label="Creation point lumineux avec saignee, passage de gaine, boite DCL et raccordement">
+                                <input type="number" class="number-input" id="points-lumineux-number" min="0" max="999" value="0" aria-label="Nombre de points lumineux" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="prises">Prises élec. (60€)</label>
                             <div class="slider-group">
-                                <input type="range" id="prises" min="0" max="50" value="0" data-price="60" data-label="Creation prise 2P+T avec saignee, boite encastrement et appareillage">
-                                <input type="number" class="number-input" id="prises-number" min="0" max="50" value="0" aria-label="Nombre de prises électriques" inputmode="numeric">
+                                <input type="range" id="prises" min="0" max="999" value="0" data-price="60" data-label="Creation prise 2P+T avec saignee, boite encastrement et appareillage">
+                                <input type="number" class="number-input" id="prises-number" min="0" max="999" value="0" aria-label="Nombre de prises électriques" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -258,16 +258,16 @@
                         <div class="form-item">
                             <label for="interrupteurs">Interrupteurs (50€)</label>
                             <div class="slider-group">
-                                <input type="range" id="interrupteurs" min="0" max="30" value="0" data-price="50" data-label="Fourniture et pose interrupteur va-et-vient avec cablage et appareillage">
-                                <input type="number" class="number-input" id="interrupteurs-number" min="0" max="30" value="0" aria-label="Nombre d'interrupteurs" inputmode="numeric">
+                                <input type="range" id="interrupteurs" min="0" max="999" value="0" data-price="50" data-label="Fourniture et pose interrupteur va-et-vient avec cablage et appareillage">
+                                <input type="number" class="number-input" id="interrupteurs-number" min="0" max="999" value="0" aria-label="Nombre d'interrupteurs" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="radiateurs">Radiateurs (300€)</label>
                             <div class="slider-group">
-                                <input type="range" id="radiateurs" min="0" max="15" value="0" data-price="300" data-label="Fourniture et pose radiateur electrique a inertie avec thermostat programmable">
-                                <input type="number" class="number-input" id="radiateurs-number" min="0" max="15" value="0" aria-label="Nombre de radiateurs" inputmode="numeric">
+                                <input type="range" id="radiateurs" min="0" max="999" value="0" data-price="300" data-label="Fourniture et pose radiateur electrique a inertie avec thermostat programmable">
+                                <input type="number" class="number-input" id="radiateurs-number" min="0" max="999" value="0" aria-label="Nombre de radiateurs" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -281,39 +281,85 @@
                 <div class="options-columns">
                     <div class="column">
                         <div class="form-item">
-                            <label for="murs-peinture">Surface murs à peindre (m²)</label>
+                            <label for="murs-peinture">Surface murs (m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="murs-peinture" min="0" max="300" value="0" data-label="Peinture murale avec preparation du support">
-                                <input type="number" class="number-input" id="murs-peinture-number" min="0" max="300" value="0" aria-label="Surface murs en m²" inputmode="numeric">
+                                <input type="range" id="murs-peinture" min="0" max="9999" value="0" data-label="Peinture murale avec preparation du support">
+                                <input type="number" class="number-input" id="murs-peinture-number" min="0" max="9999" value="0" aria-label="Surface murs en m²" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
-                            <label for="type-peinture-murs">Type de peinture murs</label>
+                            <label for="type-peinture-murs">Type peinture murs</label>
                             <select id="type-peinture-murs" data-label="Type peinture murs">
-                                <option value="20" data-label="Preparation et application peinture murs : rebouchage, sous-couche et 2 couches acrylique mate">Standard (20 €/m²)</option>
-                                <option value="30" data-label="Preparation et application peinture murs : enduit lissage et 2 couches satinee lessivable">Lavable (30 €/m²)</option>
-                                <option value="45" data-label="Preparation et application peinture murs haut de gamme : enduit complet et 2 couches velours">Premium (45 €/m²)</option>
+                                <option value="20" data-label="Preparation et application peinture murs : rebouchage, sous-couche et 2 couches acrylique mate">Standard (20€/m²)</option>
+                                <option value="30" data-label="Preparation et application peinture murs : enduit lissage et 2 couches satinee lessivable">Lavable (30€/m²)</option>
+                                <option value="45" data-label="Preparation et application peinture murs haut de gamme : enduit complet et 2 couches velours">Premium (45€/m²)</option>
                             </select>
                         </div>
-                    </div>
 
-                    <div class="column">
                         <div class="form-item">
-                            <label for="plafonds-peinture">Surface plafonds (m²) - 18 €/m²</label>
+                            <label for="portes-peinture">Portes (80€/unité)</label>
                             <div class="slider-group">
-                                <input type="range" id="plafonds-peinture" min="0" max="200" value="0" data-price="18" data-label="Preparation et application peinture plafond : rebouchage fissures et 2 couches mate">
-                                <input type="number" class="number-input" id="plafonds-peinture-number" min="0" max="200" value="0" aria-label="Surface plafonds en m²" inputmode="numeric">
+                                <input type="range" id="portes-peinture" min="0" max="999" value="0" data-price="80" data-label="Peinture porte avec poncage, sous-couche et 2 couches laque satinee">
+                                <input type="number" class="number-input" id="portes-peinture-number" min="0" max="999" value="0" aria-label="Nombre de portes" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="plinthes-peinture">Plinthes (8€/ml)</label>
+                            <div class="slider-group">
+                                <input type="range" id="plinthes-peinture" min="0" max="9999" value="0" data-price="8" data-label="Peinture plinthes avec preparation et 2 couches laque">
+                                <input type="number" class="number-input" id="plinthes-peinture-number" min="0" max="9999" value="0" aria-label="Mètres linéaires de plinthes" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="depose-papier">Dépose papier peint (12€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="depose-papier" min="0" max="9999" value="0" data-price="12" data-label="Depose papier peint avec decolleuse et preparation du support">
+                                <input type="number" class="number-input" id="depose-papier-number" min="0" max="9999" value="0" aria-label="Surface dépose papier peint en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
 
                     <div class="column">
                         <div class="form-item">
-                            <label for="boiseries">Boiseries (ml) - 15 €/ml</label>
+                            <label for="plafonds-peinture">Plafonds (18€/m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="boiseries" min="0" max="100" value="0" data-price="15" data-label="Preparation et application peinture boiseries : poncage, sous-couche et 2 couches laque satinee">
-                                <input type="number" class="number-input" id="boiseries-number" min="0" max="100" value="0" aria-label="Mètres linéaires de boiseries" inputmode="numeric">
+                                <input type="range" id="plafonds-peinture" min="0" max="9999" value="0" data-price="18" data-label="Preparation et application peinture plafond : rebouchage fissures et 2 couches mate">
+                                <input type="number" class="number-input" id="plafonds-peinture-number" min="0" max="9999" value="0" aria-label="Surface plafonds en m²" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="boiseries">Boiseries (15€/ml)</label>
+                            <div class="slider-group">
+                                <input type="range" id="boiseries" min="0" max="9999" value="0" data-price="15" data-label="Preparation et application peinture boiseries : poncage, sous-couche et 2 couches laque satinee">
+                                <input type="number" class="number-input" id="boiseries-number" min="0" max="9999" value="0" aria-label="Mètres linéaires de boiseries" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="fenetres-peinture">Fenêtres (60€/unité)</label>
+                            <div class="slider-group">
+                                <input type="range" id="fenetres-peinture" min="0" max="999" value="0" data-price="60" data-label="Peinture encadrement fenetre avec poncage et 2 couches laque">
+                                <input type="number" class="number-input" id="fenetres-peinture-number" min="0" max="999" value="0" aria-label="Nombre de fenêtres" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="enduit-murs">Enduit (25€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="enduit-murs" min="0" max="9999" value="0" data-price="25" data-label="Enduit de ratissage et lissage murs avant peinture">
+                                <input type="number" class="number-input" id="enduit-murs-number" min="0" max="9999" value="0" aria-label="Surface enduit en m²" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="primaire-peinture">Primaire (10€/m²)</label>
+                            <div class="slider-group">
+                                <input type="range" id="primaire-peinture" min="0" max="9999" value="0" data-price="10" data-label="Application primaire d'accrochage sur support difficile">
+                                <input type="number" class="number-input" id="primaire-peinture-number" min="0" max="9999" value="0" aria-label="Surface primaire en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -329,8 +375,8 @@
                         <div class="form-item">
                             <label for="surface-sol">Surface sol (m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="surface-sol" min="0" max="200" value="0" data-label="Revetement de sol avec preparation support">
-                                <input type="number" class="number-input" id="surface-sol-number" min="0" max="200" value="0" aria-label="Surface sol en m²" inputmode="numeric">
+                                <input type="range" id="surface-sol" min="0" max="9999" value="0" data-label="Revetement de sol avec preparation support">
+                                <input type="number" class="number-input" id="surface-sol-number" min="0" max="9999" value="0" aria-label="Surface sol en m²" inputmode="numeric">
                             </div>
                         </div>
 
@@ -351,8 +397,8 @@
                         <div class="form-item">
                             <label for="surface-mur-rev">Surface mur (m²)</label>
                             <div class="slider-group">
-                                <input type="range" id="surface-mur-rev" min="0" max="100" value="0" data-label="Revetement mural avec preparation support">
-                                <input type="number" class="number-input" id="surface-mur-rev-number" min="0" max="100" value="0" aria-label="Surface murale en m²" inputmode="numeric">
+                                <input type="range" id="surface-mur-rev" min="0" max="9999" value="0" data-label="Revetement mural avec preparation support">
+                                <input type="number" class="number-input" id="surface-mur-rev-number" min="0" max="9999" value="0" aria-label="Surface murale en m²" inputmode="numeric">
                             </div>
                         </div>
 
@@ -378,8 +424,8 @@
                         <div class="form-item">
                             <label for="cuisine">Cuisine équipée (ml)</label>
                             <div class="slider-group">
-                                <input type="range" id="cuisine" min="0" max="15" value="0" data-label="Cuisine equipee complete avec pose">
-                                <input type="number" class="number-input" id="cuisine-number" min="0" max="15" value="0" aria-label="Mètres linéaires de cuisine" inputmode="numeric">
+                                <input type="range" id="cuisine" min="0" max="9999" value="0" data-label="Cuisine equipee complete avec pose">
+                                <input type="number" class="number-input" id="cuisine-number" min="0" max="9999" value="0" aria-label="Mètres linéaires de cuisine" inputmode="numeric">
                             </div>
                         </div>
 
@@ -397,8 +443,8 @@
                         <div class="form-item">
                             <label for="placards">Placards sur mesure (ml) - 500 €/ml</label>
                             <div class="slider-group">
-                                <input type="range" id="placards" min="0" max="20" value="0" data-price="500" data-label="Fabrication et pose placard sur-mesure avec caisson, portes et amenagement interieur">
-                                <input type="number" class="number-input" id="placards-number" min="0" max="20" value="0" aria-label="Mètres linéaires de placards" inputmode="numeric">
+                                <input type="range" id="placards" min="0" max="9999" value="0" data-price="500" data-label="Fabrication et pose placard sur-mesure avec caisson, portes et amenagement interieur">
+                                <input type="number" class="number-input" id="placards-number" min="0" max="9999" value="0" aria-label="Mètres linéaires de placards" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -436,16 +482,16 @@
                         <div class="form-item">
                             <label for="cloisons">Cloisons (m²) - 45 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="cloisons" min="0" max="100" value="0" data-price="45" data-label="Construction cloison placo BA13 sur ossature metallique avec isolation acoustique">
-                                <input type="number" class="number-input" id="cloisons-number" min="0" max="100" value="0" aria-label="Surface cloisons en m²" inputmode="numeric">
+                                <input type="range" id="cloisons" min="0" max="9999" value="0" data-price="45" data-label="Construction cloison placo BA13 sur ossature metallique avec isolation acoustique">
+                                <input type="number" class="number-input" id="cloisons-number" min="0" max="9999" value="0" aria-label="Surface cloisons en m²" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="dalle-beton">Dalle béton (m²) - 70 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="dalle-beton" min="0" max="150" value="0" data-price="70" data-label="Realisation dalle beton avec herisson, film polyane, treillis soude et coulage">
-                                <input type="number" class="number-input" id="dalle-beton-number" min="0" max="150" value="0" aria-label="Surface dalle béton en m²" inputmode="numeric">
+                                <input type="range" id="dalle-beton" min="0" max="9999" value="0" data-price="70" data-label="Realisation dalle beton avec herisson, film polyane, treillis soude et coulage">
+                                <input type="number" class="number-input" id="dalle-beton-number" min="0" max="9999" value="0" aria-label="Surface dalle béton en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -454,8 +500,8 @@
                         <div class="form-item">
                             <label for="demolition">Démolition (m³) - 80 €/m³</label>
                             <div class="slider-group">
-                                <input type="range" id="demolition" min="0" max="50" value="0" data-price="80" data-label="Demolition maconnerie avec protection, evacuation gravats en decharge agreee et nettoyage">
-                                <input type="number" class="number-input" id="demolition-number" min="0" max="50" value="0" aria-label="Volume démolition en m³" inputmode="numeric">
+                                <input type="range" id="demolition" min="0" max="9999" value="0" data-price="80" data-label="Demolition maconnerie avec protection, evacuation gravats en decharge agreee et nettoyage">
+                                <input type="number" class="number-input" id="demolition-number" min="0" max="9999" value="0" aria-label="Volume démolition en m³" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -471,8 +517,8 @@
                         <div class="form-item">
                             <label for="clim-unites">Climatiseurs réversibles (unité) - 1 800 €/unité</label>
                             <div class="slider-group">
-                                <input type="range" id="clim-unites" min="0" max="10" value="0" data-price="1800" data-label="Fourniture et pose climatiseur reversible mono-split avec liaisons frigorifiques et mise en service">
-                                <input type="number" class="number-input" id="clim-unites-number" min="0" max="10" value="0" aria-label="Nombre de climatiseurs" inputmode="numeric">
+                                <input type="range" id="clim-unites" min="0" max="999" value="0" data-price="1800" data-label="Fourniture et pose climatiseur reversible mono-split avec liaisons frigorifiques et mise en service">
+                                <input type="number" class="number-input" id="clim-unites-number" min="0" max="999" value="0" aria-label="Nombre de climatiseurs" inputmode="numeric">
                             </div>
                         </div>
 
@@ -530,8 +576,8 @@
                         <div class="form-item">
                             <label for="combles">Combles perdus (m²) - 35 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="combles" min="0" max="200" value="0" data-price="35" data-label="Isolation combles perdus par soufflage laine minerale R=7 avec reperage et protection spots">
-                                <input type="number" class="number-input" id="combles-number" min="0" max="200" value="0" aria-label="Surface combles en m²" inputmode="numeric">
+                                <input type="range" id="combles" min="0" max="9999" value="0" data-price="35" data-label="Isolation combles perdus par soufflage laine minerale R=7 avec reperage et protection spots">
+                                <input type="number" class="number-input" id="combles-number" min="0" max="9999" value="0" aria-label="Surface combles en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -540,8 +586,8 @@
                         <div class="form-item">
                             <label for="murs-int">Murs intérieurs (m²) - 45 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="murs-int" min="0" max="200" value="0" data-price="45" data-label="Isolation murs par l'interieur avec laine minerale, ossature metallique et plaque de platre">
-                                <input type="number" class="number-input" id="murs-int-number" min="0" max="200" value="0" aria-label="Surface murs intérieurs en m²" inputmode="numeric">
+                                <input type="range" id="murs-int" min="0" max="9999" value="0" data-price="45" data-label="Isolation murs par l'interieur avec laine minerale, ossature metallique et plaque de platre">
+                                <input type="number" class="number-input" id="murs-int-number" min="0" max="9999" value="0" aria-label="Surface murs intérieurs en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -550,8 +596,8 @@
                         <div class="form-item">
                             <label for="ite">ITE - Isolation par l'extérieur (m²) - 120 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="ite" min="0" max="200" value="0" data-price="120" data-label="Isolation thermique par l'exterieur avec panneaux isolants, armature et enduit de finition">
-                                <input type="number" class="number-input" id="ite-number" min="0" max="200" value="0" aria-label="Surface ITE en m²" inputmode="numeric">
+                                <input type="range" id="ite" min="0" max="9999" value="0" data-price="120" data-label="Isolation thermique par l'exterieur avec panneaux isolants, armature et enduit de finition">
+                                <input type="number" class="number-input" id="ite-number" min="0" max="9999" value="0" aria-label="Surface ITE en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -567,8 +613,8 @@
                         <div class="form-item">
                             <label for="extension">Extension (m²) - 1 800 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="extension" min="0" max="100" value="0" data-price="1800" data-label="Construction extension complete : fondations, elevation murs, charpente, couverture et finitions">
-                                <input type="number" class="number-input" id="extension-number" min="0" max="100" value="0" aria-label="Surface extension en m²" inputmode="numeric">
+                                <input type="range" id="extension" min="0" max="9999" value="0" data-price="1800" data-label="Construction extension complete : fondations, elevation murs, charpente, couverture et finitions">
+                                <input type="number" class="number-input" id="extension-number" min="0" max="9999" value="0" aria-label="Surface extension en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -577,16 +623,16 @@
                         <div class="form-item">
                             <label for="terrassement">Terrassement (m³) - 50 €/m³</label>
                             <div class="slider-group">
-                                <input type="range" id="terrassement" min="0" max="100" value="0" data-price="50" data-label="Terrassement avec decapage terre vegetale, decaissement et evacuation terres excedentaires">
-                                <input type="number" class="number-input" id="terrassement-number" min="0" max="100" value="0" aria-label="Volume terrassement en m³" inputmode="numeric">
+                                <input type="range" id="terrassement" min="0" max="9999" value="0" data-price="50" data-label="Terrassement avec decapage terre vegetale, decaissement et evacuation terres excedentaires">
+                                <input type="number" class="number-input" id="terrassement-number" min="0" max="9999" value="0" aria-label="Volume terrassement en m³" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="fondations">Fondations (m³) - 200 €/m³</label>
                             <div class="slider-group">
-                                <input type="range" id="fondations" min="0" max="50" value="0" data-price="200" data-label="Realisation fondations avec fouilles en rigole, ferraillage et coulage beton arme">
-                                <input type="number" class="number-input" id="fondations-number" min="0" max="50" value="0" aria-label="Volume fondations en m³" inputmode="numeric">
+                                <input type="range" id="fondations" min="0" max="9999" value="0" data-price="200" data-label="Realisation fondations avec fouilles en rigole, ferraillage et coulage beton arme">
+                                <input type="number" class="number-input" id="fondations-number" min="0" max="9999" value="0" aria-label="Volume fondations en m³" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -595,8 +641,8 @@
                         <div class="form-item">
                             <label for="charpente">Charpente (m²) - 180 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="charpente" min="0" max="150" value="0" data-price="180" data-label="Fourniture et pose charpente traditionnelle bois avec traitement insecticide et fongicide">
-                                <input type="number" class="number-input" id="charpente-number" min="0" max="150" value="0" aria-label="Surface charpente en m²" inputmode="numeric">
+                                <input type="range" id="charpente" min="0" max="9999" value="0" data-price="180" data-label="Fourniture et pose charpente traditionnelle bois avec traitement insecticide et fongicide">
+                                <input type="number" class="number-input" id="charpente-number" min="0" max="9999" value="0" aria-label="Surface charpente en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -624,8 +670,8 @@
                         <div class="form-item">
                             <label for="carrelage-sdb">Carrelage salle de bain (m²) - 55 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="carrelage-sdb" min="0" max="50" value="0" data-price="55" data-label="Fourniture et pose carrelage salle de bain avec etancheite SPEC et joints epoxy">
-                                <input type="number" class="number-input" id="carrelage-sdb-number" min="0" max="50" value="0" aria-label="Surface carrelage SDB en m²" inputmode="numeric">
+                                <input type="range" id="carrelage-sdb" min="0" max="9999" value="0" data-price="55" data-label="Fourniture et pose carrelage salle de bain avec etancheite SPEC et joints epoxy">
+                                <input type="number" class="number-input" id="carrelage-sdb-number" min="0" max="9999" value="0" aria-label="Surface carrelage SDB en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -663,8 +709,8 @@
                         <div class="form-item">
                             <label for="peinture-facade">Peinture façade (m²) - 40 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="peinture-facade" min="0" max="300" value="0" data-price="40" data-label="Application peinture facade : nettoyage haute pression, fixateur et 2 couches peinture minerale">
-                                <input type="number" class="number-input" id="peinture-facade-number" min="0" max="300" value="0" aria-label="Surface peinture façade en m²" inputmode="numeric">
+                                <input type="range" id="peinture-facade" min="0" max="9999" value="0" data-price="40" data-label="Application peinture facade : nettoyage haute pression, fixateur et 2 couches peinture minerale">
+                                <input type="number" class="number-input" id="peinture-facade-number" min="0" max="9999" value="0" aria-label="Surface peinture façade en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -680,8 +726,8 @@
                         <div class="form-item">
                             <label for="portes-int">Portes intérieures (unité) - 350 €/unité</label>
                             <div class="slider-group">
-                                <input type="range" id="portes-int" min="0" max="20" value="0" data-price="350" data-label="Fourniture et pose porte interieure avec huisserie, poignee et finition peinture">
-                                <input type="number" class="number-input" id="portes-int-number" min="0" max="20" value="0" aria-label="Nombre de portes intérieures" inputmode="numeric">
+                                <input type="range" id="portes-int" min="0" max="999" value="0" data-price="350" data-label="Fourniture et pose porte interieure avec huisserie, poignee et finition peinture">
+                                <input type="number" class="number-input" id="portes-int-number" min="0" max="999" value="0" aria-label="Nombre de portes intérieures" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -709,8 +755,8 @@
                         <div class="form-item">
                             <label for="fenetres">Fenêtres PVC (unité) - 450 €/unité</label>
                             <div class="slider-group">
-                                <input type="range" id="fenetres" min="0" max="20" value="0" data-price="450" data-label="Fourniture et pose fenetre PVC double vitrage avec depose existant et finitions">
-                                <input type="number" class="number-input" id="fenetres-number" min="0" max="20" value="0" aria-label="Nombre de fenêtres" inputmode="numeric">
+                                <input type="range" id="fenetres" min="0" max="999" value="0" data-price="450" data-label="Fourniture et pose fenetre PVC double vitrage avec depose existant et finitions">
+                                <input type="number" class="number-input" id="fenetres-number" min="0" max="999" value="0" aria-label="Nombre de fenêtres" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -731,8 +777,8 @@
                         <div class="form-item">
                             <label for="volets">Volets roulants (unité) - 350 €/unité</label>
                             <div class="slider-group">
-                                <input type="range" id="volets" min="0" max="15" value="0" data-price="350" data-label="Fourniture et pose volet roulant electrique avec coffre et commande filaire">
-                                <input type="number" class="number-input" id="volets-number" min="0" max="15" value="0" aria-label="Nombre de volets" inputmode="numeric">
+                                <input type="range" id="volets" min="0" max="999" value="0" data-price="350" data-label="Fourniture et pose volet roulant electrique avec coffre et commande filaire">
+                                <input type="number" class="number-input" id="volets-number" min="0" max="999" value="0" aria-label="Nombre de volets" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -748,8 +794,8 @@
                         <div class="form-item">
                             <label for="charpente-couv">Charpente (m²) - 180 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="charpente-couv" min="0" max="200" value="0" data-price="180" data-label="Fourniture et pose charpente traditionnelle bois avec traitement et fixations">
-                                <input type="number" class="number-input" id="charpente-couv-number" min="0" max="200" value="0" aria-label="Surface charpente en m²" inputmode="numeric">
+                                <input type="range" id="charpente-couv" min="0" max="9999" value="0" data-price="180" data-label="Fourniture et pose charpente traditionnelle bois avec traitement et fixations">
+                                <input type="number" class="number-input" id="charpente-couv-number" min="0" max="9999" value="0" aria-label="Surface charpente en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -758,16 +804,16 @@
                         <div class="form-item">
                             <label for="toiture">Réfection toiture (m²) - 120 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="toiture" min="0" max="200" value="0" data-price="120" data-label="Refection complete toiture avec depose, ecran sous-toiture et pose couverture neuve">
-                                <input type="number" class="number-input" id="toiture-number" min="0" max="200" value="0" aria-label="Surface toiture en m²" inputmode="numeric">
+                                <input type="range" id="toiture" min="0" max="9999" value="0" data-price="120" data-label="Refection complete toiture avec depose, ecran sous-toiture et pose couverture neuve">
+                                <input type="number" class="number-input" id="toiture-number" min="0" max="9999" value="0" aria-label="Surface toiture en m²" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="zinguerie">Zinguerie (ml) - 80 €/ml</label>
                             <div class="slider-group">
-                                <input type="range" id="zinguerie" min="0" max="100" value="0" data-price="80" data-label="Fourniture et pose zinguerie zinc naturel : gouttieres, descentes et dauphin">
-                                <input type="number" class="number-input" id="zinguerie-number" min="0" max="100" value="0" aria-label="Mètres linéaires zinguerie" inputmode="numeric">
+                                <input type="range" id="zinguerie" min="0" max="9999" value="0" data-price="80" data-label="Fourniture et pose zinguerie zinc naturel : gouttieres, descentes et dauphin">
+                                <input type="number" class="number-input" id="zinguerie-number" min="0" max="9999" value="0" aria-label="Mètres linéaires zinguerie" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -776,8 +822,8 @@
                         <div class="form-item">
                             <label for="velux">Fenêtres de toit (unité) - 800 €/unité</label>
                             <div class="slider-group">
-                                <input type="range" id="velux" min="0" max="10" value="0" data-price="800" data-label="Fourniture et pose fenetre de toit avec chevetre, raccord d'etancheite et habillage">
-                                <input type="number" class="number-input" id="velux-number" min="0" max="10" value="0" aria-label="Nombre de velux" inputmode="numeric">
+                                <input type="range" id="velux" min="0" max="999" value="0" data-price="800" data-label="Fourniture et pose fenetre de toit avec chevetre, raccord d'etancheite et habillage">
+                                <input type="number" class="number-input" id="velux-number" min="0" max="999" value="0" aria-label="Nombre de velux" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -793,16 +839,16 @@
                         <div class="form-item">
                             <label for="placo-murs">Doublage murs (m²) - 35 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="placo-murs" min="0" max="200" value="0" data-price="35" data-label="Fourniture et pose doublage murs placo BA13 sur rails avec bandes et joints">
-                                <input type="number" class="number-input" id="placo-murs-number" min="0" max="200" value="0" aria-label="Surface doublage murs en m²" inputmode="numeric">
+                                <input type="range" id="placo-murs" min="0" max="9999" value="0" data-price="35" data-label="Fourniture et pose doublage murs placo BA13 sur rails avec bandes et joints">
+                                <input type="number" class="number-input" id="placo-murs-number" min="0" max="9999" value="0" aria-label="Surface doublage murs en m²" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="placo-cloisons">Cloisons Placo (m²) - 40 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="placo-cloisons" min="0" max="150" value="0" data-price="40" data-label="Fourniture et pose cloison placo BA13 double parement sur ossature metallique">
-                                <input type="number" class="number-input" id="placo-cloisons-number" min="0" max="150" value="0" aria-label="Surface cloisons placo en m²" inputmode="numeric">
+                                <input type="range" id="placo-cloisons" min="0" max="9999" value="0" data-price="40" data-label="Fourniture et pose cloison placo BA13 double parement sur ossature metallique">
+                                <input type="number" class="number-input" id="placo-cloisons-number" min="0" max="9999" value="0" aria-label="Surface cloisons placo en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -811,16 +857,16 @@
                         <div class="form-item">
                             <label for="faux-plafond">Faux plafond (m²) - 45 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="faux-plafond" min="0" max="150" value="0" data-price="45" data-label="Fourniture et pose faux plafond placo BA13 sur suspentes avec bandes et joints">
-                                <input type="number" class="number-input" id="faux-plafond-number" min="0" max="150" value="0" aria-label="Surface faux plafond en m²" inputmode="numeric">
+                                <input type="range" id="faux-plafond" min="0" max="9999" value="0" data-price="45" data-label="Fourniture et pose faux plafond placo BA13 sur suspentes avec bandes et joints">
+                                <input type="number" class="number-input" id="faux-plafond-number" min="0" max="9999" value="0" aria-label="Surface faux plafond en m²" inputmode="numeric">
                             </div>
                         </div>
 
                         <div class="form-item">
                             <label for="enduit-lissage">Enduit de lissage (m²) - 18 €/m²</label>
                             <div class="slider-group">
-                                <input type="range" id="enduit-lissage" min="0" max="200" value="0" data-price="18" data-label="Application enduit de lissage sur murs et plafonds avec poncage et finition soignee">
-                                <input type="number" class="number-input" id="enduit-lissage-number" min="0" max="200" value="0" aria-label="Surface enduit en m²" inputmode="numeric">
+                                <input type="range" id="enduit-lissage" min="0" max="9999" value="0" data-price="18" data-label="Application enduit de lissage sur murs et plafonds avec poncage et finition soignee">
+                                <input type="number" class="number-input" id="enduit-lissage-number" min="0" max="9999" value="0" aria-label="Surface enduit en m²" inputmode="numeric">
                             </div>
                         </div>
                     </div>
@@ -829,8 +875,8 @@
                         <div class="form-item">
                             <label for="bandes-joints">Bandes et joints (ml) - 8 €/ml</label>
                             <div class="slider-group">
-                                <input type="range" id="bandes-joints" min="0" max="300" value="0" data-price="8" data-label="Realisation bandes a joints avec calicot, enduit et poncage finition prete a peindre">
-                                <input type="number" class="number-input" id="bandes-joints-number" min="0" max="300" value="0" aria-label="Mètres linéaires bandes" inputmode="numeric">
+                                <input type="range" id="bandes-joints" min="0" max="9999" value="0" data-price="8" data-label="Realisation bandes a joints avec calicot, enduit et poncage finition prete a peindre">
+                                <input type="number" class="number-input" id="bandes-joints-number" min="0" max="9999" value="0" aria-label="Mètres linéaires bandes" inputmode="numeric">
                             </div>
                         </div>
 

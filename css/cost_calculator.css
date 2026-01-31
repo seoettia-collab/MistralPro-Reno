@@ -1020,7 +1020,7 @@ select:focus {
     .calc-content {
         order: 1;
         padding: 0 10px 10px !important;
-        margin-top: 35px !important; /* Réduit - espace pour header fixe */
+        margin-top: 0 !important;
     }
     
     /* Formulaire client - TAILLES HARMONISÉES */
@@ -1135,16 +1135,31 @@ select:focus {
         min-width: 80px !important;
     }
     
-    /* Options columns en 2 colonnes pour sliders */
+    /* Options columns en 2 colonnes pour sliders ET selects */
     .options-columns {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 5px 8px !important;
     }
     
+    /* Tous les form-item prennent 1 colonne */
+    .options-columns .form-item {
+        grid-column: span 1 !important;
+    }
+    
+    /* SAUF les checkboxes qui prennent 2 colonnes (toute la largeur) */
+    .options-columns .form-item:has(.checkbox-group) {
+        grid-column: span 2 !important;
+    }
+    
     /* Colonne unique pour les items avec checkboxes (span 2 colonnes) */
     .options-columns .column:has(.checkbox-group) {
         grid-column: span 2 !important;
+    }
+    
+    /* Colonnes aussi en grille */
+    .options-columns .column {
+        display: contents !important;
     }
     
     /* Checkboxes en 3 colonnes - TAILLES HARMONISÉES */
@@ -1173,46 +1188,66 @@ select:focus {
         flex-shrink: 0 !important;
     }
     
-    /* Slider + chiffre inline - HARMONISÉ */
+    /* Slider + chiffre - compact pour 2 par ligne */
     .slider-group {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
-        gap: 6px !important;
-        flex: 0 0 auto !important;
-        max-width: 120px !important;
+        gap: 5px !important;
+        flex: 1 !important;
+        width: 100% !important;
     }
     
     .slider-group input[type="range"] {
         flex: 1 !important;
         height: 5px !important;
-        width: 60px !important;
-        max-width: 70px !important;
+        min-width: 40px !important;
     }
     
     .slider-group input[type="range"]::-webkit-slider-thumb {
-        width: 16px !important;
-        height: 16px !important;
+        width: 14px !important;
+        height: 14px !important;
     }
     
     .number-input {
-        width: 35px !important;
-        padding: 4px !important;
-        font-size: 11px !important;
-        min-height: 24px !important;
+        width: 32px !important;
+        padding: 3px !important;
+        font-size: 10px !important;
+        min-height: 22px !important;
         text-align: center !important;
     }
     
-    /* Select harmonisé */
+    /* Form-item avec slider en colonne */
+    .form-item:has(.slider-group) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .form-item:has(.slider-group) > label {
+        margin-bottom: 3px !important;
+    }
+    
+    /* Select harmonisé - compact pour 2 par ligne */
     .form-item select {
         flex: 1 !important;
-        min-width: 90px !important;
+        width: 100% !important;
+        min-width: 0 !important;
     }
     
     select {
-        padding: 5px !important;
-        font-size: 11px !important;
-        min-height: 28px !important;
+        padding: 4px !important;
+        font-size: 10px !important;
+        min-height: 24px !important;
+    }
+    
+    /* Form-item avec select en colonne */
+    .form-item:has(select) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .form-item:has(select) > label {
+        margin-bottom: 3px !important;
     }
     
     /* =====================================================
@@ -1268,7 +1303,7 @@ select:focus {
 
 @media (max-width: 480px) {
     .calc-content {
-        margin-top: 32px !important;
+        margin-top: 0 !important;
     }
     
     .tab-button {
