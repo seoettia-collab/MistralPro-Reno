@@ -703,3 +703,40 @@ select:focus {
         display: none;
     }
 }
+
+/* =====================================================
+   HERO COMPACT - Mobile Optimisation
+   Réduit la hauteur du hero pour afficher le formulaire
+   ===================================================== */
+@media (max-width: 768px) {
+    .hero {
+        min-height: auto !important;
+        height: auto !important;
+        padding: 100px 20px 30px !important;
+    }
+    
+    .hero h1 {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+    
+    .hero p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 90px 15px 25px !important;
+    }
+    
+    .hero h1 {
+        font-size: 1.4rem;
+    }
+    
+    .hero p {
+        font-size: 0.85rem;
+    }
+}
