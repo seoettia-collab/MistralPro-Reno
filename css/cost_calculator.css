@@ -1025,7 +1025,7 @@ select:focus {
     
     /* Formulaire client - TAILLES HARMONISÉES */
     .client-form h2 {
-        font-size: 14px !important;
+        font-size: 13px !important;
         margin-bottom: 6px !important;
     }
     
@@ -1085,7 +1085,7 @@ select:focus {
     
     /* Options prestations - TAILLES HARMONISÉES */
     .tab-content h2 {
-        font-size: 15px !important;
+        font-size: 13px !important;
         margin-bottom: 8px !important;
         margin-top: 0 !important;
         padding-bottom: 5px !important;
@@ -1179,13 +1179,15 @@ select:focus {
         flex-direction: row !important;
         align-items: center !important;
         gap: 6px !important;
-        flex: 1 !important;
+        flex: 0 0 auto !important;
+        max-width: 120px !important;
     }
     
     .slider-group input[type="range"] {
         flex: 1 !important;
         height: 5px !important;
-        min-width: 50px !important;
+        width: 60px !important;
+        max-width: 70px !important;
     }
     
     .slider-group input[type="range"]::-webkit-slider-thumb {
@@ -1194,7 +1196,7 @@ select:focus {
     }
     
     .number-input {
-        width: 40px !important;
+        width: 35px !important;
         padding: 4px !important;
         font-size: 11px !important;
         min-height: 24px !important;
@@ -1245,7 +1247,7 @@ select:focus {
     }
     
     .summary-item.total strong {
-        font-size: 15px !important;
+        font-size: 13px !important;
         color: #f4c430 !important;
     }
     
@@ -1289,7 +1291,7 @@ select:focus {
     }
     
     .summary-item.total strong {
-        font-size: 14px !important;
+        font-size: 13px !important;
     }
     
     .summary-actions button {
