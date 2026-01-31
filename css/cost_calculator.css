@@ -705,6 +705,173 @@ select:focus {
 }
 
 /* =====================================================
+   DESKTOP - Layout 2 Colonnes
+   Gauche: Formulaire Client | Droite: Corps de Métier
+   ===================================================== */
+@media (min-width: 1024px) {
+    /* Container principal en 2 colonnes */
+    .calc-container {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 0;
+        max-width: 1600px;
+    }
+    
+    /* Colonne gauche - Formulaire Client */
+    .client-form {
+        position: sticky;
+        top: 120px;
+        height: fit-content;
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+        padding: 15px;
+        border-bottom: none;
+        border-right: 3px solid var(--yellow);
+    }
+    
+    .client-form h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .client-form > p {
+        font-size: 12px;
+        margin-bottom: 12px !important;
+    }
+    
+    .client-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 10px;
+    }
+    
+    .client-form .form-group label {
+        font-size: 11px;
+        margin-bottom: 3px;
+    }
+    
+    .client-form .form-group input {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .form-note {
+        margin-top: 8px;
+        font-size: 10px;
+    }
+    
+    /* Colonne droite - Corps de Métier */
+    .calc-content {
+        padding: 15px 20px 140px;
+    }
+    
+    /* Onglets métiers compacts */
+    .tabs-container {
+        top: 120px;
+        padding: 8px 0;
+        margin-bottom: 15px;
+    }
+    
+    .tabs {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .tab-button {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    
+    /* Contenu des onglets compact */
+    .tab-content h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+    }
+    
+    .options-columns {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    
+    .form-item {
+        padding: 8px 10px;
+    }
+    
+    .form-item > label {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+    
+    .slider-group {
+        gap: 8px;
+    }
+    
+    .number-input {
+        width: 60px;
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+    
+    select {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+    
+    .checkbox-group label {
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: 12px;
+        height: 12px;
+        margin-right: 5px;
+    }
+    
+    /* Barre total compacte */
+    .summary {
+        padding: 12px 15px;
+    }
+    
+    .summary-item span {
+        font-size: 12px;
+    }
+    
+    .summary-item strong {
+        font-size: 16px;
+    }
+    
+    .summary-item.total strong {
+        font-size: 22px;
+    }
+    
+    .summary-actions button {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+}
+
+/* Desktop large - encore plus de place */
+@media (min-width: 1400px) {
+    .calc-container {
+        grid-template-columns: 350px 1fr;
+    }
+    
+    .client-form {
+        padding: 20px;
+    }
+    
+    .client-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .options-columns {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* =====================================================
    HERO COMPACT - Mobile Optimisation
    Réduit la hauteur du hero pour afficher le formulaire
    ===================================================== */
