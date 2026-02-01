@@ -245,7 +245,7 @@
 
         // Download PDF
         console.log('Attachement événement printQuote');
-        $('#printQuote').on('click', printDevis);
+        $('#printQuote').on('click', generatePDF);
     }
 
     // =====================================================
@@ -521,12 +521,23 @@
         doc.setTextColor(100, 100, 100);
         doc.text('Devis valable 30 jours - Garantie décennale', 105, 285, { align: 'center' });
 
-        doc.save('devis-mistral-' + quoteNum + '.pdf');
+        // Ouvrir dans une fenêtre d'impression (comme l'ancien code)
+        const pdfBlob = doc.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        const printWindow = window.open(pdfUrl, '_blank');
         
-        // Redirect
-        setTimeout(() => {
-            window.location.href = 'merci.html';
-        }, 1000);
+        if (printWindow) {
+            printWindow.onload = function() {
+                printWindow.print();
+                setTimeout(function() {
+                    URL.revokeObjectURL(pdfUrl);
+                }, 1000);
+            };
+        } else {
+            // Fallback : télécharger si popup bloquée
+            doc.save('devis-mistral-' + quoteNum + '.pdf');
+            URL.revokeObjectURL(pdfUrl);
+        }
     }
 
     function getUnit(id) {
