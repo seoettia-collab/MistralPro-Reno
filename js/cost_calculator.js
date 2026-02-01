@@ -48,6 +48,12 @@
     
     async function sendToWebhook(formData, itemsList, totals) {
         try {
+            // Créer une version texte des prestations pour l'email
+            let prestationsTexte = '';
+            itemsList.forEach(item => {
+                prestationsTexte += `• ${item.description} - ${item.quantite} ${item.unite} x ${item.prix_unitaire}€ = ${item.total}€\n`;
+            });
+            
             const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: {
@@ -71,8 +77,11 @@
                     tva: totals.vat,
                     total_ttc: totals.totalTTC,
                     
-                    // Détail prestations
+                    // Détail prestations (tableau JSON)
                     prestations: itemsList,
+                    
+                    // Détail prestations (texte formaté pour email)
+                    prestations_texte: prestationsTexte,
                     
                     // PDF en base64
                     pdf_base64: formData.pdfBase64 || null,
