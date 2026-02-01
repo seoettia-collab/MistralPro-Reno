@@ -244,7 +244,59 @@
         });
 
         // Download PDF
-        $('#downloadQuote').on('click', generatePDF);
+        console.log('Attachement événement printQuote');
+        $('#printQuote').on('click', printDevis);
+    }
+
+    // =====================================================
+    // IMPRESSION DEVIS
+    // =====================================================
+    
+    function printDevis() {
+        console.log('printDevis appelée');
+        
+        const $formMessage = $('#formMessage');
+        const $clientForm = $('.client-form');
+        
+        console.log('formMessage trouvé:', $formMessage.length);
+        console.log('clientForm trouvé:', $clientForm.length);
+        
+        // Validation des champs obligatoires
+        const nom = $('#client-nom').val().trim();
+        const tel = $('#client-tel').val().trim();
+        const email = $('#client-email').val().trim();
+        const cp = $('#client-cp').val().trim();
+        
+        console.log('Valeurs:', { nom, tel, email, cp });
+
+        if (!nom || !tel || !email || !cp) {
+            console.log('Validation échouée - affichage message');
+            $formMessage.addClass('show');
+            $clientForm.addClass('highlight');
+            setTimeout(() => {
+                $formMessage.removeClass('show');
+                $clientForm.removeClass('highlight');
+            }, 3000);
+            return;
+        }
+
+        if (!/^[0-9]{5}$/.test(cp)) {
+            $formMessage.text('⚠️ Code postal invalide (5 chiffres)').addClass('show');
+            $clientForm.addClass('highlight');
+            setTimeout(() => {
+                $formMessage.removeClass('show');
+                $formMessage.text('⚠️ Veuillez compléter votre formulaire');
+                $clientForm.removeClass('highlight');
+            }, 3000);
+            return;
+        }
+
+        // Masquer le message si tout est OK
+        $formMessage.removeClass('show');
+        $clientForm.removeClass('highlight');
+
+        // Lancer l'impression
+        window.print();
     }
 
     // =====================================================
