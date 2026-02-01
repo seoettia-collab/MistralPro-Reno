@@ -17,83 +17,212 @@
 }
 
 /* =====================================================
-   HERO COMPACT
+   HEADER FIX - S'assurer que le header s'affiche bien
    ===================================================== */
-.calc-hero {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    padding: 40px 20px;
-    text-align: center;
-    color: var(--white);
+header {
+    width: 100%;
 }
 
-.calc-hero h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
-    font-weight: 800;
+.top-bar {
+    background: var(--black);
+    padding: 8px 0;
+    font-size: 13px;
 }
 
-.calc-hero h1 span {
+.top-bar .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.top-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact-info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.contact-info a,
+.contact-info span {
+    color: #d0d0d0;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.contact-info a:hover {
     color: var(--yellow);
 }
 
-.calc-hero p {
+.social-links a {
     color: #d0d0d0;
-    font-size: 16px;
+}
+
+.social-links a:hover {
+    color: var(--yellow);
+}
+
+/* Navigation principale */
+.main-nav {
+    background: var(--black);
+    padding: 15px 0;
+    border-bottom: 3px solid var(--yellow);
+}
+
+.main-nav .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-nav .logo {
+    color: var(--yellow);
+    font-size: 24px;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 5px;
+    list-style: none !important;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    list-style: none !important;
+}
+
+.nav-links li::before {
+    display: none !important;
+    content: none !important;
+}
+
+.nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.mobile-menu-btn span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: var(--white);
+    margin: 5px 0;
+    border-radius: 2px;
+}
+
+/* =====================================================
+   HERO COMPACT
+   ===================================================== */
+.calc-hero {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+    padding: 40px 20px !important;
+    text-align: center !important;
+    color: var(--white) !important;
+    display: block !important;
+}
+
+.calc-hero h1 {
+    font-size: 32px !important;
+    margin-bottom: 10px !important;
+    font-weight: 800 !important;
+    color: var(--white) !important;
+}
+
+.calc-hero h1 span {
+    color: var(--yellow) !important;
+}
+
+.calc-hero p {
+    color: #d0d0d0 !important;
+    font-size: 16px !important;
 }
 
 /* =====================================================
    CONTAINER PRINCIPAL
    ===================================================== */
 .calc-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 140px;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    padding-bottom: 140px !important;
+    display: block !important;
 }
 
 /* =====================================================
    NIVEAU 1 : CATÉGORIES PRINCIPALES (Barre horizontale)
    ===================================================== */
 .main-categories {
-    display: flex;
-    gap: 8px;
-    background: var(--white);
-    padding: 12px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    margin-bottom: 25px;
-    overflow-x: auto;
-    position: sticky;
-    top: 80px;
-    z-index: 100;
+    display: flex !important;
+    gap: 8px !important;
+    background: var(--white) !important;
+    padding: 12px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+    margin-bottom: 25px !important;
+    overflow-x: auto !important;
+    position: sticky !important;
+    top: 80px !important;
+    z-index: 100 !important;
 }
 
 .main-cat {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: transparent;
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 14px 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    white-space: nowrap;
-    flex: 1;
-    justify-content: center;
-    min-width: 160px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: transparent !important;
+    border: 2px solid transparent !important;
+    border-radius: 12px !important;
+    padding: 14px 20px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-family: inherit !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+    justify-content: center !important;
+    min-width: 160px !important;
 }
 
 .main-cat:hover {
-    background: var(--gray-light);
-    border-color: var(--border);
+    background: var(--gray-light) !important;
+    border-color: var(--border) !important;
 }
 
 .main-cat.active {
-    background: var(--yellow);
-    border-color: var(--yellow);
-    box-shadow: 0 4px 15px rgba(244, 196, 48, 0.4);
+    background: var(--yellow) !important;
+    border-color: var(--yellow) !important;
+    box-shadow: 0 4px 15px rgba(244, 196, 48, 0.4) !important;
 }
 
 .main-cat .cat-icon {
@@ -679,6 +808,52 @@
 /* =====================================================
    RESPONSIVE
    ===================================================== */
+
+/* Header responsive */
+@media (max-width: 1024px) {
+    .nav-links a {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 900px) {
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--black);
+        flex-direction: column;
+        padding: 20px;
+        gap: 10px;
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .contact-info span:last-child {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-info {
+        gap: 10px;
+    }
+    
+    .contact-info a:nth-child(2) {
+        display: none;
+    }
+}
+
+/* Calculateur responsive */
 @media (max-width: 1024px) {
     .main-cat .cat-text {
         font-size: 12px;
