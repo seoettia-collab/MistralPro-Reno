@@ -77,22 +77,14 @@
                     tva: totals.vat,
                     total_ttc: totals.totalTTC,
                     
-                    // Détail prestations (tableau JSON)
-                    prestations: itemsList,
-                    
                     // Détail prestations (texte formaté pour email)
                     prestations_texte: prestationsTexte,
-                    
-                    // PDF en base64
-                    pdf_base64: formData.pdfBase64 || null,
-                    pdf_filename: formData.fileName || null,
                     
                     // Métadonnées
                     form_name: 'simulateur-devis',
                     form_location: 'cost_calculator',
                     submitted_at: new Date().toISOString(),
-                    page_url: window.location.href,
-                    user_agent: navigator.userAgent
+                    page_url: window.location.href
                 })
             });
             
@@ -807,12 +799,9 @@
             });
         });
         
-        // ===== RÉCUPÉRER LE PDF EN BASE64 =====
-        const pdfBase64 = doc.output('datauristring').split(',')[1];
-        
-        // Envoyer au webhook avec le PDF
+        // Envoyer au webhook (sans PDF, juste les données)
         sendToWebhook(
-            { nom, tel, email, adresse, cp, ville, quoteNum, pdfBase64, fileName: fileName + '.pdf' },
+            { nom, tel, email, adresse, cp, ville, quoteNum },
             itemsList,
             { subtotal, vat, totalTTC }
         );
