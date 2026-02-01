@@ -20,15 +20,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
 
-    <!-- Préchargement fonts critiques -->
-    <link rel="preload" href="fonts/raleway-bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="fonts/raleway-regular.woff2" as="font" type="font/woff2" crossorigin>
-
-    <!-- CSS Principal -->
+    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cost_calculator.css">
+    <link rel="stylesheet" href="css/cost_calculator.css?v=3.0">
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -42,8 +37,8 @@
                 <div class="top-bar-content">
                     <div class="contact-info">
                         <a href="tel:0755188937" data-location="top_bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> 07 55 18 89 37</a>
-                        <a href="mailto:contact@mistralpro-reno.fr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> contact@mistralpro-reno.fr</a>
-                        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lun-Ven 08h00-18h00, Sam 09h00-12h00</span>
+                        <a href="/cdn-cgi/l/email-protection#7b1814150f1a180f3b1612080f091a170b091456091e1514551d09"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span class="__cf_email__" data-cfemail="7714181903161403371a1e040305161b0705185a05121918591105">[email&#160;protected]</span></a>
+                        <span class="hide-mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lun-Ven 08h-18h</span>
                     </div>
                     <div class="social-links">
                         <a href="https://www.facebook.com/profile.php?id=61568990293498" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -56,7 +51,7 @@
         <nav class="main-nav">
             <div class="container">
                 <a href="index.html" class="logo">MISTRAL PRO RENO</a>
-                <button class="mobile-menu-btn" aria-label="Menu">
+                <button class="mobile-menu-btn" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                     <span></span><span></span><span></span>
                 </button>
                 <ul class="nav-links">
@@ -64,7 +59,6 @@
                     <li><a href="services.html">SERVICES</a></li>
                     <li><a href="projets.html">PROJETS</a></li>
                     <li><a href="degat-des-eaux.html">DÉGÂT DES EAUX</a></li>
-                    <li><a href="landing.html">INFORMATIONS</a></li>
                     <li><a href="devis.html">DEVIS</a></li>
                     <li><a href="cost_calculator.html" class="active">CALCULATEUR</a></li>
                     <li><a href="contact.html">CONTACT</a></li>
@@ -74,1291 +68,800 @@
     </header>
 
     <main>
-        <!-- HERO COMPACT -->
-        <section class="calc-hero">
-            <div class="container">
-                <h1>Simulateur de Devis <span>Gratuit</span></h1>
-                <p>Estimez le coût de votre projet de rénovation en quelques clics</p>
-            </div>
-        </section>
-
-        <div class="calc-container">
-            <!-- ========================================
-                 NIVEAU 1 : CATÉGORIES PRINCIPALES
-                 ======================================== -->
-            <nav class="main-categories" aria-label="Catégories de travaux">
-                <button class="main-cat active" data-category="plomberie">
-                    <span class="cat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M5.5 21a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h13a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3h-13z"/><path d="M12 12v4"/><path d="M12 4v4"/><circle cx="12" cy="12" r="2"/></svg>
-                    </span>
-                    <span class="cat-text">Plomberie & SDB</span>
-                    <span class="cat-badge" id="badge-plomberie">0</span>
-                </button>
-
-                <button class="main-cat" data-category="electricite">
-                    <span class="cat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </span>
-                    <span class="cat-text">Électricité & Chauffage</span>
-                    <span class="cat-badge" id="badge-electricite">0</span>
-                </button>
-
-                <button class="main-cat" data-category="peinture">
-                    <span class="cat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>
-                    </span>
-                    <span class="cat-text">Peinture & Sols</span>
-                    <span class="cat-badge" id="badge-peinture">0</span>
-                </button>
-
-                <button class="main-cat" data-category="gros-oeuvre">
-                    <span class="cat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    </span>
-                    <span class="cat-text">Gros Œuvre</span>
-                    <span class="cat-badge" id="badge-gros-oeuvre">0</span>
-                </button>
-
-                <button class="main-cat" data-category="menuiserie">
-                    <span class="cat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    </span>
-                    <span class="cat-text">Menuiserie & Finitions</span>
-                    <span class="cat-badge" id="badge-menuiserie">0</span>
-                </button>
-            </nav>
-
-            <!-- ========================================
-                 CONTENU DES CATÉGORIES
-                 ======================================== -->
+        <!-- ========================================
+             LAYOUT PRINCIPAL : 2 COLONNES
+             ======================================== -->
+        <div class="simulator-layout">
             
-            <!-- ==================== PLOMBERIE & SDB ==================== -->
-            <div class="category-content active" data-category="plomberie">
-                <div class="category-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><path d="M5.5 21a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h13a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3h-13z"/><path d="M12 12v4"/><path d="M12 4v4"/><circle cx="12" cy="12" r="2"/></svg>
-                    <h2>Plomberie & Salle de Bain</h2>
+            <!-- COLONNE GAUCHE : Formulaire Client -->
+            <aside class="client-sidebar">
+                <div class="client-header">
+                    <h1>📋 Simulateur de Devis</h1>
+                    <p>Estimez vos travaux gratuitement</p>
                 </div>
+                
+                <form class="client-form" id="clientForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="client-nom">Nom <span class="req">*</span></label>
+                            <input type="text" id="client-nom" name="nom" placeholder="Jean Dupont" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="client-tel">Téléphone <span class="req">*</span></label>
+                            <input type="tel" id="client-tel" name="tel" placeholder="06 12 34 56 78" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="client-email">Email</label>
+                            <input type="email" id="client-email" name="email" placeholder="email@exemple.fr">
+                        </div>
+                        <div class="form-group">
+                            <label for="client-adresse">Adresse <span class="req">*</span></label>
+                            <input type="text" id="client-adresse" name="adresse" placeholder="12 rue..." required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group small">
+                            <label for="client-cp">CP <span class="req">*</span></label>
+                            <input type="text" id="client-cp" name="cp" placeholder="75017" required pattern="[0-9]{5}">
+                        </div>
+                        <div class="form-group">
+                            <label for="client-ville">Ville <span class="req">*</span></label>
+                            <input type="text" id="client-ville" name="ville" placeholder="Paris" required>
+                        </div>
+                    </div>
+                </form>
 
-                <!-- NIVEAU 2 : Sous-catégories -->
-                <div class="sub-categories">
-                    <button class="sub-cat active" data-sub="sanitaires">
-                        <span class="sub-icon">🚿</span>
-                        <span class="sub-name">Sanitaires</span>
-                        <span class="sub-desc">WC, lavabo, douche, baignoire</span>
-                    </button>
-                    <button class="sub-cat" data-sub="equipements">
-                        <span class="sub-icon">🔧</span>
-                        <span class="sub-name">Équipements</span>
-                        <span class="sub-desc">Ballon, adoucisseur</span>
-                    </button>
-                    <button class="sub-cat" data-sub="tuyauterie">
-                        <span class="sub-icon">🔩</span>
-                        <span class="sub-name">Robinetterie</span>
-                        <span class="sub-desc">Robinets, tuyauterie</span>
-                    </button>
-                    <button class="sub-cat" data-sub="pack-sdb">
-                        <span class="sub-icon">🛁</span>
-                        <span class="sub-name">Pack SDB</span>
-                        <span class="sub-desc">Rénovation complète</span>
-                    </button>
+                <!-- Récap Total -->
+                <div class="total-box">
+                    <div class="total-row">
+                        <span>Sous-total HT</span>
+                        <strong id="subtotal">0 €</strong>
+                    </div>
+                    <div class="total-row">
+                        <span>TVA 20%</span>
+                        <strong id="vat">0 €</strong>
+                    </div>
+                    <div class="total-row main">
+                        <span>TOTAL TTC</span>
+                        <strong id="total">0 €</strong>
+                    </div>
+                    <div class="total-actions">
+                        <button type="button" class="btn-download" id="downloadQuote">📄 Télécharger</button>
+                        <button type="button" class="btn-reset" id="resetBtn">🔄 Réinitialiser</button>
+                    </div>
                 </div>
+            </aside>
 
-                <!-- NIVEAU 3 : Options de configuration -->
-                <div class="options-panel">
-                    <!-- Sanitaires -->
-                    <div class="options-section active" data-sub="sanitaires">
-                        <h3>Sanitaires <span>— Sélectionnez vos équipements</span></h3>
+            <!-- COLONNE DROITE : Sélection Prestations -->
+            <section class="prestations-area">
+                
+                <!-- NIVEAU 1 : 5 Catégories principales -->
+                <nav class="main-categories">
+                    <button class="main-cat active" data-category="plomberie">
+                        <span class="cat-icon">🚿</span>
+                        <span class="cat-name">Plomberie & SDB</span>
+                        <span class="cat-count" id="count-plomberie">0</span>
+                    </button>
+                    <button class="main-cat" data-category="electricite">
+                        <span class="cat-icon">⚡</span>
+                        <span class="cat-name">Électricité</span>
+                        <span class="cat-count" id="count-electricite">0</span>
+                    </button>
+                    <button class="main-cat" data-category="peinture">
+                        <span class="cat-icon">🎨</span>
+                        <span class="cat-name">Peinture & Sols</span>
+                        <span class="cat-count" id="count-peinture">0</span>
+                    </button>
+                    <button class="main-cat" data-category="gros-oeuvre">
+                        <span class="cat-icon">🧱</span>
+                        <span class="cat-name">Gros Œuvre</span>
+                        <span class="cat-count" id="count-gros-oeuvre">0</span>
+                    </button>
+                    <button class="main-cat" data-category="menuiserie">
+                        <span class="cat-icon">🏠</span>
+                        <span class="cat-name">Menuiserie</span>
+                        <span class="cat-count" id="count-menuiserie">0</span>
+                    </button>
+                </nav>
+
+                <!-- ==================== PLOMBERIE ==================== -->
+                <div class="category-panel active" data-category="plomberie">
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" data-sub="sanitaires">Sanitaires</button>
+                        <button class="sub-tab" data-sub="equipements">Équipements</button>
+                        <button class="sub-tab" data-sub="tuyauterie">Robinetterie</button>
+                        <button class="sub-tab" data-sub="pack-sdb">Pack SDB</button>
+                    </div>
+                    
+                    <div class="sub-content active" data-sub="sanitaires">
                         <div class="options-grid">
                             <label class="option-card">
-                                <input type="checkbox" id="wc" data-price="400" data-label="Fourniture et pose WC suspendu ceramique avec bati-support et abattant frein de chute">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">WC Suspendu</span>
-                                    <span class="option-desc">Céramique, bâti-support, abattant frein de chute</span>
-                                </span>
-                                <span class="option-price">400 €</span>
+                                <input type="checkbox" id="wc" data-price="400" data-label="WC suspendu ceramique avec bati-support">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>WC Suspendu</strong>
+                                    <small>Céramique, bâti-support</small>
+                                </div>
+                                <span class="price">400 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="lavabo" data-price="350" data-label="Fourniture et pose lavabo vasque avec meuble sous-vasque et robinetterie mitigeur">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Lavabo Vasque</span>
-                                    <span class="option-desc">Meuble sous-vasque et robinetterie mitigeur</span>
-                                </span>
-                                <span class="option-price">350 €</span>
+                                <input type="checkbox" id="lavabo" data-price="350" data-label="Lavabo vasque avec meuble et robinetterie">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Lavabo Vasque</strong>
+                                    <small>Meuble sous-vasque + robinet</small>
+                                </div>
+                                <span class="price">350 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="douche" data-price="1200" data-label="Creation douche a l'italienne : receveur extra-plat, paroi vitree, colonne thermostatique">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Douche à l'Italienne</span>
-                                    <span class="option-desc">Receveur extra-plat, paroi vitrée, colonne thermostatique</span>
-                                </span>
-                                <span class="option-price">1 200 €</span>
+                                <input type="checkbox" id="douche" data-price="1200" data-label="Douche italienne receveur extra-plat paroi vitree">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Douche Italienne</strong>
+                                    <small>Receveur extra-plat, paroi</small>
+                                </div>
+                                <span class="price">1 200 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="baignoire" data-price="1500" data-label="Fourniture et pose baignoire acrylique avec tablier et robinetterie bain/douche">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Baignoire</span>
-                                    <span class="option-desc">Acrylique avec tablier et robinetterie bain/douche</span>
-                                </span>
-                                <span class="option-price">1 500 €</span>
+                                <input type="checkbox" id="baignoire" data-price="1500" data-label="Baignoire acrylique avec tablier et robinetterie">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Baignoire</strong>
+                                    <small>Acrylique + tablier + robinet</small>
+                                </div>
+                                <span class="price">1 500 €</span>
                             </label>
                         </div>
                     </div>
-
-                    <!-- Équipements -->
-                    <div class="options-section" data-sub="equipements">
-                        <h3>Équipements <span>— Chauffe-eau et traitement d'eau</span></h3>
+                    
+                    <div class="sub-content" data-sub="equipements">
                         <div class="options-grid">
                             <label class="option-card">
-                                <input type="checkbox" id="ballon-eau" data-price="800" data-label="Fourniture et pose chauffe-eau electrique 200L avec groupe de securite et raccordements">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Ballon 200L</span>
-                                    <span class="option-desc">Chauffe-eau électrique avec groupe de sécurité</span>
-                                </span>
-                                <span class="option-price">800 €</span>
+                                <input type="checkbox" id="ballon-eau" data-price="800" data-label="Chauffe-eau electrique 200L">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Ballon 200L</strong>
+                                    <small>Chauffe-eau électrique</small>
+                                </div>
+                                <span class="price">800 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="adoucisseur" data-price="1200" data-label="Fourniture et pose adoucisseur d'eau avec bypass et mise en service">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Adoucisseur d'eau</span>
-                                    <span class="option-desc">Avec bypass et mise en service</span>
-                                </span>
-                                <span class="option-price">1 200 €</span>
+                                <input type="checkbox" id="adoucisseur" data-price="1200" data-label="Adoucisseur d'eau avec bypass">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Adoucisseur</strong>
+                                    <small>Avec bypass et mise en service</small>
+                                </div>
+                                <span class="price">1 200 €</span>
                             </label>
                         </div>
                     </div>
-
-                    <!-- Robinetterie & Tuyauterie -->
-                    <div class="options-section" data-sub="tuyauterie">
-                        <h3>Robinetterie & Tuyauterie <span>— Quantités</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="robinets">Robinets</label>
-                                    <span class="slider-price">150 €/unité</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="tuyauterie">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Robinets <span class="unit-price">150 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="robinets" min="0" max="20" value="0" data-price="150" data-label="Fourniture et pose robinetterie mitigeur chrome avec flexibles et raccordements">
-                                    <input type="number" class="number-input" id="robinets-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="robinets" min="0" max="20" value="0" data-price="150" data-label="Robinetterie mitigeur chrome">
+                                    <input type="number" id="robinets-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="robinets-total">0 €</strong></div>
+                                <span class="row-total" id="robinets-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="tuyauterie">Tuyauterie (ml)</label>
-                                    <span class="slider-price">35 €/ml</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Tuyauterie <span class="unit-price">35 €/ml</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="tuyauterie" min="0" max="100" value="0" data-price="35" data-label="Fourniture et pose canalisation PER/Multicouche avec raccords et colliers de fixation">
-                                    <input type="number" class="number-input" id="tuyauterie-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="tuyauterie" min="0" max="100" value="0" data-price="35" data-label="Canalisation PER/Multicouche">
+                                    <input type="number" id="tuyauterie-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="tuyauterie-total">0 €</strong></div>
+                                <span class="row-total" id="tuyauterie-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Pack SDB -->
-                    <div class="options-section" data-sub="pack-sdb">
-                        <h3>Pack Salle de Bain <span>— Rénovation complète</span></h3>
-                        <div class="select-group">
-                            <label for="pack-sdb">Choisissez votre pack</label>
+                    
+                    <div class="sub-content" data-sub="pack-sdb">
+                        <div class="select-box">
+                            <label for="pack-sdb">Pack Salle de Bain Complète</label>
                             <select id="pack-sdb" data-label="Pack salle de bain">
-                                <option value="0">-- Sélectionner un pack --</option>
-                                <option value="4500" data-label="Renovation salle de bain standard : depose existant, plomberie, sanitaires et carrelage sol/murs">Pack Standard (4 500 €)</option>
-                                <option value="8000" data-label="Renovation salle de bain confort : douche italienne, faience decorative et meuble vasque design">Pack Confort (8 000 €)</option>
-                                <option value="15000" data-label="Renovation salle de bain premium : sanitaires design, carrelage grand format et robinetterie haut de gamme">Pack Premium (15 000 €)</option>
+                                <option value="0">-- Choisir un pack --</option>
+                                <option value="4500" data-label="Renovation SDB standard">Pack Standard (4 500 €)</option>
+                                <option value="8000" data-label="Renovation SDB confort douche italienne">Pack Confort (8 000 €)</option>
+                                <option value="15000" data-label="Renovation SDB premium design">Pack Premium (15 000 €)</option>
                             </select>
                         </div>
-                        <div class="sliders-grid" style="margin-top: 25px;">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="carrelage-sdb">Carrelage SDB (m²)</label>
-                                    <span class="slider-price">55 €/m²</span>
-                                </div>
+                        <div class="sliders-list" style="margin-top:15px;">
+                            <div class="slider-row">
+                                <label>Carrelage SDB <span class="unit-price">55 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="carrelage-sdb" min="0" max="50" value="0" data-price="55" data-label="Fourniture et pose carrelage salle de bain avec etancheite SPEC et joints epoxy">
-                                    <input type="number" class="number-input" id="carrelage-sdb-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="carrelage-sdb" min="0" max="50" value="0" data-price="55" data-label="Carrelage salle de bain etancheite">
+                                    <input type="number" id="carrelage-sdb-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="carrelage-sdb-total">0 €</strong></div>
+                                <span class="row-total" id="carrelage-sdb-total">0 €</span>
                             </div>
                         </div>
-                        <div class="options-grid" style="margin-top: 25px;">
+                        <div class="options-grid" style="margin-top:15px;">
                             <label class="option-card">
-                                <input type="checkbox" id="meuble-sdb" data-price="1200" data-label="Fourniture et pose meuble vasque suspendu avec plan vasque ceramique et robinetterie">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Meuble vasque premium</span>
-                                    <span class="option-desc">Suspendu avec plan vasque céramique</span>
-                                </span>
-                                <span class="option-price">1 200 €</span>
+                                <input type="checkbox" id="meuble-sdb" data-price="1200" data-label="Meuble vasque suspendu premium">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Meuble vasque premium</strong>
+                                    <small>Suspendu + plan céramique</small>
+                                </div>
+                                <span class="price">1 200 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="colonne-douche" data-price="800" data-label="Fourniture et pose colonne de douche thermostatique avec douchette et pomme de tete">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Colonne de douche</span>
-                                    <span class="option-desc">Thermostatique avec douchette et pomme de tête</span>
-                                </span>
-                                <span class="option-price">800 €</span>
+                                <input type="checkbox" id="colonne-douche" data-price="800" data-label="Colonne de douche thermostatique">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Colonne de douche</strong>
+                                    <small>Thermostatique + pomme</small>
+                                </div>
+                                <span class="price">800 €</span>
                             </label>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ==================== ÉLECTRICITÉ & CHAUFFAGE ==================== -->
-            <div class="category-content" data-category="electricite">
-                <div class="category-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    <h2>Électricité & Chauffage</h2>
-                </div>
-
-                <div class="sub-categories">
-                    <button class="sub-cat active" data-sub="elec-install">
-                        <span class="sub-icon">💡</span>
-                        <span class="sub-name">Installation</span>
-                        <span class="sub-desc">Tableau, prises, éclairage</span>
-                    </button>
-                    <button class="sub-cat" data-sub="chauffage">
-                        <span class="sub-icon">🔥</span>
-                        <span class="sub-name">Chauffage</span>
-                        <span class="sub-desc">Radiateurs électriques</span>
-                    </button>
-                    <button class="sub-cat" data-sub="climatisation">
-                        <span class="sub-icon">❄️</span>
-                        <span class="sub-name">Climatisation</span>
-                        <span class="sub-desc">Clim mono/multi-split</span>
-                    </button>
-                    <button class="sub-cat" data-sub="ventilation">
-                        <span class="sub-icon">💨</span>
-                        <span class="sub-name">Ventilation</span>
-                        <span class="sub-desc">VMC simple/double flux</span>
-                    </button>
-                </div>
-
-                <div class="options-panel">
-                    <!-- Installation électrique -->
-                    <div class="options-section active" data-sub="elec-install">
-                        <h3>Installation Électrique <span>— Tableau et appareillages</span></h3>
-                        <div class="select-group">
+                <!-- ==================== ÉLECTRICITÉ ==================== -->
+                <div class="category-panel" data-category="electricite">
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" data-sub="elec-base">Installation</button>
+                        <button class="sub-tab" data-sub="chauffage">Chauffage</button>
+                        <button class="sub-tab" data-sub="clim">Climatisation</button>
+                        <button class="sub-tab" data-sub="vmc">Ventilation</button>
+                    </div>
+                    
+                    <div class="sub-content active" data-sub="elec-base">
+                        <div class="select-box">
                             <label for="tableau-electrique">Tableau électrique</label>
                             <select id="tableau-electrique" data-label="Tableau electrique">
                                 <option value="0">-- Sélectionner --</option>
-                                <option value="800" data-label="Mise en conformite tableau electrique avec disjoncteurs et differentiels 30mA">Standard (800 €)</option>
-                                <option value="1500" data-label="Remplacement tableau electrique complet avec parafoudre et modules supplementaires">Renforcé (1 500 €)</option>
-                                <option value="2500" data-label="Installation tableau electrique connecte avec modules domotique et gestion a distance">Premium connecté (2 500 €)</option>
+                                <option value="800" data-label="Mise en conformite tableau">Standard (800 €)</option>
+                                <option value="1500" data-label="Remplacement tableau complet">Renforcé (1 500 €)</option>
+                                <option value="2500" data-label="Tableau connecte domotique">Premium connecté (2 500 €)</option>
                             </select>
                         </div>
-                        <div class="sliders-grid" style="margin-top: 25px;">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="points-lumineux">Points lumineux</label>
-                                    <span class="slider-price">80 €/unité</span>
-                                </div>
+                        <div class="sliders-list" style="margin-top:15px;">
+                            <div class="slider-row">
+                                <label>Points lumineux <span class="unit-price">80 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="points-lumineux" min="0" max="30" value="0" data-price="80" data-label="Creation point lumineux avec saignee, passage de gaine, boite DCL et raccordement">
-                                    <input type="number" class="number-input" id="points-lumineux-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="points-lumineux" min="0" max="30" value="0" data-price="80" data-label="Creation point lumineux">
+                                    <input type="number" id="points-lumineux-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="points-lumineux-total">0 €</strong></div>
+                                <span class="row-total" id="points-lumineux-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="prises">Prises électriques</label>
-                                    <span class="slider-price">60 €/unité</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Prises électriques <span class="unit-price">60 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="prises" min="0" max="30" value="0" data-price="60" data-label="Creation prise 2P+T avec saignee, boite encastrement et appareillage">
-                                    <input type="number" class="number-input" id="prises-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="prises" min="0" max="30" value="0" data-price="60" data-label="Creation prise 2P+T">
+                                    <input type="number" id="prises-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="prises-total">0 €</strong></div>
+                                <span class="row-total" id="prises-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="interrupteurs">Interrupteurs</label>
-                                    <span class="slider-price">50 €/unité</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Interrupteurs <span class="unit-price">50 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="interrupteurs" min="0" max="30" value="0" data-price="50" data-label="Fourniture et pose interrupteur va-et-vient avec cablage et appareillage">
-                                    <input type="number" class="number-input" id="interrupteurs-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="interrupteurs" min="0" max="30" value="0" data-price="50" data-label="Interrupteur va-et-vient">
+                                    <input type="number" id="interrupteurs-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="interrupteurs-total">0 €</strong></div>
+                                <span class="row-total" id="interrupteurs-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Chauffage -->
-                    <div class="options-section" data-sub="chauffage">
-                        <h3>Chauffage <span>— Radiateurs électriques</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="radiateurs">Radiateurs à inertie</label>
-                                    <span class="slider-price">300 €/unité</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="chauffage">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Radiateurs inertie <span class="unit-price">300 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="radiateurs" min="0" max="15" value="0" data-price="300" data-label="Fourniture et pose radiateur electrique a inertie avec thermostat programmable">
-                                    <input type="number" class="number-input" id="radiateurs-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="radiateurs" min="0" max="15" value="0" data-price="300" data-label="Radiateur electrique inertie">
+                                    <input type="number" id="radiateurs-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="radiateurs-total">0 €</strong></div>
+                                <span class="row-total" id="radiateurs-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Climatisation -->
-                    <div class="options-section" data-sub="climatisation">
-                        <h3>Climatisation <span>— Systèmes de climatisation</span></h3>
+                    
+                    <div class="sub-content" data-sub="clim">
                         <div class="options-grid">
                             <label class="option-card">
-                                <input type="checkbox" id="clim-mono" data-price="2500" data-label="Fourniture et pose climatisation mono-split reversible avec unite exterieure et mise en service">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Clim Mono-split</span>
-                                    <span class="option-desc">Réversible avec unité extérieure et mise en service</span>
-                                </span>
-                                <span class="option-price">2 500 €</span>
+                                <input type="checkbox" id="clim-mono" data-price="2500" data-label="Climatisation mono-split reversible">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Clim Mono-split</strong>
+                                    <small>Réversible + unité ext.</small>
+                                </div>
+                                <span class="price">2 500 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="clim-multi" data-price="6000" data-label="Fourniture et pose climatisation multi-split 3 unites interieures avec groupe exterieur et mise en service">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Clim Multi-split</span>
-                                    <span class="option-desc">3 unités intérieures avec groupe extérieur</span>
-                                </span>
-                                <span class="option-price">6 000 €</span>
+                                <input type="checkbox" id="clim-multi" data-price="6000" data-label="Climatisation multi-split 3 unites">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Clim Multi-split</strong>
+                                    <small>3 unités intérieures</small>
+                                </div>
+                                <span class="price">6 000 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="gainable" data-price="12000" data-label="Fourniture et pose climatisation gainable avec reseau de gaines, bouches de soufflage et reprise">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Clim Gainable</span>
-                                    <span class="option-desc">Réseau de gaines, bouches de soufflage et reprise</span>
-                                </span>
-                                <span class="option-price">12 000 €</span>
+                                <input type="checkbox" id="gainable" data-price="12000" data-label="Climatisation gainable reseau gaines">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Clim Gainable</strong>
+                                    <small>Réseau de gaines complet</small>
+                                </div>
+                                <span class="price">12 000 €</span>
                             </label>
                         </div>
                     </div>
-
-                    <!-- Ventilation -->
-                    <div class="options-section" data-sub="ventilation">
-                        <h3>Ventilation <span>— VMC et extraction</span></h3>
+                    
+                    <div class="sub-content" data-sub="vmc">
                         <div class="options-grid">
                             <label class="option-card">
-                                <input type="checkbox" id="vmc-simple" data-price="800" data-label="Fourniture et pose VMC simple flux hygroreglable avec bouches extraction et entrees d'air">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">VMC Simple flux</span>
-                                    <span class="option-desc">Hygroréglable avec bouches extraction</span>
-                                </span>
-                                <span class="option-price">800 €</span>
+                                <input type="checkbox" id="vmc-simple" data-price="800" data-label="VMC simple flux hygroreglable">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>VMC Simple flux</strong>
+                                    <small>Hygroréglable</small>
+                                </div>
+                                <span class="price">800 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="vmc-double" data-price="3500" data-label="Fourniture et pose VMC double flux avec echangeur thermique haut rendement et reseau de gaines">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">VMC Double flux</span>
-                                    <span class="option-desc">Échangeur thermique haut rendement</span>
-                                </span>
-                                <span class="option-price">3 500 €</span>
+                                <input type="checkbox" id="vmc-double" data-price="3500" data-label="VMC double flux echangeur thermique">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>VMC Double flux</strong>
+                                    <small>Échangeur thermique</small>
+                                </div>
+                                <span class="price">3 500 €</span>
                             </label>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ==================== PEINTURE & SOLS ==================== -->
-            <div class="category-content" data-category="peinture">
-                <div class="category-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>
-                    <h2>Peinture & Sols</h2>
-                </div>
-
-                <div class="sub-categories">
-                    <button class="sub-cat active" data-sub="peinture-murs">
-                        <span class="sub-icon">🎨</span>
-                        <span class="sub-name">Peinture Murs</span>
-                        <span class="sub-desc">Intérieur, plafonds</span>
-                    </button>
-                    <button class="sub-cat" data-sub="sols">
-                        <span class="sub-icon">🪵</span>
-                        <span class="sub-name">Revêtements Sols</span>
-                        <span class="sub-desc">Parquet, carrelage, PVC</span>
-                    </button>
-                    <button class="sub-cat" data-sub="murs-revetement">
-                        <span class="sub-icon">🧱</span>
-                        <span class="sub-name">Revêtements Muraux</span>
-                        <span class="sub-desc">Faïence, crédence</span>
-                    </button>
-                    <button class="sub-cat" data-sub="preparation">
-                        <span class="sub-icon">🔨</span>
-                        <span class="sub-name">Préparation</span>
-                        <span class="sub-desc">Dépose, ragréage, chape</span>
-                    </button>
-                    <button class="sub-cat" data-sub="peinture-ext">
-                        <span class="sub-icon">🏠</span>
-                        <span class="sub-name">Peinture Extérieure</span>
-                        <span class="sub-desc">Ravalement, façade</span>
-                    </button>
-                </div>
-
-                <div class="options-panel">
-                    <!-- Peinture Murs -->
-                    <div class="options-section active" data-sub="peinture-murs">
-                        <h3>Peinture Intérieure <span>— Murs et plafonds</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="murs-peinture">Surface murs (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                <!-- ==================== PEINTURE & SOLS ==================== -->
+                <div class="category-panel" data-category="peinture">
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" data-sub="peinture-int">Peinture</button>
+                        <button class="sub-tab" data-sub="sols">Sols</button>
+                        <button class="sub-tab" data-sub="murs-rev">Murs</button>
+                        <button class="sub-tab" data-sub="preparation">Préparation</button>
+                        <button class="sub-tab" data-sub="ext">Extérieur</button>
+                    </div>
+                    
+                    <div class="sub-content active" data-sub="peinture-int">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Peinture murs (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="murs-peinture" min="0" max="300" value="0" data-label="Peinture murale avec preparation du support">
-                                    <input type="number" class="number-input" id="murs-peinture-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="murs-peinture" min="0" max="300" value="0" data-label="Peinture murale">
+                                    <input type="number" id="murs-peinture-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="type-peinture-murs" data-label="Type peinture murs" style="margin-top: 10px;">
-                                    <option value="20" data-label="Preparation et application peinture murs : rebouchage, sous-couche et 2 couches acrylique mate">Standard (20 €/m²)</option>
-                                    <option value="30" data-label="Preparation et application peinture murs : enduit lissage et 2 couches satinee lessivable">Lavable (30 €/m²)</option>
-                                    <option value="45" data-label="Preparation et application peinture murs haut de gamme : enduit complet et 2 couches velours">Premium (45 €/m²)</option>
+                                <select id="type-peinture-murs" class="gamme-select">
+                                    <option value="20">Standard 20€</option>
+                                    <option value="30">Lavable 30€</option>
+                                    <option value="45">Premium 45€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="murs-peinture-total">0 €</strong></div>
+                                <span class="row-total" id="murs-peinture-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="plafonds-peinture">Surface plafonds (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Peinture plafonds (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="plafonds-peinture" min="0" max="200" value="0" data-label="Peinture plafond avec preparation du support">
-                                    <input type="number" class="number-input" id="plafonds-peinture-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="plafonds-peinture" min="0" max="200" value="0" data-label="Peinture plafond">
+                                    <input type="number" id="plafonds-peinture-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="type-peinture-plafonds" data-label="Type peinture plafonds" style="margin-top: 10px;">
-                                    <option value="22" data-label="Preparation et application peinture plafond : rebouchage, sous-couche et 2 couches mate">Standard (22 €/m²)</option>
-                                    <option value="32" data-label="Preparation et application peinture plafond : enduit lissage et 2 couches mat profond">Confort (32 €/m²)</option>
-                                    <option value="48" data-label="Preparation et application peinture plafond tendu ou haut de gamme avec finition parfaite">Premium (48 €/m²)</option>
+                                <select id="type-peinture-plafonds" class="gamme-select">
+                                    <option value="22">Standard 22€</option>
+                                    <option value="32">Confort 32€</option>
+                                    <option value="48">Premium 48€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="plafonds-peinture-total">0 €</strong></div>
+                                <span class="row-total" id="plafonds-peinture-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Revêtements Sols -->
-                    <div class="options-section" data-sub="sols">
-                        <h3>Revêtements de Sol <span>— Choisissez votre type de sol</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="parquet-massif">Parquet Massif (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="sols">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Parquet massif (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="parquet-massif" min="0" max="200" value="0" data-label="Fourniture et pose parquet massif chene, preparation support, pose clouee ou collee, poncage et vitrification 2 couches, plinthes assorties">
-                                    <input type="number" class="number-input" id="parquet-massif-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="parquet-massif" min="0" max="200" value="0" data-label="Parquet massif chene">
+                                    <input type="number" id="parquet-massif-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="gamme-parquet-massif" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
+                                <select id="gamme-parquet-massif" class="gamme-select">
+                                    <option value="25">Std 25€</option>
+                                    <option value="40">Confort 40€</option>
+                                    <option value="80">Premium 80€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="parquet-massif-total">0 €</strong></div>
+                                <span class="row-total" id="parquet-massif-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="parquet-contrecolle">Parquet Contrecollé (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Carrelage sol (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="parquet-contrecolle" min="0" max="200" value="0" data-label="Fourniture et pose parquet contrecolle 3 plis chene, sous-couche pare-vapeur, pose flottante ou collee, joints peripheriques, plinthes assorties">
-                                    <input type="number" class="number-input" id="parquet-contrecolle-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="carrelage-sol" min="0" max="200" value="0" data-label="Carrelage gres cerame">
+                                    <input type="number" id="carrelage-sol-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="gamme-parquet-contrecolle" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
+                                <select id="gamme-carrelage-sol" class="gamme-select">
+                                    <option value="25">Std 25€</option>
+                                    <option value="40">Confort 40€</option>
+                                    <option value="80">Premium 80€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="parquet-contrecolle-total">0 €</strong></div>
+                                <span class="row-total" id="carrelage-sol-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="carrelage-sol">Carrelage (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Lino / PVC (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="carrelage-sol" min="0" max="200" value="0" data-label="Fourniture et pose carrelage gres cerame, double encollage, joints souples peripheriques, joints coulis ciment, nettoyage fin de chantier">
-                                    <input type="number" class="number-input" id="carrelage-sol-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="lino-sol" min="0" max="200" value="0" data-label="Revetement lino PVC">
+                                    <input type="number" id="lino-sol-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="gamme-carrelage-sol" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
+                                <select id="gamme-lino-sol" class="gamme-select">
+                                    <option value="25">Std 25€</option>
+                                    <option value="40">Confort 40€</option>
+                                    <option value="80">Premium 80€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="carrelage-sol-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="lino-sol">Lino / Vinyle (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="lino-sol" min="0" max="200" value="0" data-label="Fourniture et pose revetement linoleum naturel, collage plein, soudure a chaud des les, remontee en plinthe ou baguette de finition">
-                                    <input type="number" class="number-input" id="lino-sol-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <select id="gamme-lino-sol" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
-                                </select>
-                                <div class="slider-total">Total: <strong id="lino-sol-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="dalle-pvc">Dalle PVC (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="dalle-pvc" min="0" max="200" value="0" data-label="Fourniture et pose dalles PVC clipsables ou collees, sous-couche si necessaire, plinthes de finition, nettoyage fin de chantier">
-                                    <input type="number" class="number-input" id="dalle-pvc-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <select id="gamme-dalle-pvc" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
-                                </select>
-                                <div class="slider-total">Total: <strong id="dalle-pvc-total">0 €</strong></div>
+                                <span class="row-total" id="lino-sol-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Revêtements Muraux -->
-                    <div class="options-section" data-sub="murs-revetement">
-                        <h3>Revêtements Muraux <span>— Faïence et crédence</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="faience-mur">Faïence (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="murs-rev">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Faïence (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="faience-mur" min="0" max="100" value="0" data-label="Fourniture et pose faience murale, simple ou double encollage selon format, joints ciment ou epoxy, finition soignee">
-                                    <input type="number" class="number-input" id="faience-mur-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="faience-mur" min="0" max="100" value="0" data-label="Faience murale">
+                                    <input type="number" id="faience-mur-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="gamme-faience-mur" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
+                                <select id="gamme-faience-mur" class="gamme-select">
+                                    <option value="25">Std 25€</option>
+                                    <option value="40">Confort 40€</option>
+                                    <option value="80">Premium 80€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="faience-mur-total">0 €</strong></div>
+                                <span class="row-total" id="faience-mur-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="credence-mur">Crédence (m²)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Crédence (m²)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="credence-mur" min="0" max="50" value="0" data-label="Fourniture et pose credence cuisine ou salle de bain, decoupe et ajustement, joints silicone, finition soignee">
-                                    <input type="number" class="number-input" id="credence-mur-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="credence-mur" min="0" max="50" value="0" data-label="Credence cuisine">
+                                    <input type="number" id="credence-mur-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <select id="gamme-credence-mur" data-label="Gamme" style="margin-top: 10px;">
-                                    <option value="25">Standard (25 €/m²)</option>
-                                    <option value="40">Confort (40 €/m²)</option>
-                                    <option value="80">Premium (80 €/m²)</option>
+                                <select id="gamme-credence-mur" class="gamme-select">
+                                    <option value="25">Std 25€</option>
+                                    <option value="40">Confort 40€</option>
+                                    <option value="80">Premium 80€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="credence-mur-total">0 €</strong></div>
+                                <span class="row-total" id="credence-mur-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Préparation -->
-                    <div class="options-section" data-sub="preparation">
-                        <h3>Préparation des Supports <span>— Travaux préparatoires</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="depose-sol">Dépose ancien sol (m²)</label>
-                                    <span class="slider-price">15 €/m²</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="preparation">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Dépose ancien sol <span class="unit-price">15 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="depose-sol" min="0" max="200" value="0" data-price="15" data-label="Depose ancien revetement de sol, grattage colle residuelle, evacuation gravats en decharge agreee">
-                                    <input type="number" class="number-input" id="depose-sol-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="depose-sol" min="0" max="200" value="0" data-price="15" data-label="Depose ancien revetement">
+                                    <input type="number" id="depose-sol-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="depose-sol-total">0 €</strong></div>
+                                <span class="row-total" id="depose-sol-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="reagreage">Ragréage (m²)</label>
-                                    <span class="slider-price">45 €/m²</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Ragréage <span class="unit-price">45 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="reagreage" min="0" max="200" value="0" data-price="45" data-label="Ragreage autolissant P3, primaire d'accrochage, epaisseur 3 a 10mm, temps de sechage selon DTU">
-                                    <input type="number" class="number-input" id="reagreage-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="reagreage" min="0" max="200" value="0" data-price="45" data-label="Ragreage autolissant">
+                                    <input type="number" id="reagreage-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="reagreage-total">0 €</strong></div>
+                                <span class="row-total" id="reagreage-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="chape-sol">Chape (m²)</label>
-                                    <span class="slider-price">45 €/m²</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Chape <span class="unit-price">45 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="chape-sol" min="0" max="200" value="0" data-price="45" data-label="Realisation chape fluide ou traditionnelle, armature treillis soude si necessaire, planeite selon DTU 26.2">
-                                    <input type="number" class="number-input" id="chape-sol-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="chape-sol" min="0" max="200" value="0" data-price="45" data-label="Chape fluide traditionnelle">
+                                    <input type="number" id="chape-sol-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="chape-sol-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="primaire-sol">Primaire (m²)</label>
-                                    <span class="slider-price">15 €/m²</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="primaire-sol" min="0" max="200" value="0" data-price="15" data-label="Application primaire d'accrochage adapte au support, temps de sechage selon preconisations fabricant">
-                                    <input type="number" class="number-input" id="primaire-sol-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <div class="slider-total">Total: <strong id="primaire-sol-total">0 €</strong></div>
+                                <span class="row-total" id="chape-sol-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Peinture Extérieure -->
-                    <div class="options-section" data-sub="peinture-ext">
-                        <h3>Peinture Extérieure <span>— Ravalement et façade</span></h3>
-                        <div class="select-group">
-                            <label for="ravalement">Ravalement de façade</label>
+                    
+                    <div class="sub-content" data-sub="ext">
+                        <div class="select-box">
+                            <label for="ravalement">Ravalement façade</label>
                             <select id="ravalement" data-label="Ravalement facade">
                                 <option value="0">-- Sélectionner --</option>
-                                <option value="8000" data-label="Ravalement facade maison 80m2 : echafaudage, nettoyage, rebouchage et peinture 2 couches">Maison 80 m² (8 000 €)</option>
-                                <option value="12000" data-label="Ravalement facade maison 120m2 : echafaudage, nettoyage, rebouchage et peinture 2 couches">Maison 120 m² (12 000 €)</option>
-                                <option value="18000" data-label="Ravalement facade maison 180m2 : echafaudage complet, traitement fissures et peinture siloxane">Maison 180 m² (18 000 €)</option>
+                                <option value="8000">Maison 80 m² (8 000 €)</option>
+                                <option value="12000">Maison 120 m² (12 000 €)</option>
+                                <option value="18000">Maison 180 m² (18 000 €)</option>
                             </select>
                         </div>
-                        <div class="sliders-grid" style="margin-top: 25px;">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="facade-peinture">Peinture façade (m²)</label>
-                                    <span class="slider-price">35 €/m²</span>
-                                </div>
+                        <div class="sliders-list" style="margin-top:15px;">
+                            <div class="slider-row">
+                                <label>Peinture façade <span class="unit-price">35 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="facade-peinture" min="0" max="300" value="0" data-price="35" data-label="Nettoyage haute pression, traitement anti-mousse, application peinture facade 2 couches">
-                                    <input type="number" class="number-input" id="facade-peinture-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="facade-peinture" min="0" max="300" value="0" data-price="35" data-label="Peinture facade">
+                                    <input type="number" id="facade-peinture-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="facade-peinture-total">0 €</strong></div>
+                                <span class="row-total" id="facade-peinture-total">0 €</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ==================== GROS ŒUVRE ==================== -->
-            <div class="category-content" data-category="gros-oeuvre">
-                <div class="category-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    <h2>Gros Œuvre</h2>
-                </div>
-
-                <div class="sub-categories">
-                    <button class="sub-cat active" data-sub="maconnerie">
-                        <span class="sub-icon">🧱</span>
-                        <span class="sub-name">Maçonnerie</span>
-                        <span class="sub-desc">Murs, cloisons, démolition</span>
-                    </button>
-                    <button class="sub-cat" data-sub="isolation">
-                        <span class="sub-icon">🧊</span>
-                        <span class="sub-name">Isolation</span>
-                        <span class="sub-desc">Murs, combles, ITE</span>
-                    </button>
-                    <button class="sub-cat" data-sub="platrerie">
-                        <span class="sub-icon">📐</span>
-                        <span class="sub-name">Plâtrerie</span>
-                        <span class="sub-desc">Placo, faux-plafond</span>
-                    </button>
-                    <button class="sub-cat" data-sub="construction">
-                        <span class="sub-icon">🏗️</span>
-                        <span class="sub-name">Construction</span>
-                        <span class="sub-desc">Extension, fondations</span>
-                    </button>
-                </div>
-
-                <div class="options-panel">
-                    <!-- Maçonnerie -->
-                    <div class="options-section active" data-sub="maconnerie">
-                        <h3>Maçonnerie <span>— Travaux de structure</span></h3>
-                        <div class="select-group">
+                <!-- ==================== GROS ŒUVRE ==================== -->
+                <div class="category-panel" data-category="gros-oeuvre">
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" data-sub="maconnerie">Maçonnerie</button>
+                        <button class="sub-tab" data-sub="isolation">Isolation</button>
+                        <button class="sub-tab" data-sub="platrerie">Plâtrerie</button>
+                        <button class="sub-tab" data-sub="construction">Construction</button>
+                    </div>
+                    
+                    <div class="sub-content active" data-sub="maconnerie">
+                        <div class="select-box">
                             <label for="mur-porteur">Ouverture mur porteur</label>
                             <select id="mur-porteur" data-label="Ouverture mur porteur">
                                 <option value="0">-- Sélectionner --</option>
-                                <option value="2500" data-label="Ouverture mur porteur inferieure a 1.5m avec etaiement, decoupe et pose IPN">Petite ouverture < 1.5m (2 500 €)</option>
-                                <option value="4500" data-label="Ouverture mur porteur 1.5 a 2.5m avec etaiement renforce et pose IPN dimensionne">Moyenne ouverture 1.5-2.5m (4 500 €)</option>
-                                <option value="7000" data-label="Ouverture mur porteur superieure a 2.5m avec etude structure et pose poutre acier">Grande ouverture > 2.5m (7 000 €)</option>
+                                <option value="2500">Petite &lt;1.5m (2 500 €)</option>
+                                <option value="4500">Moyenne 1.5-2.5m (4 500 €)</option>
+                                <option value="7000">Grande &gt;2.5m (7 000 €)</option>
                             </select>
                         </div>
-                        <div class="sliders-grid" style="margin-top: 25px;">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="cloisons">Cloisons (m²)</label>
-                                    <span class="slider-price">45 €/m²</span>
-                                </div>
+                        <div class="sliders-list" style="margin-top:15px;">
+                            <div class="slider-row">
+                                <label>Cloisons <span class="unit-price">45 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="cloisons" min="0" max="100" value="0" data-price="45" data-label="Construction cloison placo BA13 sur ossature metallique avec isolation acoustique">
-                                    <input type="number" class="number-input" id="cloisons-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="cloisons" min="0" max="100" value="0" data-price="45" data-label="Cloison placo BA13">
+                                    <input type="number" id="cloisons-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="cloisons-total">0 €</strong></div>
+                                <span class="row-total" id="cloisons-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="dalle-beton">Dalle béton (m²)</label>
-                                    <span class="slider-price">70 €/m²</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Dalle béton <span class="unit-price">70 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="dalle-beton" min="0" max="100" value="0" data-price="70" data-label="Realisation dalle beton avec herisson, film polyane, treillis soude et coulage">
-                                    <input type="number" class="number-input" id="dalle-beton-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="dalle-beton" min="0" max="100" value="0" data-price="70" data-label="Dalle beton armee">
+                                    <input type="number" id="dalle-beton-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="dalle-beton-total">0 €</strong></div>
+                                <span class="row-total" id="dalle-beton-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="demolition">Démolition (m³)</label>
-                                    <span class="slider-price">80 €/m³</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Démolition <span class="unit-price">80 €/m³</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="demolition" min="0" max="50" value="0" data-price="80" data-label="Demolition maconnerie avec protection, evacuation gravats en decharge agreee et nettoyage">
-                                    <input type="number" class="number-input" id="demolition-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="demolition" min="0" max="50" value="0" data-price="80" data-label="Demolition evacuation">
+                                    <input type="number" id="demolition-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="demolition-total">0 €</strong></div>
+                                <span class="row-total" id="demolition-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Isolation -->
-                    <div class="options-section" data-sub="isolation">
-                        <h3>Isolation <span>— Thermique et acoustique</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="isolation-murs">Isolation murs (m²)</label>
-                                    <span class="slider-price">45 €/m²</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="isolation">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Isolation murs <span class="unit-price">45 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="isolation-murs" min="0" max="200" value="0" data-price="45" data-label="Fourniture et pose isolation murs interieurs avec laine minerale et parement placo">
-                                    <input type="number" class="number-input" id="isolation-murs-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="isolation-murs" min="0" max="200" value="0" data-price="45" data-label="Isolation murs interieurs">
+                                    <input type="number" id="isolation-murs-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="isolation-murs-total">0 €</strong></div>
+                                <span class="row-total" id="isolation-murs-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="isolation-combles">Isolation combles (m²)</label>
-                                    <span class="slider-price">35 €/m²</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Isolation combles <span class="unit-price">35 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="isolation-combles" min="0" max="200" value="0" data-price="35" data-label="Fourniture et pose isolation combles perdus avec laine soufflee ou deroulee">
-                                    <input type="number" class="number-input" id="isolation-combles-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="isolation-combles" min="0" max="200" value="0" data-price="35" data-label="Isolation combles perdus">
+                                    <input type="number" id="isolation-combles-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="isolation-combles-total">0 €</strong></div>
+                                <span class="row-total" id="isolation-combles-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="ite">ITE - Isolation extérieure (m²)</label>
-                                    <span class="slider-price">120 €/m²</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>ITE extérieure <span class="unit-price">120 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="ite" min="0" max="200" value="0" data-price="120" data-label="Isolation thermique par l'exterieur avec panneaux isolants, armature et enduit de finition">
-                                    <input type="number" class="number-input" id="ite-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="ite" min="0" max="200" value="0" data-price="120" data-label="Isolation thermique exterieur">
+                                    <input type="number" id="ite-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="ite-total">0 €</strong></div>
+                                <span class="row-total" id="ite-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Plâtrerie -->
-                    <div class="options-section" data-sub="platrerie">
-                        <h3>Plâtrerie & Placo <span>— Cloisons sèches et finitions</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="placo-murs">Doublage murs (m²)</label>
-                                    <span class="slider-price">35 €/m²</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="platrerie">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Faux plafond <span class="unit-price">45 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="placo-murs" min="0" max="200" value="0" data-price="35" data-label="Fourniture et pose doublage murs placo BA13 sur rails avec bandes et joints">
-                                    <input type="number" class="number-input" id="placo-murs-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="faux-plafond" min="0" max="200" value="0" data-price="45" data-label="Faux plafond placo">
+                                    <input type="number" id="faux-plafond-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="placo-murs-total">0 €</strong></div>
+                                <span class="row-total" id="faux-plafond-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="placo-cloisons">Cloisons Placo (m²)</label>
-                                    <span class="slider-price">40 €/m²</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Doublage murs <span class="unit-price">35 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="placo-cloisons" min="0" max="200" value="0" data-price="40" data-label="Fourniture et pose cloison placo BA13 double parement sur ossature metallique">
-                                    <input type="number" class="number-input" id="placo-cloisons-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="placo-murs" min="0" max="200" value="0" data-price="35" data-label="Doublage placo murs">
+                                    <input type="number" id="placo-murs-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="placo-cloisons-total">0 €</strong></div>
+                                <span class="row-total" id="placo-murs-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="faux-plafond">Faux plafond (m²)</label>
-                                    <span class="slider-price">45 €/m²</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="faux-plafond" min="0" max="200" value="0" data-price="45" data-label="Fourniture et pose faux plafond placo BA13 sur suspentes avec bandes et joints">
-                                    <input type="number" class="number-input" id="faux-plafond-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <div class="slider-total">Total: <strong id="faux-plafond-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="enduit-lissage">Enduit de lissage (m²)</label>
-                                    <span class="slider-price">18 €/m²</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="enduit-lissage" min="0" max="300" value="0" data-price="18" data-label="Application enduit de lissage sur murs et plafonds avec poncage et finition soignee">
-                                    <input type="number" class="number-input" id="enduit-lissage-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <div class="slider-total">Total: <strong id="enduit-lissage-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="bandes-joints">Bandes et joints (ml)</label>
-                                    <span class="slider-price">8 €/ml</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="bandes-joints" min="0" max="200" value="0" data-price="8" data-label="Realisation bandes a joints avec calicot, enduit et poncage finition prete a peindre">
-                                    <input type="number" class="number-input" id="bandes-joints-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <div class="slider-total">Total: <strong id="bandes-joints-total">0 €</strong></div>
-                            </div>
-                        </div>
-                        <div class="options-grid" style="margin-top: 25px;">
-                            <label class="option-card">
-                                <input type="checkbox" id="placo-phonique" data-price="1500" data-label="Fourniture et pose placo phonique haute densite avec ossature desolidarisee">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Placo phonique</span>
-                                    <span class="option-desc">Haute densité avec ossature désolidarisée</span>
-                                </span>
-                                <span class="option-price">1 500 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="placo-hydrofuge" data-price="1200" data-label="Fourniture et pose placo hydrofuge vert pour pieces humides avec traitement joints">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Placo hydrofuge</span>
-                                    <span class="option-desc">Pour pièces humides avec traitement joints</span>
-                                </span>
-                                <span class="option-price">1 200 €</span>
-                            </label>
                         </div>
                     </div>
-
-                    <!-- Construction -->
-                    <div class="options-section" data-sub="construction">
-                        <h3>Construction & Extension <span>— Travaux d'agrandissement</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="extension">Extension (m²)</label>
-                                    <span class="slider-price">1 800 €/m²</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="construction">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Extension <span class="unit-price">1 800 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="extension" min="0" max="100" value="0" data-price="1800" data-label="Construction extension complete : fondations, elevation murs, charpente, couverture et finitions">
-                                    <input type="number" class="number-input" id="extension-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="extension" min="0" max="100" value="0" data-price="1800" data-label="Construction extension complete">
+                                    <input type="number" id="extension-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="extension-total">0 €</strong></div>
+                                <span class="row-total" id="extension-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="terrassement">Terrassement (m³)</label>
-                                    <span class="slider-price">50 €/m³</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Terrassement <span class="unit-price">50 €/m³</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="terrassement" min="0" max="100" value="0" data-price="50" data-label="Terrassement avec decapage terre vegetale, decaissement et evacuation terres excedentaires">
-                                    <input type="number" class="number-input" id="terrassement-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="terrassement" min="0" max="100" value="0" data-price="50" data-label="Terrassement decaissement">
+                                    <input type="number" id="terrassement-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="terrassement-total">0 €</strong></div>
+                                <span class="row-total" id="terrassement-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="fondations">Fondations (m³)</label>
-                                    <span class="slider-price">200 €/m³</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Fondations <span class="unit-price">200 €/m³</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="fondations" min="0" max="50" value="0" data-price="200" data-label="Realisation fondations avec fouilles en rigole, ferraillage et coulage beton arme">
-                                    <input type="number" class="number-input" id="fondations-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="fondations" min="0" max="50" value="0" data-price="200" data-label="Fondations beton arme">
+                                    <input type="number" id="fondations-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="fondations-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="charpente">Charpente (m²)</label>
-                                    <span class="slider-price">180 €/m²</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="charpente" min="0" max="200" value="0" data-price="180" data-label="Fourniture et pose charpente traditionnelle bois avec traitement insecticide et fongicide">
-                                    <input type="number" class="number-input" id="charpente-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <div class="slider-total">Total: <strong id="charpente-total">0 €</strong></div>
+                                <span class="row-total" id="fondations-total">0 €</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ==================== MENUISERIE & FINITIONS ==================== -->
-            <div class="category-content" data-category="menuiserie">
-                <div class="category-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    <h2>Menuiserie & Finitions</h2>
-                </div>
-
-                <div class="sub-categories">
-                    <button class="sub-cat active" data-sub="menuiserie-int">
-                        <span class="sub-icon">🚪</span>
-                        <span class="sub-name">Menuiserie Int.</span>
-                        <span class="sub-desc">Portes, plinthes</span>
-                    </button>
-                    <button class="sub-cat" data-sub="menuiserie-ext">
-                        <span class="sub-icon">🪟</span>
-                        <span class="sub-name">Menuiserie Ext.</span>
-                        <span class="sub-desc">Fenêtres, volets</span>
-                    </button>
-                    <button class="sub-cat" data-sub="couverture">
-                        <span class="sub-icon">🏠</span>
-                        <span class="sub-name">Couverture</span>
-                        <span class="sub-desc">Toiture, zinguerie</span>
-                    </button>
-                    <button class="sub-cat" data-sub="meubles">
-                        <span class="sub-icon">🍳</span>
-                        <span class="sub-name">Agencement</span>
-                        <span class="sub-desc">Cuisine, placards</span>
-                    </button>
-                </div>
-
-                <div class="options-panel">
-                    <!-- Menuiserie Intérieure -->
-                    <div class="options-section active" data-sub="menuiserie-int">
-                        <h3>Menuiserie Intérieure <span>— Portes et finitions</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="portes-int">Portes intérieures</label>
-                                    <span class="slider-price">350 €/unité</span>
-                                </div>
+                <!-- ==================== MENUISERIE ==================== -->
+                <div class="category-panel" data-category="menuiserie">
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" data-sub="menu-int">Intérieure</button>
+                        <button class="sub-tab" data-sub="menu-ext">Extérieure</button>
+                        <button class="sub-tab" data-sub="toiture">Toiture</button>
+                        <button class="sub-tab" data-sub="agencement">Agencement</button>
+                    </div>
+                    
+                    <div class="sub-content active" data-sub="menu-int">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Portes intérieures <span class="unit-price">350 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="portes-int" min="0" max="15" value="0" data-price="350" data-label="Fourniture et pose porte interieure ame alveolaire avec huisserie et quincaillerie">
-                                    <input type="number" class="number-input" id="portes-int-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="portes-int" min="0" max="15" value="0" data-price="350" data-label="Porte interieure avec huisserie">
+                                    <input type="number" id="portes-int-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="portes-int-total">0 €</strong></div>
+                                <span class="row-total" id="portes-int-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="portes-bloc">Blocs-portes</label>
-                                    <span class="slider-price">250 €/unité</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Plinthes <span class="unit-price">12 €/ml</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="portes-bloc" min="0" max="15" value="0" data-price="250" data-label="Fourniture et pose bloc-porte standard avec huisserie bois et serrure">
-                                    <input type="number" class="number-input" id="portes-bloc-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="plinthes" min="0" max="200" value="0" data-price="12" data-label="Plinthes bois MDF">
+                                    <input type="number" id="plinthes-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="portes-bloc-total">0 €</strong></div>
-                            </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="plinthes">Plinthes (ml)</label>
-                                    <span class="slider-price">12 €/ml</span>
-                                </div>
-                                <div class="slider-control">
-                                    <input type="range" id="plinthes" min="0" max="200" value="0" data-price="12" data-label="Fourniture et pose plinthes bois ou MDF avec finition vernis ou peinture">
-                                    <input type="number" class="number-input" id="plinthes-number" min="0" max="9999" value="0" inputmode="numeric">
-                                </div>
-                                <div class="slider-total">Total: <strong id="plinthes-total">0 €</strong></div>
+                                <span class="row-total" id="plinthes-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Menuiserie Extérieure -->
-                    <div class="options-section" data-sub="menuiserie-ext">
-                        <h3>Menuiserie Extérieure <span>— Fenêtres et portes</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="fenetres">Fenêtres PVC</label>
-                                    <span class="slider-price">450 €/unité</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="menu-ext">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Fenêtres PVC <span class="unit-price">450 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="fenetres" min="0" max="15" value="0" data-price="450" data-label="Fourniture et pose fenetre PVC double vitrage avec volet roulant integre">
-                                    <input type="number" class="number-input" id="fenetres-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="fenetres" min="0" max="15" value="0" data-price="450" data-label="Fenetre PVC double vitrage">
+                                    <input type="number" id="fenetres-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="fenetres-total">0 €</strong></div>
+                                <span class="row-total" id="fenetres-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="porte-entree">Porte d'entrée</label>
-                                    <span class="slider-price">1 800 €/unité</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Porte entrée <span class="unit-price">1 800 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="porte-entree" min="0" max="3" value="0" data-price="1800" data-label="Fourniture et pose porte d'entree blindee avec serrure multipoints et huisserie">
-                                    <input type="number" class="number-input" id="porte-entree-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="porte-entree" min="0" max="3" value="0" data-price="1800" data-label="Porte entree blindee">
+                                    <input type="number" id="porte-entree-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="porte-entree-total">0 €</strong></div>
+                                <span class="row-total" id="porte-entree-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="volets">Volets roulants</label>
-                                    <span class="slider-price">500 €/unité</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Volets roulants <span class="unit-price">500 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="volets" min="0" max="15" value="0" data-price="500" data-label="Fourniture et pose volet roulant electrique avec coffre et telecommande">
-                                    <input type="number" class="number-input" id="volets-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="volets" min="0" max="15" value="0" data-price="500" data-label="Volet roulant electrique">
+                                    <input type="number" id="volets-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="volets-total">0 €</strong></div>
+                                <span class="row-total" id="volets-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Couverture -->
-                    <div class="options-section" data-sub="couverture">
-                        <h3>Couverture & Toiture <span>— Travaux de toit</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="toiture">Réfection toiture (m²)</label>
-                                    <span class="slider-price">120 €/m²</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="toiture">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Toiture <span class="unit-price">120 €/m²</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="toiture" min="0" max="200" value="0" data-price="120" data-label="Refection complete toiture avec depose, ecran sous-toiture et pose couverture neuve">
-                                    <input type="number" class="number-input" id="toiture-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="toiture" min="0" max="200" value="0" data-price="120" data-label="Refection toiture complete">
+                                    <input type="number" id="toiture-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="toiture-total">0 €</strong></div>
+                                <span class="row-total" id="toiture-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="zinguerie">Zinguerie (ml)</label>
-                                    <span class="slider-price">80 €/ml</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Velux <span class="unit-price">800 €/u</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="zinguerie" min="0" max="100" value="0" data-price="80" data-label="Fourniture et pose zinguerie zinc naturel : gouttieres, descentes et dauphin">
-                                    <input type="number" class="number-input" id="zinguerie-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="velux" min="0" max="10" value="0" data-price="800" data-label="Fenetre de toit Velux">
+                                    <input type="number" id="velux-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="zinguerie-total">0 €</strong></div>
+                                <span class="row-total" id="velux-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="velux">Fenêtres de toit (Velux)</label>
-                                    <span class="slider-price">800 €/unité</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Zinguerie <span class="unit-price">80 €/ml</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="velux" min="0" max="10" value="0" data-price="800" data-label="Fourniture et pose fenetre de toit avec chevetre, raccord d'etancheite et habillage">
-                                    <input type="number" class="number-input" id="velux-number" min="0" max="999" value="0" inputmode="numeric">
+                                    <input type="range" id="zinguerie" min="0" max="100" value="0" data-price="80" data-label="Zinguerie gouttieres">
+                                    <input type="number" id="zinguerie-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="velux-total">0 €</strong></div>
+                                <span class="row-total" id="zinguerie-total">0 €</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Meubles & Agencement -->
-                    <div class="options-section" data-sub="meubles">
-                        <h3>Meubles & Agencement <span>— Cuisine et rangements</span></h3>
-                        <div class="sliders-grid">
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="cuisine">Cuisine équipée (ml)</label>
-                                    <span class="slider-price">Variable</span>
-                                </div>
+                    
+                    <div class="sub-content" data-sub="agencement">
+                        <div class="sliders-list">
+                            <div class="slider-row">
+                                <label>Cuisine équipée (ml)</label>
                                 <div class="slider-control">
-                                    <input type="range" id="cuisine" min="0" max="15" value="0" data-label="Cuisine equipee complete avec pose">
-                                    <input type="number" class="number-input" id="cuisine-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="cuisine" min="0" max="15" value="0" data-label="Cuisine equipee">
+                                    <input type="number" id="cuisine-number" min="0" max="999" value="0" class="qty-input">
                                 </div>
-                                <select id="gamme-cuisine" data-label="Gamme cuisine" style="margin-top: 10px;">
-                                    <option value="800" data-label="Fourniture et pose cuisine equipee melamine avec plan de travail stratifie et poignees">Entrée de gamme (800 €/ml)</option>
-                                    <option value="1500" data-label="Fourniture et pose cuisine equipee soft-close avec plan compact et electromenager">Moyenne gamme (1 500 €/ml)</option>
-                                    <option value="3000" data-label="Fourniture et pose cuisine sur-mesure avec plan quartz et electromenager premium integre">Haut de gamme (3 000 €/ml)</option>
+                                <select id="gamme-cuisine" class="gamme-select">
+                                    <option value="800">Entrée 800€</option>
+                                    <option value="1500">Moyenne 1500€</option>
+                                    <option value="3000">Haut 3000€</option>
                                 </select>
-                                <div class="slider-total">Total: <strong id="cuisine-total">0 €</strong></div>
+                                <span class="row-total" id="cuisine-total">0 €</span>
                             </div>
-                            <div class="slider-card">
-                                <div class="slider-header">
-                                    <label for="placards">Placards sur mesure (ml)</label>
-                                    <span class="slider-price">500 €/ml</span>
-                                </div>
+                            <div class="slider-row">
+                                <label>Placards <span class="unit-price">500 €/ml</span></label>
                                 <div class="slider-control">
-                                    <input type="range" id="placards" min="0" max="15" value="0" data-price="500" data-label="Fabrication et pose placard sur-mesure avec caisson, portes et amenagement interieur">
-                                    <input type="number" class="number-input" id="placards-number" min="0" max="9999" value="0" inputmode="numeric">
+                                    <input type="range" id="placards" min="0" max="15" value="0" data-price="500" data-label="Placard sur-mesure">
+                                    <input type="number" id="placards-number" min="0" max="9999" value="0" class="qty-input">
                                 </div>
-                                <div class="slider-total">Total: <strong id="placards-total">0 €</strong></div>
+                                <span class="row-total" id="placards-total">0 €</span>
                             </div>
                         </div>
-                        <div class="options-grid" style="margin-top: 25px;">
+                        <div class="options-grid" style="margin-top:15px;">
                             <label class="option-card">
-                                <input type="checkbox" id="dressing" data-price="2500" data-label="Fabrication et pose dressing sur-mesure avec penderies, tiroirs et eclairage LED integre">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Dressing sur mesure</span>
-                                    <span class="option-desc">Penderies, tiroirs et éclairage LED intégré</span>
-                                </span>
-                                <span class="option-price">2 500 €</span>
+                                <input type="checkbox" id="dressing" data-price="2500" data-label="Dressing sur-mesure">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Dressing</strong>
+                                    <small>Sur mesure + LED</small>
+                                </div>
+                                <span class="price">2 500 €</span>
                             </label>
                             <label class="option-card">
-                                <input type="checkbox" id="bibliotheque" data-price="1800" data-label="Fabrication et pose bibliotheque sur-mesure avec etageres reglables et finitions">
-                                <span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></span>
-                                <span class="option-info">
-                                    <span class="option-name">Bibliothèque</span>
-                                    <span class="option-desc">Sur mesure avec étagères réglables</span>
-                                </span>
-                                <span class="option-price">1 800 €</span>
+                                <input type="checkbox" id="bibliotheque" data-price="1800" data-label="Bibliotheque sur-mesure">
+                                <span class="check">✓</span>
+                                <div class="option-info">
+                                    <strong>Bibliothèque</strong>
+                                    <small>Sur mesure</small>
+                                </div>
+                                <span class="price">1 800 €</span>
                             </label>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ========================================
-                 FORMULAIRE CLIENT (à la fin)
-                 ======================================== -->
-            <section class="client-form-section">
-                <div class="client-form-header">
-                    <h2>📋 Vos Coordonnées</h2>
-                    <p>Pour recevoir votre devis estimatif par email</p>
-                </div>
-                <div class="client-form-grid">
-                    <div class="form-group">
-                        <label for="client-nom">Nom et Prénom <span class="required">*</span></label>
-                        <input type="text" id="client-nom" name="client-nom" placeholder="Ex: Jean Dupont" required autocomplete="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="client-tel">Téléphone <span class="required">*</span></label>
-                        <input type="tel" id="client-tel" name="client-tel" placeholder="Ex: 06 12 34 56 78" required autocomplete="tel">
-                    </div>
-                    <div class="form-group">
-                        <label for="client-email">Email</label>
-                        <input type="email" id="client-email" name="client-email" placeholder="Ex: contact@email.fr" autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="client-adresse">Adresse <span class="required">*</span></label>
-                        <input type="text" id="client-adresse" name="client-adresse" placeholder="Ex: 12 rue de la Paix" required autocomplete="street-address">
-                    </div>
-                    <div class="form-group">
-                        <label for="client-cp">Code Postal <span class="required">*</span></label>
-                        <input type="text" id="client-cp" name="client-cp" placeholder="Ex: 75017" required autocomplete="postal-code" pattern="[0-9]{5}" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label for="client-ville">Ville <span class="required">*</span></label>
-                        <input type="text" id="client-ville" name="client-ville" placeholder="Ex: Paris" required autocomplete="address-level2">
-                    </div>
-                </div>
-                <p class="form-note"><span class="required">*</span> Champs obligatoires pour générer le devis</p>
             </section>
-
-        </div><!-- fin calc-container -->
-
-        <!-- ========================================
-             BARRE TOTAL FIXE
-             ======================================== -->
-        <aside class="summary" aria-label="Récapitulatif du devis">
-            <div class="summary-content">
-                <div class="summary-item">
-                    <span>Sous-total HT :</span>
-                    <strong id="subtotal">0 €</strong>
-                </div>
-                <div class="summary-item">
-                    <span>TVA (20%) :</span>
-                    <strong id="vat">0 €</strong>
-                </div>
-                <div class="summary-item total">
-                    <span>TOTAL TTC :</span>
-                    <strong id="total">0 €</strong>
-                </div>
-                <div class="summary-actions">
-                    <button type="button" class="btn-download" id="downloadQuote">Télécharger le Devis</button>
-                    <button type="button" class="btn-print" id="printQuote">Imprimer</button>
-                    <button type="button" class="btn-reset" id="resetBtn">Réinitialiser</button>
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="grid grid-4">
-                <div>
-                    <h3>À Propos</h3>
-                    <p style="color: #d0d0d0; font-size: 14px; line-height: 1.6;">Mistral Pro Reno est une entreprise générale de bâtiment et rénovation basée à Paris, avec plus de 30 ans d'expérience dans le domaine.</p>
-                </div>
-                <div>
-                    <h3>Nos Services</h3>
-                    <ul>
-                        <li><a href="services.html">Rénovation Intérieure</a></li>
-                        <li><a href="services.html">Construction</a></li>
-                        <li><a href="degat-des-eaux.html">Dégât des Eaux</a></li>
-                        <li><a href="services.html">Menuiserie</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Liens Rapides</h3>
-                    <ul>
-                        <li><a href="index.html">Accueil</a></li>
-                        <li><a href="projets.html">Nos Réalisations</a></li>
-                        <li><a href="devis.html">Demander un Devis</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Contact</h3>
-                    <ul style="list-style: none;">
-                        <li style="margin-bottom: 15px;">
-                            <a href="tel:0755188937" data-location="footer">07 55 18 89 37</a>
-                        </li>
-                        <li>
-                            <a href="mailto:contact@mistralpro-reno.fr">contact@mistralpro-reno.fr</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p style="margin-bottom: 15px;"><strong>MISTRAL PRO RENO – Entreprise Générale de Bâtiment</strong><br>9 rue Anatole de la Forge, 75017 Paris<br>Garantie Décennale</p>
-                <p>© 2025 Mistral Pro Reno. Tous droits réservés.</p>
-            </div>
         </div>
-    </footer>
+    </main>
 
     <!-- Mobile CTA -->
     <div class="mobile-cta">
-        <a href="tel:0755188937" data-location="mobile_cta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-            Appelez-nous : 07 55 18 89 37
-        </a>
+        <a href="tel:0755188937">📞 07 55 18 89 37</a>
     </div>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <script src="js/cost_calculator.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/cost_calculator.js?v=3.0"></script>
     <script src="js/main.js" type="module"></script>
-
-    <!-- Schema.org pour SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Simulateur de Devis Mistral Pro Reno",
-        "description": "Outil gratuit d'estimation de devis pour travaux de rénovation à Paris",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web",
-        "provider": {
-            "@type": "LocalBusiness",
-            "name": "Mistral Pro Reno",
-            "telephone": "+33755188937",
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "9 rue Anatole de la Forge",
-                "addressLocality": "Paris",
-                "postalCode": "75017",
-                "addressCountry": "FR"
-            }
-        }
-    }
-    </script>
 </body>
 </html>
