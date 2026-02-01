@@ -365,34 +365,40 @@ header { width: 100%; }
 
 .category-panel.active { display: block; }
 
-/* Sub-tabs */
+/* Sub-tabs - Style boutons */
 .sub-tabs {
     display: flex;
-    background: var(--gray-light);
-    border-bottom: 3px solid var(--yellow);
+    gap: 8px;
+    padding: 15px;
+    background: var(--black);
     overflow-x: auto;
 }
 
 .sub-tab {
     padding: 12px 20px;
-    background: none;
-    border: none;
+    background: #333;
+    border: 2px solid #444;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--gray-text);
+    color: var(--white);
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
     font-family: inherit;
 }
 
-.sub-tab:hover { background: var(--white); color: var(--black); }
+.sub-tab:hover {
+    background: #444;
+    border-color: var(--yellow);
+    transform: translateY(-2px);
+}
 
 .sub-tab.active {
-    background: var(--white);
+    background: var(--yellow);
+    border-color: var(--yellow);
     color: var(--black);
-    border-bottom: 3px solid var(--yellow);
-    margin-bottom: -3px;
+    box-shadow: 0 4px 12px rgba(244, 196, 48, 0.3);
 }
 
 /* Sub-content */
