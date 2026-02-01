@@ -413,7 +413,11 @@
 
         $('select').each(function() {
             const id = $(this).attr('id');
-            if (id && !id.startsWith('gamme-') && !id.startsWith('type-peinture')) {
+            // Exclure les selects de gamme/type (ils sont juste pour définir le prix unitaire)
+            if (id && 
+                !id.startsWith('gamme-') && 
+                !id.startsWith('type-peinture') &&
+                !$(this).hasClass('gamme-select')) {
                 const val = parseFloat($(this).val()) || 0;
                 if (val > 0) {
                     const category = $(this).closest('.category-panel').data('category') || 'Prestations';
@@ -421,12 +425,19 @@
                     
                     if (!itemsByCategory[catName]) itemsByCategory[catName] = [];
                     
+                    // Priorité: data-label de l'option > data-label du select > label > texte option
+                    const $selectedOption = $(this).find('option:selected');
+                    const label = $selectedOption.data('label') || 
+                                  $(this).data('label') || 
+                                  $(this).closest('.select-box').find('label').text().trim().split('(')[0].trim();
+                    
                     itemsByCategory[catName].push({
-                        desc: $(this).find('option:selected').text(),
+                        desc: label,
                         qty: 1,
                         unit: 'forfait',
                         price: val
                     });
+                }
                 }
             }
         });
@@ -454,7 +465,7 @@
             String(date.getDate()).padStart(2, '0') + '-' + 
             String(Math.floor(Math.random() * 9000) + 1000);
 
-        let y = 15;
+        let y = 10;
 
         // ===== LOGO =====
         if (companyLogo) {
@@ -475,49 +486,43 @@
         doc.setFont(undefined, 'bold');
         doc.text('Devis', 170, y + 5);
         
-        y += 10;
+        let yRight = y + 12;
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
         doc.setFont(undefined, 'normal');
-        doc.text('N° ' + quoteNum, 155, y);
-        y += 4;
-        doc.text('En date du : ' + dateStr, 155, y);
-        y += 4;
-        doc.text('Valable jusqu\'au : ' + validityStr, 155, y);
-        y += 4;
-        doc.text('Votre contact : ' + COMPANY.name.split(' ')[0], 155, y);
-        y += 4;
-        doc.text('Tél : ' + COMPANY.phone, 155, y);
-        y += 4;
-        doc.text('Email : ' + COMPANY.email, 155, y);
+        doc.text('N° ' + quoteNum, 155, yRight);
+        yRight += 4;
+        doc.text('En date du : ' + dateStr, 155, yRight);
+        yRight += 4;
+        doc.text('Valable jusqu\'au : ' + validityStr, 155, yRight);
+        yRight += 4;
+        doc.text('Votre contact : ' + COMPANY.name.split(' ')[0], 155, yRight);
+        yRight += 4;
+        doc.text('Tél : ' + COMPANY.phone, 155, yRight);
+        yRight += 4;
+        doc.text('Email : ' + COMPANY.email, 155, yRight);
 
-        // ===== INFOS ENTREPRISE (gauche) =====
-        y = 50;
-        doc.setFontSize(14);
-        doc.setTextColor(74, 144, 226);
-        doc.setFont(undefined, 'bold');
-        doc.text(COMPANY.name, 20, y);
-        
-        y += 5;
+        // ===== INFOS ENTREPRISE (à droite du logo) =====
+        let yCompany = y + 12;
         doc.setFontSize(9);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'normal');
-        doc.text(COMPANY.address, 20, y);
-        y += 4;
-        doc.text(COMPANY.city, 20, y);
-        y += 4;
-        doc.text('TVA N° FR74851558882', 20, y);
-        y += 4;
+        doc.text(COMPANY.address, 55, yCompany);
+        yCompany += 4;
+        doc.text(COMPANY.city, 55, yCompany);
+        yCompany += 4;
+        doc.text('TVA N° FR74851558882', 55, yCompany);
+        yCompany += 4;
         doc.setTextColor(74, 144, 226);
         doc.setFont(undefined, 'bold');
-        doc.text('Tél : ' + COMPANY.phone, 20, y);
-        y += 4;
+        doc.text('Tél : ' + COMPANY.phone, 55, yCompany);
+        yCompany += 4;
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'normal');
-        doc.text('Email : ' + COMPANY.email, 20, y);
+        doc.text('Email : ' + COMPANY.email, 55, yCompany);
 
-        // ===== INFOS CLIENT (droite) =====
-        let yClient = 50;
+        // ===== INFOS CLIENT (milieu droite) =====
+        let yClient = y + 12;
         doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'bold');
@@ -542,7 +547,7 @@
         }
 
         // ===== LIGNE SÉPARATRICE =====
-        y = 85;
+        y = 50;
         doc.setDrawColor(74, 144, 226);
         doc.setLineWidth(0.5);
         doc.line(20, y, 190, y);
@@ -707,6 +712,19 @@
             doc.text('Page ' + i + ' / ' + pageCount, 185, 286, { align: 'right' });
         }
 
+        // ===== NOM DU FICHIER =====
+        // Nettoyer le nom du client pour le nom de fichier
+        const nomClean = nom.replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').toUpperCase();
+        const fileName = 'Devis-' + quoteNum + '-' + nomClean;
+        
+        // Définir les propriétés du document
+        doc.setProperties({
+            title: fileName,
+            subject: 'Devis travaux de rénovation',
+            author: COMPANY.name,
+            creator: COMPANY.name
+        });
+
         // ===== OUVRIR POUR IMPRESSION =====
         const pdfBlob = doc.output('blob');
         const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -714,13 +732,15 @@
         
         if (printWindow) {
             printWindow.onload = function() {
+                // Définir le titre de la fenêtre
+                printWindow.document.title = fileName;
                 printWindow.print();
                 setTimeout(function() {
                     URL.revokeObjectURL(pdfUrl);
                 }, 1000);
             };
         } else {
-            doc.save('devis-mistral-' + quoteNum + '.pdf');
+            doc.save(fileName + '.pdf');
             URL.revokeObjectURL(pdfUrl);
         }
     }
