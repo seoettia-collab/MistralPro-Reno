@@ -265,26 +265,31 @@ header { width: 100%; }
 }
 
 .btn-download {
-    background: #27ae60;
-    color: var(--white);
-    animation: pulse-download 2s infinite;
+    background: var(--yellow);
+    color: var(--black);
+    border: 3px solid #27ae60;
+    animation: border-glow 2s infinite;
 }
 
-@keyframes pulse-download {
+@keyframes border-glow {
     0% {
+        border-color: #27ae60;
         box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4);
     }
     50% {
-        box-shadow: 0 0 8px 2px rgba(39, 174, 96, 0.3);
+        border-color: #2ecc71;
+        box-shadow: 0 0 10px 2px rgba(39, 174, 96, 0.5);
     }
     100% {
+        border-color: #27ae60;
         box-shadow: 0 0 0 0 rgba(39, 174, 96, 0);
     }
 }
 
 .btn-download:hover {
-    background: #219a52;
+    background: var(--yellow-dark);
     animation: none;
+    border-color: #219a52;
 }
 
 .btn-reset {
@@ -361,6 +366,7 @@ header { width: 100%; }
 /* 5 Catégories principales */
 .main-categories {
     display: flex;
+    justify-content: center;
     gap: 8px;
     margin-bottom: 15px;
     overflow-x: auto;
@@ -370,11 +376,11 @@ header { width: 100%; }
 .main-cat {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
+    gap: 6px;
+    padding: 8px 14px;
     background: var(--yellow);
     border: 2px solid var(--yellow-dark);
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     font-family: inherit;
@@ -405,8 +411,8 @@ header { width: 100%; }
     color: var(--white);
 }
 
-.cat-icon { font-size: 20px; }
-.cat-name { font-size: 13px; font-weight: 700; }
+.cat-icon { font-size: 16px; }
+.cat-name { font-size: 12px; font-weight: 700; }
 
 .cat-count {
     background: var(--yellow);
@@ -439,18 +445,19 @@ header { width: 100%; }
 /* Sub-tabs - Style boutons */
 .sub-tabs {
     display: flex;
+    justify-content: center;
     gap: 8px;
-    padding: 15px;
+    padding: 12px;
     background: #f0f0f0;
     overflow-x: auto;
 }
 
 .sub-tab {
-    padding: 12px 20px;
+    padding: 8px 16px;
     background: var(--yellow);
     border: 2px solid var(--yellow-dark);
-    border-radius: 8px;
-    font-size: 13px;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--black);
     cursor: pointer;
