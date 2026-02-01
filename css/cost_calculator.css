@@ -130,7 +130,7 @@ header { width: 100%; }
    ===================================================== */
 .simulator-layout {
     display: grid;
-    grid-template-columns: 480px 1fr;
+    grid-template-columns: 420px 1fr;
     min-height: calc(100vh - 120px);
     max-width: 1600px;
     margin: 0 auto;
@@ -142,10 +142,11 @@ header { width: 100%; }
 .client-sidebar {
     background: var(--black);
     color: var(--white);
-    padding: 20px;
+    padding: 15px;
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: fit-content;
+    max-height: 100vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -153,32 +154,32 @@ header { width: 100%; }
 
 .client-header {
     text-align: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
     border-bottom: 2px solid var(--yellow);
 }
 
 .client-header h1 {
-    font-size: 18px;
+    font-size: 16px;
     color: var(--yellow);
-    margin: 0 0 5px 0;
+    margin: 0 0 3px 0;
 }
 
 .client-header p {
-    font-size: 12px;
+    font-size: 11px;
     color: #aaa;
     margin: 0;
 }
 
 .client-form {
-    flex: 1;
+    flex: 0;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 .form-group {
@@ -191,18 +192,18 @@ header { width: 100%; }
 }
 
 .form-group label {
-    font-size: 12px;
+    font-size: 11px;
     color: #aaa;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .form-group input {
-    padding: 10px 12px;
+    padding: 8px 10px;
     border: 1px solid #444;
     border-radius: 5px;
     background: #2a2a2a;
     color: var(--white);
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .form-group input:focus {
@@ -220,15 +221,15 @@ header { width: 100%; }
 .total-box {
     background: #2a2a2a;
     border-radius: 10px;
-    padding: 15px;
-    margin-top: auto;
+    padding: 12px;
+    margin-top: 10px;
 }
 
 .total-row {
     display: flex;
     justify-content: space-between;
-    padding: 6px 0;
-    font-size: 13px;
+    padding: 4px 0;
+    font-size: 12px;
     color: #aaa;
 }
 
@@ -238,26 +239,26 @@ header { width: 100%; }
 
 .total-row.main {
     border-top: 2px solid var(--yellow);
-    margin-top: 8px;
-    padding-top: 10px;
-    font-size: 16px;
+    margin-top: 6px;
+    padding-top: 8px;
+    font-size: 14px;
 }
 
 .total-row.main span { color: var(--white); font-weight: 600; }
-.total-row.main strong { color: var(--yellow); font-size: 20px; }
+.total-row.main strong { color: var(--yellow); font-size: 18px; }
 
 .total-actions {
     display: flex;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 6px;
+    margin-top: 10px;
 }
 
 .total-actions button {
     flex: 1;
-    padding: 10px;
+    padding: 8px;
     border: none;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -299,12 +300,12 @@ header { width: 100%; }
 .form-message {
     background: var(--danger);
     color: var(--white);
-    padding: 10px;
+    padding: 8px;
     border-radius: 6px;
     text-align: center;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
-    margin-top: 10px;
+    margin-top: 8px;
     display: none;
 }
 
@@ -317,6 +318,35 @@ header { width: 100%; }
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-5px); }
     40%, 80% { transform: translateX(5px); }
+}
+
+/* Bordure clignotante formulaire */
+.client-form.highlight {
+    animation: border-pulse 1s ease-in-out 3;
+}
+
+@keyframes border-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.8), 0 0 20px rgba(220, 53, 69, 0.4);
+    }
+}
+
+.client-form.highlight input:invalid,
+.client-form.highlight input:placeholder-shown:required {
+    border-color: var(--danger) !important;
+    animation: input-pulse 1s ease-in-out 3;
+}
+
+@keyframes input-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+    }
 }
 
 /* =====================================================

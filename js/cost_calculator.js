@@ -253,6 +253,7 @@
     
     function generatePDF() {
         const $formMessage = $('#formMessage');
+        const $clientForm = $('.client-form');
         
         // Validation des champs obligatoires
         const nom = $('#client-nom').val().trim();
@@ -264,21 +265,28 @@
 
         if (!nom || !tel || !email || !cp) {
             $formMessage.addClass('show');
-            setTimeout(() => $formMessage.removeClass('show'), 3000);
+            $clientForm.addClass('highlight');
+            setTimeout(() => {
+                $formMessage.removeClass('show');
+                $clientForm.removeClass('highlight');
+            }, 3000);
             return;
         }
 
         if (!/^[0-9]{5}$/.test(cp)) {
             $formMessage.text('⚠️ Code postal invalide (5 chiffres)').addClass('show');
+            $clientForm.addClass('highlight');
             setTimeout(() => {
                 $formMessage.removeClass('show');
                 $formMessage.text('⚠️ Veuillez compléter votre formulaire');
+                $clientForm.removeClass('highlight');
             }, 3000);
             return;
         }
 
         // Masquer le message si tout est OK
         $formMessage.removeClass('show');
+        $clientForm.removeClass('highlight');
 
         // Collecte items
         const items = [];
