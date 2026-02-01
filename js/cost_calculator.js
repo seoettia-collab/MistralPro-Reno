@@ -1,12 +1,14 @@
 /**
  * MISTRAL PRO RENO - Simulateur V3
- * Navigation + Calculs + PDF
+ * Navigation + Calculs + PDF + Envoi Webhook
  */
 
 (function($) {
     'use strict';
 
     const TVA_RATE = 0.20;
+    const WEBHOOK_URL = 'https://ettia.app.n8n.cloud/webhook/landing-form';
+    
     const COMPANY = {
         name: "Mistral Pro Reno",
         address: "9 rue Anatole de la Forge",
@@ -38,6 +40,60 @@
             console.warn('Logo non trouvé, utilisation du logo par défaut');
         };
         img.src = 'images/logo.png';
+    }
+    
+    // =====================================================
+    // ENVOI WEBHOOK N8N
+    // =====================================================
+    
+    async function sendToWebhook(formData, itemsList, totals) {
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    // Infos client
+                    nom: formData.nom,
+                    telephone: formData.tel,
+                    email: formData.email,
+                    adresse: formData.adresse,
+                    code_postal: formData.cp,
+                    ville: formData.ville,
+                    
+                    // Infos devis
+                    numero_devis: formData.quoteNum,
+                    date_devis: new Date().toLocaleDateString('fr-FR'),
+                    
+                    // Totaux
+                    total_ht: totals.subtotal,
+                    tva: totals.vat,
+                    total_ttc: totals.totalTTC,
+                    
+                    // Détail prestations
+                    prestations: itemsList,
+                    
+                    // Métadonnées
+                    form_name: 'simulateur-devis',
+                    form_location: 'cost_calculator',
+                    submitted_at: new Date().toISOString(),
+                    page_url: window.location.href,
+                    user_agent: navigator.userAgent
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Données envoyées au webhook avec succès');
+                return true;
+            } else {
+                console.warn('Erreur webhook:', response.status);
+                return false;
+            }
+        } catch (error) {
+            console.error('Erreur envoi webhook:', error);
+            return false;
+        }
     }
 
     // =====================================================
@@ -721,6 +777,29 @@
             author: COMPANY.name,
             creator: COMPANY.name
         });
+
+        // ===== ENVOI WEBHOOK N8N =====
+        // Préparer la liste des prestations pour le webhook
+        const itemsList = [];
+        Object.keys(itemsByCategory).forEach(catName => {
+            itemsByCategory[catName].forEach(item => {
+                itemsList.push({
+                    categorie: catName,
+                    description: item.desc,
+                    quantite: item.qty,
+                    unite: item.unit,
+                    prix_unitaire: item.price,
+                    total: item.qty * item.price
+                });
+            });
+        });
+        
+        // Envoyer au webhook (async, ne bloque pas)
+        sendToWebhook(
+            { nom, tel, email, adresse, cp, ville, quoteNum },
+            itemsList,
+            { subtotal, vat, totalTTC }
+        );
 
         // ===== OUVRIR POUR IMPRESSION =====
         const pdfBlob = doc.output('blob');
