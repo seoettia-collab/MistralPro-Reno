@@ -464,109 +464,107 @@
             String(date.getDate()).padStart(2, '0') + '-' + 
             String(Math.floor(Math.random() * 9000) + 1000);
 
-        let y = 10;
+        let y = 15;
 
-        // ===== LOGO =====
+        // ===== LOGO (haut gauche) =====
         if (companyLogo) {
             try {
-                doc.addImage(companyLogo, 'PNG', 15, y, 35, 35);
+                doc.addImage(companyLogo, 'PNG', 15, y, 40, 40);
             } catch(e) {
-                // Fallback: cercle avec initiales
                 drawLogoFallback(doc, y);
             }
         } else {
-            // Fallback: cercle avec initiales
             drawLogoFallback(doc, y);
         }
 
-        // ===== TITRE DEVIS (droite) =====
+        // ===== TITRE DEVIS (haut droite) =====
         doc.setFontSize(28);
         doc.setTextColor(74, 144, 226);
         doc.setFont(undefined, 'bold');
-        doc.text('Devis', 170, y + 5);
+        doc.text('Devis', 175, 20);
         
-        let yRight = y + 12;
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
         doc.setFont(undefined, 'normal');
-        doc.text('N° ' + quoteNum, 155, yRight);
-        yRight += 4;
-        doc.text('En date du : ' + dateStr, 155, yRight);
-        yRight += 4;
-        doc.text('Valable jusqu\'au : ' + validityStr, 155, yRight);
-        yRight += 4;
-        doc.text('Votre contact : ' + COMPANY.name.split(' ')[0], 155, yRight);
-        yRight += 4;
-        doc.text('Tél : ' + COMPANY.phone, 155, yRight);
-        yRight += 4;
-        doc.text('Email : ' + COMPANY.email, 155, yRight);
+        doc.text('N° ' + quoteNum, 150, 28);
+        doc.text('En date du : ' + dateStr, 150, 32);
+        doc.text('Valable jusqu\'au : ' + validityStr, 150, 36);
+        doc.text('Votre contact : Mistral', 150, 40);
+        doc.text('Tél : ' + COMPANY.phone, 150, 44);
+        doc.text('Email : ' + COMPANY.email, 150, 48);
 
-        // ===== INFOS ENTREPRISE (à droite du logo) =====
-        let yCompany = y + 12;
+        // ===== LIGNE SÉPARATRICE =====
+        y = 60;
+        doc.setDrawColor(74, 144, 226);
+        doc.setLineWidth(0.5);
+        doc.line(15, y, 195, y);
+
+        // ===== INFOS ENTREPRISE (gauche, sous la ligne) =====
+        y = 68;
+        doc.setFontSize(12);
+        doc.setTextColor(74, 144, 226);
+        doc.setFont(undefined, 'bold');
+        doc.text('Mistral Pro Reno', 15, y);
+        
+        y += 5;
         doc.setFontSize(9);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'normal');
-        doc.text(COMPANY.address, 55, yCompany);
-        yCompany += 4;
-        doc.text(COMPANY.city, 55, yCompany);
-        yCompany += 4;
-        doc.text('TVA N° FR74851558882', 55, yCompany);
-        yCompany += 4;
+        doc.text(COMPANY.address, 15, y);
+        y += 4;
+        doc.text(COMPANY.city, 15, y);
+        y += 4;
+        doc.text('TVA N° FR74851558882', 15, y);
+        y += 4;
         doc.setTextColor(74, 144, 226);
         doc.setFont(undefined, 'bold');
-        doc.text('Tél : ' + COMPANY.phone, 55, yCompany);
-        yCompany += 4;
+        doc.text('Tél : ' + COMPANY.phone, 15, y);
+        y += 4;
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'normal');
-        doc.text('Email : ' + COMPANY.email, 55, yCompany);
+        doc.text('Email : ' + COMPANY.email, 15, y);
 
-        // ===== INFOS CLIENT (milieu droite) =====
-        let yClient = y + 12;
+        // ===== INFOS CLIENT (droite, sous la ligne) =====
+        let yClient = 68;
         doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'bold');
-        doc.text(nom, 120, yClient);
+        doc.text(nom, 110, yClient);
         
         yClient += 5;
         doc.setFontSize(9);
         doc.setFont(undefined, 'normal');
         if (adresse) {
-            doc.text(adresse, 120, yClient);
+            doc.text(adresse, 110, yClient);
             yClient += 4;
         }
         const cpVilleStr = [cp, ville].filter(Boolean).join(' ');
-        doc.text(cpVilleStr, 120, yClient);
+        doc.text(cpVilleStr, 110, yClient);
         yClient += 4;
-        doc.text('France', 120, yClient);
+        doc.text('France', 110, yClient);
         yClient += 4;
-        doc.text(tel, 120, yClient);
+        doc.text(tel, 110, yClient);
         yClient += 4;
         if (email) {
-            doc.text(email, 120, yClient);
+            doc.text(email, 110, yClient);
         }
 
-        // ===== LIGNE SÉPARATRICE =====
-        y = 50;
-        doc.setDrawColor(74, 144, 226);
-        doc.setLineWidth(0.5);
-        doc.line(20, y, 190, y);
-
-        // ===== TITRE DEVIS =====
-        y += 8;
+        // ===== TITRE DEVIS ESTIMATIF =====
+        y = 95;
         doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'bold');
-        doc.text('Devis Estimatif - Travaux de Rénovation', 20, y);
+        doc.text('Devis Estimatif - Travaux de Rénovation', 15, y);
 
         // ===== EN-TÊTE TABLEAU =====
-        y += 10;
+        y += 8;
         doc.setFillColor(74, 144, 226);
-        doc.rect(20, y - 4, 170, 7, 'F');
+        doc.rect(15, y - 4, 180, 7, 'F');
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(8);
         doc.setFont(undefined, 'bold');
-        doc.text('N°', 22, y);
-        doc.text('DÉSIGNATION', 32, y);
+        doc.text('N°', 17, y);
+        doc.text('DÉSIGNATION', 27, y);
         doc.text('QTÉ', 115, y);
         doc.text('PRIX U.', 135, y);
         doc.text('TVA', 155, y);
@@ -593,12 +591,12 @@
             // Titre catégorie
             y += 6;
             doc.setFillColor(240, 240, 240);
-            doc.rect(20, y - 4, 170, 6, 'F');
+            doc.rect(15, y - 4, 180, 6, 'F');
             doc.setFont(undefined, 'bold');
             doc.setFontSize(9);
-            doc.text(sectionNum + '', 22, y);
-            doc.text(catName.toUpperCase(), 32, y);
-            doc.text(formatPrice(catTotal), 175, y);
+            doc.text(sectionNum + '', 17, y);
+            doc.text(catName.toUpperCase(), 27, y);
+            doc.text(formatPrice(catTotal), 180, y);
             
             // Items de la catégorie
             let itemNum = 1;
@@ -616,11 +614,11 @@
                 doc.setFontSize(8);
                 
                 // Numéro
-                doc.text(sectionNum + '.' + itemNum, 22, y);
+                doc.text(sectionNum + '.' + itemNum, 17, y);
                 
                 // Description (tronquée si trop longue)
-                const desc = item.desc.length > 45 ? item.desc.substring(0, 45) + '...' : item.desc;
-                doc.text(desc, 32, y);
+                const desc = item.desc.length > 50 ? item.desc.substring(0, 50) + '...' : item.desc;
+                doc.text(desc, 27, y);
                 
                 // Quantité + unité
                 doc.text(item.qty + ' ' + item.unit, 115, y);
