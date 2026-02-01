@@ -74,6 +74,10 @@
                     // Détail prestations
                     prestations: itemsList,
                     
+                    // PDF en base64
+                    pdf_base64: formData.pdfBase64 || null,
+                    pdf_filename: formData.fileName || null,
+                    
                     // Métadonnées
                     form_name: 'simulateur-devis',
                     form_location: 'cost_calculator',
@@ -794,9 +798,12 @@
             });
         });
         
-        // Envoyer au webhook (async, ne bloque pas)
+        // ===== RÉCUPÉRER LE PDF EN BASE64 =====
+        const pdfBase64 = doc.output('datauristring').split(',')[1];
+        
+        // Envoyer au webhook avec le PDF
         sendToWebhook(
-            { nom, tel, email, adresse, cp, ville, quoteNum },
+            { nom, tel, email, adresse, cp, ville, quoteNum, pdfBase64, fileName: fileName + '.pdf' },
             itemsList,
             { subtotal, vat, totalTTC }
         );
