@@ -300,7 +300,7 @@
     }
 
     // =====================================================
-    // PDF GENERATION
+    // PDF GENERATION - FORMAT PROFESSIONNEL
     // =====================================================
     
     function generatePDF() {
@@ -340,11 +340,18 @@
         $formMessage.removeClass('show');
         $clientForm.removeClass('highlight');
 
-        // Collecte items
-        const items = [];
+        // Collecte items par catégorie
+        const itemsByCategory = {};
         
         $('input[type="checkbox"]:checked').each(function() {
-            items.push({
+            const category = $(this).closest('.category-panel').data('category') || 
+                           $(this).closest('.sub-content').prev('.sub-tabs').find('.sub-tab.active').text() ||
+                           'Prestations';
+            const catName = getCategoryName(category);
+            
+            if (!itemsByCategory[catName]) itemsByCategory[catName] = [];
+            
+            itemsByCategory[catName].push({
                 desc: $(this).data('label') || $(this).closest('label').find('strong').text(),
                 qty: 1,
                 unit: 'u',
@@ -358,14 +365,18 @@
                 const id = $(this).attr('id');
                 let price = parseFloat($(this).data('price')) || 0;
                 
-                // Prix variable ?
                 const $gamme = $(`#gamme-${id}, #type-peinture-${id.replace('-peinture', '')}`);
                 if ($gamme.length && !price) {
                     price = parseFloat($gamme.val()) || 0;
                 }
                 
                 if (price > 0) {
-                    items.push({
+                    const category = $(this).closest('.category-panel').data('category') || 'Prestations';
+                    const catName = getCategoryName(category);
+                    
+                    if (!itemsByCategory[catName]) itemsByCategory[catName] = [];
+                    
+                    itemsByCategory[catName].push({
                         desc: $(this).data('label') || $(`label[for="${id}"]`).text().split('(')[0].trim(),
                         qty: qty,
                         unit: getUnit(id),
@@ -380,7 +391,12 @@
             if (id && !id.startsWith('gamme-') && !id.startsWith('type-peinture')) {
                 const val = parseFloat($(this).val()) || 0;
                 if (val > 0) {
-                    items.push({
+                    const category = $(this).closest('.category-panel').data('category') || 'Prestations';
+                    const catName = getCategoryName(category);
+                    
+                    if (!itemsByCategory[catName]) itemsByCategory[catName] = [];
+                    
+                    itemsByCategory[catName].push({
                         desc: $(this).find('option:selected').text(),
                         qty: 1,
                         unit: 'forfait',
@@ -390,138 +406,279 @@
             }
         });
 
-        if (items.length === 0) {
+        const allItems = Object.values(itemsByCategory).flat();
+        if (allItems.length === 0) {
             alert('Veuillez sélectionner au moins une prestation');
             return;
         }
 
-        // Génération PDF
+        // =====================================================
+        // GÉNÉRATION PDF PROFESSIONNEL
+        // =====================================================
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
         const date = new Date();
+        const dateStr = date.toLocaleDateString('fr-FR');
+        const validityDate = new Date(date);
+        validityDate.setDate(validityDate.getDate() + 30);
+        const validityStr = validityDate.toLocaleDateString('fr-FR');
+        
         const quoteNum = 'DEV-' + date.getFullYear() + 
             String(date.getMonth() + 1).padStart(2, '0') + 
             String(date.getDate()).padStart(2, '0') + '-' + 
             String(Math.floor(Math.random() * 9000) + 1000);
 
-        let y = 20;
+        let y = 15;
 
-        // Header
-        doc.setFontSize(18);
-        doc.setTextColor(244, 196, 48);
+        // ===== LOGO (cercle avec initiales) =====
+        doc.setDrawColor(74, 144, 226);
+        doc.setLineWidth(2);
+        doc.circle(30, y + 15, 14, 'S');
+        doc.setFontSize(14);
+        doc.setTextColor(74, 144, 226);
+        doc.setFont(undefined, 'bold');
+        doc.text('MPR', 22, y + 18);
+
+        // ===== TITRE DEVIS (droite) =====
+        doc.setFontSize(28);
+        doc.setTextColor(74, 144, 226);
+        doc.setFont(undefined, 'bold');
+        doc.text('Devis', 170, y + 5);
+        
+        y += 10;
+        doc.setFontSize(9);
+        doc.setTextColor(80, 80, 80);
+        doc.setFont(undefined, 'normal');
+        doc.text('N° ' + quoteNum, 155, y);
+        y += 4;
+        doc.text('En date du : ' + dateStr, 155, y);
+        y += 4;
+        doc.text('Valable jusqu\'au : ' + validityStr, 155, y);
+        y += 4;
+        doc.text('Votre contact : ' + COMPANY.name.split(' ')[0], 155, y);
+        y += 4;
+        doc.text('Tél : ' + COMPANY.phone, 155, y);
+        y += 4;
+        doc.text('Email : ' + COMPANY.email, 155, y);
+
+        // ===== INFOS ENTREPRISE (gauche) =====
+        y = 50;
+        doc.setFontSize(14);
+        doc.setTextColor(74, 144, 226);
         doc.setFont(undefined, 'bold');
         doc.text(COMPANY.name, 20, y);
         
-        y += 8;
-        doc.setFontSize(10);
+        y += 5;
+        doc.setFontSize(9);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'normal');
-        doc.text(COMPANY.address + ', ' + COMPANY.city, 20, y);
-        y += 5;
-        doc.text('Tél: ' + COMPANY.phone + ' | ' + COMPANY.email, 20, y);
+        doc.text(COMPANY.address, 20, y);
+        y += 4;
+        doc.text(COMPANY.city, 20, y);
+        y += 4;
+        doc.text('TVA N° FR74851558882', 20, y);
+        y += 4;
+        doc.setTextColor(74, 144, 226);
+        doc.setFont(undefined, 'bold');
+        doc.text('Tél : ' + COMPANY.phone, 20, y);
+        y += 4;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(undefined, 'normal');
+        doc.text('Email : ' + COMPANY.email, 20, y);
 
-        // Titre
-        doc.setFontSize(24);
+        // ===== INFOS CLIENT (droite) =====
+        let yClient = 50;
+        doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'bold');
-        doc.text('DEVIS', 160, 25);
+        doc.text(nom, 120, yClient);
         
-        doc.setFontSize(10);
+        yClient += 5;
+        doc.setFontSize(9);
         doc.setFont(undefined, 'normal');
-        doc.text('N° ' + quoteNum, 155, 32);
-        doc.text('Date: ' + date.toLocaleDateString('fr-FR'), 155, 37);
+        if (adresse) {
+            doc.text(adresse, 120, yClient);
+            yClient += 4;
+        }
+        const cpVilleStr = [cp, ville].filter(Boolean).join(' ');
+        doc.text(cpVilleStr, 120, yClient);
+        yClient += 4;
+        doc.text('France', 120, yClient);
+        yClient += 4;
+        doc.text(tel, 120, yClient);
+        yClient += 4;
+        if (email) {
+            doc.text(email, 120, yClient);
+        }
 
-        // Ligne
-        y = 50;
-        doc.setDrawColor(244, 196, 48);
-        doc.setLineWidth(1);
+        // ===== LIGNE SÉPARATRICE =====
+        y = 85;
+        doc.setDrawColor(74, 144, 226);
+        doc.setLineWidth(0.5);
         doc.line(20, y, 190, y);
 
-        // Client
-        y += 10;
+        // ===== TITRE DEVIS =====
+        y += 8;
         doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        doc.text('CLIENT', 20, y);
-        y += 6;
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(10);
-        doc.text(nom, 20, y);
-        y += 5;
-        if (adresse) {
-            doc.text(adresse, 20, y);
-            y += 5;
-        }
-        const cpVille = [cp, ville].filter(Boolean).join(' ');
-        if (cpVille) {
-            doc.text(cpVille, 20, y);
-            y += 5;
-        }
-        doc.text('Tél: ' + tel, 20, y);
-        y += 5;
-        if (email) {
-            doc.text('Email: ' + email, 20, y);
-        }
-
-        // Tableau
-        y += 15;
-        doc.setFillColor(244, 196, 48);
-        doc.rect(20, y - 5, 170, 8, 'F');
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'bold');
-        doc.text('Désignation', 22, y);
-        doc.text('Qté', 120, y);
-        doc.text('Unité', 135, y);
-        doc.text('P.U.', 155, y);
-        doc.text('Total', 175, y);
+        doc.text('Devis Estimatif - Travaux de Rénovation', 20, y);
+
+        // ===== EN-TÊTE TABLEAU =====
+        y += 10;
+        doc.setFillColor(74, 144, 226);
+        doc.rect(20, y - 4, 170, 7, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'bold');
+        doc.text('N°', 22, y);
+        doc.text('DÉSIGNATION', 32, y);
+        doc.text('QTÉ', 115, y);
+        doc.text('PRIX U.', 135, y);
+        doc.text('TVA', 155, y);
+        doc.text('TOTAL HT', 175, y);
 
         y += 5;
-        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
         
+        // ===== CONTENU TABLEAU PAR CATÉGORIE =====
         let subtotal = 0;
-        items.forEach(item => {
-            if (y > 270) {
+        let sectionNum = 1;
+
+        Object.keys(itemsByCategory).forEach(catName => {
+            const items = itemsByCategory[catName];
+            let catTotal = 0;
+            items.forEach(item => catTotal += item.qty * item.price);
+            
+            // Vérifier saut de page
+            if (y > 250) {
                 doc.addPage();
                 y = 20;
             }
-            y += 6;
-            const total = item.qty * item.price;
-            subtotal += total;
             
-            doc.text(item.desc.substring(0, 50), 22, y);
-            doc.text(item.qty.toString(), 122, y);
-            doc.text(item.unit, 137, y);
-            doc.text(item.price.toFixed(0) + ' €', 157, y);
-            doc.text(total.toFixed(0) + ' €', 177, y);
+            // Titre catégorie
+            y += 6;
+            doc.setFillColor(240, 240, 240);
+            doc.rect(20, y - 4, 170, 6, 'F');
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(9);
+            doc.text(sectionNum + '', 22, y);
+            doc.text(catName.toUpperCase(), 32, y);
+            doc.text(formatPrice(catTotal), 175, y);
+            
+            // Items de la catégorie
+            let itemNum = 1;
+            items.forEach(item => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                y += 5;
+                const total = item.qty * item.price;
+                subtotal += total;
+                
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(8);
+                
+                // Numéro
+                doc.text(sectionNum + '.' + itemNum, 22, y);
+                
+                // Description (tronquée si trop longue)
+                const desc = item.desc.length > 45 ? item.desc.substring(0, 45) + '...' : item.desc;
+                doc.text(desc, 32, y);
+                
+                // Quantité + unité
+                doc.text(item.qty + ' ' + item.unit, 115, y);
+                
+                // Prix unitaire
+                doc.text(formatPrice(item.price), 135, y);
+                
+                // TVA
+                doc.text('20 %', 155, y);
+                
+                // Total
+                doc.text(formatPrice(total), 175, y);
+                
+                itemNum++;
+            });
+            
+            sectionNum++;
         });
 
-        // Totaux
+        // ===== TOTAUX =====
         y += 15;
-        doc.setDrawColor(200, 200, 200);
+        if (y > 250) {
+            doc.addPage();
+            y = 30;
+        }
+        
+        doc.setDrawColor(74, 144, 226);
+        doc.setLineWidth(0.5);
         doc.line(120, y, 190, y);
-        y += 8;
         
         const vat = subtotal * TVA_RATE;
         const totalTTC = subtotal + vat;
-
-        doc.text('Total HT:', 125, y);
-        doc.text(subtotal.toFixed(0) + ' €', 185, y, { align: 'right' });
+        const acompte = Math.round(totalTTC * 0.3);
+        const solde = totalTTC - acompte;
+        
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Total HT', 125, y);
+        doc.text(formatPrice(subtotal), 185, y, { align: 'right' });
+        
         y += 6;
-        doc.text('TVA 20%:', 125, y);
-        doc.text(vat.toFixed(0) + ' €', 185, y, { align: 'right' });
+        doc.text('TVA 20%', 125, y);
+        doc.text(formatPrice(vat), 185, y, { align: 'right' });
+        
         y += 8;
         doc.setFont(undefined, 'bold');
-        doc.setFontSize(12);
-        doc.text('TOTAL TTC:', 125, y);
-        doc.text(totalTTC.toFixed(0) + ' €', 185, y, { align: 'right' });
+        doc.setFontSize(11);
+        doc.text('Total TTC', 125, y);
+        doc.text(formatPrice(totalTTC), 185, y, { align: 'right' });
+        
+        // ===== ENCADRÉ NET À PAYER =====
+        y += 10;
+        doc.setFillColor(74, 144, 226);
+        doc.rect(120, y - 5, 70, 10, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.text('NET À PAYER', 125, y);
+        doc.text(formatPrice(totalTTC), 185, y, { align: 'right' });
 
-        // Footer
-        doc.setFontSize(8);
+        // ===== CONDITIONS DE PAIEMENT (gauche) =====
+        let yConditions = y - 30;
+        if (yConditions < 200) yConditions = y - 30;
+        
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(undefined, 'bold');
+        doc.setFontSize(9);
+        doc.text('Conditions de paiement', 20, yConditions);
+        
+        yConditions += 5;
         doc.setFont(undefined, 'normal');
-        doc.setTextColor(100, 100, 100);
-        doc.text('Devis valable 30 jours - Garantie décennale', 105, 285, { align: 'center' });
+        doc.setFontSize(8);
+        doc.text('Acompte de 30% à la signature : ' + formatPrice(acompte) + ' TTC', 20, yConditions);
+        yConditions += 4;
+        doc.text('Solde à la fin des travaux : ' + formatPrice(solde) + ' TTC', 20, yConditions);
+        yConditions += 4;
+        doc.text('Paiement par virement bancaire.', 20, yConditions);
 
-        // Ouvrir dans une fenêtre d'impression (comme l'ancien code)
+        // ===== FOOTER =====
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(7);
+            doc.setTextColor(100, 100, 100);
+            doc.setFont(undefined, 'normal');
+            doc.text('Capital 1000 € - 85155888200029 RCS Paris - APE : 4120A', 105, 282, { align: 'center' });
+            doc.text('Garantie décennale - HOKEN ASSURANCE - 25 Rue Marbeuf, 75008 Paris', 105, 286, { align: 'center' });
+            doc.text('Page ' + i + ' / ' + pageCount, 185, 286, { align: 'right' });
+        }
+
+        // ===== OUVRIR POUR IMPRESSION =====
         const pdfBlob = doc.output('blob');
         const pdfUrl = URL.createObjectURL(pdfBlob);
         const printWindow = window.open(pdfUrl, '_blank');
@@ -534,10 +691,26 @@
                 }, 1000);
             };
         } else {
-            // Fallback : télécharger si popup bloquée
             doc.save('devis-mistral-' + quoteNum + '.pdf');
             URL.revokeObjectURL(pdfUrl);
         }
+    }
+    
+    // Fonction pour formater les prix
+    function formatPrice(amount) {
+        return Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
+    }
+    
+    // Fonction pour obtenir le nom de catégorie lisible
+    function getCategoryName(category) {
+        const names = {
+            'plomberie': 'Plomberie & Sanitaires',
+            'electricite': 'Électricité',
+            'peinture': 'Peinture & Revêtements',
+            'gros-oeuvre': 'Gros Œuvre',
+            'menuiserie': 'Menuiserie'
+        };
+        return names[category] || category || 'Prestations';
     }
 
     function getUnit(id) {
