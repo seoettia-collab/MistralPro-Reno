@@ -252,22 +252,33 @@
     // =====================================================
     
     function generatePDF() {
-        // Validation
+        const $formMessage = $('#formMessage');
+        
+        // Validation des champs obligatoires
         const nom = $('#client-nom').val().trim();
         const tel = $('#client-tel').val().trim();
-        const adresse = $('#client-adresse').val().trim();
+        const email = $('#client-email').val().trim();
         const cp = $('#client-cp').val().trim();
+        const adresse = $('#client-adresse').val().trim();
         const ville = $('#client-ville').val().trim();
 
-        if (!nom || !tel || !adresse || !cp || !ville) {
-            alert('Veuillez remplir tous les champs obligatoires (*)');
+        if (!nom || !tel || !email || !cp) {
+            $formMessage.addClass('show');
+            setTimeout(() => $formMessage.removeClass('show'), 3000);
             return;
         }
 
         if (!/^[0-9]{5}$/.test(cp)) {
-            alert('Code postal invalide (5 chiffres)');
+            $formMessage.text('⚠️ Code postal invalide (5 chiffres)').addClass('show');
+            setTimeout(() => {
+                $formMessage.removeClass('show');
+                $formMessage.text('⚠️ Veuillez compléter votre formulaire');
+            }, 3000);
             return;
         }
+
+        // Masquer le message si tout est OK
+        $formMessage.removeClass('show');
 
         // Collecte items
         const items = [];
@@ -377,11 +388,20 @@
         doc.setFontSize(10);
         doc.text(nom, 20, y);
         y += 5;
-        doc.text(adresse, 20, y);
-        y += 5;
-        doc.text(cp + ' ' + ville, 20, y);
-        y += 5;
+        if (adresse) {
+            doc.text(adresse, 20, y);
+            y += 5;
+        }
+        const cpVille = [cp, ville].filter(Boolean).join(' ');
+        if (cpVille) {
+            doc.text(cpVille, 20, y);
+            y += 5;
+        }
         doc.text('Tél: ' + tel, 20, y);
+        y += 5;
+        if (email) {
+            doc.text('Email: ' + email, 20, y);
+        }
 
         // Tableau
         y += 15;

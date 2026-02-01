@@ -23,7 +23,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cost_calculator.css?v=3.2">
+    <link rel="stylesheet" href="css/cost_calculator.css?v=3.4">
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -93,12 +93,12 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="client-email">Email</label>
-                            <input type="email" id="client-email" name="email" placeholder="email@exemple.fr">
+                            <label for="client-email">Email <span class="req">*</span></label>
+                            <input type="email" id="client-email" name="email" placeholder="email@exemple.fr" required>
                         </div>
                         <div class="form-group">
-                            <label for="client-adresse">Adresse <span class="req">*</span></label>
-                            <input type="text" id="client-adresse" name="adresse" placeholder="12 rue..." required>
+                            <label for="client-adresse">Adresse</label>
+                            <input type="text" id="client-adresse" name="adresse" placeholder="12 rue...">
                         </div>
                     </div>
                     <div class="form-row">
@@ -107,8 +107,8 @@
                             <input type="text" id="client-cp" name="cp" placeholder="75017" required pattern="[0-9]{5}">
                         </div>
                         <div class="form-group">
-                            <label for="client-ville">Ville <span class="req">*</span></label>
-                            <input type="text" id="client-ville" name="ville" placeholder="Paris" required>
+                            <label for="client-ville">Ville</label>
+                            <input type="text" id="client-ville" name="ville" placeholder="Paris">
                         </div>
                     </div>
                 </form>
@@ -131,6 +131,7 @@
                         <button type="button" class="btn-download" id="downloadQuote">📄 Télécharger</button>
                         <button type="button" class="btn-reset" id="resetBtn">🔄 Réinitialiser</button>
                     </div>
+                    <div class="form-message" id="formMessage">⚠️ Veuillez compléter votre formulaire</div>
                 </div>
             </aside>
 
@@ -861,7 +862,7 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="js/cost_calculator.js?v=3.2"></script>
+    <script src="js/cost_calculator.js?v=3.4"></script>
     <script src="js/main.js" type="module"></script>
 </body>
 </html>
