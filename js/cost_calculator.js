@@ -14,6 +14,31 @@
         phone: "07 55 18 89 37",
         email: "contact@mistralpro-reno.fr"
     };
+    
+    // Variable pour stocker le logo en base64
+    let companyLogo = null;
+    
+    // Charger le logo au démarrage
+    function loadLogo() {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                companyLogo = canvas.toDataURL('image/png');
+                console.log('Logo chargé avec succès');
+            } catch(e) {
+                console.warn('Erreur conversion logo:', e);
+            }
+        };
+        img.onerror = function() {
+            console.warn('Logo non trouvé, utilisation du logo par défaut');
+        };
+        img.src = 'images/logo.png';
+    }
 
     // =====================================================
     // NAVIGATION
@@ -431,14 +456,18 @@
 
         let y = 15;
 
-        // ===== LOGO (cercle avec initiales) =====
-        doc.setDrawColor(74, 144, 226);
-        doc.setLineWidth(2);
-        doc.circle(30, y + 15, 14, 'S');
-        doc.setFontSize(14);
-        doc.setTextColor(74, 144, 226);
-        doc.setFont(undefined, 'bold');
-        doc.text('MPR', 22, y + 18);
+        // ===== LOGO =====
+        if (companyLogo) {
+            try {
+                doc.addImage(companyLogo, 'PNG', 15, y, 35, 35);
+            } catch(e) {
+                // Fallback: cercle avec initiales
+                drawLogoFallback(doc, y);
+            }
+        } else {
+            // Fallback: cercle avec initiales
+            drawLogoFallback(doc, y);
+        }
 
         // ===== TITRE DEVIS (droite) =====
         doc.setFontSize(28);
@@ -730,12 +759,24 @@
         }
         return 'u';
     }
+    
+    // Fonction pour dessiner le logo fallback (cercle MPR)
+    function drawLogoFallback(doc, y) {
+        doc.setDrawColor(74, 144, 226);
+        doc.setLineWidth(2);
+        doc.circle(32, y + 17, 16, 'S');
+        doc.setFontSize(12);
+        doc.setTextColor(74, 144, 226);
+        doc.setFont(undefined, 'bold');
+        doc.text('MPR', 24, y + 20);
+    }
 
     // =====================================================
     // INIT
     // =====================================================
     
     $(document).ready(function() {
+        loadLogo(); // Charger le logo
         initNavigation();
         initSliders();
         initEvents();
