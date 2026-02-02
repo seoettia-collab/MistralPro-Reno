@@ -103,13 +103,17 @@
     @media(max-width:768px){
       header{height:60px}
       .top-bar{display:none}
-      nav{height:60px;padding:15px 0}
+      nav{height:60px;padding:15px 0;position:relative}
       main{padding-top:60px}
       .hero{min-height:200px;padding:40px 0 30px}
       .hero .container{min-height:120px}
       .hero h1{font-size:28px;min-height:34px}
       .hero p{font-size:16px;min-height:72px}
-      .nav-menu{display:none}
+      .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;background:#1a1a1a;flex-direction:column;padding:0;gap:0;box-shadow:0 4px 20px rgba(0,0,0,0.5);z-index:1000}
+      .nav-menu.active{display:flex}
+      .nav-menu li{list-style:none}
+      .nav-menu a{font-size:14px;padding:12px 20px;border-bottom:1px solid #333;display:block;line-height:1.2;color:#fff}
+      .nav-menu li:last-child a{border-bottom:none}
       .menu-toggle{display:block}
       .hide-mobile{display:none}
       .grid-2,.grid-4{grid-template-columns:1fr}
@@ -270,7 +274,8 @@
           <li role="none"><a href="services.html" role="menuitem" aria-current="page">SERVICES</a></li>
           <li role="none"><a href="projets.html" role="menuitem">PROJETS</a></li>
           <li role="none"><a href="degat-des-eaux.html" role="menuitem">DÉGÂT DES EAUX</a></li>
-          <li role="none"><a href="cost_calculator.html" role="menuitem">DEVIS</a></li>
+          <li role="none"><a href="cost_calculator.html" role="menuitem">CONTACT</a></li>
+          <li role="none"><a href="cost_calculator.html" role="menuitem">SIMULATEUR DEVIS</a></li>
         </ul>
         <button class="menu-toggle" aria-label="Menu" aria-expanded="false">☰</button>
       </div>
@@ -533,14 +538,25 @@
             <option value="plomberie">Plomberie</option>
             <option value="electricite">Électricité</option>
             <option value="menuiserie">Menuiserie</option>
-            <option value="toiture">Toiture</option>            <option value="autre">Autre</option>
+            <option value="autre">Autre</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary" style="width:100%">Envoyer ma demande</button>
+        <button type="submit" class="btn btn-primary" style="width:100%">Envoyer</button>
       </form>
     </div>
   </div>
 
   <script src="js/main.js"></script>
+  
+  <!-- FONT CHARGÉE APRÈS LE RENDU - ZERO CLS -->
+  <script>
+  if('fonts'in document){
+    var link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;900&display=optional';
+    document.head.appendChild(link);
+    document.fonts.ready.then(function(){document.body.classList.add('fonts-loaded');});
+  }
+  </script>
 </body>
 </html>

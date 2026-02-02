@@ -1730,3 +1730,42 @@ footer a:hover {
     font-size: 17px;
   }
 }
+/* ================================
+   NAV-LINKS (pour cost_calculator.html)
+   ================================ */
+@media (max-width: 1024px) {
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links li {
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #333;
+    display: block;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+  .nav-links li:last-child a {
+    border-bottom: none;
+  }
+}
