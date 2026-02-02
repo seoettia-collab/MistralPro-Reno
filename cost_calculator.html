@@ -915,12 +915,59 @@
             observer.observe(totalElement, { childList: true, characterData: true, subtree: true });
         }
         
-        // Bouton Télécharger mobile
+        // Bouton Télécharger mobile - avec scroll vers formulaire
         var mobilePrintBtn = document.getElementById('mobilePrintQuote');
         var desktopPrintBtn = document.getElementById('printQuote');
-        if (mobilePrintBtn && desktopPrintBtn) {
+        var clientForm = document.getElementById('clientForm');
+        var clientSidebar = document.querySelector('.client-sidebar');
+        var mobileFormMessage = document.getElementById('mobileFormMessage');
+        
+        if (mobilePrintBtn) {
             mobilePrintBtn.addEventListener('click', function() {
-                desktopPrintBtn.click();
+                // Vérifier si le formulaire est rempli
+                var nom = document.getElementById('client-nom');
+                var tel = document.getElementById('client-tel');
+                var email = document.getElementById('client-email');
+                var cp = document.getElementById('client-cp');
+                
+                var isFormValid = nom && nom.value.trim() !== '' &&
+                                  tel && tel.value.trim() !== '' &&
+                                  email && email.value.trim() !== '' &&
+                                  cp && cp.value.trim() !== '';
+                
+                if (!isFormValid) {
+                    // Afficher le message d'erreur mobile
+                    if (mobileFormMessage) {
+                        mobileFormMessage.classList.add('show');
+                        setTimeout(function() {
+                            mobileFormMessage.classList.remove('show');
+                        }, 3000);
+                    }
+                    
+                    // Scroll vers le formulaire
+                    if (clientSidebar) {
+                        clientSidebar.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                        
+                        // Focus sur le premier champ vide après le scroll
+                        setTimeout(function() {
+                            if (nom && nom.value.trim() === '') {
+                                nom.focus();
+                            } else if (tel && tel.value.trim() === '') {
+                                tel.focus();
+                            } else if (email && email.value.trim() === '') {
+                                email.focus();
+                            } else if (cp && cp.value.trim() === '') {
+                                cp.focus();
+                            }
+                        }, 500);
+                    }
+                } else {
+                    // Formulaire valide, déclencher le téléchargement
+                    if (desktopPrintBtn) desktopPrintBtn.click();
+                }
             });
         }
         
