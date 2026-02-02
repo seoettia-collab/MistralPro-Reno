@@ -140,10 +140,8 @@
           <li><a href="index.html">ACCUEIL</a></li>
           <li><a href="services.html">SERVICES</a></li>
           <li><a href="projets.html">PROJETS</a></li>
-          <li><a href="degat-des-eaux.html">DÉGÂT DES EAUX</a></li>
-          <li><a href="devis.html">DEVIS</a></li>
-          <li><a href="cost_calculator.html">CALCULATEUR</a></li>
-          <li><a href="contact.html">CONTACT</a></li>
+          <li><a href="degat-des-eaux.html" class="active">DÉGÂT DES EAUX</a></li>
+          <li><a href="cost_calculator.html">DEVIS</a></li>
         </ul>
         <button class="menu-toggle">☰</button>
       </div>
@@ -237,7 +235,7 @@
       <div class="container text-center">
         <h2 class="section-title">Une question ?</h2>
         <p style="font-size: 20px; margin-bottom: 30px; color: var(--gray-text);">N'hésitez pas à nous contacter pour toute question concernant nos services</p>
-        <a href="contact.html" class="btn btn-primary">Nous contacter</a>
+        <a href="cost_calculator.html" class="btn btn-primary">Nous contacter</a>
       </div>
     </section>
   </main>
@@ -265,8 +263,7 @@
           <ul>
             <li><a href="index.html">Accueil</a></li>
             <li><a href="projets.html">Nos Réalisations</a></li>
-            <li><a href="devis.html">Demander un Devis</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="cost_calculator.html">Calculateur de Devis</a></li>
             <li><a href="mentions-legales.html">Mentions Légales</a></li>
           </ul>
         </div>
@@ -308,18 +305,6 @@
     </a>
   </div>
 
-  <script src="js/main.js" type="module"></script>
-  
-  <!-- Font loading detection -->
-  <script>
-    if ('fonts' in document) {
-      Promise.all([
-        document.fonts.load('700 1em Raleway'),
-        document.fonts.load('400 1em Raleway')
-      ]).then(function() {
-        document.body.classList.add('fonts-loaded');
-      });
-    }
-  </script>
+  <script src="js/main.js"></script>
 </body>
 </html>
