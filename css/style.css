@@ -1047,13 +1047,15 @@ footer a:hover {
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    right: 20px;
+    left: auto;
+    width: 220px;
     background: #1a1a1a;
     flex-direction: column;
     padding: 0;
     gap: 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
     z-index: 1000;
   }
 
@@ -1075,6 +1077,11 @@ footer a:hover {
 
   .nav-menu li:last-child a {
     border-bottom: none;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .nav-menu li:first-child a {
+    border-radius: 8px 8px 0 0;
   }
 
   .menu-toggle {
@@ -1738,13 +1745,15 @@ footer a:hover {
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    right: 20px;
+    left: auto;
+    width: 220px;
     background: #1a1a1a;
     flex-direction: column;
     padding: 0;
     gap: 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
     z-index: 1000;
   }
 
@@ -1767,5 +1776,47 @@ footer a:hover {
 
   .nav-links li:last-child a {
     border-bottom: none;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .nav-links li:first-child a {
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+/* ================================
+   COST CALCULATOR - MOBILE ORDER
+   ================================ */
+@media (max-width: 768px) {
+  /* Layout principal en colonne */
+  .simulator-layout {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Simulateur en premier */
+  .prestations-area {
+    order: 1 !important;
+  }
+  
+  /* Sidebar (formulaire + boutons) en second */
+  .client-sidebar {
+    order: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Dans le sidebar: boutons en haut, formulaire en bas */
+  .client-sidebar .client-header {
+    order: 3 !important;
+  }
+  
+  .client-sidebar .client-form {
+    order: 4 !important;
+  }
+  
+  .client-sidebar .total-box {
+    order: 2 !important;
+    margin-bottom: 20px;
   }
 }
