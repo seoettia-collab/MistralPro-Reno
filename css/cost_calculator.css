@@ -739,26 +739,45 @@ header { width: 100%; }
 }
 
 @media (max-width: 768px) {
-    /* Passer en 1 colonne */
+    /* Passer en 1 colonne avec ordre inversé */
     .simulator-layout {
-        grid-template-columns: 1fr;
-        display: block;
+        display: flex;
+        flex-direction: column;
     }
     
-    /* Formulaire en haut, compact */
+    /* Simulateur en PREMIER (en haut) */
+    .prestations-area {
+        order: 1;
+    }
+    
+    /* Sidebar (formulaire + boutons) en SECOND (en bas) */
     .client-sidebar {
+        order: 2;
         position: relative;
         height: auto;
         padding: 15px;
+        display: flex;
+        flex-direction: column;
     }
     
-    .client-header {
+    /* Dans le sidebar : réorganiser les éléments */
+    .client-sidebar .total-box {
+        order: 1;
+    }
+    
+    .client-sidebar .client-header {
+        order: 2;
         display: flex;
         align-items: center;
         justify-content: space-between;
         text-align: left;
         padding-bottom: 10px;
         margin-bottom: 10px;
+        margin-top: 15px;
+    }
+    
+    .client-sidebar .client-form {
+        order: 3;
     }
     
     .client-header h1 { font-size: 16px; margin: 0; }
@@ -784,7 +803,7 @@ header { width: 100%; }
         align-items: center;
         gap: 10px;
         padding: 10px;
-        margin-top: 10px;
+        margin-top: 0;
     }
     
     .total-row {
