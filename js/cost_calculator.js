@@ -48,18 +48,29 @@
     
     async function sendToWebhook(formData, itemsList, totals) {
         try {
-            // Créer une version texte des prestations pour l'email (groupé par catégorie)
+            // Créer une version texte des prestations pour l'email (groupé par catégorie avec colonnes)
             let prestationsTexte = '';
             let currentCategory = '';
+            
             itemsList.forEach(item => {
-                // Si nouvelle catégorie, ajouter l'en-tête en majuscules
+                // Si nouvelle catégorie, ajouter l'en-tête
                 if (item.categorie !== currentCategory) {
                     currentCategory = item.categorie;
                     if (prestationsTexte !== '') prestationsTexte += '\n';
-                    prestationsTexte += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n${currentCategory.toUpperCase()}\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                    prestationsTexte += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                    prestationsTexte += `${currentCategory.toUpperCase()}\n`;
+                    prestationsTexte += `───────────────────────────────────────────────────────────────────────────\n`;
+                    prestationsTexte += `DÉSIGNATION                                      QTÉ        P.U.      TOTAL\n`;
+                    prestationsTexte += `───────────────────────────────────────────────────────────────────────────\n`;
                 }
-                prestationsTexte += `• ${item.description} - ${item.quantite} ${item.unite} x ${item.prix_unitaire}€ = ${item.total}€\n`;
+                // Formater chaque ligne avec colonnes alignées
+                const desc = item.description.substring(0, 45).padEnd(45);
+                const qty = `${item.quantite} ${item.unite}`.padStart(8);
+                const pu = `${item.prix_unitaire} €`.padStart(10);
+                const total = `${item.total} €`.padStart(10);
+                prestationsTexte += `${desc} ${qty} ${pu} ${total}\n`;
             });
+            prestationsTexte += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
             
             const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
