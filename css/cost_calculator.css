@@ -863,9 +863,23 @@ header { width: 100%; }
     .cat-icon { font-size: 18px; }
     .cat-name { font-size: 10px; text-align: center; }
     
+    /* Sous-catégories avec scroll horizontal */
+    .sub-tabs {
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        padding: 10px 15px;
+    }
+    
+    .sub-tabs::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+    }
+    
     .sub-tab {
         padding: 10px 15px;
         font-size: 12px;
+        flex-shrink: 0; /* Empêche la réduction */
     }
     
     .sub-content { padding: 10px; }
