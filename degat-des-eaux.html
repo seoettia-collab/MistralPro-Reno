@@ -141,7 +141,8 @@
           <li><a href="services.html">SERVICES</a></li>
           <li><a href="projets.html">PROJETS</a></li>
           <li><a href="degat-des-eaux.html" class="active">DÉGÂT DES EAUX</a></li>
-          <li><a href="cost_calculator.html">DEVIS</a></li>
+          <li><a href="cost_calculator.html">CONTACT</a></li>
+          <li><a href="cost_calculator.html">SIMULATEUR DEVIS</a></li>
         </ul>
         <button class="menu-toggle">☰</button>
       </div>
@@ -306,5 +307,16 @@
   </div>
 
   <script src="js/main.js"></script>
+  
+  <!-- FONT CHARGÉE APRÈS LE RENDU - ZERO CLS -->
+  <script>
+  if('fonts'in document){
+    var link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;900&display=optional';
+    document.head.appendChild(link);
+    document.fonts.ready.then(function(){document.body.classList.add('fonts-loaded');});
+  }
+  </script>
 </body>
 </html>
