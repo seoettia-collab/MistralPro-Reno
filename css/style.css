@@ -1049,11 +1049,11 @@ footer a:hover {
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(26, 26, 26, 0.98);
+    background: #1a1a1a;
     flex-direction: column;
-    padding: 10px 20px;
+    padding: 0;
     gap: 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     z-index: 1000;
   }
 
@@ -1061,10 +1061,16 @@ footer a:hover {
     display: flex;
   }
 
+  .nav-menu li {
+    list-style: none;
+  }
+
   .nav-menu a {
-    font-size: 15px;
-    padding: 12px 10px;
+    font-size: 14px;
+    padding: 12px 20px;
     border-bottom: 1px solid #333;
+    display: block;
+    line-height: 1.2;
   }
 
   .nav-menu li:last-child a {
@@ -1151,9 +1157,9 @@ footer a:hover {
   }
 
   .nav-menu a {
-    font-size: 15px;
-    padding: 12px 10px;
-    min-height: 44px;
+    font-size: 14px;
+    padding: 10px 20px;
+    min-height: 40px;
     display: flex;
     align-items: center;
   }
