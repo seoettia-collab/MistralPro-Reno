@@ -127,7 +127,7 @@
                         <strong id="total">0 €</strong>
                     </div>
                     <div class="total-actions">
-                        <button type="button" class="btn-download" id="printQuote">📄 Télécharger le Devis</button>
+                        <button type="button" class="btn-download" id="printQuote">📄 Télécharger</button>
                         <button type="button" class="btn-reset" id="resetBtn">🔄 Réinitialiser</button>
                     </div>
                     <div class="form-message" id="formMessage">⚠️ Veuillez compléter votre formulaire</div>
@@ -857,20 +857,22 @@
 
                 <!-- TOTAL MOBILE - Visible uniquement sur mobile -->
                 <div class="mobile-total-box">
-                    <div class="total-row">
-                        <span>Sous-total HT</span>
-                        <strong id="mobile-subtotal">0 €</strong>
-                    </div>
-                    <div class="total-row">
-                        <span>TVA 20%</span>
-                        <strong id="mobile-vat">0 €</strong>
-                    </div>
-                    <div class="total-row main">
-                        <span>TOTAL TTC</span>
-                        <strong id="mobile-total">0 €</strong>
+                    <div class="total-cols">
+                        <div class="total-col">
+                            <span>Sous-total HT</span>
+                            <strong id="mobile-subtotal">0 €</strong>
+                        </div>
+                        <div class="total-col">
+                            <span>TVA 20%</span>
+                            <strong id="mobile-vat">0 €</strong>
+                        </div>
+                        <div class="total-col main">
+                            <span>TOTAL TTC</span>
+                            <strong id="mobile-total">0 €</strong>
+                        </div>
                     </div>
                     <div class="total-actions">
-                        <button type="button" class="btn-download" id="mobilePrintQuote">📄 Télécharger le Devis</button>
+                        <button type="button" class="btn-download" id="mobilePrintQuote">📄 Télécharger</button>
                         <button type="button" class="btn-reset" id="mobileResetBtn">🔄 Réinitialiser</button>
                     </div>
                     <div class="form-message" id="mobileFormMessage">⚠️ Veuillez compléter votre formulaire</div>
