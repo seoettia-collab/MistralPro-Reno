@@ -267,22 +267,23 @@ header { width: 100%; }
 .btn-download {
     background: var(--yellow);
     color: var(--black);
-    border: 3px solid #27ae60;
-    animation: border-glow 2s infinite;
+    border: 4px solid #2ecc71;
+    box-shadow: 0 0 0 3px #fff, 0 0 10px 3px rgba(46, 204, 113, 0.7);
+    animation: border-glow 1.5s infinite;
 }
 
 @keyframes border-glow {
     0% {
         border-color: #27ae60;
-        box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4);
+        box-shadow: 0 0 0 3px #fff, 0 0 8px 2px rgba(46, 204, 113, 0.5);
     }
     50% {
         border-color: #2ecc71;
-        box-shadow: 0 0 10px 2px rgba(39, 174, 96, 0.5);
+        box-shadow: 0 0 0 3px #fff, 0 0 20px 8px rgba(46, 204, 113, 0.9);
     }
     100% {
         border-color: #27ae60;
-        box-shadow: 0 0 0 0 rgba(39, 174, 96, 0);
+        box-shadow: 0 0 0 3px #fff, 0 0 8px 2px rgba(46, 204, 113, 0.5);
     }
 }
 
@@ -726,31 +727,44 @@ header { width: 100%; }
         display: none;
         position: absolute;
         top: 100%;
-        left: 0;
-        right: 0;
+        right: 20px;
+        left: auto;
+        width: 220px;
         background: var(--black);
         flex-direction: column;
-        padding: 15px;
+        padding: 0;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
     
     .nav-links.active { display: flex; }
+    .nav-links li { list-style: none; }
+    .nav-links a {
+        padding: 12px 20px;
+        border-bottom: 1px solid #333;
+        display: block;
+        font-size: 14px;
+        color: #fff;
+    }
+    .nav-links li:last-child a { border-bottom: none; }
     .mobile-menu-btn { display: block; }
     .hide-mobile { display: none !important; }
 }
 
 @media (max-width: 768px) {
-    /* Passer en 1 colonne avec ordre inversé */
+    /* Passer en 1 colonne avec boutons en haut */
     .simulator-layout {
         display: flex;
         flex-direction: column;
     }
     
-    /* Simulateur en PREMIER (en haut) */
+    /* Simulateur EN PREMIER avec espace pour le total-box fixed */
     .prestations-area {
         order: 1;
+        padding-top: 70px;
     }
     
-    /* Sidebar (formulaire + boutons) en SECOND (en bas) */
+    /* Sidebar (formulaire) EN SECOND - boutons sont fixed en haut */
     .client-sidebar {
         order: 2;
         position: relative;
@@ -760,11 +774,21 @@ header { width: 100%; }
         flex-direction: column;
     }
     
-    /* Dans le sidebar : réorganiser les éléments */
+    /* Boutons FIXED toujours visibles en haut */
     .client-sidebar .total-box {
-        order: 1;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        margin: 0;
+        padding: 10px 15px;
+        background: #1a1a1a;
+        border-bottom: 2px solid var(--yellow);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
     
+    /* Formulaire masqué, apparait après clic sur Télécharger */
     .client-sidebar .client-header {
         order: 2;
         display: flex;
@@ -795,16 +819,6 @@ header { width: 100%; }
     }
     
     .form-group label { font-size: 10px; }
-    
-    /* Total compact en ligne */
-    .total-box {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 10px;
-        padding: 10px;
-        margin-top: 0;
-    }
     
     .total-row {
         padding: 0;
