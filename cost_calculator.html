@@ -855,6 +855,27 @@
                     </div>
                 </div>
 
+                <!-- TOTAL MOBILE - Visible uniquement sur mobile -->
+                <div class="mobile-total-box">
+                    <div class="total-row">
+                        <span>Sous-total HT</span>
+                        <strong id="mobile-subtotal">0 €</strong>
+                    </div>
+                    <div class="total-row">
+                        <span>TVA 20%</span>
+                        <strong id="mobile-vat">0 €</strong>
+                    </div>
+                    <div class="total-row main">
+                        <span>TOTAL TTC</span>
+                        <strong id="mobile-total">0 €</strong>
+                    </div>
+                    <div class="total-actions">
+                        <button type="button" class="btn-download" id="mobilePrintQuote">📄 Télécharger le Devis</button>
+                        <button type="button" class="btn-reset" id="mobileResetBtn">🔄 Réinitialiser</button>
+                    </div>
+                    <div class="form-message" id="mobileFormMessage">⚠️ Veuillez compléter votre formulaire</div>
+                </div>
+
             </section>
         </div>
     </main>
@@ -866,8 +887,59 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/cost_calculator.js"></script>
+    
+    <!-- Synchronisation des boutons mobile -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Synchroniser les totaux
+        function syncMobileTotals() {
+            var subtotal = document.getElementById('subtotal');
+            var vat = document.getElementById('vat');
+            var total = document.getElementById('total');
+            var mobileSubtotal = document.getElementById('mobile-subtotal');
+            var mobileVat = document.getElementById('mobile-vat');
+            var mobileTotal = document.getElementById('mobile-total');
+            
+            if (subtotal && mobileSubtotal) mobileSubtotal.textContent = subtotal.textContent;
+            if (vat && mobileVat) mobileVat.textContent = vat.textContent;
+            if (total && mobileTotal) mobileTotal.textContent = total.textContent;
+        }
+        
+        // Observer les changements des totaux
+        var totalElement = document.getElementById('total');
+        if (totalElement) {
+            var observer = new MutationObserver(syncMobileTotals);
+            observer.observe(totalElement, { childList: true, characterData: true, subtree: true });
+        }
+        
+        // Bouton Télécharger mobile
+        var mobilePrintBtn = document.getElementById('mobilePrintQuote');
+        var desktopPrintBtn = document.getElementById('printQuote');
+        if (mobilePrintBtn && desktopPrintBtn) {
+            mobilePrintBtn.addEventListener('click', function() {
+                desktopPrintBtn.click();
+            });
+        }
+        
+        // Bouton Réinitialiser mobile
+        var mobileResetBtn = document.getElementById('mobileResetBtn');
+        var desktopResetBtn = document.getElementById('resetBtn');
+        if (mobileResetBtn && desktopResetBtn) {
+            mobileResetBtn.addEventListener('click', function() {
+                desktopResetBtn.click();
+                syncMobileTotals();
+            });
+        }
+        
+        // Synchroniser au chargement
+        syncMobileTotals();
+        
+        // Synchroniser périodiquement (backup)
+        setInterval(syncMobileTotals, 500);
+    });
+    </script>
 </body>
 </html>

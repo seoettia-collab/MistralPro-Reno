@@ -19,6 +19,11 @@
 
 * { box-sizing: border-box; }
 
+/* Mobile-total-box masqué par défaut (desktop) */
+.mobile-total-box {
+    display: none;
+}
+
 /* =====================================================
    HEADER
    ===================================================== */
@@ -761,10 +766,9 @@ header { width: 100%; }
     /* Simulateur EN PREMIER avec espace pour le total-box fixed */
     .prestations-area {
         order: 1;
-        padding-top: 70px;
     }
     
-    /* Sidebar (formulaire) EN SECOND - boutons sont fixed en haut */
+    /* Sidebar (formulaire) EN SECOND */
     .client-sidebar {
         order: 2;
         position: relative;
@@ -774,18 +778,83 @@ header { width: 100%; }
         flex-direction: column;
     }
     
-    /* Boutons FIXED toujours visibles en haut */
+    /* MASQUER le total-box original sur mobile */
     .client-sidebar .total-box {
-        position: fixed;
-        top: 60px;
-        left: 0;
-        right: 0;
-        z-index: 100;
-        margin: 0;
-        padding: 10px 15px;
+        display: none;
+    }
+    
+    /* AFFICHER le mobile-total-box */
+    .mobile-total-box {
+        display: block;
         background: #1a1a1a;
-        border-bottom: 2px solid var(--yellow);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 10px;
+        border: 2px solid var(--yellow);
+    }
+    
+    .mobile-total-box .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        font-size: 13px;
+        color: #ccc;
+    }
+    
+    .mobile-total-box .total-row.main {
+        border-top: 1px solid #333;
+        margin-top: 8px;
+        padding-top: 10px;
+    }
+    
+    .mobile-total-box .total-row.main strong {
+        font-size: 20px;
+        color: var(--yellow);
+    }
+    
+    .mobile-total-box .total-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .mobile-total-box .total-actions button {
+        flex: 1;
+        padding: 12px;
+        font-size: 13px;
+        border-radius: 8px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .mobile-total-box .btn-download {
+        background: var(--yellow);
+        color: var(--black);
+        border: 3px solid #2ecc71;
+        box-shadow: 0 0 0 2px #fff, 0 0 10px 3px rgba(46, 204, 113, 0.7);
+        animation: border-glow 1.5s infinite;
+    }
+    
+    .mobile-total-box .btn-reset {
+        background: #444;
+        color: #fff;
+    }
+    
+    .mobile-total-box .form-message {
+        display: none;
+        text-align: center;
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 10px;
+        padding: 8px;
+        background: rgba(231, 76, 60, 0.1);
+        border-radius: 5px;
+    }
+    
+    .mobile-total-box .form-message.show {
+        display: block;
+        animation: shake 0.5s;
     }
     
     /* Formulaire masqué, apparait après clic sur Télécharger */
