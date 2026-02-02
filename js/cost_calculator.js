@@ -48,9 +48,16 @@
     
     async function sendToWebhook(formData, itemsList, totals) {
         try {
-            // Créer une version texte des prestations pour l'email
+            // Créer une version texte des prestations pour l'email (groupé par catégorie)
             let prestationsTexte = '';
+            let currentCategory = '';
             itemsList.forEach(item => {
+                // Si nouvelle catégorie, ajouter l'en-tête en majuscules
+                if (item.categorie !== currentCategory) {
+                    currentCategory = item.categorie;
+                    if (prestationsTexte !== '') prestationsTexte += '\n';
+                    prestationsTexte += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n${currentCategory.toUpperCase()}\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                }
                 prestationsTexte += `• ${item.description} - ${item.quantite} ${item.unite} x ${item.prix_unitaire}€ = ${item.total}€\n`;
             });
             
@@ -72,10 +79,10 @@
                     numero_devis: formData.quoteNum,
                     date_devis: new Date().toLocaleDateString('fr-FR'),
                     
-                    // Totaux
-                    total_ht: totals.subtotal,
-                    tva: totals.vat,
-                    total_ttc: totals.totalTTC,
+                    // Totaux (arrondis à 2 décimales)
+                    total_ht: Math.round(totals.subtotal * 100) / 100,
+                    tva: Math.round(totals.vat * 100) / 100,
+                    total_ttc: Math.round(totals.totalTTC * 100) / 100,
                     
                     // Détail prestations (texte formaté pour email)
                     prestations_texte: prestationsTexte,
