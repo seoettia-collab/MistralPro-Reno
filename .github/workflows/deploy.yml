@@ -10,10 +10,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Create remote directories
-        run: |
-          sudo apt-get install -y sshpass
-          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p 22 ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} "mkdir -p /home/gardvjx/www/blog"
       - name: Upload to OVH via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
