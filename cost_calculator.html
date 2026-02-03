@@ -14,6 +14,15 @@
 
     <title>Simulateur de Devis Gratuit | Mistral Pro Reno Paris</title>
     <meta name="description" content="Estimez gratuitement le coût de vos travaux de rénovation à Paris. Simulateur interactif pour devis plomberie, électricité, peinture, maçonnerie.">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Simulateur de Devis Gratuit | Mistral Pro Reno Paris">
+    <meta property="og:description" content="Estimez gratuitement le coût de vos travaux de rénovation à Paris. Simulateur interactif pour devis plomberie, électricité, peinture, maçonnerie.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.mistralpro-reno.fr/cost_calculator.html">
+    <!-- X Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Simulateur de Devis Gratuit | Mistral Pro Reno Paris">
+    <meta name="twitter:description" content="Estimez gratuitement le coût de vos travaux de rénovation à Paris. Simulateur interactif.">
     <link rel="canonical" href="https://www.mistralpro-reno.fr/cost_calculator.html">
 
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -37,14 +46,10 @@
                 <div class="top-bar-content">
                     <div class="contact-info">
                         <a href="tel:0755188937" data-location="top_bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> 07 55 18 89 37</a>
-                        <a href="mailto:contact@mistralpro-reno.fr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> contact@mistralpro-reno.fr</a>
+                        <a href="/cdn-cgi/l/email-protection#b6d5d9d8c2d7d5c2f6dbdfc5c2c4d7dac6c4d99bc4d3d8d998d0c4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span class="__cf_email__" data-cfemail="385b57564c595b4c7855514b4c4a5954484a57154a5d5657165e4a">[email&#160;protected]</span></a>
                         <span class="hide-mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lun-Ven 08h-18h</span>
                     </div>
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/profile.php?id=61568990293498" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                        </a>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -75,7 +80,7 @@
             <!-- COLONNE GAUCHE : Formulaire Client -->
             <aside class="client-sidebar">
                 <div class="client-header">
-                    <h1>📝 Vos Coordonnées</h1>
+                    <h2>📝 Vos Coordonnées</h2>
                     <p>Pour recevoir votre devis</p>
                 </div>
                 
@@ -883,7 +888,7 @@
     </main>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/cost_calculator.js"></script>
@@ -974,16 +979,4 @@
         if (mobileResetBtn && desktopResetBtn) {
             mobileResetBtn.addEventListener('click', function() {
                 desktopResetBtn.click();
-                syncMobileTotals();
-            });
-        }
-        
-        // Synchroniser au chargement
-        syncMobileTotals();
-        
-        // Synchroniser périodiquement (backup)
-        setInterval(syncMobileTotals, 500);
-    });
-    </script>
-</body>
-</html>
+                syn
