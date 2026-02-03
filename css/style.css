@@ -153,6 +153,61 @@ nav .container {
   min-height: 44px;
 }
 
+/* Navigation principale */
+.main-nav {
+  background: var(--black);
+  padding: 10px 0;
+  border-bottom: 3px solid var(--yellow);
+}
+
+.main-nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 3px;
+  list-style: none !important;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li { list-style: none !important; }
+.nav-links li::before { display: none !important; }
+
+.nav-links a {
+  color: var(--white);
+  text-decoration: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  transition: all 0.2s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  background: var(--yellow);
+  color: var(--black);
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.mobile-menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  margin: 4px 0;
+}
+
 /* Main */
 main {
   padding-top: 100px;
@@ -1738,7 +1793,7 @@ footer a:hover {
   }
 }
 /* ================================
-   NAV-LINKS (pour cost_calculator.html)
+   NAV-LINKS (toutes les pages)
    ================================ */
 @media (max-width: 1024px) {
   .nav-links {
@@ -1781,6 +1836,10 @@ footer a:hover {
 
   .nav-links li:first-child a {
     border-radius: 8px 8px 0 0;
+  }
+
+  .mobile-menu-btn {
+    display: block;
   }
 }
 
