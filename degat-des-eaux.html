@@ -29,11 +29,13 @@
     <link rel="preload" href="/fonts/raleway-bold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/raleway-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="images/plomberie.webp" fetchpriority="high">
-    <!-- DNS Prefetch pour scripts externes -->
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://code.jquery.com">
 
     <!-- CSS Critique Inline -->
-    <style>:root{--yellow:#f4c430;--yellow-dark:#e5b520;--black:#1a1a1a;--white:#fff;--gray-light:#f5f5f5;--gray-text:#666;--gray-dark:#111}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Raleway,'Open Sans',sans-serif;line-height:1.6;color:var(--black)}h1,h2,h3,h4,h5,h6{font-family:Raleway,sans-serif;font-weight:700;line-height:1.2}a{text-decoration:none;color:inherit}.container{max-width:1200px;margin:0 auto;padding:0 20px}header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--black);height:120px}.top-bar{background:var(--black);color:var(--white);padding:6px 0;height:44px}.top-bar .container{max-width:1400px;margin:0 auto;padding:0 15px}.top-bar-content{display:flex;justify-content:space-between;align-items:center;height:24px}.contact-info{display:flex;gap:15px;align-items:center}.contact-info a,.contact-info span{color:#ccc;text-decoration:none;display:flex;align-items:center;gap:5px;font-size:12px}.contact-info a:hover{color:var(--yellow)}.social-links a{color:#ccc}.social-links a:hover{color:var(--yellow)}.main-nav{background:var(--black);padding:10px 0;border-bottom:3px solid var(--yellow)}.main-nav .container{display:flex;justify-content:space-between;align-items:center}.nav-links{display:flex;gap:3px;list-style:none;margin:0;padding:0}.nav-links li{list-style:none}.nav-links li::before{display:none}.nav-links a{color:#fff;text-decoration:none;padding:8px 12px;font-size:12px;font-weight:600;border-radius:5px;transition:all 0.2s}.nav-links a:hover,.nav-links a.active{background:var(--yellow);color:var(--black)}.mobile-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:8px}.mobile-menu-btn span{display:block;width:22px;height:2px;background:#fff;margin:4px 0}.logo{font-size:20px;font-weight:800;color:var(--yellow);text-decoration:none}main{padding-top:120px}.btn{display:inline-block;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none}.btn-primary{background:var(--yellow);color:var(--black)}</style>
+    <style>:root{--yellow:#f4c430;--yellow-dark:#e5b520;--black:#1a1a1a;--white:#fff;--gray-light:#f5f5f5;--gray-text:#666;--gray-dark:#111}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Raleway,'Open Sans',sans-serif;line-height:1.6;color:var(--black)}h1,h2,h3,h4,h5,h6{font-family:Raleway,sans-serif;font-weight:700;line-height:1.2}a{text-decoration:none;color:inherit}.container{max-width:1200px;margin:0 auto;padding:0 20px}header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--black);height:120px}.top-bar{background:var(--black);color:var(--white);padding:6px 0;height:44px}.top-bar .container{max-width:1400px;margin:0 auto;padding:0 15px}.top-bar-content{display:flex;justify-content:space-between;align-items:center;height:24px}.contact-info{display:flex;gap:15px;align-items:center}.contact-info a,.contact-info span{color:#ccc;text-decoration:none;display:flex;align-items:center;gap:5px;font-size:12px}.contact-info a:hover{color:var(--yellow)}.social-links a{color:#ccc}.social-links a:hover{color:var(--yellow)}.main-nav{background:var(--black);padding:10px 0;border-bottom:3px solid var(--yellow)}.main-nav .container{display:flex;justify-content:space-between;align-items:center}.nav-links{display:flex;gap:3px;list-style:none;margin:0;padding:0}.nav-links li{list-style:none}.nav-links li::before{display:none}.nav-links a{color:#fff;text-decoration:none;padding:8px 12px;font-size:12px;font-weight:600;border-radius:5px;transition:all 0.2s}.nav-links a:hover,.nav-links a.active{background:var(--yellow);color:var(--black)}.mobile-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:8px}.mobile-menu-btn span{display:block;width:22px;height:2px;background:#fff;margin:4px 0}.logo{font-size:20px;font-weight:800;color:var(--yellow);text-decoration:none}main{padding-top:120px}.btn{display:inline-block;padding:15px 40px;border-radius:50px;font-weight:bold;font-size:16px;cursor:pointer;border:none}.btn-primary{background:var(--yellow);color:var(--black)}.hero{position:relative;min-height:400px;padding:60px 20px;text-align:center;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center;contain:layout style;overflow:hidden}.hero .container{position:relative;z-index:1}.hero h1{color:#fff;font-size:36px;margin-bottom:15px}.hero p{color:#fff;font-size:20px;max-width:800px;margin:20px auto}.emergency-banner{min-height:50px;contain:layout style}</style>
 
     <!-- CSS Fonts - Chargement asynchrone -->
     <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -213,6 +215,7 @@
             .nav-links li:first-child a{border-radius:8px 8px 0 0}
             .mobile-menu-btn{display:block}
             .hide-mobile{display:none}
+            .emergency-banner{min-height:auto;font-size:13px;padding:10px 15px}
         }
     </style>
 </head>
@@ -223,7 +226,7 @@
         <div class="top-bar-content">
           <div class="contact-info">
             <a href="tel:0755188937" data-location="top_bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> 07 55 18 89 37</a>
-            <a href="mailto:contact@mistralpro-reno.fr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> contact@mistralpro-reno.fr</a>
+            <a href="/cdn-cgi/l/email-protection#c5a6aaabb1a4a6b185a8acb6b1b7a4a9b5b7aae8b7a0abaaeba3b7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span class="__cf_email__" data-cfemail="b2d1dddcc6d3d1c6f2dfdbc1c6c0d3dec2c0dd9fc0d7dcdd9cd4c0">[email&#160;protected]</span></a>
             <span class="hide-mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lun-Ven 08h-18h</span>
           </div>
           <div class="social-links">
@@ -271,17 +274,17 @@
         <section style="padding: 60px 20px; background: #f8f9fa;">
             <div class="container">
                 <h2 style="text-align: center; margin-bottom: 50px; font-size: 32px;">Nos Interventions Dégât des Eaux</h2>
-                <p style="text-align: center; margin-bottom: 40px; color: #666;">Découvrez <a href="services.html" style="color: #ffc107;">tous nos services de rénovation</a> ou consultez nos <a href="landing.html" style="color: #ffc107;">informations pratiques</a>.</p>
+                <p style="text-align: center; margin-bottom: 40px; color: #666;">Découvrez <a href="services.html" style="color: #ffc107;">tous nos services de rénovation</a> ou consultez nos <a href="cost_calculator.html" style="color: #ffc107;">informations pratiques</a>.</p>
                 <div class="interventions-grid">
                     <div class="intervention-card">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         <h3>Recherche de Fuite</h3>
-                        <p>Détection précise des fuites d'eau avec équipement professionnel. <a href="landing.html" style="color: #ffc107;">En savoir plus</a></p>
+                        <p>Détection précise des fuites d'eau avec équipement professionnel. <a href="cost_calculator.html" style="color: #ffc107;">En savoir plus</a></p>
                     </div>
                     <div class="intervention-card">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
                         <h3>Réparation Plomberie</h3>
-                        <p>Réparation rapide de toute fuite ou canalisation endommagée. <a href="devis.html" style="color: #ffc107;">Demander un devis</a></p>
+                        <p>Réparation rapide de toute fuite ou canalisation endommagée. <a href="cost_calculator.html" style="color: #ffc107;">Demander un devis</a></p>
                     </div>
                     <div class="intervention-card">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
@@ -329,7 +332,7 @@
                     <div class="step-card">
                         <div class="step-number">4</div>
                         <h3>Travaux avec prise en charge assurance</h3>
-                        <p>Nous fournissons tous les documents nécessaires pour votre assurance. <a href="devis.html" style="color: #ffc107;">Devis détaillé</a></p>
+                        <p>Nous fournissons tous les documents nécessaires pour votre assurance. <a href="cost_calculator.html" style="color: #ffc107;">Devis détaillé</a></p>
                     </div>
                 </div>
             </div>
@@ -387,7 +390,7 @@
         <section class="cta-final">
             <div class="container">
                 <h2>Besoin d'une Intervention Rapide ?</h2>
-                <p style="margin-bottom: 20px;">Consultez <a href="projets.html" style="color: #ffc107;">nos réalisations</a> ou <a href="landing.html" style="color: #ffc107;">nos informations pratiques</a>.</p>
+                <p style="margin-bottom: 20px;">Consultez <a href="projets.html" style="color: #ffc107;">nos réalisations</a> ou <a href="cost_calculator.html" style="color: #ffc107;">nos informations pratiques</a>.</p>
                 <div class="phone-large">07 55 18 89 37</div>
                 <a href="tel:0755188937" class="btn btn-primary" style="font-size: 18px; padding: 18px 40px;">Appeler Maintenant</a>
             </div>
@@ -414,7 +417,7 @@
       <div class="container" style="max-width: 900px;">
         <p style="text-align: center; line-height: 1.8; color: #666;">
           Découvrez <a href="services.html" style="color: #f4c430;">nos autres services de rénovation</a> et <a href="projets.html" style="color: #f4c430;">nos réalisations</a>.
-          <a href="devis.html" style="color: #f4c430;">Demandez un devis d'urgence</a> ou
+          <a href="cost_calculator.html" style="color: #f4c430;">Demandez un devis d'urgence</a> ou
           <a href="contact.html" style="color: #f4c430;">contactez-nous immédiatement</a>.
         </p>
       </div>
@@ -443,8 +446,8 @@
                     <ul>
                         <li><a href="index.html">Accueil</a></li>
                         <li><a href="projets.html">Nos Réalisations</a></li>
-                        <li><a href="devis.html">Demander un Devis</a></li>
-                        <li><a href="landing.html">Contact</a></li>
+                        <li><a href="cost_calculator.html">Demander un Devis</a></li>
+                        <li><a href="cost_calculator.html">Contact</a></li>
                     </ul>
                 </div>
                 <div>
@@ -454,7 +457,7 @@
                             <a href="tel:0755188937" data-location="footer">07 55 18 89 37</a>
                         </li>
                         <li>
-                            <a href="mailto:contact@mistralpro-reno.fr">contact@mistralpro-reno.fr</a>
+                            <a href="/cdn-cgi/l/email-protection#86e5e9e8f2e7e5f2c6ebeff5f2f4e7eaf6f4e9abf4e3e8e9a8e0f4"><span class="__cf_email__" data-cfemail="aac9c5c4decbc9deeac7c3d9ded8cbc6dad8c587d8cfc4c584ccd8">[email&#160;protected]</span></a>
                         </li>
                     </ul>
                 </div>
@@ -521,7 +524,7 @@
     </div>
 
     <!-- Scripts - Chargement différé pour performance -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <script src="js/main.js" type="module"></script>
 
     <script>
@@ -605,14 +608,4 @@
                 "@type": "Question",
                 "name": "Intervenez-vous le week-end ?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Oui, nous sommes disponibles 7j/7 pour les urgences liées aux dégâts des eaux. Contactez-nous au 07 55 18 89 37."
-                }
-            }
-        ]
-    }
-    </script>
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.c
+  
