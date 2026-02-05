@@ -30,12 +30,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/mentions-legales.html</loc>
-    <lastmod>2026-02-03</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
+
   <url>
     <loc>https://www.mistralpro-reno.fr/blog.html</loc>
     <lastmod>2026-02-03</lastmod>
