@@ -84,7 +84,8 @@ Le déploiement est **automatique** :
 /docs/
 ├── GOUVERNANCE.md      # Ce document (règles + démarrage)
 ├── FICHE_TECHNIQUE.md  # Référentiel rapide (pages, CSS, JS, images)
-└── ARCHITECTURE.md     # Architecture technique du système
+├── ARCHITECTURE.md     # Architecture technique du système
+└── SIMULATEUR.md       # Documentation simulateur de devis (page complexe)
 ```
 
 ### 0.6 Après clonage

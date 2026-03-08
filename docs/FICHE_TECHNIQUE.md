@@ -40,13 +40,12 @@
 
 ---
 
-## 🎨 FICHIERS CSS (10 fichiers)
+## 🎨 FICHIERS CSS (9 fichiers)
 
 | Fichier | Rôle | Taille |
 |---------|------|--------|
 | `style.css` | Styles principaux du site | 20K |
 | `cost_calculator.css` | Simulateur de devis | 13K |
-| `cost_calculator1.css` | Simulateur (variante) | 31K |
 | `blog.css` | Styles page blog | 5.5K |
 | `modals.css` | Fenêtres modales | 4K |
 | `lecture.css` | Vue lecture | 3K |
@@ -57,15 +56,14 @@
 
 ---
 
-## ⚡ FICHIERS JS (16 fichiers)
+## ⚡ FICHIERS JS (15 fichiers)
 
 ### Site vitrine
 
 | Fichier | Rôle | Taille |
 |---------|------|--------|
 | `main.js` | Script principal du site | 5K |
-| `cost_calculator.js` | Simulateur de devis | 15K |
-| `cost_calculator1.js` | Simulateur (variante) | 18K |
+| `cost_calculator.js` | Simulateur de devis (voir `/docs/SIMULATEUR.md`) | 15K |
 
 ### Dashboard Google Ads (intégré)
 
@@ -203,6 +201,9 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 ---
 
 ## ⚠️ POINTS D'ATTENTION
+
+### Documentation spécifique
+- **Simulateur de devis** : Voir `/docs/SIMULATEUR.md` pour la documentation complète
 
 ### À corriger
 - [ ] `salle_de_bain.webp` : 1.9M — trop lourd, à compresser
