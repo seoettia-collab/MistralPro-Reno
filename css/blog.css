@@ -165,3 +165,25 @@
 .section-title{font-size:24px;margin-bottom:20px}
 .blog-card-actions{margin-top:15px}
 }
+
+/* =========================================
+   SECTION ARCHIVES - Articles précédents
+   ========================================= */
+.blog-archives{padding:60px 0;background:var(--gray-light);border-top:1px solid #e0e0e0}
+.blog-archives .section-title{font-size:28px;margin-bottom:10px}
+.archives-intro{text-align:center;color:var(--gray-text);margin-bottom:30px;font-size:16px}
+.archives-list{list-style:none;padding:0;margin:0;max-width:800px;margin:0 auto}
+.archive-item{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:var(--white);border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;transition:all 0.2s}
+.archive-item:hover{border-color:var(--yellow);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.archive-item a{font-weight:600;color:var(--black);font-size:16px;text-decoration:none;flex:1}
+.archive-item a:hover{color:#b8941f}
+.archive-meta{display:flex;align-items:center;gap:15px;flex-shrink:0}
+.archive-date{color:var(--gray-text);font-size:14px}
+.archive-tag{background:var(--yellow);color:var(--black);padding:4px 12px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase}
+.archives-empty{text-align:center;color:var(--gray-text);font-style:italic;padding:30px;background:var(--white);border-radius:8px;border:1px dashed #ccc}
+
+@media(max-width:768px){
+.blog-archives{padding:40px 0}
+.archive-item{flex-direction:column;align-items:flex-start;gap:10px}
+.archive-meta{width:100%;justify-content:space-between}
+}

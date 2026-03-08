@@ -159,6 +159,51 @@ Une fois le site mis à jour (~2 min après le push) :
 
 ---
 
+## 📚 GESTION DES ARCHIVES
+
+Quand le blog a **plus de 6 articles récents**, les anciens articles passent dans la section "Articles précédents" (en bas de page, sans images).
+
+### Structure de la page blog :
+
+```
+┌─────────────────────────────────────────┐
+│         ARTICLE MIS EN AVANT            │  ← Le plus récent
+└─────────────────────────────────────────┘
+
+┌───────────┐ ┌───────────┐ ┌───────────┐
+│  Article  │ │  Article  │ │  Article  │  ← 3-6 articles récents (avec images)
+└───────────┘ └───────────┘ └───────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        📚 ARTICLES PRÉCÉDENTS            ← Archives (sans images)
+
+• Titre article — Date — [Catégorie]
+• Titre article — Date — [Catégorie]
+```
+
+### Déplacer un article vers les archives :
+
+1. **Retirer** la carte de l'article de `.blog-grid`
+2. **Ajouter** une ligne dans `.archives-list` :
+
+```html
+<li class="archive-item" data-category="renovation">
+  <a href="blog/nom-article.html">Titre de l'article</a>
+  <span class="archive-meta">
+    <span class="archive-date">15 janv. 2026</span>
+    <span class="archive-tag">Rénovation</span>
+  </span>
+</li>
+```
+
+### Quand archiver ?
+
+- Après **6 mois**
+- Ou quand tu as **plus de 6 articles** dans la grille principale
+
+---
+
 ## 🔗 RESSOURCES
 
 - **Template article** : `/blog/TEMPLATE.html`
