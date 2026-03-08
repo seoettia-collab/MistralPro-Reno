@@ -6,7 +6,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { db, dbAll } = require('./services/db');
+const { db, dbAll, initSchema } = require('./services/db');
 const seoRoutes = require('./routes/seo');
 const gscRoutes = require('./routes/gsc');
 const opportunitiesRoutes = require('./routes/opportunities');
@@ -21,13 +21,22 @@ const conversionsRoutes = require('./routes/conversions');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Middleware CORS - autoriser le frontend OVH
+const corsOptions = {
+  origin: [
+    'https://www.mistralpro-reno.fr',
+    'https://mistralpro-reno.fr',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Route test /api/health
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Route test /api/db-check
@@ -83,7 +92,17 @@ app.use('/api', seoScoreRoutes);
 const historyRoutes = require('./routes/history');
 app.use('/api', historyRoutes);
 
-// Démarrage serveur
-app.listen(PORT, () => {
-  console.log(`SEO API running on port ${PORT}`);
-});
+// Démarrage serveur avec init schema
+const startServer = async () => {
+  try {
+    await initSchema();
+    app.listen(PORT, () => {
+      console.log(`SEO API running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err.message);
+    process.exit(1);
+  }
+};
+
+startServer();
