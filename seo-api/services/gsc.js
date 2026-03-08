@@ -5,18 +5,22 @@
 const { google } = require('googleapis');
 const { dbRun, dbAll } = require('./db');
 
-// Configuration OAuth2
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GSC_CLIENT_ID,
-  process.env.GSC_CLIENT_SECRET
-);
-
-// Set refresh token
-oauth2Client.setCredentials({
-  refresh_token: process.env.GSC_REFRESH_TOKEN
-});
-
-const searchconsole = google.searchconsole({ version: 'v1', auth: oauth2Client });
+/**
+ * Create OAuth2 client with credentials
+ * @returns {OAuth2Client}
+ */
+function createOAuth2Client() {
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GSC_CLIENT_ID,
+    process.env.GSC_CLIENT_SECRET
+  );
+  
+  oauth2Client.setCredentials({
+    refresh_token: process.env.GSC_REFRESH_TOKEN
+  });
+  
+  return oauth2Client;
+}
 
 /**
  * Fetch Search Console data
@@ -25,6 +29,9 @@ const searchconsole = google.searchconsole({ version: 'v1', auth: oauth2Client }
  * @returns {Promise<{imported: number}>}
  */
 async function fetchSearchConsoleData(siteUrl, siteId) {
+  // Create OAuth client for this request
+  const oauth2Client = createOAuth2Client();
+  const searchconsole = google.searchconsole({ version: 'v1', auth: oauth2Client });
   // Calcul dates (28 derniers jours)
   const endDate = new Date();
   const startDate = new Date();
