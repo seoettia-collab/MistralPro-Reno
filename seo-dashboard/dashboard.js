@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadConversions();
       } else if (targetTab === 'competitors') {
         loadCompetitors();
+      } else if (targetTab === 'pages') {
+        loadPagesAnalysis();
       }
     });
   });
@@ -1862,3 +1864,166 @@ function closeOptimizationBrief() {
     output.classList.add('hidden');
   }
 }
+
+// =====================================================
+// PAGES SEO
+// =====================================================
+
+/**
+ * Charger et afficher l'analyse des pages
+ */
+async function loadPagesAnalysis() {
+  const summaryContainer = document.getElementById('pages-summary');
+  const topPagesContainer = document.getElementById('top-pages-container');
+  const lowCtrContainer = document.getElementById('low-ctr-pages-container');
+  const quickWinsContainer = document.getElementById('quick-wins-pages-container');
+  const allPagesContainer = document.getElementById('all-pages-container');
+
+  try {
+    const response = await fetch(`${API_BASE}/api/pages/analysis`);
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      summaryContainer.innerHTML = '<p class="error">Erreur de chargement</p>';
+      return;
+    }
+
+    const data = result.data;
+
+    // Afficher le résumé
+    summaryContainer.innerHTML = `
+      <div class="stat-card">
+        <span class="stat-value">${data.summary.totalPages}</span>
+        <span class="stat-label">Pages analysées</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${data.summary.totalClicks}</span>
+        <span class="stat-label">Clics total</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${data.summary.totalImpressions}</span>
+        <span class="stat-label">Impressions</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${data.summary.avgPosition}</span>
+        <span class="stat-label">Position moyenne</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${data.summary.avgCtr}%</span>
+        <span class="stat-label">CTR moyen</span>
+      </div>
+    `;
+
+    // Afficher le Top 10
+    if (data.topPages && data.topPages.length > 0) {
+      topPagesContainer.innerHTML = renderPagesTable(data.topPages, 'top');
+    } else {
+      topPagesContainer.innerHTML = '<p class="empty-state">Aucune donnée de page disponible. Importez les données GSC.</p>';
+    }
+
+    // Pages CTR faible
+    if (data.pagesToOptimize.lowCtr && data.pagesToOptimize.lowCtr.length > 0) {
+      lowCtrContainer.innerHTML = renderPagesTable(data.pagesToOptimize.lowCtr, 'lowCtr');
+    } else {
+      lowCtrContainer.innerHTML = '<p class="empty-state">Aucune page avec CTR faible détectée.</p>';
+    }
+
+    // Quick Wins
+    if (data.pagesToOptimize.quickWins && data.pagesToOptimize.quickWins.length > 0) {
+      quickWinsContainer.innerHTML = renderPagesTable(data.pagesToOptimize.quickWins, 'quickWins');
+    } else {
+      quickWinsContainer.innerHTML = '<p class="empty-state">Aucun quick win détecté.</p>';
+    }
+
+    // Toutes les pages
+    if (data.allPages && data.allPages.length > 0) {
+      allPagesContainer.innerHTML = renderPagesTable(data.allPages, 'all');
+    } else {
+      allPagesContainer.innerHTML = '<p class="empty-state">Aucune page analysée.</p>';
+    }
+
+  } catch (err) {
+    summaryContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('loadPagesAnalysis error:', err);
+  }
+}
+
+/**
+ * Générer le tableau des pages
+ */
+function renderPagesTable(pages, type) {
+  let html = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Clics</th>
+          <th>Impressions</th>
+          <th>CTR</th>
+          <th>Position</th>
+          ${type === 'lowCtr' || type === 'quickWins' ? '<th>Priorité</th><th>Action</th>' : '<th>Statut</th>'}
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  for (const page of pages) {
+    const priorityClass = page.priority === 'high' ? 'priority-high' : 
+                          page.priority === 'medium' ? 'priority-medium' : 'priority-low';
+    const statusClass = page.status === 'excellent' ? 'status-excellent' :
+                        page.status === 'good' ? 'status-good' :
+                        page.status === 'improve' ? 'status-improve' : 'status-poor';
+    
+    html += `
+      <tr>
+        <td class="page-url" title="${escapeHtml(page.url)}">${escapeHtml(page.path)}</td>
+        <td>${page.clicks}</td>
+        <td>${page.impressions}</td>
+        <td>${page.ctr}%</td>
+        <td>${page.position}</td>
+    `;
+
+    if (type === 'lowCtr' || type === 'quickWins') {
+      html += `
+        <td><span class="priority-badge ${priorityClass}">${page.priority}</span></td>
+        <td class="action-text">${escapeHtml(page.action || '')}</td>
+      `;
+    } else {
+      html += `
+        <td><span class="status-badge ${statusClass}">${page.status}</span></td>
+      `;
+    }
+
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+  return html;
+}
+
+/**
+ * Rafraîchir l'analyse des pages
+ */
+async function refreshPagesAnalysis() {
+  // D'abord importer les données GSC pour s'assurer d'avoir les données par page
+  const statusDiv = document.getElementById('pages-summary');
+  statusDiv.innerHTML = '<p class="loading">Import des données GSC en cours...</p>';
+
+  try {
+    const importResponse = await fetch(`${API_BASE}/api/gsc/fetch`);
+    const importResult = await importResponse.json();
+
+    if (importResult.status !== 'ok') {
+      statusDiv.innerHTML = `<p class="error">Erreur import: ${importResult.message}</p>`;
+      return;
+    }
+
+    // Recharger l'analyse
+    await loadPagesAnalysis();
+
+  } catch (err) {
+    statusDiv.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('refreshPagesAnalysis error:', err);
+  }
+}
+

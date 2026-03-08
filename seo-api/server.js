@@ -92,6 +92,10 @@ app.use('/api', seoScoreRoutes);
 const historyRoutes = require('./routes/history');
 app.use('/api', historyRoutes);
 
+// Routes Pages Analysis
+const pagesRoutes = require('./routes/pages');
+app.use('/api', pagesRoutes);
+
 // Démarrage serveur avec init schema
 const startServer = async () => {
   try {

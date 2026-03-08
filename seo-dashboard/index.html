@@ -20,11 +20,12 @@
     <button class="tab-btn active" data-tab="cockpit">1. Cockpit SEO</button>
     <button class="tab-btn" data-tab="searchconsole">2. Search Console</button>
     <button class="tab-btn" data-tab="opportunities">3. Opportunités</button>
-    <button class="tab-btn" data-tab="content">4. Contenu</button>
-    <button class="tab-btn" data-tab="audit">5. Audit technique</button>
-    <button class="tab-btn" data-tab="conversions">6. Conversions</button>
-    <button class="tab-btn" data-tab="competitors">7. Concurrents</button>
-    <button class="tab-btn" data-tab="brief">8. Brief Claude</button>
+    <button class="tab-btn" data-tab="pages">4. Pages SEO</button>
+    <button class="tab-btn" data-tab="content">5. Contenu</button>
+    <button class="tab-btn" data-tab="audit">6. Audit technique</button>
+    <button class="tab-btn" data-tab="conversions">7. Conversions</button>
+    <button class="tab-btn" data-tab="competitors">8. Concurrents</button>
+    <button class="tab-btn" data-tab="brief">9. Brief Claude</button>
   </nav>
 
   <main class="main-container">
@@ -58,6 +59,36 @@
       <h3 class="subsection-title">🔧 Pages à optimiser</h3>
       <div id="pages-to-optimize-container">
         <p class="loading">Chargement des pages à optimiser...</p>
+      </div>
+    </section>
+
+    <section id="pages" class="tab-section">
+      <h2>Pages SEO</h2>
+      <div class="section-actions">
+        <button class="btn-primary" onclick="refreshPagesAnalysis()">🔄 Rafraîchir l'analyse</button>
+      </div>
+      <div id="pages-summary" class="stats-grid">
+        <p class="loading">Chargement des statistiques...</p>
+      </div>
+      
+      <h3 class="subsection-title">🏆 Top 10 Pages</h3>
+      <div id="top-pages-container">
+        <p class="loading">Chargement des meilleures pages...</p>
+      </div>
+      
+      <h3 class="subsection-title">⚠️ Pages à optimiser (CTR faible)</h3>
+      <div id="low-ctr-pages-container">
+        <p class="loading">Chargement...</p>
+      </div>
+      
+      <h3 class="subsection-title">🚀 Quick Wins (Position améliorable)</h3>
+      <div id="quick-wins-pages-container">
+        <p class="loading">Chargement...</p>
+      </div>
+      
+      <h3 class="subsection-title">📋 Toutes les pages</h3>
+      <div id="all-pages-container">
+        <p class="loading">Chargement de toutes les pages...</p>
       </div>
     </section>
 

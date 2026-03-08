@@ -1325,3 +1325,46 @@ body {
   overflow-y: auto;
   color: var(--text-secondary);
 }
+
+/* Pages SEO */
+.page-url {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-excellent {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.status-good {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.status-improve {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.status-poor {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.action-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  max-width: 250px;
+}
