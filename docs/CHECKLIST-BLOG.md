@@ -36,10 +36,11 @@ Ouvrir le fichier et remplacer tous les `🔧 À MODIFIER` :
 
 | Section | Ce qu'il faut modifier |
 |---------|----------------------|
+| `BLOG_META` | Métadonnées (title, date, image, category, excerpt) |
 | `<title>` | Titre de l'article (60 caractères max) |
 | `<meta description>` | Description SEO (150-160 caractères) |
 | `<link canonical>` | URL du fichier |
-| Open Graph | Titre, description, URL, image |
+| Open Graph | Titre, description, URL, **image** (IMPORTANT pour Facebook) |
 | Schema.org | Titre, dates, description, image |
 | `<h1>` | Titre principal |
 | Date et temps | Date publication + temps de lecture |
@@ -48,6 +49,11 @@ Ouvrir le fichier et remplacer tous les `🔧 À MODIFIER` :
 | Image principale | Chemin + alt text |
 | URL partage Facebook | URL de l'article |
 | Articles liés | Choisir 3 articles pertinents |
+
+**⚠️ IMPORTANT pour Facebook :** La balise `og:image` doit contenir l'URL complète de l'image :
+```html
+<meta property="og:image" content="https://www.mistralpro-reno.fr/images/nom-image.webp">
+```
 
 ---
 
