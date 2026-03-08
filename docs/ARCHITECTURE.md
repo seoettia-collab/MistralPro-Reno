@@ -149,8 +149,7 @@ css/
 ├── base.css           ◀── Reset, styles de base
 ├── style.css          ◀── Styles principaux du site
 ├── blog.css           ◀── Styles page blog
-├── cost_calculator.css ◀── Simulateur (version 1)
-├── cost_calculator1.css◀── Simulateur (version 2)
+├── cost_calculator.css ◀── Simulateur de devis
 ├── modals.css         ◀── Fenêtres modales
 ├── toast.css          ◀── Notifications
 ├── lecture.css        ◀── Vue lecture
@@ -176,8 +175,7 @@ css/
 ```
 js/
 ├── main.js             ◀── Script principal (navigation, animations)
-├── cost_calculator.js  ◀── Logique simulateur v1
-└── cost_calculator1.js ◀── Logique simulateur v2
+└── cost_calculator.js  ◀── Logique simulateur de devis + envoi backend
 ```
 
 ### Dashboard Google Ads (intégré)
@@ -202,19 +200,53 @@ js/
 
 ---
 
-## 7. FLUX FORMULAIRE CONTACT
+## 7. FLUX SIMULATEUR DEVIS & EMAIL
 
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│Formulaire│────▶│  Submit  │────▶│ Backend  │────▶│  Email   │
-│  HTML    │     │  JS      │     │ (à def.) │     │ contact@ │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
-                                                         │
-                                                         ▼
-                                                  ┌──────────┐
-                                                  │ merci.   │
-                                                  │ html     │
-                                                  └──────────┘
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│ Simulateur   │────▶│ JS fetch()   │────▶│ Backend      │────▶│ SMTP OVH     │
+│ cost_calc.   │     │ POST JSON    │     │ Render.com   │     │ ssl0.ovh.net │
+└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+                                                                       │
+                                                                       ▼
+                                                              ┌──────────────┐
+                                                              │ contact@     │
+                                                              │ mistralpro-  │
+                                                              │ reno.fr      │
+                                                              └──────────────┘
+```
+
+### Backend API — Mistral Pro Reno
+
+| Élément | Valeur |
+|---------|--------|
+| Repo GitHub | `seoettia-collab/mistralpro-reno-backend` |
+| Hébergement | Render.com (Free tier) |
+| URL | `https://mistralpro-reno-backend.onrender.com` |
+| Endpoint | `POST /api/send-devis` |
+| SMTP | OVH Zimbra (`ssl0.ovh.net:465`) |
+| Email | `contact@mistralpro-reno.fr` |
+
+### Payload envoyé
+
+```json
+{
+  "nom": "Jean Dupont",
+  "telephone": "06 12 34 56 78",
+  "email": "client@exemple.fr",
+  "adresse": "12 rue Example",
+  "code_postal": "75017",
+  "ville": "Paris",
+  "numero_devis": "DEV-20260308-1234",
+  "date_devis": "08/03/2026",
+  "total_ht": 5000,
+  "tva": 1000,
+  "total_ttc": 6000,
+  "prestations_texte": "Détail des prestations...",
+  "form_name": "simulateur-devis",
+  "form_location": "cost_calculator",
+  "page_url": "https://www.mistralpro-reno.fr/cost_calculator.html"
+}
 ```
 
 ---

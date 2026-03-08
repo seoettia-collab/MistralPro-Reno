@@ -233,4 +233,34 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 
 ---
 
+## 🔌 BACKEND API
+
+### Mistral Pro Reno Backend
+
+| Élément | Valeur |
+|---------|--------|
+| **Repo GitHub** | `seoettia-collab/mistralpro-reno-backend` |
+| **Hébergement** | Render.com (Free tier) |
+| **URL** | `https://mistralpro-reno-backend.onrender.com` |
+| **Endpoint devis** | `POST /api/send-devis` |
+
+### Fonctionnalités
+
+| Route | Description |
+|-------|-------------|
+| `GET /` | Santé + infos service |
+| `GET /health` | Health check |
+| `POST /api/send-devis` | Envoi email devis via SMTP OVH |
+
+### Variables d'environnement (Render)
+
+| Variable | Valeur |
+|----------|--------|
+| `SMTP_HOST` | `ssl0.ovh.net` |
+| `SMTP_PORT` | `465` |
+| `SMTP_USER` | `contact@mistralpro-reno.fr` |
+| `SMTP_PASS` | `[mot de passe]` |
+
+---
+
 *Dernière mise à jour : 8 mars 2026*

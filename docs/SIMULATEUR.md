@@ -211,13 +211,22 @@ Exemple: DEV-20260308-4521
 
 ---
 
-## 🔗 INTÉGRATION WEBHOOK
+## 🔗 INTÉGRATION BACKEND
 
-### Endpoint
+### Endpoint API
 
 ```
-POST https://ettia.app.n8n.cloud/webhook/landing-form
+POST https://mistralpro-reno-backend.onrender.com/api/send-devis
 ```
+
+### Backend
+
+| Élément | Valeur |
+|---------|--------|
+| Repo | `seoettia-collab/mistralpro-reno-backend` |
+| Hébergement | Render.com (Free tier) |
+| Fonction | Envoi email via SMTP OVH |
+| Email destination | `contact@mistralpro-reno.fr` |
 
 ### Payload JSON
 
@@ -240,6 +249,12 @@ POST https://ettia.app.n8n.cloud/webhook/landing-form
   "submitted_at": "2026-03-08T12:00:00.000Z",
   "page_url": "https://www.mistralpro-reno.fr/cost_calculator.html"
 }
+```
+
+### Flux d'envoi
+
+```
+Client → Simulateur → fetch() POST → Backend Render → SMTP OVH → contact@mistralpro-reno.fr
 ```
 
 ---
