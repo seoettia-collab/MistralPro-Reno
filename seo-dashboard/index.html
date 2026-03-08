@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>SEO Dashboard — Mistral Pro Reno</title>
+  <link rel="stylesheet" href="/seo-dashboard/dashboard.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo">
+      <span class="logo-icon">📊</span>
+      <h1>SEO Dashboard</h1>
+    </div>
+    <div class="header-site">mistralpro-reno.fr</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="cockpit">1. Cockpit SEO</button>
+    <button class="tab-btn" data-tab="searchconsole">2. Search Console</button>
+    <button class="tab-btn" data-tab="opportunities">3. Opportunités</button>
+    <button class="tab-btn" data-tab="content">4. Contenu</button>
+    <button class="tab-btn" data-tab="audit">5. Audit technique</button>
+    <button class="tab-btn" data-tab="conversions">6. Conversions</button>
+    <button class="tab-btn" data-tab="competitors">7. Concurrents</button>
+    <button class="tab-btn" data-tab="brief">8. Brief Claude</button>
+  </nav>
+
+  <main class="main-container">
+    <section id="cockpit" class="tab-section active">
+      <h2>Cockpit SEO</h2>
+      <div id="priority-alerts-container" class="priority-alerts-container">
+        <p class="loading">Chargement des alertes...</p>
+      </div>
+      <div id="cockpit-container">
+        <p class="loading">Chargement des statistiques...</p>
+      </div>
+    </section>
+
+    <section id="searchconsole" class="tab-section">
+      <h2>Search Console Data</h2>
+      <div class="section-actions">
+        <button class="btn-primary" onclick="importGscData()">🔄 Importer données GSC</button>
+      </div>
+      <div id="gsc-status" class="import-status hidden"></div>
+      <div id="queries-container">
+        <p class="loading">Chargement des données...</p>
+      </div>
+    </section>
+
+    <section id="opportunities" class="tab-section">
+      <h2>Opportunités SEO</h2>
+      <div id="opportunities-container">
+        <p class="loading">Chargement des opportunités...</p>
+      </div>
+      
+      <h3 class="subsection-title">🔧 Pages à optimiser</h3>
+      <div id="pages-to-optimize-container">
+        <p class="loading">Chargement des pages à optimiser...</p>
+      </div>
+    </section>
+
+    <section id="content" class="tab-section">
+      <h2>Contenu</h2>
+      <div class="section-actions">
+        <button class="btn-primary" onclick="toggleContentForm()">+ Créer contenu</button>
+        <button class="btn-primary" onclick="generateEditorialPlan()">📋 Générer plan éditorial</button>
+      </div>
+      <div id="content-form" class="form-container hidden">
+        <h3>Nouveau contenu</h3>
+        <form onsubmit="submitContent(event)">
+          <div class="form-group">
+            <label for="content-type">Type</label>
+            <select id="content-type" required>
+              <option value="blog">Article blog</option>
+              <option value="service">Page service</option>
+              <option value="optimization">Optimisation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="content-title">Titre</label>
+            <input type="text" id="content-title" required placeholder="Titre du contenu">
+          </div>
+          <div class="form-group">
+            <label for="content-keyword">Mot-clé cible</label>
+            <input type="text" id="content-keyword" placeholder="Mot-clé principal">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="toggleContentForm()">Annuler</button>
+            <button type="submit" class="btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+      
+      <h3 class="subsection-title">📅 Plan éditorial mensuel</h3>
+      <div id="monthly-plan-container">
+        <p class="loading">Chargement du plan mensuel...</p>
+      </div>
+      
+      <div id="content-container">
+        <p class="loading">Chargement des contenus...</p>
+      </div>
+      
+      <h3 class="subsection-title">📋 Plan éditorial</h3>
+      <div id="editorial-container">
+        <p class="loading">Chargement du plan éditorial...</p>
+      </div>
+      
+      <h3 class="subsection-title">📜 Historique récent</h3>
+      <div id="history-container">
+        <p class="loading">Chargement de l'historique...</p>
+      </div>
+    </section>
+
+    <section id="audit" class="tab-section">
+      <h2>Audit technique</h2>
+      <div class="section-actions">
+        <button class="btn-primary" onclick="runAudit()">🔍 Audit page</button>
+        <button class="btn-primary" onclick="runCrawl()">🕷️ Crawl site</button>
+      </div>
+      <div id="audit-container">
+        <p class="loading">Chargement des audits...</p>
+      </div>
+      
+      <h3 class="subsection-title">Maillage interne</h3>
+      <div id="internal-links-container">
+        <p class="loading">Chargement du maillage...</p>
+      </div>
+    </section>
+
+    <section id="conversions" class="tab-section">
+      <h2>Conversions SEO</h2>
+      <div id="conversions-stats">
+        <p class="loading">Chargement des statistiques...</p>
+      </div>
+      <h3 class="subsection-title">Historique des conversions</h3>
+      <div id="conversions-container">
+        <p class="loading">Chargement des conversions...</p>
+      </div>
+    </section>
+
+    <section id="competitors" class="tab-section">
+      <h2>Concurrents SEO</h2>
+      <div class="section-actions">
+        <button class="btn-primary" onclick="toggleCompetitorForm()">+ Ajouter concurrent</button>
+      </div>
+      <div id="competitor-form" class="form-container hidden">
+        <h3>Nouveau concurrent</h3>
+        <form onsubmit="submitCompetitor(event)">
+          <div class="form-group">
+            <label for="competitor-domain">Domaine</label>
+            <input type="text" id="competitor-domain" required placeholder="exemple.fr">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="toggleCompetitorForm()">Annuler</button>
+            <button type="submit" class="btn-primary">Ajouter</button>
+          </div>
+        </form>
+      </div>
+      <div id="competitors-container">
+        <p class="loading">Chargement des concurrents...</p>
+      </div>
+    </section>
+
+    <section id="brief" class="tab-section">
+      <h2>Brief Claude</h2>
+      <div id="briefs-container">
+        <p class="loading">Chargement des briefs...</p>
+      </div>
+      <div id="brief-detail" class="brief-detail hidden">
+        <div class="brief-detail-header">
+          <h3 id="brief-detail-title"></h3>
+          <button class="btn-secondary" onclick="closeBriefDetail()">Fermer</button>
+        </div>
+        <div id="brief-detail-content" class="brief-content"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/seo-dashboard/dashboard.js"></script>
+</body>
+</html>
