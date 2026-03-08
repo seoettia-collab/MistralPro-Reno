@@ -87,7 +87,10 @@ const initSchema = async () => {
       type TEXT NOT NULL,
       target TEXT,
       priority TEXT DEFAULT 'medium',
-      status TEXT DEFAULT 'pending'
+      status TEXT DEFAULT 'pending',
+      action_recommended TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     
     CREATE TABLE IF NOT EXISTS contents (
@@ -140,6 +143,23 @@ const initSchema = async () => {
     if (stmt.trim()) {
       await db.execute(stmt.trim());
     }
+  }
+  
+  // Migration: ajouter colonnes manquantes à opportunities
+  try {
+    await db.execute("ALTER TABLE opportunities ADD COLUMN action_recommended TEXT");
+  } catch (e) {
+    // Colonne existe déjà, ignorer
+  }
+  try {
+    await db.execute("ALTER TABLE opportunities ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+  } catch (e) {
+    // Colonne existe déjà, ignorer
+  }
+  try {
+    await db.execute("ALTER TABLE opportunities ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+  } catch (e) {
+    // Colonne existe déjà, ignorer
   }
   
   // Insérer site pilote
