@@ -78,12 +78,23 @@ Le déploiement est **automatique** :
     └── deploy.yml          # FTP Deploy vers OVH
 ```
 
-### 0.5 Après clonage
+### 0.5 Structure documentation
 
-1. Lire ce fichier GOUVERNANCE.md
-2. Attendre les instructions de Ricardo
-3. Faire les modifications demandées
-4. Commit + Push pour déployer
+```
+/docs/
+├── GOUVERNANCE.md      # Ce document (règles + démarrage)
+├── FICHE_TECHNIQUE.md  # Référentiel rapide (pages, CSS, JS, images)
+└── ARCHITECTURE.md     # Architecture technique du système
+```
+
+### 0.6 Après clonage
+
+1. Lire `GOUVERNANCE.md` (ce fichier)
+2. Consulter `FICHE_TECHNIQUE.md` pour retrouver les infos clés
+3. Consulter `ARCHITECTURE.md` pour comprendre la structure
+4. Attendre les instructions de Ricardo
+5. Faire les modifications demandées
+6. Commit + Push pour déployer
 
 ---
 
