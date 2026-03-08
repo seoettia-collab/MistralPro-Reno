@@ -304,4 +304,150 @@ Header set X-XSS-Protection "1; mode=block"
 
 ---
 
+## 11. SEO ENGINE — SITE WEB
+
+### Structure du blog
+
+```
+blog.html (Liste des articles)
+└── /blog/
+    ├── cout-renovation-appartement-paris.html (PILIER)
+    ├── renovation-appartement-paris-prix-m2.html
+    ├── combien-coutent-travaux-renovation-maison.html
+    ├── renovation-salle-de-bain-guide-prix.html
+    ├── degat-des-eaux-5-etapes.html
+    ├── prix-renovation-cuisine-paris.html
+    ├── prix-renovation-salle-de-bain-paris.html
+    ├── prix-travaux-electricite-appartement.html
+    ├── prix-travaux-peinture-appartement.html
+    └── prix-travaux-isolation-appartement.html
+```
+
+### Cluster SEO "Coût des Travaux"
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    CLUSTER "RÉNOVATION PARIS"                    │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │              ARTICLE PILIER                               │   │
+│  │     cout-renovation-appartement-paris.html               │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                              │                                   │
+│        ┌─────────────────────┼─────────────────────┐            │
+│        ▼                     ▼                     ▼            │
+│  ┌──────────┐         ┌──────────┐         ┌──────────┐        │
+│  │ Prix m²  │         │ Cuisine  │         │ SdB      │        │
+│  └──────────┘         └──────────┘         └──────────┘        │
+│        │                     │                     │            │
+│        ▼                     ▼                     ▼            │
+│  ┌──────────┐         ┌──────────┐         ┌──────────┐        │
+│  │ Électric.│         │ Peinture │         │ Isolation│        │
+│  └──────────┘         └──────────┘         └──────────┘        │
+│                                                                  │
+│                    ┌──────────────────┐                         │
+│                    │  CONVERSIONS     │                         │
+│                    │  ───────────────│                         │
+│                    │  services.html   │                         │
+│                    │  cost_calculator │                         │
+│                    │  degat-des-eaux  │                         │
+│                    └──────────────────┘                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Logique de maillage interne
+
+| Depuis | Vers | Objectif |
+|--------|------|----------|
+| Chaque article | `services.html` | Découverte services |
+| Chaque article | `cost_calculator.html` | Conversion |
+| Articles pertinents | `degat-des-eaux.html` | Urgences |
+| Articles liés | Autres articles du cluster | Autorité thématique |
+
+### Point de conversion
+
+```
+┌────────────────┐     ┌────────────────┐     ┌────────────────┐
+│   Article      │────▶│  Simulateur    │────▶│  Email devis   │
+│   Blog SEO     │     │  cost_calc.    │     │  + Notification│
+└────────────────┘     └────────────────┘     └────────────────┘
+```
+
+### Schema.org implémentés
+
+| Page | Type Schema | Données |
+|------|-------------|---------|
+| `index.html` | HomeAndConstructionBusiness | Nom, adresse, téléphone, horaires |
+| `services.html` | Service + FAQPage | Services, areaServed: Paris, 3 FAQ |
+| `blog.html` | Blog | Liste articles |
+| `blog/*.html` | Article + BreadcrumbList | Titre, date, auteur, fil d'Ariane |
+| `cost_calculator.html` | WebApplication | Application gratuite |
+| `degat-des-eaux.html` | Service | Service urgence |
+| `projets.html` | CollectionPage | Portfolio réalisations |
+
+### Fichiers SEO
+
+| Fichier | Contenu | Articles |
+|---------|---------|----------|
+| `sitemap.xml` | Plan du site | 10 articles blog |
+| `robots.txt` | Directives crawlers | Sitemap déclaré |
+
+---
+
+## 12. SEO AI APPLICATION (PROJET FUTUR)
+
+### Description
+
+Application indépendante permettant l'analyse et l'optimisation SEO automatisée du site Mistral Pro Reno.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    SEO AI APPLICATION                            │
+│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ Audit SEO    │  │ Analyse      │  │ Suivi        │          │
+│  │ automatique  │  │ pages        │  │ mots-clés    │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ Génération   │  │ Génération   │  │ Suivi        │          │
+│  │ articles IA  │  │ images IA    │  │ performance  │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Fonctionnalités prévues
+
+| Module | Description |
+|--------|-------------|
+| **Audit SEO** | Analyse technique automatique du site |
+| **Analyse pages** | Vérification meta, schema, performance |
+| **Suivi mots-clés** | Tracking positions Google |
+| **Génération articles** | Création contenu optimisé via IA |
+| **Génération images** | Création visuels via IA |
+| **Suivi performance** | Dashboard métriques SEO |
+
+### Architecture prévue
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Frontend       │────▶│  Backend API    │────▶│  Services IA    │
+│  React/Vue      │     │  Node.js        │     │  OpenAI/Claude  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                               │
+                               ▼
+                        ┌─────────────────┐
+                        │  Base données   │
+                        │  PostgreSQL     │
+                        └─────────────────┘
+```
+
+### Contraintes
+
+- **Application séparée** du site vitrine
+- **Aucune modification** de l'architecture actuelle du dashboard Facebook Ads
+- **Repo indépendant** à créer
+
+---
+
 *Dernière mise à jour : 8 mars 2026*

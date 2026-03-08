@@ -34,9 +34,16 @@
 
 | Fichier | Sujet |
 |---------|-------|
-| `cout-renovation-appartement-paris.html` | Coût rénovation appartement Paris |
-| `degat-des-eaux-5-etapes.html` | 5 étapes après un dégât des eaux |
+| `cout-renovation-appartement-paris.html` | Coût rénovation appartement Paris (PILIER) |
+| `renovation-appartement-paris-prix-m2.html` | Prix rénovation au m² Paris |
+| `combien-coutent-travaux-renovation-maison.html` | Coût travaux rénovation maison |
 | `renovation-salle-de-bain-guide-prix.html` | Guide prix rénovation salle de bain |
+| `degat-des-eaux-5-etapes.html` | 5 étapes après un dégât des eaux |
+| `prix-renovation-cuisine-paris.html` | Prix rénovation cuisine Paris |
+| `prix-renovation-salle-de-bain-paris.html` | Prix rénovation salle de bain Paris |
+| `prix-travaux-electricite-appartement.html` | Prix travaux électricité |
+| `prix-travaux-peinture-appartement.html` | Prix travaux peinture |
+| `prix-travaux-isolation-appartement.html` | Prix travaux isolation |
 
 ---
 
@@ -172,10 +179,50 @@
 
 | Fichier | Rôle |
 |---------|------|
-| `sitemap.xml` | Plan du site pour Google |
+| `sitemap.xml` | Plan du site pour Google (10 articles) |
 | `robots.txt` | Directives crawlers |
 | `site.webmanifest` | PWA manifest |
 | `googled215df2191151168.html` | Vérification Search Console |
+
+---
+
+## 🎯 SEO ENGINE
+
+### Cluster SEO "Rénovation Paris"
+
+| Catégorie | Articles |
+|-----------|----------|
+| Article pilier | `cout-renovation-appartement-paris.html` |
+| Prix au m² | `renovation-appartement-paris-prix-m2.html` |
+| Maison | `combien-coutent-travaux-renovation-maison.html` |
+| Salle de bain | `renovation-salle-de-bain-guide-prix.html`, `prix-renovation-salle-de-bain-paris.html` |
+| Cuisine | `prix-renovation-cuisine-paris.html` |
+| Électricité | `prix-travaux-electricite-appartement.html` |
+| Peinture | `prix-travaux-peinture-appartement.html` |
+| Isolation | `prix-travaux-isolation-appartement.html` |
+| Urgences | `degat-des-eaux-5-etapes.html` |
+
+### Schema.org implémentés
+
+| Type | Pages |
+|------|-------|
+| HomeAndConstructionBusiness | `index.html` |
+| Service | `services.html`, `degat-des-eaux.html` |
+| FAQPage | `services.html`, articles blog |
+| Blog | `blog.html` |
+| Article | Tous les articles `/blog/*.html` |
+| BreadcrumbList | Toutes les pages principales |
+| CollectionPage | `projets.html` |
+| WebApplication | `cost_calculator.html` |
+
+### Maillage interne
+
+| Lien | Objectif |
+|------|----------|
+| → `services.html` | Découverte services |
+| → `cost_calculator.html` | Conversion (simulateur) |
+| → `degat-des-eaux.html` | Urgences plomberie |
+| → Autres articles | Autorité thématique |
 
 ---
 

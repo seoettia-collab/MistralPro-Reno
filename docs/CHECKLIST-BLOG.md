@@ -213,4 +213,66 @@ Quand le blog a **plus de 6 articles récents**, les anciens articles passent da
 
 ---
 
+## 🎯 SEO MANAGEMENT
+
+### Checklist SEO récurrente
+
+| Tâche | Fréquence | Responsable |
+|-------|-----------|-------------|
+| Création contenu blog | 2/mois | Ricardo/Claude |
+| Mise à jour sitemap.xml | À chaque nouvel article | Claude |
+| Vérification maillage interne | Mensuel | Claude |
+| Vérification Schema.org | Mensuel | Claude |
+| Suivi performance GTmetrix | Mensuel | Ricardo |
+| Audit SEO technique | Trimestriel | GPT/Claude |
+
+### Création d'un nouvel article SEO
+
+```
+□ Choisir mot-clé cible (ex: "prix rénovation cuisine Paris")
+□ Vérifier qu'il n'existe pas déjà un article similaire
+□ Créer fichier à partir de TEMPLATE.html
+□ Rédiger contenu (min 800 mots)
+□ Ajouter Schema.org Article + BreadcrumbList
+□ Ajouter liens internes vers :
+   - services.html
+   - cost_calculator.html
+   - degat-des-eaux.html (si pertinent)
+   - 2-3 autres articles du cluster
+□ Ajouter mentions géographiques (Paris, Île-de-France)
+□ Mettre à jour sitemap.xml
+□ Mettre à jour blog.html
+□ Git commit + push
+□ Vérifier déploiement
+```
+
+### Maillage interne obligatoire
+
+| Type de lien | Destination | Objectif |
+|--------------|-------------|----------|
+| CTA principal | `cost_calculator.html` | Conversion |
+| Services | `services.html` | Découverte |
+| Urgences | `degat-des-eaux.html` | Si thème plomberie/eau |
+| Cluster | Articles thématiques liés | Autorité SEO |
+
+### Schema.org obligatoires par page
+
+| Type de page | Schema requis |
+|--------------|---------------|
+| Article blog | Article + BreadcrumbList |
+| Page service | Service (ou LocalBusiness) |
+| FAQ visible | FAQPage |
+| Page collection | CollectionPage |
+
+### Suivi performance SEO
+
+| Métrique | Outil | Cible |
+|----------|-------|-------|
+| GTmetrix Grade | GTmetrix | A (>90%) |
+| Core Web Vitals | PageSpeed Insights | Tous verts |
+| Indexation | Google Search Console | 100% pages |
+| Positions mots-clés | Search Console | Top 10 |
+
+---
+
 *Dernière mise à jour : 8 mars 2026*
