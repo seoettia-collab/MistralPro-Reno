@@ -9,7 +9,7 @@
     "init-db": "node scripts/init-db.js"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "keywords": [],
   "author": "",
