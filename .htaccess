@@ -1,4 +1,11 @@
 # =========================================
+# REDIRECTION WWW - Force www prefix
+# =========================================
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^mistralpro-reno\.fr [NC]
+RewriteRule ^(.*)$ https://www.mistralpro-reno.fr/$1 [L,R=301]
+
+# =========================================
 # REDIRECTIONS 301 - Pages supprimées
 # =========================================
 Redirect 301 /landing.html /cost_calculator.html
