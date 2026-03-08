@@ -979,7 +979,34 @@
         if (mobileResetBtn && desktopResetBtn) {
             mobileResetBtn.addEventListener('click', function() {
                 desktopResetBtn.click();
-                syn
+                syncMobileTotals();
+            });
+        }
+        
+        // Synchroniser aussi quand les inputs changent
+        document.querySelectorAll('input[type="checkbox"], input[type="range"], select').forEach(function(el) {
+            el.addEventListener('change', function() {
+                setTimeout(syncMobileTotals, 100);
+            });
+        });
+        
+        document.querySelectorAll('input[type="range"]').forEach(function(el) {
+            el.addEventListener('input', function() {
+                setTimeout(syncMobileTotals, 100);
+            });
+        });
+        
+        document.querySelectorAll('.qty-input').forEach(function(el) {
+            el.addEventListener('input', function() {
+                setTimeout(syncMobileTotals, 100);
+            });
+        });
+        
+        // Sync initial
+        syncMobileTotals();
+    });
+    </script>
+
 <script>
 (function(){var u="contact",d="mistralpro-reno",t=".fr";var e=u+"@"+d+t;
 document.querySelectorAll("[data-eml]").forEach(function(a){a.href="mai"+"lto:"+e});
