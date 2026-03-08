@@ -119,26 +119,48 @@
       </div>
     </section>
 
-    <section>
+    <!-- Filtres par catégorie -->
+    <section class="blog-filters">
       <div class="container">
-        <div class="blog-grid">
+        <div class="filter-tags">
+          <button class="filter-tag active" data-filter="all">Tous</button>
+          <button class="filter-tag" data-filter="renovation">Rénovation</button>
+          <button class="filter-tag" data-filter="salle-de-bain">Salle de bain</button>
+          <button class="filter-tag" data-filter="urgences">Urgences</button>
+          <button class="filter-tag" data-filter="prix">Prix</button>
+        </div>
+      </div>
+    </section>
 
-        <article class="blog-card">
-          <div class="blog-card-img">
-            <img src="images/renovation_general_(9).webp" alt="Rénovation appartement Paris - coût et prix au m²" width="400" height="250" loading="lazy">
+    <!-- Article mis en avant -->
+    <section class="blog-featured">
+      <div class="container">
+        <article class="featured-card" data-category="renovation">
+          <div class="featured-img">
+            <img src="images/renovation_general_(9).webp" alt="Rénovation appartement Paris - coût et prix au m²" width="600" height="400" loading="lazy">
           </div>
-          <div class="blog-card-body">
+          <div class="featured-body">
+            <span class="blog-card-tag">Rénovation</span>
+            <span class="featured-badge">Article à la une</span>
+            <h2><a href="blog/cout-renovation-appartement-paris.html">Combien coûte une rénovation d'appartement à Paris en 2026 ?</a></h2>
+            <p>De 400 € à 2 000 € le m², le budget d'une rénovation à Paris varie fortement. Découvrez les prix détaillés par type de travaux et nos conseils pour optimiser votre investissement.</p>
             <div class="blog-card-meta">
               <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 3 février 2026</span>
               <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 6 min</span>
             </div>
-            <span class="blog-card-tag">Rénovation</span>
-            <h2><a href="blog/cout-renovation-appartement-paris.html">Combien coûte une rénovation d'appartement à Paris en 2026 ?</a></h2>
-            <p>De 400 € à 2 000 € le m², le budget d'une rénovation à Paris varie fortement. Découvrez les prix détaillés par type de travaux et nos conseils pour optimiser votre investissement.</p>
-            <a href="blog/cout-renovation-appartement-paris.html" class="blog-card-link">Lire l'article →</a>
+            <a href="blog/cout-renovation-appartement-paris.html" class="btn btn-primary">Lire l'article</a>
           </div>
         </article>
-        <article class="blog-card">
+      </div>
+    </section>
+
+    <!-- Grille des autres articles -->
+    <section class="blog-articles">
+      <div class="container">
+        <h2 class="section-title">Tous nos articles</h2>
+        <div class="blog-grid">
+
+        <article class="blog-card" data-category="urgences">
           <div class="blog-card-img">
             <img src="images/plomberie.webp" alt="Plombier intervenant sur un dégât des eaux" width="400" height="250" loading="lazy">
           </div>
@@ -153,7 +175,7 @@
             <a href="blog/degat-des-eaux-5-etapes.html" class="blog-card-link">Lire l'article →</a>
           </div>
         </article>
-        <article class="blog-card">
+        <article class="blog-card" data-category="salle-de-bain">
           <div class="blog-card-img">
             <img src="images/salle_de_bain.webp" alt="Rénovation salle de bain moderne avec douche italienne" width="400" height="250" loading="lazy">
           </div>
@@ -218,6 +240,12 @@
                 <span class="eml-addr"></span>
               </a>
             </li>
+            <li style="margin-top:15px">
+              <a href="https://www.facebook.com/profile.php?id=61587951641785" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:10px" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                Facebook
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -269,6 +297,29 @@
 (function(){var u="contact",d="mistralpro-reno",t=".fr";var e=u+"@"+d+t;
 document.querySelectorAll("[data-eml]").forEach(function(a){a.href="mai"+"lto:"+e});
 document.querySelectorAll(".eml-addr").forEach(function(s){s.textContent=e})})();
+</script>
+
+<script>
+// Blog category filtering
+document.querySelectorAll('.filter-tag').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var filter = this.dataset.filter;
+    
+    // Update active state
+    document.querySelectorAll('.filter-tag').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    
+    // Filter articles
+    var cards = document.querySelectorAll('.blog-card, .featured-card');
+    cards.forEach(function(card) {
+      if (filter === 'all' || card.dataset.category === filter) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
 </script>
 </body>
 </html>
