@@ -2,7 +2,9 @@
  * SEO Dashboard - Navigation & Data
  */
 
-const API_BASE = '/seo-api';
+// URL API Backend (Vercel)
+// À remplacer par l'URL réelle après déploiement
+const API_BASE = 'https://mistral-pro-reno.vercel.app';
 
 document.addEventListener('DOMContentLoaded', () => {
   const tabButtons = document.querySelectorAll('.tab-btn');
