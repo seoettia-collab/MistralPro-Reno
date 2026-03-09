@@ -1071,29 +1071,34 @@ async function loadConversions() {
     const statsResult = await statsResponse.json();
     const conversionsResult = await conversionsResponse.json();
 
-    // Afficher les stats
+    // Afficher les stats (même si tout est à 0)
     if (statsResult.status === 'ok') {
       const stats = statsResult.data;
+      const hasConversions = stats.total > 0;
+      
       statsContainer.innerHTML = `
-        <div class="conversions-stats-grid">
+        <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-value">${stats.today}</span>
+            <span class="stat-value">${stats.today || 0}</span>
             <span class="stat-label">Aujourd'hui</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">${stats.this_week}</span>
+            <span class="stat-value">${stats.this_week || 0}</span>
             <span class="stat-label">Cette semaine</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">${stats.this_month}</span>
+            <span class="stat-value">${stats.this_month || 0}</span>
             <span class="stat-label">Ce mois</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">${stats.total}</span>
+            <span class="stat-value">${stats.total || 0}</span>
             <span class="stat-label">Total</span>
           </div>
         </div>
+        ${!hasConversions ? '<p class="section-description" style="margin-top: 0.5rem; color: var(--text-secondary);">📊 En attente des premières conversions depuis /merci.html</p>' : ''}
       `;
+    } else {
+      statsContainer.innerHTML = '<p class="empty-state">Statistiques non disponibles</p>';
     }
 
     // Afficher les conversions
@@ -2969,3 +2974,6 @@ window.submitCompetitor = submitCompetitor;
 window.escapeHtml = escapeHtml;
 window.toggleQaPanel = toggleQaPanel;
 window.updateQaProgress = updateQaProgress;
+window.updateContentStatus = updateContentStatus;
+window.refreshPagesAnalysis = refreshPagesAnalysis;
+window.refreshContentIdeas = refreshContentIdeas;
