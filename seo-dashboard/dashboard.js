@@ -3310,85 +3310,145 @@ window.publishContent = publishContent;
 window.verifyAndMarkLive = verifyAndMarkLive;
 
 /**
- * Publier un contenu : générer HTML et afficher pour copie
+ * Publier un contenu : EXÉCUTION AUTOMATIQUE COMPLÈTE
+ * Génère HTML → Push Git → Attend déploiement → Vérifie URL → Marque LIVE
  */
 async function publishContent(contentId) {
   try {
-    // Afficher message de chargement
-    const confirmPublish = confirm('🚀 Publication du contenu\n\nCette action va :\n1. Générer la page HTML\n2. Afficher le code à copier dans le repo\n\nContinuer ?');
-    if (!confirmPublish) return;
+    // Afficher message de démarrage
+    showPublishProgress(contentId, 'Démarrage de la publication...');
 
-    // Appeler l'API de publication
+    // Appeler l'API de publication automatique
     const response = await fetchAPI(`/api/publish/${contentId}`, {
       method: 'POST'
     });
     const result = await response.json();
 
-    if (result.status !== 'ok') {
-      alert(`❌ Erreur : ${result.message}`);
-      return;
+    // Fermer le loader
+    closePublishProgress();
+
+    if (result.status === 'ok') {
+      // Afficher le résultat
+      showPublishResult(result);
+      // Rafraîchir la liste
+      loadContents();
+    } else {
+      alert(`❌ Erreur : ${result.message}\n\nÉtape échouée : ${result.data?.failed_step || 'inconnue'}`);
+      loadContents();
     }
 
-    // Afficher le HTML généré dans une modal
-    showPublishModal(result);
-
   } catch (err) {
+    closePublishProgress();
     alert(`❌ Erreur : ${err.message}`);
     console.error('publishContent error:', err);
   }
 }
 
 /**
- * Afficher la modal de publication avec le HTML généré
+ * Afficher la progression de publication
  */
-function showPublishModal(result) {
-  // Créer la modal
+function showPublishProgress(contentId, message) {
+  // Supprimer si existant
+  closePublishProgress();
+  
+  const modal = document.createElement('div');
+  modal.className = 'publish-progress-modal';
+  modal.id = 'publish-progress';
+  modal.innerHTML = `
+    <div class="publish-progress-content">
+      <div class="publish-progress-spinner"></div>
+      <h3>🚀 Publication en cours...</h3>
+      <p id="publish-progress-msg">${message}</p>
+      <div class="publish-progress-steps" id="publish-steps">
+        <div class="step pending">⏳ Génération HTML</div>
+        <div class="step pending">⏳ Push GitHub</div>
+        <div class="step pending">⏳ Déploiement OVH (~45s)</div>
+        <div class="step pending">⏳ Vérification URL</div>
+      </div>
+      <p class="publish-progress-note">⚠️ Ne fermez pas cette fenêtre</p>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+/**
+ * Fermer la modal de progression
+ */
+function closePublishProgress() {
+  const modal = document.getElementById('publish-progress');
+  if (modal) modal.remove();
+}
+
+/**
+ * Afficher le résultat de publication
+ */
+function showPublishResult(result) {
+  const data = result.data;
+  const isLive = data.final_status === 'live';
+  
+  const stepsHtml = data.steps.map(s => {
+    const icon = s.status === 'ok' ? '✅' : s.status === 'warning' ? '⚠️' : s.status === 'error' ? '❌' : '⏳';
+    return `<div class="step ${s.status}">${icon} ${s.step}</div>`;
+  }).join('');
+
   const modal = document.createElement('div');
   modal.className = 'publish-modal';
   modal.innerHTML = `
     <div class="publish-modal-content">
-      <div class="publish-modal-header">
-        <h2>🚀 Page HTML Générée</h2>
+      <div class="publish-modal-header ${isLive ? 'success' : 'warning'}">
+        <h2>${isLive ? '✅ Page publiée et en ligne !' : '⚠️ Page déployée'}</h2>
         <button onclick="closePublishModal()" class="close-btn">×</button>
       </div>
       <div class="publish-modal-body">
-        <div class="publish-info">
-          <p><strong>Fichier :</strong> <code>${result.data.filepath}</code></p>
-          <p><strong>URL finale :</strong> <a href="${result.data.url}" target="_blank">${result.data.url}</a></p>
-          <p><strong>Taille :</strong> ${(result.data.html_length / 1024).toFixed(1)} Ko</p>
+        <div class="publish-result-url">
+          <strong>URL :</strong> 
+          <a href="${data.url}" target="_blank">${data.url}</a>
+          ${isLive ? '🟢' : '🟠'}
         </div>
         
-        <div class="publish-instructions">
-          <h3>📋 Instructions de déploiement</h3>
-          <ol>
-            <li>Cliquez sur <strong>"Copier le HTML"</strong></li>
-            <li>Dans votre repo local, créez le fichier <code>blog/${result.data.filename}</code></li>
-            <li>Collez le contenu et sauvegardez</li>
-            <li>Faites un <code>git add . && git commit -m "Ajout article ${result.data.slug}" && git push</code></li>
-            <li>Attendez le déploiement (~60s)</li>
-            <li>Revenez ici et cliquez sur <strong>"Confirmer déploiement"</strong></li>
-          </ol>
+        <div class="publish-steps-result">
+          <h4>Étapes exécutées :</h4>
+          ${stepsHtml}
         </div>
 
-        <div class="publish-actions">
-          <button onclick="copyPublishHTML()" class="btn btn-primary">📋 Copier le HTML</button>
-          <button onclick="downloadPublishHTML('${result.data.filename}')" class="btn btn-secondary">💾 Télécharger</button>
-          <button onclick="confirmDeployment(${result.data.content_id || 'null'}, '${result.data.url}')" class="btn btn-success">✅ Confirmer déploiement</button>
-        </div>
-
-        <div class="publish-preview">
-          <h3>Aperçu du code (début)</h3>
-          <pre><code>${escapeHtml(result.html.substring(0, 1000))}...</code></pre>
-        </div>
+        ${!isLive ? `
+          <div class="publish-warning">
+            <p>⚠️ La page a été déployée mais n'est pas encore accessible.</p>
+            <p>Le déploiement OVH peut prendre quelques minutes supplémentaires.</p>
+            <button onclick="retryVerifyLive(${data.content_id})" class="btn btn-primary">🔄 Vérifier à nouveau</button>
+          </div>
+        ` : `
+          <div class="publish-success">
+            <p>🎉 La page est maintenant accessible publiquement !</p>
+            <a href="${data.url}" target="_blank" class="btn btn-primary">🔗 Voir la page</a>
+          </div>
+        `}
       </div>
     </div>
   `;
-
-  // Stocker le HTML complet pour copie
-  window._publishHTML = result.html;
-  window._publishContentId = result.data.content_id;
-
   document.body.appendChild(modal);
+}
+
+/**
+ * Réessayer la vérification Live
+ */
+async function retryVerifyLive(contentId) {
+  try {
+    const response = await fetchAPI(`/api/publish/${contentId}/verify`, { method: 'POST' });
+    const result = await response.json();
+    
+    closePublishModal();
+    
+    if (result.status === 'ok' && result.data.status === 'live') {
+      alert(`✅ Page en ligne !\n\nURL : ${result.data.url}`);
+    } else {
+      alert(`⚠️ Page pas encore accessible.\n\nRéessayez dans quelques minutes.`);
+    }
+    
+    loadContents();
+  } catch (err) {
+    alert(`❌ Erreur : ${err.message}`);
+  }
 }
 
 /**
@@ -3396,103 +3456,12 @@ function showPublishModal(result) {
  */
 function closePublishModal() {
   const modal = document.querySelector('.publish-modal');
-  if (modal) {
-    modal.remove();
-  }
-  // Rafraîchir la liste des contenus
-  loadContents();
-}
-
-/**
- * Copier le HTML dans le presse-papier
- */
-async function copyPublishHTML() {
-  try {
-    await navigator.clipboard.writeText(window._publishHTML);
-    alert('✅ HTML copié dans le presse-papier !');
-  } catch (err) {
-    // Fallback pour les navigateurs qui ne supportent pas clipboard
-    const textarea = document.createElement('textarea');
-    textarea.value = window._publishHTML;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    alert('✅ HTML copié !');
-  }
-}
-
-/**
- * Télécharger le HTML comme fichier
- */
-function downloadPublishHTML(filename) {
-  const blob = new Blob([window._publishHTML], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-/**
- * Confirmer le déploiement après push Git
- */
-async function confirmDeployment(contentId, deployedUrl) {
-  if (!contentId) {
-    // Extraire l'ID depuis l'URL ou demander
-    const idInput = prompt('ID du contenu déployé ?');
-    if (!idInput) return;
-    contentId = parseInt(idInput);
-  }
-
-  try {
-    const response = await fetchAPI(`/api/publish/${contentId}/confirm`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deployed_url: deployedUrl })
-    });
-    const result = await response.json();
-
-    if (result.status === 'ok') {
-      alert('✅ Déploiement confirmé !\n\nLe contenu est maintenant en statut "Déployé".\nCliquez sur "Vérifier Live" pour confirmer que l\'URL est accessible.');
-      closePublishModal();
-    } else {
-      alert(`❌ Erreur : ${result.message}`);
-    }
-  } catch (err) {
-    alert(`❌ Erreur : ${err.message}`);
-  }
-}
-
-/**
- * Vérifier si l'URL est accessible et marquer "live"
- */
-async function verifyAndMarkLive(contentId) {
-  try {
-    const response = await fetchAPI(`/api/publish/${contentId}/verify`, {
-      method: 'POST'
-    });
-    const result = await response.json();
-
-    if (result.status === 'ok') {
-      alert(`✅ Page en ligne !\n\nURL : ${result.data.url}\nStatut HTTP : ${result.data.http_status}`);
-      loadContents();
-    } else {
-      alert(`❌ Page non accessible\n\nURL : ${result.data.url}\nStatut HTTP : ${result.data.http_status}\n\n${result.data.error || 'Vérifiez que le fichier est bien déployé.'}`);
-    }
-  } catch (err) {
-    alert(`❌ Erreur : ${err.message}`);
-  }
+  if (modal) modal.remove();
 }
 
 // Exposer les fonctions globalement
 window.closePublishModal = closePublishModal;
-window.copyPublishHTML = copyPublishHTML;
-window.downloadPublishHTML = downloadPublishHTML;
-window.confirmDeployment = confirmDeployment;
+window.retryVerifyLive = retryVerifyLive;
 
 /**
  * Vérifier si l'URL est accessible avant de marquer "live"

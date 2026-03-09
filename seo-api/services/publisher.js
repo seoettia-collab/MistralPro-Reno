@@ -1,32 +1,285 @@
 /**
  * SEO Dashboard - Auto SEO Publisher
- * Génère des pages HTML à partir des briefs et les déploie sur le site
+ * Génère des pages HTML et les déploie AUTOMATIQUEMENT sur le site
+ * 
+ * PRINCIPE GOUVERNANCE :
+ * Ricardo clique "Publier" → Le système EXÉCUTE tout automatiquement
+ * Pas d'intervention manuelle de Ricardo dans l'exécution technique
  */
 
 const { dbGet, dbRun } = require('./db');
-const fs = require('fs').promises;
-const path = require('path');
 
 // Configuration
 const SITE_URL = 'https://www.mistralpro-reno.fr';
 const GITHUB_REPO = 'seoettia-collab/MistralPro-Reno';
 const GITHUB_BRANCH = 'main';
+// Token GitHub depuis variable d'environnement Vercel
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
+/**
+ * WORKFLOW COMPLET AUTOMATIQUE
+ * 1. Générer HTML
+ * 2. Créer fichier via GitHub API
+ * 3. Attendre déploiement
+ * 4. Vérifier URL
+ * 5. Marquer LIVE
+ */
+async function autoPublish(contentId) {
+  const steps = [];
+  let currentStep = '';
+
+  try {
+    // === ÉTAPE 1 : Récupérer le contenu ===
+    currentStep = 'Récupération contenu';
+    steps.push({ step: currentStep, status: 'running' });
+    
+    const content = await dbGet('SELECT * FROM contents WHERE id = ?', [contentId]);
+    if (!content) {
+      throw new Error('Contenu non trouvé');
+    }
+    steps[steps.length - 1].status = 'ok';
+
+    // === ÉTAPE 2 : Générer le slug et le HTML ===
+    currentStep = 'Génération HTML';
+    steps.push({ step: currentStep, status: 'running' });
+    
+    const slug = content.slug_suggested || generateSlug(content.title);
+    const filename = `${slug}.html`;
+    const filepath = `blog/${filename}`;
+    
+    // Récupérer le brief
+    const brief = await dbGet(
+      'SELECT * FROM briefs WHERE target = ? OR target LIKE ? ORDER BY id DESC LIMIT 1', 
+      [slug, `%${content.keyword}%`]
+    );
+    
+    const briefData = brief || {
+      h1: content.title,
+      meta_description: `${content.keyword} - Guide complet par Mistral Pro Reno.`,
+      introduction: `Découvrez notre guide complet sur ${content.keyword}.`,
+      conclusion: `Pour votre projet, faites confiance à Mistral Pro Reno.`,
+      brief_content: ''
+    };
+
+    const html = generateHTMLFromBrief(briefData, content);
+    steps[steps.length - 1].status = 'ok';
+    steps[steps.length - 1].details = { filename, size: html.length };
+
+    // === ÉTAPE 3 : Mettre à jour statut → deploying ===
+    currentStep = 'Mise à jour statut';
+    steps.push({ step: currentStep, status: 'running' });
+    
+    await dbRun('UPDATE contents SET status = ?, slug_suggested = ? WHERE id = ?', 
+      ['deploying', slug, contentId]);
+    steps[steps.length - 1].status = 'ok';
+
+    // === ÉTAPE 4 : Créer/Mettre à jour le fichier via GitHub API ===
+    currentStep = 'Push GitHub';
+    steps.push({ step: currentStep, status: 'running' });
+    
+    const githubResult = await createOrUpdateFile(filepath, html, `Auto-publish: ${content.title}`);
+    
+    if (!githubResult.success) {
+      throw new Error(`GitHub API: ${githubResult.error}`);
+    }
+    steps[steps.length - 1].status = 'ok';
+    steps[steps.length - 1].details = { commit: githubResult.commit_sha };
+
+    // === ÉTAPE 5 : Mettre à jour statut → deployed ===
+    currentStep = 'Confirmation déploiement';
+    steps.push({ step: currentStep, status: 'running' });
+    
+    const deployedUrl = `${SITE_URL}/blog/${filename}`;
+    await dbRun(
+      'UPDATE contents SET status = ?, deployed_at = ?, deployed_url = ? WHERE id = ?',
+      ['deployed', new Date().toISOString(), deployedUrl, contentId]
+    );
+    steps[steps.length - 1].status = 'ok';
+
+    // === ÉTAPE 6 : Attendre le déploiement OVH (via GitHub Actions) ===
+    currentStep = 'Attente déploiement OVH';
+    steps.push({ step: currentStep, status: 'running', details: { wait: '45s' } });
+    
+    await sleep(45000); // 45 secondes pour GitHub Actions + FTP
+    steps[steps.length - 1].status = 'ok';
+
+    // === ÉTAPE 7 : Vérifier que l'URL est accessible ===
+    currentStep = 'Vérification URL';
+    steps.push({ step: currentStep, status: 'running' });
+    
+    const urlCheck = await checkURLWithRetry(deployedUrl, 3);
+    
+    if (urlCheck.success) {
+      // === ÉTAPE 8 : Marquer LIVE ===
+      currentStep = 'Marquage LIVE';
+      steps.push({ step: currentStep, status: 'running' });
+      
+      await dbRun(
+        'UPDATE contents SET status = ?, live_at = ? WHERE id = ?',
+        ['live', new Date().toISOString(), contentId]
+      );
+      steps[steps.length - 1].status = 'ok';
+      
+      return {
+        success: true,
+        status: 'live',
+        url: deployedUrl,
+        steps,
+        message: `✅ Page publiée et en ligne : ${deployedUrl}`
+      };
+    } else {
+      // URL pas encore accessible - rester en "deployed"
+      steps[steps.length - 1].status = 'warning';
+      steps[steps.length - 1].details = { http_status: urlCheck.status, error: urlCheck.error };
+      
+      return {
+        success: true,
+        status: 'deployed',
+        url: deployedUrl,
+        steps,
+        message: `⚠️ Page déployée mais pas encore accessible. Vérifiez dans quelques minutes.`
+      };
+    }
+
+  } catch (err) {
+    // Marquer l'étape en erreur
+    if (steps.length > 0) {
+      steps[steps.length - 1].status = 'error';
+      steps[steps.length - 1].error = err.message;
+    }
+
+    // Remettre en statut "ready" en cas d'erreur
+    try {
+      await dbRun('UPDATE contents SET status = ? WHERE id = ?', ['ready', contentId]);
+    } catch (e) {}
+
+    return {
+      success: false,
+      status: 'error',
+      error: err.message,
+      step: currentStep,
+      steps,
+      message: `❌ Erreur à l'étape "${currentStep}": ${err.message}`
+    };
+  }
+}
+
+/**
+ * Créer ou mettre à jour un fichier via GitHub API
+ */
+async function createOrUpdateFile(filepath, content, commitMessage) {
+  try {
+    const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filepath}`;
+    
+    // Encoder le contenu en base64
+    const contentBase64 = Buffer.from(content, 'utf-8').toString('base64');
+
+    // Vérifier si le fichier existe déjà (pour récupérer le SHA)
+    let sha = null;
+    try {
+      const checkResponse = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `token ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      if (checkResponse.ok) {
+        const fileData = await checkResponse.json();
+        sha = fileData.sha;
+      }
+    } catch (e) {
+      // Fichier n'existe pas, on le crée
+    }
+
+    // Créer ou mettre à jour le fichier
+    const body = {
+      message: commitMessage,
+      content: contentBase64,
+      branch: GITHUB_BRANCH
+    };
+    
+    if (sha) {
+      body.sha = sha; // Nécessaire pour mise à jour
+    }
+
+    const response = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    return {
+      success: true,
+      commit_sha: result.commit.sha,
+      html_url: result.content.html_url
+    };
+
+  } catch (err) {
+    console.error('GitHub API error:', err);
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
+
+/**
+ * Vérifier si une URL est accessible avec retry
+ */
+async function checkURLWithRetry(url, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, { 
+        method: 'HEAD',
+        headers: { 'User-Agent': 'SEO-Dashboard-Verifier/1.0' }
+      });
+      
+      if (response.ok) {
+        return { success: true, status: response.status };
+      }
+      
+      // Attendre avant retry
+      if (i < maxRetries - 1) {
+        await sleep(10000); // 10 secondes entre chaque tentative
+      }
+    } catch (err) {
+      if (i < maxRetries - 1) {
+        await sleep(10000);
+      }
+    }
+  }
+  
+  return { success: false, status: 0, error: 'URL non accessible après 3 tentatives' };
+}
+
+/**
+ * Sleep helper
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Générer le HTML complet à partir d'un brief
- * @param {Object} brief - Brief du contenu
- * @param {Object} content - Données du contenu
- * @returns {string} - HTML complet
  */
 function generateHTMLFromBrief(brief, content) {
   const today = new Date().toISOString().split('T')[0];
   const slug = content.slug_suggested || generateSlug(content.title);
   const category = content.type === 'blog' ? 'Blog' : 'Rénovation';
   
-  // Parser le brief pour extraire les sections
-  const sections = parseBriefSections(brief.brief_content || '');
-  
-  // Générer le contenu des sections
+  const sections = parseBriefSections(brief.brief_content || brief.instructions || '');
+
   const sectionsHTML = sections.map(section => `
       <h2>${escapeHTML(section.title)}</h2>
       ${section.content.map(p => `<p>${escapeHTML(p)}</p>`).join('\n      ')}
@@ -56,7 +309,7 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
   <meta name="robots" content="index, follow">
   
   <title>${escapeHTML(content.title)} | Mistral Pro Reno</title>
-  <meta name="description" content="${escapeHTML(brief.meta_description || content.keyword + ' - Découvrez notre guide complet. Devis gratuit à Paris et Île-de-France.')}">
+  <meta name="description" content="${escapeHTML(brief.meta_description || content.keyword + ' - Découvrez notre guide complet. Devis gratuit à Paris.')}">
   <link rel="canonical" href="${SITE_URL}/blog/${slug}.html">
   
   <!-- Open Graph -->
@@ -65,23 +318,18 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
   <meta property="og:title" content="${escapeHTML(content.title)}">
   <meta property="og:description" content="${escapeHTML(brief.meta_description || content.keyword)}">
   <meta property="og:image" content="${SITE_URL}/images/renovation_general_(9).webp">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Mistral Pro Reno">
   <meta property="og:locale" content="fr_FR">
   <meta property="article:published_time" content="${today}">
-  <meta property="article:author" content="Mistral Pro Reno">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHTML(content.title)}">
   <meta name="twitter:description" content="${escapeHTML(brief.meta_description || content.keyword)}">
-  <meta name="twitter:image" content="${SITE_URL}/images/renovation_general_(9).webp">
   
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   
   <!-- CSS -->
@@ -102,8 +350,8 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
       <div class="container">
         <div class="top-bar-content">
           <div class="contact-info">
-            <a href="tel:0755188937" aria-label="Téléphone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> 07 55 18 89 37</a>
-            <a href="#" data-eml aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span class="eml-addr"></span></a>
+            <a href="tel:0755188937"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> 07 55 18 89 37</a>
+            <a href="#" data-eml><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span class="eml-addr"></span></a>
             <span class="hide-mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lun-Ven 08h-18h</span>
           </div>
         </div>
@@ -157,11 +405,11 @@ ${sectionsHTML}
 
       <div class="article-share">
         <span>Partager cet article :</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${SITE_URL}/blog/${slug}.html" target="_blank" rel="noopener noreferrer" class="share-btn share-facebook" aria-label="Partager sur Facebook">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${SITE_URL}/blog/${slug}.html" target="_blank" rel="noopener noreferrer" class="share-btn share-facebook">
           <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
           Facebook
         </a>
-        <button class="share-btn share-copy" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='✓ Copié !'" aria-label="Copier le lien">
+        <button class="share-btn share-copy" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='✓ Copié !'">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           Copier le lien
         </button>
@@ -187,7 +435,6 @@ ${sectionsHTML}
       <div class="container">
         <h2>Articles similaires</h2>
         <div class="related-grid">
-          
           <article class="blog-card">
             <div class="blog-card-img">
               <img src="../images/renovation_general_(9).webp" alt="Rénovation appartement Paris" width="400" height="250" loading="lazy">
@@ -198,7 +445,6 @@ ${sectionsHTML}
               <a href="cout-renovation-appartement-paris.html" class="blog-card-link">Lire →</a>
             </div>
           </article>
-
           <article class="blog-card">
             <div class="blog-card-img">
               <img src="../images/plomberie.webp" alt="Dégât des eaux" width="400" height="250" loading="lazy">
@@ -209,7 +455,6 @@ ${sectionsHTML}
               <a href="degat-des-eaux-5-etapes.html" class="blog-card-link">Lire →</a>
             </div>
           </article>
-
         </div>
       </div>
     </section>
@@ -253,11 +498,8 @@ ${sectionsHTML}
 
 /**
  * Parser le brief pour extraire les sections H2
- * @param {string} briefContent - Contenu du brief
- * @returns {Array} - Sections avec titre et contenu
  */
 function parseBriefSections(briefContent) {
-  // Si le brief est vide, générer des sections par défaut
   if (!briefContent || briefContent.trim() === '') {
     return [
       {
@@ -284,7 +526,6 @@ function parseBriefSections(briefContent) {
     ];
   }
 
-  // Parser le brief pour extraire les sections
   const sections = [];
   const lines = briefContent.split('\n');
   let currentSection = null;
@@ -292,26 +533,23 @@ function parseBriefSections(briefContent) {
   for (const line of lines) {
     const trimmed = line.trim();
     
-    // Détecter les titres H2 (## ou lignes en majuscules ou avec :)
-    if (trimmed.startsWith('## ') || trimmed.startsWith('H2:') || /^[A-Z][A-Z\s]+:?$/.test(trimmed)) {
-      if (currentSection) {
+    if (trimmed.startsWith('## ') || trimmed.startsWith('H2:') || trimmed.startsWith('### ')) {
+      if (currentSection && currentSection.content.length > 0) {
         sections.push(currentSection);
       }
       currentSection = {
-        title: trimmed.replace(/^##\s*/, '').replace(/^H2:\s*/, '').replace(/:$/, ''),
+        title: trimmed.replace(/^##\s*/, '').replace(/^###\s*/, '').replace(/^H2:\s*/, ''),
         content: []
       };
-    } else if (currentSection && trimmed.length > 20) {
-      // Ajouter le contenu à la section courante
+    } else if (currentSection && trimmed.length > 20 && !trimmed.startsWith('#') && !trimmed.startsWith('*')) {
       currentSection.content.push(trimmed);
     }
   }
 
-  if (currentSection) {
+  if (currentSection && currentSection.content.length > 0) {
     sections.push(currentSection);
   }
 
-  // Si aucune section trouvée, retourner les sections par défaut
   if (sections.length === 0) {
     return parseBriefSections('');
   }
@@ -321,23 +559,19 @@ function parseBriefSections(briefContent) {
 
 /**
  * Générer un slug à partir du titre
- * @param {string} title - Titre
- * @returns {string} - Slug
  */
 function generateSlug(title) {
   return title
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Supprimer accents
-    .replace(/[^a-z0-9]+/g, '-')      // Remplacer caractères spéciaux par -
-    .replace(/^-+|-+$/g, '')          // Supprimer - au début/fin
-    .substring(0, 60);                 // Limiter la longueur
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 60);
 }
 
 /**
  * Échapper les caractères HTML
- * @param {string} str - Chaîne à échapper
- * @returns {string} - Chaîne échappée
  */
 function escapeHTML(str) {
   if (!str) return '';
@@ -351,8 +585,6 @@ function escapeHTML(str) {
 
 /**
  * Formater une date
- * @param {string} dateStr - Date ISO
- * @returns {string} - Date formatée
  */
 function formatDate(dateStr) {
   const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
@@ -363,8 +595,6 @@ function formatDate(dateStr) {
 
 /**
  * Estimer le temps de lecture
- * @param {Array} sections - Sections de l'article
- * @returns {number} - Minutes de lecture
  */
 function estimateReadTime(sections) {
   let wordCount = 0;
@@ -374,96 +604,27 @@ function estimateReadTime(sections) {
       wordCount += p.split(' ').length;
     }
   }
-  // ~200 mots par minute
   return Math.max(3, Math.ceil(wordCount / 200));
 }
 
 /**
- * Publier un contenu : générer HTML, créer fichier via GitHub API
- * @param {number} contentId - ID du contenu
- * @returns {Promise<Object>} - Résultat de la publication
- */
-async function publishContent(contentId) {
-  try {
-    // 1. Récupérer le contenu
-    const content = await dbGet('SELECT * FROM contents WHERE id = ?', [contentId]);
-    if (!content) {
-      return { success: false, error: 'Contenu non trouvé' };
-    }
-
-    // 2. Récupérer le brief associé (via target = slug ou titre)
-    const brief = await dbGet(
-      'SELECT * FROM briefs WHERE target = ? OR target LIKE ? ORDER BY id DESC LIMIT 1', 
-      [content.slug_suggested || '', `%${content.keyword}%`]
-    );
-    
-    // Si pas de brief, créer un brief par défaut
-    const briefData = brief || {
-      instructions: '',
-      h1: content.title,
-      meta_description: `${content.keyword} - Guide complet par Mistral Pro Reno, expert en rénovation à Paris.`,
-      introduction: `Découvrez notre guide complet sur ${content.keyword}.`,
-      conclusion: `Pour votre projet de ${content.keyword}, faites confiance à Mistral Pro Reno.`,
-      brief_content: ''
-    };
-
-    // 3. Générer le slug
-    const slug = content.slug_suggested || generateSlug(content.title);
-    const filename = `${slug}.html`;
-    const filepath = `blog/${filename}`;
-
-    // 4. Générer le HTML
-    const html = generateHTMLFromBrief(briefData, content);
-
-    // 5. Mettre à jour le contenu avec le slug
-    await dbRun('UPDATE contents SET slug_suggested = ? WHERE id = ?', [slug, contentId]);
-
-    // 6. Retourner le HTML et les infos pour création via GitHub API
-    return {
-      success: true,
-      slug,
-      filename,
-      filepath,
-      html,
-      url: `${SITE_URL}/blog/${filename}`,
-      message: `Article prêt : ${filename}`
-    };
-
-  } catch (err) {
-    console.error('publishContent error:', err);
-    return { success: false, error: err.message };
-  }
-}
-
-/**
- * Vérifier si une URL est accessible
- * @param {string} url - URL à vérifier
- * @returns {Promise<Object>} - Résultat du test
+ * Vérifier si une URL est accessible (simple)
  */
 async function checkURL(url) {
   try {
     const response = await fetch(url, { method: 'HEAD' });
-    return {
-      success: response.ok,
-      status: response.status,
-      url
-    };
+    return { success: response.ok, status: response.status, url };
   } catch (err) {
-    return {
-      success: false,
-      status: 0,
-      error: err.message,
-      url
-    };
+    return { success: false, status: 0, error: err.message, url };
   }
 }
 
 module.exports = {
+  autoPublish,
   generateHTMLFromBrief,
   generateSlug,
-  publishContent,
   checkURL,
-  parseBriefSections,
+  createOrUpdateFile,
   SITE_URL,
   GITHUB_REPO
 };

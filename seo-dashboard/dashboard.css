@@ -2896,3 +2896,123 @@ select:focus {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
+
+/* Modal de progression publication */
+.publish-progress-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.publish-progress-content {
+  background: var(--bg-dark);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  border: 1px solid var(--primary);
+}
+
+.publish-progress-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.publish-progress-content h3 {
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.publish-progress-steps {
+  text-align: left;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+}
+
+.publish-progress-steps .step {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.publish-progress-steps .step.ok {
+  color: var(--success);
+}
+
+.publish-progress-steps .step.error {
+  color: var(--danger);
+}
+
+.publish-progress-note {
+  color: var(--warning);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+/* Résultat publication */
+.publish-modal-header.success {
+  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+}
+
+.publish-modal-header.warning {
+  background: linear-gradient(135deg, #5a4a1a 0%, #6d5a2d 100%);
+}
+
+.publish-result-url {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.publish-result-url a {
+  color: var(--primary);
+  word-break: break-all;
+}
+
+.publish-steps-result {
+  margin-bottom: 1.5rem;
+}
+
+.publish-steps-result h4 {
+  margin-bottom: 0.5rem;
+}
+
+.publish-steps-result .step {
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.publish-warning, .publish-success {
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.publish-warning {
+  background: rgba(244, 196, 48, 0.1);
+  border: 1px solid var(--warning);
+}
+
+.publish-success {
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid var(--success);
+}

@@ -1,15 +1,17 @@
 /**
  * SEO Dashboard - Publisher Routes
- * API pour la publication automatique de contenus
+ * API pour la publication AUTOMATIQUE de contenus
+ * 
+ * PRINCIPE GOUVERNANCE :
+ * Un clic "Publier" = exécution complète automatique
  */
 
 const express = require('express');
 const router = express.Router();
-const { publishContent, checkURL, generateSlug, SITE_URL } = require('../services/publisher');
+const { autoPublish, checkURL, generateSlug, SITE_URL } = require('../services/publisher');
 const { dbGet, dbRun } = require('../services/db');
-const { updateContentStatus } = require('../services/content');
 
-// POST /api/publish/:contentId - Générer le HTML pour un contenu
+// POST /api/publish/:contentId - PUBLICATION AUTOMATIQUE COMPLÈTE
 router.post('/publish/:contentId', async (req, res) => {
   try {
     const { contentId } = req.params;
@@ -27,30 +29,31 @@ router.post('/publish/:contentId', async (req, res) => {
       });
     }
 
-    // Générer le HTML
-    const result = await publishContent(contentId);
+    // Lancer la publication automatique complète
+    const result = await autoPublish(contentId);
 
-    if (!result.success) {
-      return res.status(400).json({ status: 'error', message: result.error });
+    if (result.success) {
+      res.json({
+        status: 'ok',
+        message: result.message,
+        data: {
+          content_id: contentId,
+          final_status: result.status,
+          url: result.url,
+          steps: result.steps
+        }
+      });
+    } else {
+      res.status(400).json({
+        status: 'error',
+        message: result.message,
+        data: {
+          content_id: contentId,
+          failed_step: result.step,
+          steps: result.steps
+        }
+      });
     }
-
-    // Mettre à jour le statut en "deploying"
-    await dbRun('UPDATE contents SET status = ? WHERE id = ?', ['deploying', contentId]);
-
-    res.json({
-      status: 'ok',
-      message: 'HTML généré avec succès',
-      data: {
-        slug: result.slug,
-        filename: result.filename,
-        filepath: result.filepath,
-        url: result.url,
-        html_preview: result.html.substring(0, 500) + '...',
-        html_length: result.html.length
-      },
-      // Le HTML complet pour que le client puisse le copier ou l'envoyer à GitHub
-      html: result.html
-    });
 
   } catch (err) {
     console.error('Publish error:', err);
@@ -58,41 +61,7 @@ router.post('/publish/:contentId', async (req, res) => {
   }
 });
 
-// POST /api/publish/:contentId/confirm - Confirmer le déploiement après push Git
-router.post('/publish/:contentId/confirm', async (req, res) => {
-  try {
-    const { contentId } = req.params;
-    const { commit_sha, deployed_url } = req.body;
-
-    const content = await dbGet('SELECT * FROM contents WHERE id = ?', [contentId]);
-    if (!content) {
-      return res.status(404).json({ status: 'error', message: 'Contenu non trouvé' });
-    }
-
-    // Mettre à jour le statut en "deployed"
-    await dbRun(
-      'UPDATE contents SET status = ?, deployed_at = ?, deployed_url = ? WHERE id = ?',
-      ['deployed', new Date().toISOString(), deployed_url || null, contentId]
-    );
-
-    res.json({
-      status: 'ok',
-      message: 'Déploiement confirmé',
-      data: {
-        content_id: contentId,
-        status: 'deployed',
-        commit_sha,
-        deployed_url
-      }
-    });
-
-  } catch (err) {
-    console.error('Confirm deploy error:', err);
-    res.status(500).json({ status: 'error', message: err.message });
-  }
-});
-
-// POST /api/publish/:contentId/verify - Vérifier si l'URL est accessible et marquer "live"
+// POST /api/publish/:contentId/verify - Vérifier manuellement si l'URL est accessible
 router.post('/publish/:contentId/verify', async (req, res) => {
   try {
     const { contentId } = req.params;
@@ -118,7 +87,7 @@ router.post('/publish/:contentId/verify', async (req, res) => {
 
       res.json({
         status: 'ok',
-        message: 'Page en ligne !',
+        message: '✅ Page en ligne !',
         data: {
           content_id: contentId,
           status: 'live',
@@ -127,10 +96,9 @@ router.post('/publish/:contentId/verify', async (req, res) => {
         }
       });
     } else {
-      // URL non accessible
       res.json({
-        status: 'error',
-        message: 'Page non accessible',
+        status: 'warning',
+        message: '⚠️ Page non accessible',
         data: {
           content_id: contentId,
           url,
@@ -146,30 +114,31 @@ router.post('/publish/:contentId/verify', async (req, res) => {
   }
 });
 
-// GET /api/publish/:contentId/preview - Prévisualiser le HTML généré
-router.get('/publish/:contentId/preview', async (req, res) => {
+// GET /api/publish/:contentId/status - Obtenir le statut de publication
+router.get('/publish/:contentId/status', async (req, res) => {
   try {
     const { contentId } = req.params;
 
-    const result = await publishContent(contentId);
-
-    if (!result.success) {
-      return res.status(400).json({ status: 'error', message: result.error });
+    const content = await dbGet('SELECT * FROM contents WHERE id = ?', [contentId]);
+    if (!content) {
+      return res.status(404).json({ status: 'error', message: 'Contenu non trouvé' });
     }
 
-    // Retourner le HTML complet pour prévisualisation
     res.json({
       status: 'ok',
       data: {
-        slug: result.slug,
-        filename: result.filename,
-        url: result.url,
-        html: result.html
+        content_id: contentId,
+        title: content.title,
+        current_status: content.status,
+        slug: content.slug_suggested,
+        deployed_url: content.deployed_url,
+        deployed_at: content.deployed_at,
+        live_at: content.live_at
       }
     });
 
   } catch (err) {
-    console.error('Preview error:', err);
+    console.error('Status error:', err);
     res.status(500).json({ status: 'error', message: err.message });
   }
 });
