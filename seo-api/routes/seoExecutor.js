@@ -11,6 +11,24 @@ const {
   generateSEOContent,
   generatePageHTML
 } = require('../services/seoExecutor');
+const { checkContentQuality } = require('../services/seoQuality');
+
+// GET /api/seo/quality/:contentId - Contrôle qualité SEO
+router.get('/seo/quality/:contentId', async (req, res) => {
+  try {
+    const { contentId } = req.params;
+    
+    const result = await checkContentQuality(parseInt(contentId));
+    
+    res.json({
+      status: 'ok',
+      ...result
+    });
+
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
 
 // GET /api/seo/candidates - Récupérer les contenus candidats à l'exécution
 router.get('/seo/candidates', async (req, res) => {

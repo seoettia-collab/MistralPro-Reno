@@ -2254,7 +2254,7 @@ async function loadSEOCandidates() {
             <th>Mot-clé</th>
             <th>Type</th>
             <th>Statut</th>
-            <th>Impressions</th>
+            <th>Qualité</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -2268,10 +2268,11 @@ async function loadSEOCandidates() {
           <td class="keyword-cell">${escapeHtml(content.keyword || '-')}</td>
           <td><span class="type-badge">${content.type}</span></td>
           <td><span class="status-badge status-${content.status}">${content.status}</span></td>
-          <td>${content.impressions || '-'}</td>
+          <td id="quality-badge-${content.id}"><span class="quality-badge quality-pending">⏳</span></td>
           <td class="actions-cell">
+            <button class="btn-small" onclick="checkQuality(${content.id})">🔍 Qualité</button>
             <button class="btn-small" onclick="previewSEO(${content.id})">👁️ Preview</button>
-            <button class="btn-small btn-execute-single" onclick="executeSingleSEO(${content.id})">⚡ Exécuter</button>
+            <button class="btn-small btn-execute-single" onclick="executeSingleSEO(${content.id})" id="exec-btn-${content.id}">⚡ Exécuter</button>
           </td>
         </tr>
       `;
@@ -2280,9 +2281,144 @@ async function loadSEOCandidates() {
     html += '</tbody></table>';
     container.innerHTML = html;
 
+    // Charger automatiquement les badges qualité
+    for (const content of result.data) {
+      loadQualityBadge(content.id);
+    }
+
   } catch (err) {
     container.innerHTML = '<p class="error">Erreur de chargement</p>';
     console.error('loadSEOCandidates error:', err);
+  }
+}
+
+/**
+ * Charger le badge qualité pour un contenu
+ */
+async function loadQualityBadge(contentId) {
+  const badgeContainer = document.getElementById(`quality-badge-${contentId}`);
+  if (!badgeContainer) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/seo/quality/${contentId}`);
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      badgeContainer.innerHTML = '<span class="quality-badge quality-error">❌</span>';
+      return;
+    }
+
+    const q = result.quality;
+    const badgeClass = `quality-${q.status}`;
+    const icon = q.status === 'pass' ? '✅' : q.status === 'warning' ? '⚠️' : '❌';
+    
+    badgeContainer.innerHTML = `
+      <span class="quality-badge ${badgeClass}" title="${q.summary.pass}/${q.summary.total} contrôles OK">
+        ${icon} ${q.score}%
+      </span>
+    `;
+
+    // Désactiver le bouton exécuter si qualité fail
+    const execBtn = document.getElementById(`exec-btn-${contentId}`);
+    if (execBtn && q.status === 'fail') {
+      execBtn.disabled = true;
+      execBtn.title = 'Qualité insuffisante - corrigez les erreurs avant publication';
+    }
+
+  } catch (err) {
+    badgeContainer.innerHTML = '<span class="quality-badge quality-error">❓</span>';
+  }
+}
+
+/**
+ * Vérifier et afficher le détail qualité
+ */
+async function checkQuality(contentId) {
+  const resultContainer = document.getElementById('seo-execution-result');
+  resultContainer.classList.remove('hidden');
+  resultContainer.innerHTML = '<p class="loading">Analyse qualité en cours...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/seo/quality/${contentId}`);
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      resultContainer.innerHTML = `<p class="error">Erreur: ${result.message}</p>`;
+      return;
+    }
+
+    const q = result.quality;
+    const statusClass = `quality-${q.status}`;
+    const statusIcon = q.status === 'pass' ? '✅' : q.status === 'warning' ? '⚠️' : '❌';
+
+    let checksHtml = '';
+    for (const check of q.checks) {
+      const checkIcon = check.status === 'pass' ? '✅' : check.status === 'warning' ? '⚠️' : '❌';
+      checksHtml += `
+        <tr class="check-${check.status}">
+          <td>${checkIcon}</td>
+          <td>${check.name}</td>
+          <td>${check.message}</td>
+        </tr>
+      `;
+    }
+
+    resultContainer.innerHTML = `
+      <div class="quality-report">
+        <div class="quality-header">
+          <h4>🔍 Contrôle Qualité SEO</h4>
+          <button class="btn-small" onclick="closeSEOPreview()">✕ Fermer</button>
+        </div>
+        
+        <div class="quality-summary ${statusClass}">
+          <span class="quality-status">${statusIcon} ${q.status.toUpperCase()}</span>
+          <span class="quality-score">${q.score}%</span>
+          <span class="quality-counts">${q.summary.pass} pass / ${q.summary.warning} warning / ${q.summary.fail} fail</span>
+        </div>
+
+        <div class="quality-details">
+          <h5>Mot-clé: ${escapeHtml(result.keyword)}</h5>
+          <table class="quality-checks-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Contrôle</th>
+                <th>Résultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checksHtml}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="quality-parsed">
+          <h5>Éléments détectés</h5>
+          <ul>
+            <li><strong>Title:</strong> ${result.parsed.titleLength} caractères</li>
+            <li><strong>Meta:</strong> ${result.parsed.metaDescriptionLength} caractères</li>
+            <li><strong>H1:</strong> ${escapeHtml(result.parsed.h1 || 'N/A')}</li>
+            <li><strong>H2:</strong> ${result.parsed.h2Count}</li>
+            <li><strong>Mots:</strong> ${result.parsed.wordCount}</li>
+            <li><strong>Liens internes:</strong> ${result.parsed.internalLinksCount}</li>
+          </ul>
+        </div>
+
+        ${q.status === 'pass' ? `
+          <div class="quality-actions">
+            <button class="btn-primary" onclick="executeSingleSEO(${contentId})">⚡ Publier cette page</button>
+          </div>
+        ` : `
+          <div class="quality-warning">
+            <p>⚠️ Corrigez les erreurs avant de publier cette page.</p>
+          </div>
+        `}
+      </div>
+    `;
+
+  } catch (err) {
+    resultContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('checkQuality error:', err);
   }
 }
 
