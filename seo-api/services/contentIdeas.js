@@ -43,6 +43,8 @@ async function generateContentIdeas(siteId) {
   // Récupérer les contenus existants pour éviter les doublons
   const existingContents = await dbAll(`SELECT keyword FROM contents WHERE keyword IS NOT NULL`);
   const existingKeywords = new Set(existingContents.map(c => c.keyword?.toLowerCase()));
+  
+  console.log(`ContentIdeas: ${queries.length} queries found, ${existingKeywords.size} existing keywords`);
 
   const ideas = {
     contentGaps: [],      // Requêtes sans page associée
@@ -51,6 +53,11 @@ async function generateContentIdeas(siteId) {
   };
 
   for (const query of queries) {
+    // Log pour debug
+    if (queries.indexOf(query) < 5) {
+      console.log(`Query: ${query.query}, imp: ${query.impressions}, pos: ${query.position}`);
+    }
+    
     // Ignorer les requêtes déjà ciblées
     if (existingKeywords.has(query.query.toLowerCase())) {
       continue;
