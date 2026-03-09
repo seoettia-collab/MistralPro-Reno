@@ -47,57 +47,62 @@
       </div>
       <div id="gsc-status" class="import-status hidden"></div>
       
-      <!-- Section Historique / Évolution -->
-      <div class="history-section">
-        <h3 class="subsection-title">📈 Historique / Évolution</h3>
-        
-        <div class="history-controls">
-          <div class="filter-group">
-            <label for="history-filter">Filtrer par :</label>
-            <select id="history-filter" onchange="changeHistoryFilter()">
-              <option value="global">Global (toutes requêtes)</option>
-              <option value="query">Par requête</option>
-              <option value="page">Par page</option>
-            </select>
+      <!-- Layout 2 colonnes pour desktop -->
+      <div class="two-col-layout">
+        <!-- Colonne gauche: Filtres + Stats -->
+        <div class="col-left">
+          <div class="history-controls-box">
+            <h4>📈 Historique</h4>
+            <div class="filter-group">
+              <label for="history-filter">Filtrer par :</label>
+              <select id="history-filter" onchange="changeHistoryFilter()">
+                <option value="global">Global (toutes requêtes)</option>
+                <option value="query">Par requête</option>
+                <option value="page">Par page</option>
+              </select>
+            </div>
+            <div class="filter-group hidden" id="query-select-group">
+              <label for="history-query">Requête :</label>
+              <select id="history-query" onchange="loadHistoryData()">
+                <option value="">Sélectionner...</option>
+              </select>
+            </div>
+            <div class="filter-group hidden" id="page-select-group">
+              <label for="history-page">Page :</label>
+              <select id="history-page" onchange="loadHistoryData()">
+                <option value="">Sélectionner...</option>
+              </select>
+            </div>
           </div>
-          <div class="filter-group hidden" id="query-select-group">
-            <label for="history-query">Requête :</label>
-            <select id="history-query" onchange="loadHistoryData()">
-              <option value="">Sélectionner...</option>
-            </select>
-          </div>
-          <div class="filter-group hidden" id="page-select-group">
-            <label for="history-page">Page :</label>
-            <select id="history-page" onchange="loadHistoryData()">
-              <option value="">Sélectionner...</option>
-            </select>
-          </div>
+          <div id="history-evolution-summary" class="evolution-summary hidden"></div>
         </div>
         
-        <div id="history-evolution-summary" class="evolution-summary hidden"></div>
-        
-        <div class="history-charts">
-          <div class="chart-container">
-            <h4>Impressions par jour</h4>
-            <div id="chart-impressions" class="chart-area">
-              <p class="loading">Chargement...</p>
+        <!-- Colonne droite: Graphiques -->
+        <div class="col-right">
+          <div class="history-charts">
+            <div class="chart-container">
+              <h4>Impressions</h4>
+              <div id="chart-impressions" class="chart-area">
+                <p class="loading">Chargement...</p>
+              </div>
             </div>
-          </div>
-          <div class="chart-container">
-            <h4>Clics par jour</h4>
-            <div id="chart-clicks" class="chart-area">
-              <p class="loading">Chargement...</p>
+            <div class="chart-container">
+              <h4>Clics</h4>
+              <div id="chart-clicks" class="chart-area">
+                <p class="loading">Chargement...</p>
+              </div>
             </div>
-          </div>
-          <div class="chart-container">
-            <h4>Position moyenne par jour</h4>
-            <div id="chart-position" class="chart-area">
-              <p class="loading">Chargement...</p>
+            <div class="chart-container">
+              <h4>Position moy.</h4>
+              <div id="chart-position" class="chart-area">
+                <p class="loading">Chargement...</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
+      <!-- Tableau pleine largeur -->
       <h3 class="subsection-title">🔍 Requêtes</h3>
       <div id="queries-container">
         <p class="loading">Chargement des données...</p>
@@ -180,20 +185,36 @@
         <button class="btn-primary" onclick="generateEditorialPlan()">📋 Générer plan éditorial</button>
       </div>
       
-      <!-- SEO Executor Section -->
-      <div id="seo-executor-section" class="executor-section">
-        <h3 class="subsection-title">⚡ Auto SEO Executor</h3>
-        <p class="section-description">Générez automatiquement des pages SEO optimisées à partir de vos contenus.</p>
-        <div class="executor-actions">
-          <button class="btn-primary btn-execute" onclick="loadSEOCandidates()">🔍 Voir les candidats</button>
-          <button class="btn-warning btn-execute" onclick="executeAllSEO()">⚡ Exécuter tout</button>
+      <!-- Layout 2 colonnes pour desktop -->
+      <div class="two-col-layout">
+        <!-- Colonne gauche: SEO Executor -->
+        <div class="col-left">
+          <div id="seo-executor-section" class="executor-section">
+            <h4>⚡ Auto SEO Executor</h4>
+            <p class="section-description">Générez automatiquement des pages SEO optimisées.</p>
+            <div class="executor-actions">
+              <button class="btn-primary btn-execute" onclick="loadSEOCandidates()">🔍 Candidats</button>
+              <button class="btn-warning btn-execute" onclick="executeAllSEO()">⚡ Exécuter</button>
+            </div>
+            <div id="seo-candidates-container" class="hidden">
+              <p class="loading">Chargement...</p>
+            </div>
+            <div id="seo-execution-result" class="hidden"></div>
+          </div>
         </div>
-        <div id="seo-candidates-container" class="hidden">
-          <p class="loading">Chargement...</p>
+        
+        <!-- Colonne droite: Plan éditorial mensuel -->
+        <div class="col-right">
+          <div class="monthly-plan-box">
+            <h4>📅 Plan éditorial mensuel</h4>
+            <div id="monthly-plan-container">
+              <p class="loading">Chargement...</p>
+            </div>
+          </div>
         </div>
-        <div id="seo-execution-result" class="hidden"></div>
       </div>
       
+      <!-- Formulaire pleine largeur (caché) -->
       <div id="content-form" class="form-container hidden">
         <h3>Nouveau contenu</h3>
         <form onsubmit="submitContent(event)">
@@ -220,18 +241,10 @@
         </form>
       </div>
       
-      <h3 class="subsection-title">📅 Plan éditorial mensuel</h3>
-      <div id="monthly-plan-container">
-        <p class="loading">Chargement du plan mensuel...</p>
-      </div>
-      
+      <!-- Tableaux pleine largeur -->
+      <h3 class="subsection-title">📋 Contenus</h3>
       <div id="content-container">
         <p class="loading">Chargement des contenus...</p>
-      </div>
-      
-      <h3 class="subsection-title">📋 Plan éditorial</h3>
-      <div id="editorial-container">
-        <p class="loading">Chargement du plan éditorial...</p>
       </div>
       
       <h3 class="subsection-title">📜 Historique récent</h3>
