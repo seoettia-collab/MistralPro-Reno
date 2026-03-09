@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCockpit();
       } else if (targetTab === 'searchconsole') {
         loadQueries();
+        initHistorySection();
       } else if (targetTab === 'opportunities') {
         loadOpportunities();
       } else if (targetTab === 'content') {
@@ -2607,4 +2608,288 @@ async function executeAllSEO() {
     resultContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
     console.error('executeAllSEO error:', err);
   }
+}
+
+// =====================================================
+// HISTORIQUE GSC - VISUALISATION
+// =====================================================
+
+/**
+ * Données historique en cache
+ */
+let historyQueriesList = [];
+let historyPagesList = [];
+
+/**
+ * Initialiser la section historique
+ */
+async function initHistorySection() {
+  // Charger les listes de requêtes et pages
+  await loadHistoryLists();
+  // Charger les données globales
+  await loadHistoryData();
+  // Charger l'évolution
+  await loadEvolutionSummary();
+}
+
+/**
+ * Charger les listes de requêtes et pages pour les filtres
+ */
+async function loadHistoryLists() {
+  try {
+    // Charger les requêtes
+    const queriesResponse = await fetch(`${API_BASE}/api/gsc/history/queries`);
+    const queriesResult = await queriesResponse.json();
+    
+    if (queriesResult.status === 'ok') {
+      historyQueriesList = queriesResult.data;
+      const querySelect = document.getElementById('history-query');
+      querySelect.innerHTML = '<option value="">Sélectionner...</option>';
+      for (const q of historyQueriesList) {
+        querySelect.innerHTML += `<option value="${escapeHtml(q.query)}">${escapeHtml(q.query)} (${q.totalImpressions} imp.)</option>`;
+      }
+    }
+
+    // Charger les pages
+    const pagesResponse = await fetch(`${API_BASE}/api/gsc/history/pages`);
+    const pagesResult = await pagesResponse.json();
+    
+    if (pagesResult.status === 'ok') {
+      historyPagesList = pagesResult.data;
+      const pageSelect = document.getElementById('history-page');
+      pageSelect.innerHTML = '<option value="">Sélectionner...</option>';
+      for (const p of historyPagesList) {
+        const shortUrl = p.pageUrl.replace('https://www.mistralpro-reno.fr', '');
+        pageSelect.innerHTML += `<option value="${escapeHtml(p.pageUrl)}">${escapeHtml(shortUrl)} (${p.totalImpressions} imp.)</option>`;
+      }
+    }
+
+  } catch (err) {
+    console.error('loadHistoryLists error:', err);
+  }
+}
+
+/**
+ * Changer le type de filtre
+ */
+function changeHistoryFilter() {
+  const filter = document.getElementById('history-filter').value;
+  const queryGroup = document.getElementById('query-select-group');
+  const pageGroup = document.getElementById('page-select-group');
+
+  queryGroup.classList.add('hidden');
+  pageGroup.classList.add('hidden');
+
+  if (filter === 'query') {
+    queryGroup.classList.remove('hidden');
+  } else if (filter === 'page') {
+    pageGroup.classList.remove('hidden');
+  }
+
+  // Charger les données avec le nouveau filtre
+  loadHistoryData();
+}
+
+/**
+ * Charger les données historiques selon le filtre
+ */
+async function loadHistoryData() {
+  const filter = document.getElementById('history-filter').value;
+  let url = `${API_BASE}/api/gsc/history`;
+
+  if (filter === 'query') {
+    const query = document.getElementById('history-query').value;
+    if (!query) {
+      renderEmptyCharts('Sélectionnez une requête');
+      return;
+    }
+    url += `?query=${encodeURIComponent(query)}`;
+  } else if (filter === 'page') {
+    const page = document.getElementById('history-page').value;
+    if (!page) {
+      renderEmptyCharts('Sélectionnez une page');
+      return;
+    }
+    url += `?page=${encodeURIComponent(page)}`;
+  }
+
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+
+    if (result.status !== 'ok' || !result.data || result.data.length === 0) {
+      renderEmptyCharts('Aucune donnée disponible');
+      return;
+    }
+
+    renderCharts(result.data);
+
+  } catch (err) {
+    renderEmptyCharts('Erreur de chargement');
+    console.error('loadHistoryData error:', err);
+  }
+}
+
+/**
+ * Charger le résumé d'évolution
+ */
+async function loadEvolutionSummary() {
+  const container = document.getElementById('history-evolution-summary');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/gsc/history/evolution`);
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      container.classList.add('hidden');
+      return;
+    }
+
+    const formatEvol = (val) => {
+      if (val > 0) return `<span class="evol-up">+${val}%</span>`;
+      if (val < 0) return `<span class="evol-down">${val}%</span>`;
+      return `<span class="evol-neutral">0%</span>`;
+    };
+
+    container.classList.remove('hidden');
+    container.innerHTML = `
+      <div class="evolution-card">
+        <span class="evol-label">Impressions</span>
+        <span class="evol-value">${result.current.impressions}</span>
+        ${formatEvol(result.evolution.impressions)}
+      </div>
+      <div class="evolution-card">
+        <span class="evol-label">Clics</span>
+        <span class="evol-value">${result.current.clicks}</span>
+        ${formatEvol(result.evolution.clicks)}
+      </div>
+      <div class="evolution-card">
+        <span class="evol-label">Position moy.</span>
+        <span class="evol-value">${result.current.avgPosition}</span>
+        ${formatEvol(result.evolution.position)}
+      </div>
+      <div class="evolution-period">
+        vs semaine précédente (${result.periods.previous.start} → ${result.periods.previous.end})
+      </div>
+    `;
+
+  } catch (err) {
+    container.classList.add('hidden');
+    console.error('loadEvolutionSummary error:', err);
+  }
+}
+
+/**
+ * Afficher des graphiques vides avec message
+ */
+function renderEmptyCharts(message) {
+  const emptyHtml = `<p class="empty-chart">${message}</p>`;
+  document.getElementById('chart-impressions').innerHTML = emptyHtml;
+  document.getElementById('chart-clicks').innerHTML = emptyHtml;
+  document.getElementById('chart-position').innerHTML = emptyHtml;
+}
+
+/**
+ * Rendre les graphiques avec les données
+ */
+function renderCharts(data) {
+  // Préparer les données
+  const dates = data.map(d => d.date.substring(5)); // MM-DD
+  const impressions = data.map(d => d.impressions);
+  const clicks = data.map(d => d.clicks);
+  const positions = data.map(d => d.avgPosition || d.position || 0);
+
+  // Graphique Impressions
+  renderBarChart('chart-impressions', dates, impressions, '#3b82f6', 'Impressions');
+
+  // Graphique Clics
+  renderBarChart('chart-clicks', dates, clicks, '#10b981', 'Clics');
+
+  // Graphique Position (inversé - plus bas = mieux)
+  renderLineChart('chart-position', dates, positions, '#f59e0b', 'Position');
+}
+
+/**
+ * Rendre un graphique en barres simple (SVG)
+ */
+function renderBarChart(containerId, labels, values, color, title) {
+  const container = document.getElementById(containerId);
+  const maxVal = Math.max(...values, 1);
+  const width = Math.min(labels.length * 25, 500);
+  const height = 120;
+  const barWidth = Math.max(12, (width / labels.length) - 4);
+
+  let barsHtml = '';
+  for (let i = 0; i < values.length; i++) {
+    const barHeight = (values[i] / maxVal) * (height - 30);
+    const x = i * (barWidth + 4) + 30;
+    const y = height - barHeight - 20;
+    
+    barsHtml += `
+      <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="${color}" rx="2">
+        <title>${labels[i]}: ${values[i]}</title>
+      </rect>
+    `;
+    
+    // Labels x (un sur deux si trop nombreux)
+    if (i % Math.ceil(labels.length / 10) === 0) {
+      barsHtml += `<text x="${x + barWidth/2}" y="${height - 5}" text-anchor="middle" class="chart-label">${labels[i]}</text>`;
+    }
+  }
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${width + 40} ${height}" class="chart-svg">
+      <text x="5" y="15" class="chart-title">${maxVal}</text>
+      <text x="5" y="${height - 20}" class="chart-title">0</text>
+      <line x1="25" y1="10" x2="25" y2="${height - 20}" stroke="#4b5563" stroke-width="1"/>
+      <line x1="25" y1="${height - 20}" x2="${width + 30}" y2="${height - 20}" stroke="#4b5563" stroke-width="1"/>
+      ${barsHtml}
+    </svg>
+    <p class="chart-total">Total: ${values.reduce((a, b) => a + b, 0)}</p>
+  `;
+}
+
+/**
+ * Rendre un graphique en ligne simple (SVG)
+ */
+function renderLineChart(containerId, labels, values, color, title) {
+  const container = document.getElementById(containerId);
+  const maxVal = Math.max(...values, 1);
+  const minVal = Math.min(...values);
+  const width = Math.min(labels.length * 25, 500);
+  const height = 120;
+
+  let pathD = '';
+  let dotsHtml = '';
+  
+  for (let i = 0; i < values.length; i++) {
+    const x = 30 + (i / (values.length - 1 || 1)) * (width - 10);
+    const y = 10 + ((values[i] - minVal) / (maxVal - minVal || 1)) * (height - 40);
+    
+    if (i === 0) {
+      pathD = `M ${x} ${y}`;
+    } else {
+      pathD += ` L ${x} ${y}`;
+    }
+    
+    dotsHtml += `
+      <circle cx="${x}" cy="${y}" r="4" fill="${color}">
+        <title>${labels[i]}: ${values[i].toFixed(1)}</title>
+      </circle>
+    `;
+  }
+
+  const avgVal = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1);
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${width + 40} ${height}" class="chart-svg">
+      <text x="5" y="15" class="chart-title">${maxVal.toFixed(0)}</text>
+      <text x="5" y="${height - 20}" class="chart-title">${minVal.toFixed(0)}</text>
+      <line x1="25" y1="10" x2="25" y2="${height - 20}" stroke="#4b5563" stroke-width="1"/>
+      <line x1="25" y1="${height - 20}" x2="${width + 30}" y2="${height - 20}" stroke="#4b5563" stroke-width="1"/>
+      <path d="${pathD}" fill="none" stroke="${color}" stroke-width="2"/>
+      ${dotsHtml}
+    </svg>
+    <p class="chart-total">Moyenne: ${avgVal}</p>
+  `;
 }

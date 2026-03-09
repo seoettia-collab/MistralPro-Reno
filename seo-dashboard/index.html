@@ -46,6 +46,59 @@
         <button class="btn-primary" onclick="importGscData()">🔄 Importer données GSC</button>
       </div>
       <div id="gsc-status" class="import-status hidden"></div>
+      
+      <!-- Section Historique / Évolution -->
+      <div class="history-section">
+        <h3 class="subsection-title">📈 Historique / Évolution</h3>
+        
+        <div class="history-controls">
+          <div class="filter-group">
+            <label for="history-filter">Filtrer par :</label>
+            <select id="history-filter" onchange="changeHistoryFilter()">
+              <option value="global">Global (toutes requêtes)</option>
+              <option value="query">Par requête</option>
+              <option value="page">Par page</option>
+            </select>
+          </div>
+          <div class="filter-group hidden" id="query-select-group">
+            <label for="history-query">Requête :</label>
+            <select id="history-query" onchange="loadHistoryData()">
+              <option value="">Sélectionner...</option>
+            </select>
+          </div>
+          <div class="filter-group hidden" id="page-select-group">
+            <label for="history-page">Page :</label>
+            <select id="history-page" onchange="loadHistoryData()">
+              <option value="">Sélectionner...</option>
+            </select>
+          </div>
+        </div>
+        
+        <div id="history-evolution-summary" class="evolution-summary hidden"></div>
+        
+        <div class="history-charts">
+          <div class="chart-container">
+            <h4>Impressions par jour</h4>
+            <div id="chart-impressions" class="chart-area">
+              <p class="loading">Chargement...</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <h4>Clics par jour</h4>
+            <div id="chart-clicks" class="chart-area">
+              <p class="loading">Chargement...</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <h4>Position moyenne par jour</h4>
+            <div id="chart-position" class="chart-area">
+              <p class="loading">Chargement...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h3 class="subsection-title">🔍 Requêtes</h3>
       <div id="queries-container">
         <p class="loading">Chargement des données...</p>
       </div>

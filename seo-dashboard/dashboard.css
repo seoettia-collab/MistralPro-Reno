@@ -1799,3 +1799,164 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Historique GSC */
+.history-section {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+.history-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-group label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.filter-group select {
+  padding: 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  color: var(--text-primary);
+  min-width: 200px;
+}
+
+/* Evolution Summary */
+.evolution-summary {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
+}
+
+.evolution-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border-radius: 0.375rem;
+  min-width: 100px;
+}
+
+.evol-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.evol-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.evol-up {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.evol-down {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.evol-neutral {
+  color: var(--text-secondary);
+}
+
+.evolution-period {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Charts */
+.history-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.chart-container {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
+  padding: 1rem;
+}
+
+.chart-container h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.chart-area {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-svg {
+  width: 100%;
+  max-height: 120px;
+}
+
+.chart-label {
+  font-size: 8px;
+  fill: var(--text-secondary);
+}
+
+.chart-title {
+  font-size: 10px;
+  fill: var(--text-secondary);
+}
+
+.chart-total {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.empty-chart {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .history-controls {
+    flex-direction: column;
+  }
+  
+  .filter-group select {
+    min-width: 100%;
+  }
+  
+  .evolution-summary {
+    flex-direction: column;
+  }
+  
+  .history-charts {
+    grid-template-columns: 1fr;
+  }
+}
