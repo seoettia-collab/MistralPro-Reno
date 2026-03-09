@@ -449,11 +449,6 @@ function renderCockpitV2(data) {
     `;
 
     container.innerHTML = html;
-
-  } catch (err) {
-    container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
-    console.error('loadCockpit error:', err);
-  }
 }
 
 /**
