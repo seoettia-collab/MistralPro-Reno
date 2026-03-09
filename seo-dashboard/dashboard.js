@@ -287,7 +287,7 @@ async function loadCockpit() {
             </div>
             <div class="stat-item">
               <span class="stat-value">${stats.contents_published}</span>
-              <span class="stat-label">Publiés</span>
+              <span class="stat-label">Déployés/Live</span>
             </div>
           </div>
         </div>
@@ -583,25 +583,28 @@ async function loadContents() {
       return;
     }
 
-    // Transitions autorisées (workflow: idea → draft → ready → published)
+    // Transitions autorisées (workflow: idea → draft → ready → deployed → live)
     const transitions = {
       'idea': ['draft'],
       'draft': ['ready', 'idea'],
-      'ready': ['published', 'draft'],
-      'published': ['ready']
+      'ready': ['deployed', 'draft'],
+      'deployed': ['live', 'ready'],
+      'live': ['deployed']
     };
 
     const transitionLabels = {
       'draft': '📄 Brouillon',
       'ready': '✅ Prêt',
-      'published': '🚀 Publier',
+      'deployed': '🚀 Déployé',
+      'live': '🟢 En ligne',
       'idea': '💡 Idée'
     };
 
     const transitionButtons = {
       'draft': { label: '📄 Marquer Draft', class: 'btn-secondary' },
       'ready': { label: '✅ Marquer Prêt', class: 'btn-success' },
-      'published': { label: '🚀 Publier', class: 'btn-primary' },
+      'deployed': { label: '🚀 Déployer', class: 'btn-primary' },
+      'live': { label: '🟢 Marquer Live', class: 'btn-success' },
       'idea': { label: '↩️ Retour Idée', class: 'btn-secondary' }
     };
 
@@ -630,7 +633,8 @@ async function loadContents() {
       'idea': '💡 Idée',
       'draft': '📋 Brouillon',
       'ready': '✅ Prêt',
-      'published': '🚀 Publié'
+      'deployed': '🚀 Déployé',
+      'live': '🟢 En ligne'
     };
 
     for (const c of contents) {
@@ -650,13 +654,17 @@ async function loadContents() {
         actionsHtml += `<button class="btn-small btn-success" onclick="updateContentStatus(${c.id}, 'ready')">✅ Marquer Prêt</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'idea')" title="Retour idée">↩️</button>`;
       } else if (c.status === 'ready') {
-        // Prêt → peut publier ou retour brouillon
-        actionsHtml += `<button class="btn-small btn-primary" onclick="updateContentStatus(${c.id}, 'published')">🚀 Publier</button>`;
+        // Prêt → peut déployer ou retour brouillon
+        actionsHtml += `<button class="btn-small btn-primary" onclick="updateContentStatus(${c.id}, 'deployed')">🚀 Déployer</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'draft')" title="Retour brouillon">↩️</button>`;
-      } else if (c.status === 'published') {
-        // Publié → badge confirmé + retour possible
-        actionsHtml += `<span class="published-badge">✅ Publié</span>`;
-        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'ready')" title="Dépublier">↩️</button>`;
+      } else if (c.status === 'deployed') {
+        // Déployé → peut marquer live ou retour ready
+        actionsHtml += `<button class="btn-small btn-success" onclick="checkAndMarkLive(${c.id}, '${escapeHtml(c.slug_suggested || '')}')">🟢 Vérifier Live</button>`;
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'ready')" title="Retour prêt">↩️</button>`;
+      } else if (c.status === 'live') {
+        // Live → badge confirmé + retour possible
+        actionsHtml += `<span class="live-badge">🟢 En ligne</span>`;
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'deployed')" title="Retour déployé">↩️</button>`;
       }
       
       actionsHtml += '</div>';
@@ -679,7 +687,8 @@ async function loadContents() {
       idea: contents.filter(c => c.status === 'idea').length,
       draft: contents.filter(c => c.status === 'draft').length,
       ready: contents.filter(c => c.status === 'ready').length,
-      published: contents.filter(c => c.status === 'published').length
+      deployed: contents.filter(c => c.status === 'deployed').length,
+      live: contents.filter(c => c.status === 'live').length
     };
     
     const statsHtml = `
@@ -687,7 +696,8 @@ async function loadContents() {
         <span class="stat-item">💡 ${statsCounts.idea} idées</span>
         <span class="stat-item">📋 ${statsCounts.draft} brouillons</span>
         <span class="stat-item">✅ ${statsCounts.ready} prêts</span>
-        <span class="stat-item">🚀 ${statsCounts.published} publiés</span>
+        <span class="stat-item">🚀 ${statsCounts.deployed} déployés</span>
+        <span class="stat-item">🟢 ${statsCounts.live} en ligne</span>
       </div>
     `;
     
@@ -3278,6 +3288,46 @@ window.closeOptimizationBrief = closeOptimizationBrief;
 window.viewBrief = viewBrief;
 window.loadImpactAnalysis = loadImpactAnalysis;
 window.executeAction = executeAction;
+window.checkAndMarkLive = checkAndMarkLive;
+
+/**
+ * Vérifier si l'URL est accessible avant de marquer "live"
+ */
+async function checkAndMarkLive(contentId, slug) {
+  const baseUrl = 'https://www.mistralpro-reno.fr';
+  let urlToCheck = '';
+  
+  if (slug) {
+    // Essayer différents formats d'URL
+    urlToCheck = `${baseUrl}/${slug}.html`;
+  } else {
+    alert('⚠️ Pas de slug défini pour ce contenu.\nVeuillez d\'abord déployer le fichier HTML.');
+    return;
+  }
+
+  try {
+    // Afficher message de vérification
+    const confirmCheck = confirm(`🔍 Vérification de l'URL :\n${urlToCheck}\n\nCliquez OK pour vérifier si la page est accessible.`);
+    
+    if (!confirmCheck) return;
+
+    // Note: On ne peut pas faire un fetch cross-origin depuis le dashboard
+    // L'utilisateur doit vérifier manuellement
+    const manualCheck = confirm(`📋 Vérification manuelle requise :\n\n1. Ouvrez cette URL dans un nouvel onglet :\n${urlToCheck}\n\n2. Vérifiez que la page s'affiche correctement\n\nLa page est-elle accessible et affiche le bon contenu ?`);
+
+    if (manualCheck) {
+      // Marquer comme live
+      await updateContentStatus(contentId, 'live');
+      alert(`✅ Contenu marqué "En ligne" !\n\nURL : ${urlToCheck}`);
+    } else {
+      alert(`❌ Le contenu reste en statut "Déployé".\n\nVérifiez que le fichier est bien déployé sur le serveur.`);
+    }
+
+  } catch (err) {
+    alert(`❌ Erreur lors de la vérification :\n${err.message}`);
+    console.error('checkAndMarkLive error:', err);
+  }
+}
 
 // =====================================================
 // IMPACT ANALYSIS
@@ -3311,7 +3361,7 @@ async function loadImpactAnalysis() {
       <div class="impact-stats">
         <div class="stat-card">
           <span class="stat-value">${summary.total_published}</span>
-          <span class="stat-label">Publiés</span>
+          <span class="stat-label">Déployés</span>
         </div>
         <div class="stat-card">
           <span class="stat-value">${summary.with_data}</span>
