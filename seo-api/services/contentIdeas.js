@@ -1,6 +1,6 @@
 /**
  * SEO Dashboard - Content Ideas Service
- * Génération automatique d'idées de contenu à partir des données GSC
+ * Génération automatique d'idées de contenu à partir des données GSC et opportunités
  */
 
 const { dbAll, dbRun, dbGet } = require('./db');
@@ -26,12 +26,92 @@ const SEARCH_INTENTS = {
 };
 
 /**
+ * Générer idées de contenu à partir des opportunités détectées
+ * @param {number} siteId - ID du site
+ * @returns {Promise<Array>}
+ */
+async function generateIdeasFromOpportunities(siteId) {
+  // Récupérer les opportunités en attente
+  const opportunities = await dbAll(`
+    SELECT * FROM opportunities 
+    WHERE status = 'pending'
+    ORDER BY 
+      CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END,
+      potential_gain DESC
+  `);
+
+  // Récupérer les contenus existants pour éviter les doublons
+  const existingContents = await dbAll(`SELECT keyword FROM contents WHERE keyword IS NOT NULL`);
+  const existingKeywords = new Set(existingContents.map(c => c.keyword?.toLowerCase()));
+
+  const ideas = [];
+
+  for (const opp of opportunities) {
+    const keyword = opp.keyword || opp.target;
+    
+    // Ignorer si déjà un contenu pour ce mot-clé
+    if (keyword && existingKeywords.has(keyword.toLowerCase())) {
+      continue;
+    }
+
+    // Analyser l'intention de recherche
+    const intent = detectSearchIntent(keyword || '');
+    
+    // Suggérer le type de contenu
+    const contentType = suggestContentType(keyword || '', intent);
+    
+    // Générer un titre SEO optimisé
+    const titleSuggestion = generateTitleSuggestion(keyword || '', contentType, intent);
+
+    ideas.push({
+      source: 'opportunity',
+      opportunity_id: opp.id,
+      query: keyword,
+      keyword: keyword,
+      impressions: opp.impressions || 0,
+      clicks: opp.clicks || 0,
+      position: opp.position ? Math.round(opp.position * 10) / 10 : null,
+      ctr: opp.ctr ? Math.round(opp.ctr * 10000) / 100 : 0,
+      contentType,
+      content_type: contentType,
+      titleSuggestion,
+      title_suggestion: titleSuggestion,
+      intent,
+      priority: opp.priority,
+      potential_gain: opp.potential_gain || 0,
+      opportunity_type: opp.opportunity_type,
+      action_recommended: opp.action_recommended,
+      reason: getReasonByOpportunityType(opp.opportunity_type)
+    });
+  }
+
+  return ideas;
+}
+
+/**
+ * Obtenir la raison selon le type d'opportunité
+ */
+function getReasonByOpportunityType(type) {
+  const reasons = {
+    'quick_win': 'Position proche du top 10 - Quick Win potentiel',
+    'low_ctr': 'CTR faible malgré les impressions - Optimiser title/meta',
+    'position': 'Amélioration de position possible avec contenu enrichi',
+    'new_content': 'Pas de contenu dédié pour cette requête',
+    'cannibalization': 'Plusieurs pages ciblent ce mot-clé'
+  };
+  return reasons[type] || 'Opportunité SEO détectée';
+}
+
+/**
  * Analyser les requêtes et générer des idées de contenu
  * @param {number} siteId - ID du site
  * @returns {Promise<Object>}
  */
 async function generateContentIdeas(siteId) {
-  // Récupérer toutes les requêtes GSC
+  // 1. Générer idées depuis les opportunités
+  const opportunityIdeas = await generateIdeasFromOpportunities(siteId);
+  
+  // 2. Récupérer toutes les requêtes GSC
   const queries = await dbAll(`
     SELECT q.*, 
            (SELECT COUNT(*) FROM page_queries pq WHERE pq.query = q.query AND pq.site_id = q.site_id) as page_count
@@ -44,22 +124,21 @@ async function generateContentIdeas(siteId) {
   const existingContents = await dbAll(`SELECT keyword FROM contents WHERE keyword IS NOT NULL`);
   const existingKeywords = new Set(existingContents.map(c => c.keyword?.toLowerCase()));
   
-  console.log(`ContentIdeas: ${queries.length} queries found, ${existingKeywords.size} existing keywords`);
+  // Ajouter les mots-clés des opportunités déjà traités
+  const processedKeywords = new Set(opportunityIdeas.map(i => i.keyword?.toLowerCase()).filter(Boolean));
+  
+  console.log(`ContentIdeas: ${queries.length} queries found, ${existingKeywords.size} existing keywords, ${opportunityIdeas.length} opportunity ideas`);
 
   const ideas = {
+    fromOpportunities: opportunityIdeas,
     contentGaps: [],      // Requêtes sans page associée
     lowPerformers: [],    // Pages mal positionnées à améliorer
     highPotential: []     // Requêtes avec fort potentiel
   };
 
   for (const query of queries) {
-    // Log pour debug
-    if (queries.indexOf(query) < 5) {
-      console.log(`Query: ${query.query}, imp: ${query.impressions}, pos: ${query.position}`);
-    }
-    
-    // Ignorer les requêtes déjà ciblées
-    if (existingKeywords.has(query.query.toLowerCase())) {
+    // Ignorer les requêtes déjà ciblées ou déjà dans les opportunités
+    if (existingKeywords.has(query.query.toLowerCase()) || processedKeywords.has(query.query.toLowerCase())) {
       continue;
     }
 
@@ -76,13 +155,17 @@ async function generateContentIdeas(siteId) {
     const priority = calculatePriority(query);
 
     const idea = {
+      source: 'gsc',
       query: query.query,
+      keyword: query.query,
       impressions: query.impressions,
       clicks: query.clicks,
       position: Math.round(query.position * 10) / 10,
       ctr: Math.round((query.ctr || 0) * 10000) / 100,
       contentType,
+      content_type: contentType,
       titleSuggestion,
+      title_suggestion: titleSuggestion,
       intent,
       priority,
       hasExistingPage: query.page_count > 0
@@ -130,11 +213,11 @@ async function generateContentIdeas(siteId) {
   ideas.highPotential.sort(sortByPriority);
 
   // Dédupliquer entre catégories (garder dans la catégorie la plus pertinente)
-  const seenQueries = new Set();
+  const seenQueries = new Set(processedKeywords);
   const dedup = (arr) => {
     return arr.filter(item => {
-      if (seenQueries.has(item.query)) return false;
-      seenQueries.add(item.query);
+      if (seenQueries.has(item.query?.toLowerCase())) return false;
+      seenQueries.add(item.query?.toLowerCase());
       return true;
     });
   };
@@ -143,14 +226,23 @@ async function generateContentIdeas(siteId) {
   ideas.highPotential = dedup(ideas.highPotential);
   ideas.lowPerformers = dedup(ideas.lowPerformers);
 
+  // Construire la liste complète des idées
+  const allIdeas = [
+    ...ideas.fromOpportunities,
+    ...ideas.contentGaps,
+    ...ideas.highPotential,
+    ...ideas.lowPerformers
+  ];
+
   return {
     summary: {
-      total: ideas.contentGaps.length + ideas.lowPerformers.length + ideas.highPotential.length,
+      total: allIdeas.length,
+      fromOpportunities: ideas.fromOpportunities.length,
       contentGaps: ideas.contentGaps.length,
       lowPerformers: ideas.lowPerformers.length,
       highPotential: ideas.highPotential.length
     },
-    ideas
+    ideas: allIdeas
   };
 }
 
@@ -302,9 +394,11 @@ function generateSlug(title) {
 
 module.exports = {
   generateContentIdeas,
+  generateIdeasFromOpportunities,
   saveIdeaAsContent,
   detectSearchIntent,
   suggestContentType,
+  generateTitleSuggestion,
   CONTENT_TYPES,
   SEARCH_INTENTS
 };
