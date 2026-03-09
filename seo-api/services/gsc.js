@@ -3,7 +3,7 @@
  */
 
 const { google } = require('googleapis');
-const { dbRun, dbAll } = require('./db');
+const { dbRun, dbAll, dbGet } = require('./db');
 
 /**
  * Get access token from refresh token manually
@@ -49,7 +49,7 @@ async function fetchSearchConsoleData(siteUrl, siteId) {
   const formatDate = (d) => d.toISOString().split('T')[0];
 
   try {
-    // 1. Fetch queries data
+    // 1. Fetch queries data (agrégé)
     const queriesResponse = await fetch(
       `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
       {
@@ -75,7 +75,7 @@ async function fetchSearchConsoleData(siteUrl, siteId) {
 
     const queryRows = queriesData.rows || [];
 
-    // Supprimer anciennes données queries
+    // Supprimer anciennes données queries (agrégées)
     await dbRun('DELETE FROM queries WHERE site_id = ?', [siteId]);
 
     // Insérer nouvelles données queries
@@ -120,7 +120,7 @@ async function fetchSearchConsoleData(siteUrl, siteId) {
       );
     }
 
-    // 3. Fetch page+query combinations (for detailed analysis)
+    // 3. Fetch page+query combinations
     const pageQueryResponse = await fetch(
       `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
       {
@@ -153,10 +153,49 @@ async function fetchSearchConsoleData(siteUrl, siteId) {
       );
     }
 
+    // 4. Fetch daily data (date + query + page) pour l'historique
+    const dailyResponse = await fetch(
+      `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate),
+          dimensions: ['date', 'query', 'page'],
+          rowLimit: 1000
+        })
+      }
+    );
+
+    const dailyData = await dailyResponse.json();
+    const dailyRows = dailyData.rows || [];
+
+    // Insérer données historiques (UPSERT - ne pas écraser l'existant)
+    let dailyInserted = 0;
+    for (const row of dailyRows) {
+      const date = row.keys[0];
+      const query = row.keys[1];
+      const pageUrl = row.keys[2];
+      
+      // Utiliser INSERT OR REPLACE pour mettre à jour si existe déjà
+      await dbRun(
+        `INSERT OR REPLACE INTO query_daily 
+         (site_id, date, query, page_url, clicks, impressions, ctr, position)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [siteId, date, query, pageUrl, row.clicks, row.impressions, row.ctr, row.position]
+      );
+      dailyInserted++;
+    }
+
     return { 
       imported: queryRows.length,
       pages: pageRows.length,
-      pageQueries: pageQueryRows.length
+      pageQueries: pageQueryRows.length,
+      dailyRecords: dailyInserted
     };
 
   } catch (err) {
@@ -165,7 +204,91 @@ async function fetchSearchConsoleData(siteUrl, siteId) {
   }
 }
 
+/**
+ * Récupérer l'historique d'une requête
+ * @param {number} siteId
+ * @param {string} query
+ * @returns {Promise<Array>}
+ */
+async function getQueryHistory(siteId, query) {
+  const rows = await dbAll(`
+    SELECT date, 
+           SUM(clicks) as clicks, 
+           SUM(impressions) as impressions,
+           AVG(ctr) as ctr,
+           AVG(position) as position
+    FROM query_daily 
+    WHERE site_id = ? AND query = ?
+    GROUP BY date
+    ORDER BY date ASC
+  `, [siteId, query]);
+  
+  return rows.map(r => ({
+    date: r.date,
+    clicks: r.clicks,
+    impressions: r.impressions,
+    ctr: Math.round((r.ctr || 0) * 10000) / 100,
+    position: Math.round((r.position || 0) * 10) / 10
+  }));
+}
+
+/**
+ * Récupérer l'historique d'une page
+ * @param {number} siteId
+ * @param {string} pageUrl
+ * @returns {Promise<Array>}
+ */
+async function getPageHistory(siteId, pageUrl) {
+  const rows = await dbAll(`
+    SELECT date, 
+           SUM(clicks) as clicks, 
+           SUM(impressions) as impressions,
+           AVG(ctr) as ctr,
+           AVG(position) as position
+    FROM query_daily 
+    WHERE site_id = ? AND page_url = ?
+    GROUP BY date
+    ORDER BY date ASC
+  `, [siteId, pageUrl]);
+  
+  return rows.map(r => ({
+    date: r.date,
+    clicks: r.clicks,
+    impressions: r.impressions,
+    ctr: Math.round((r.ctr || 0) * 10000) / 100,
+    position: Math.round((r.position || 0) * 10) / 10
+  }));
+}
+
+/**
+ * Récupérer les statistiques globales par jour
+ * @param {number} siteId
+ * @returns {Promise<Array>}
+ */
+async function getDailyStats(siteId) {
+  const rows = await dbAll(`
+    SELECT date, 
+           SUM(clicks) as clicks, 
+           SUM(impressions) as impressions,
+           AVG(position) as avg_position
+    FROM query_daily 
+    WHERE site_id = ?
+    GROUP BY date
+    ORDER BY date ASC
+  `, [siteId]);
+  
+  return rows.map(r => ({
+    date: r.date,
+    clicks: r.clicks,
+    impressions: r.impressions,
+    avgPosition: Math.round((r.avg_position || 0) * 10) / 10
+  }));
+}
+
 module.exports = {
   fetchSearchConsoleData,
-  getAccessToken
+  getAccessToken,
+  getQueryHistory,
+  getPageHistory,
+  getDailyStats
 };
