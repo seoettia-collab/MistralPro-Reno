@@ -90,10 +90,7 @@ async function autoPublish(contentId) {
     steps.push({ step: currentStep, status: 'running' });
     
     const deployedUrl = `${SITE_URL}/blog/${filename}`;
-    await dbRun(
-      'UPDATE contents SET status = ?, deployed_url = ? WHERE id = ?',
-      ['deployed', deployedUrl, contentId]
-    );
+    await dbRun('UPDATE contents SET status = ? WHERE id = ?', ['deployed', contentId]);
     steps[steps.length - 1].status = 'ok';
 
     // === ÉTAPE 6 : Attendre le déploiement OVH (via GitHub Actions) ===
