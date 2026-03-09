@@ -26,13 +26,3 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.ftp-deploy-sync-state.json
-```
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-5. En bas, message de commit :
-   "FIX: deploy.yml - inclure fichiers .htaccess"
-
-6. Cliquer "Commit changes"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
