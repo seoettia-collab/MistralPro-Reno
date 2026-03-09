@@ -5018,3 +5018,441 @@ select:focus {
     justify-content: center;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.7 — COMPACTAGE UI (Dense Dashboard Mode)
+   ══════════════════════════════════════════════════════════════ */
+
+/* === GLOBAL === */
+.main-container {
+  padding: 0.75rem 1rem !important;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.tab-section h2 {
+  font-size: 1.1rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* === HEADER COMPACT === */
+.header {
+  padding: 0.5rem 1.5rem !important;
+}
+
+.header h1 {
+  font-size: 1rem !important;
+}
+
+/* === NAV COMPACT === */
+.nav-v2 {
+  padding: 0.5rem 1rem !important;
+}
+
+.nav-main .tab-btn {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* === COCKPIT V2 COMPACT === */
+.cockpit-v2 {
+  gap: 0.75rem !important;
+}
+
+.cockpit-header {
+  gap: 1rem !important;
+  padding: 0.75rem !important;
+}
+
+.cockpit-score-circle.large {
+  width: 90px !important;
+  height: 90px !important;
+}
+
+.cockpit-score-circle.large svg {
+  width: 90px !important;
+  height: 90px !important;
+}
+
+.score-center .score-num {
+  font-size: 1.5rem !important;
+}
+
+.score-center .score-label {
+  font-size: 0.65rem !important;
+}
+
+.score-meta {
+  gap: 0.25rem !important;
+}
+
+.score-level {
+  font-size: 0.8rem !important;
+}
+
+.breakdown-item {
+  font-size: 0.75rem !important;
+  padding: 0.15rem 0 !important;
+}
+
+/* KPI Grid Compact */
+.cockpit-kpis-grid {
+  gap: 0.5rem !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+}
+
+.kpi-card {
+  padding: 0.5rem !important;
+  min-width: auto !important;
+}
+
+.kpi-icon {
+  font-size: 1rem !important;
+}
+
+.kpi-value {
+  font-size: 1.1rem !important;
+}
+
+.kpi-label {
+  font-size: 0.65rem !important;
+}
+
+/* Sections Compact */
+.cockpit-section {
+  padding: 0.75rem !important;
+  margin-bottom: 0 !important;
+}
+
+.cockpit-section h4 {
+  font-size: 0.9rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Opportunités Compact */
+.opportunity-card {
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.opp-keyword {
+  font-size: 0.85rem !important;
+}
+
+.opp-meta {
+  font-size: 0.7rem !important;
+}
+
+/* Actions Compact */
+.action-card {
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.action-info h5 {
+  font-size: 0.85rem !important;
+}
+
+.action-meta {
+  font-size: 0.7rem !important;
+}
+
+/* Alertes Compact */
+.alert-item {
+  padding: 0.4rem 0.6rem !important;
+  font-size: 0.8rem !important;
+  margin-bottom: 0.3rem !important;
+}
+
+.alert-level {
+  font-size: 0.6rem !important;
+  padding: 0.1rem 0.3rem !important;
+}
+
+/* Accordéons Compact */
+.accordion-btn {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.8rem !important;
+}
+
+.accordion-content {
+  padding: 0.5rem 0.75rem !important;
+}
+
+/* CTA Compact */
+.cockpit-cta {
+  padding: 0.5rem !important;
+}
+
+.cta-box {
+  padding: 0.75rem !important;
+  gap: 0.75rem !important;
+}
+
+.cta-box h4 {
+  font-size: 0.9rem !important;
+}
+
+.cta-box p {
+  font-size: 0.75rem !important;
+}
+
+/* === AUDIT IA COMPACT === */
+.audit-ia-intro {
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.audit-ia-intro p {
+  font-size: 0.85rem !important;
+}
+
+.audit-ia-start {
+  padding: 1.5rem !important;
+}
+
+.audit-ia-icon {
+  font-size: 2.5rem !important;
+}
+
+.audit-ia-start h3 {
+  font-size: 1rem !important;
+}
+
+.audit-ia-start li {
+  font-size: 0.85rem !important;
+  padding: 0.25rem 0 !important;
+}
+
+/* Résultat Audit Compact */
+.audit-section {
+  padding: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.audit-section h3 {
+  font-size: 0.95rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.summary-text {
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+}
+
+.audit-list li {
+  padding: 0.4rem 0 !important;
+  font-size: 0.85rem !important;
+}
+
+.audit-two-cols {
+  gap: 0.75rem !important;
+}
+
+/* Actions Audit Compact */
+.audit-action-card {
+  margin-bottom: 0.5rem !important;
+}
+
+.action-header {
+  padding: 0.5rem 0.75rem !important;
+}
+
+.action-icon-large {
+  font-size: 1.5rem !important;
+}
+
+.action-type-label {
+  font-size: 0.8rem !important;
+}
+
+.action-body {
+  padding: 0.5rem 0.75rem !important;
+}
+
+.action-target {
+  font-size: 0.9rem !important;
+}
+
+.action-reason, .action-impact {
+  font-size: 0.8rem !important;
+}
+
+.action-footer {
+  padding: 0.5rem 0.75rem !important;
+}
+
+/* Impact Score Compact */
+.action-impact-score {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.impact-value {
+  font-size: 0.6rem !important;
+}
+
+/* === STUDIO SEO COMPACT === */
+.studio-intro {
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.studio-intro p {
+  font-size: 0.85rem !important;
+}
+
+.studio-form-section {
+  padding: 1rem !important;
+}
+
+.studio-form-section h3 {
+  font-size: 1rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.form-row {
+  gap: 0.75rem !important;
+}
+
+.form-group {
+  gap: 0.25rem !important;
+}
+
+.form-group label {
+  font-size: 0.8rem !important;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.5rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* Résultat Studio Compact */
+.studio-result {
+  padding: 1rem !important;
+}
+
+.result-header h3 {
+  font-size: 1rem !important;
+}
+
+.result-meta span {
+  font-size: 0.75rem !important;
+}
+
+.seo-preview-card {
+  padding: 0.75rem !important;
+}
+
+.seo-preview-url {
+  font-size: 0.7rem !important;
+}
+
+.seo-preview-title {
+  font-size: 0.95rem !important;
+}
+
+.seo-preview-meta {
+  font-size: 0.75rem !important;
+}
+
+.content-preview {
+  padding: 1rem !important;
+  max-height: 250px !important;
+}
+
+.content-preview h1 {
+  font-size: 1.2rem !important;
+}
+
+.preview-body {
+  font-size: 0.8rem !important;
+}
+
+.preview-body h2 {
+  font-size: 0.95rem !important;
+}
+
+/* Image Section Compact */
+.result-image-section {
+  padding: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.image-header h4 {
+  font-size: 0.9rem !important;
+}
+
+.image-placeholder {
+  padding: 1rem !important;
+}
+
+.placeholder-icon {
+  font-size: 2rem !important;
+}
+
+/* === BOUTONS COMPACT === */
+.btn-large {
+  padding: 0.6rem 1.25rem !important;
+  font-size: 0.9rem !important;
+}
+
+.btn-small {
+  padding: 0.3rem 0.6rem !important;
+  font-size: 0.75rem !important;
+}
+
+.btn-primary, .btn-secondary {
+  font-size: 0.85rem !important;
+}
+
+/* === TABLES COMPACT === */
+.data-table th,
+.data-table td {
+  padding: 0.4rem 0.6rem !important;
+  font-size: 0.8rem !important;
+}
+
+/* === QA PANELS COMPACT === */
+.qa-panel {
+  margin-bottom: 0.5rem !important;
+}
+
+.qa-toggle {
+  padding: 0.4rem 0.75rem !important;
+  font-size: 0.8rem !important;
+}
+
+.qa-content {
+  padding: 0.75rem !important;
+}
+
+/* === RESPONSIVE ADJUSTMENTS === */
+@media (max-width: 1200px) {
+  .cockpit-kpis-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .cockpit-kpis-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .audit-two-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-container {
+    padding: 0.5rem !important;
+  }
+  
+  .cockpit-header {
+    flex-direction: column !important;
+  }
+}
