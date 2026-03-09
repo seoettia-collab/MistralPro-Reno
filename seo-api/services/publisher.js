@@ -8,6 +8,7 @@
  */
 
 const { dbGet, dbRun } = require('./db');
+const { generateArticleBody, escapeHTML: escapeHTMLContent } = require('./contentGenerator');
 
 // Configuration
 const SITE_URL = 'https://www.mistralpro-reno.fr';
@@ -269,18 +270,16 @@ function sleep(ms) {
 
 /**
  * Générer le HTML complet à partir d'un brief
+ * Utilise le contentGenerator pour le corps de l'article
  */
 function generateHTMLFromBrief(brief, content) {
   const today = new Date().toISOString().split('T')[0];
   const slug = content.slug_suggested || generateSlug(content.title);
   const category = content.type === 'blog' ? 'Blog' : 'Rénovation';
+  const keyword = content.keyword || content.title;
   
-  const sections = parseBriefSections(brief.brief_content || brief.instructions || '');
-
-  const sectionsHTML = sections.map(section => `
-      <h2>${escapeHTML(section.title)}</h2>
-      ${section.content.map(p => `<p>${escapeHTML(p)}</p>`).join('\n      ')}
-  `).join('\n');
+  // Générer le corps de l'article via le contentGenerator
+  const articleBody = generateArticleBody(brief, keyword);
 
   const html = `<!DOCTYPE html>
 <html lang="fr">
@@ -298,7 +297,7 @@ title: ${escapeHTML(content.title)}
 date: ${today}
 image: renovation_general_(9).webp
 category: ${category.toLowerCase()}
-excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
+excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
 -->
   
   <meta charset="UTF-8">
@@ -306,14 +305,14 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
   <meta name="robots" content="index, follow">
   
   <title>${escapeHTML(content.title)} | Mistral Pro Reno</title>
-  <meta name="description" content="${escapeHTML(brief.meta_description || content.keyword + ' - Découvrez notre guide complet. Devis gratuit à Paris.')}">
+  <meta name="description" content="${escapeHTML(brief.meta_description || keyword + ' - Découvrez notre guide complet. Devis gratuit à Paris.')}">
   <link rel="canonical" href="${SITE_URL}/blog/${slug}.html">
   
   <!-- Open Graph -->
   <meta property="og:type" content="article">
   <meta property="og:url" content="${SITE_URL}/blog/${slug}.html">
   <meta property="og:title" content="${escapeHTML(content.title)}">
-  <meta property="og:description" content="${escapeHTML(brief.meta_description || content.keyword)}">
+  <meta property="og:description" content="${escapeHTML(brief.meta_description || keyword)}">
   <meta property="og:image" content="${SITE_URL}/images/renovation_general_(9).webp">
   <meta property="og:site_name" content="Mistral Pro Reno">
   <meta property="og:locale" content="fr_FR">
@@ -322,7 +321,7 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHTML(content.title)}">
-  <meta name="twitter:description" content="${escapeHTML(brief.meta_description || content.keyword)}">
+  <meta name="twitter:description" content="${escapeHTML(brief.meta_description || keyword)}">
   
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
@@ -335,7 +334,7 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
   
   <!-- Schema.org -->
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || content.keyword)}","image":"${SITE_URL}/images/renovation_general_(9).webp","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
+  {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || keyword)}","image":"${SITE_URL}/images/renovation_general_(9).webp","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
   </script>
 </head>
 <body>
@@ -376,12 +375,12 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
     <section class="article-hero">
       <div class="container">
         <nav class="article-breadcrumb" aria-label="Fil d'Ariane">
-          <a href="/">Accueil</a> &gt; <a href="../blog.html">Blog</a> &gt; <span>${escapeHTML(content.keyword)}</span>
+          <a href="/">Accueil</a> &gt; <a href="../blog.html">Blog</a> &gt; <span>${escapeHTML(keyword)}</span>
         </nav>
         <h1>${escapeHTML(brief.h1 || content.title)}</h1>
         <div class="article-meta">
           <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${formatDate(today)}</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${estimateReadTime(sections)} min de lecture</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 5 min de lecture</span>
           <span class="article-tag">${category}</span>
         </div>
       </div>
@@ -389,16 +388,17 @@ excerpt: ${escapeHTML(content.keyword)} - Guide complet par Mistral Pro Reno
 
     <article class="article-content">
       
-      <p><strong>${escapeHTML(brief.introduction || content.keyword + ' : tout ce que vous devez savoir.')}</strong> Mistral Pro Reno, expert en rénovation à Paris et en Île-de-France, vous accompagne dans votre projet.</p>
-
-      <figure style="margin:30px 0">
-        <img src="../images/renovation_general_(9).webp" alt="${escapeHTML(content.keyword)}" width="800" height="500" loading="lazy" style="width:100%;height:auto;border-radius:12px">
+      <figure style="margin:0 0 30px 0">
+        <img src="../images/renovation_general_(9).webp" alt="${escapeHTML(keyword)}" width="800" height="500" loading="eager" style="width:100%;height:auto;border-radius:12px">
       </figure>
 
-${sectionsHTML}
+${articleBody}
 
-      <h2>Conclusion</h2>
-      <p>${escapeHTML(brief.conclusion || 'Pour votre projet de ' + content.keyword + ', faites confiance à Mistral Pro Reno. Contactez-nous pour un devis gratuit.')}</p>
+      <div class="article-cta">
+        <h3>Besoin d'un devis pour votre projet ?</h3>
+        <p>Obtenez une estimation gratuite en quelques clics avec notre simulateur de devis.</p>
+        <a href="../cost_calculator.html" class="btn btn-primary">Simulateur de Devis Gratuit</a>
+      </div>
 
       <div class="article-share">
         <span>Partager cet article :</span>
@@ -410,12 +410,6 @@ ${sectionsHTML}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           Copier le lien
         </button>
-      </div>
-
-      <div class="article-cta">
-        <h3>Besoin d'un devis pour votre projet ?</h3>
-        <p>Obtenez une estimation gratuite en quelques clics avec notre simulateur de devis.</p>
-        <a href="../cost_calculator.html" class="btn btn-primary">Simulateur de Devis Gratuit</a>
       </div>
 
       <div class="author-box">
@@ -494,67 +488,6 @@ ${sectionsHTML}
 }
 
 /**
- * Parser le brief pour extraire les sections H2
- */
-function parseBriefSections(briefContent) {
-  if (!briefContent || briefContent.trim() === '') {
-    return [
-      {
-        title: 'Pourquoi choisir nos services ?',
-        content: [
-          'Mistral Pro Reno vous accompagne dans tous vos projets de rénovation à Paris et en Île-de-France.',
-          'Notre équipe d\'experts vous garantit un travail de qualité, dans les délais et le budget convenus.'
-        ]
-      },
-      {
-        title: 'Notre expertise',
-        content: [
-          'Avec plus de 30 ans d\'expérience, nous maîtrisons tous les aspects de la rénovation.',
-          'Garantie décennale, assurance RC Pro, et équipe qualifiée à votre service.'
-        ]
-      },
-      {
-        title: 'Nos tarifs',
-        content: [
-          'Nous proposons des devis gratuits et détaillés pour tous vos projets.',
-          'Contactez-nous pour obtenir une estimation personnalisée.'
-        ]
-      }
-    ];
-  }
-
-  const sections = [];
-  const lines = briefContent.split('\n');
-  let currentSection = null;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    
-    if (trimmed.startsWith('## ') || trimmed.startsWith('H2:') || trimmed.startsWith('### ')) {
-      if (currentSection && currentSection.content.length > 0) {
-        sections.push(currentSection);
-      }
-      currentSection = {
-        title: trimmed.replace(/^##\s*/, '').replace(/^###\s*/, '').replace(/^H2:\s*/, ''),
-        content: []
-      };
-    } else if (currentSection && trimmed.length > 20 && !trimmed.startsWith('#') && !trimmed.startsWith('*')) {
-      currentSection.content.push(trimmed);
-    }
-  }
-
-  if (currentSection && currentSection.content.length > 0) {
-    sections.push(currentSection);
-  }
-
-  if (sections.length === 0) {
-    return parseBriefSections('');
-  }
-
-  return sections;
-}
-
-/**
  * Générer un slug à partir du titre
  */
 function generateSlug(title) {
@@ -588,20 +521,6 @@ function formatDate(dateStr) {
                   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   const date = new Date(dateStr);
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-}
-
-/**
- * Estimer le temps de lecture
- */
-function estimateReadTime(sections) {
-  let wordCount = 0;
-  for (const section of sections) {
-    wordCount += section.title.split(' ').length;
-    for (const p of section.content) {
-      wordCount += p.split(' ').length;
-    }
-  }
-  return Math.max(3, Math.ceil(wordCount / 200));
 }
 
 /**
