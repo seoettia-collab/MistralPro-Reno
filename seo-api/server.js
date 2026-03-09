@@ -96,6 +96,10 @@ app.use('/api', historyRoutes);
 const pagesRoutes = require('./routes/pages');
 app.use('/api', pagesRoutes);
 
+// Routes SEO Executor
+const seoExecutorRoutes = require('./routes/seoExecutor');
+app.use('/api', seoExecutorRoutes);
+
 // Démarrage serveur avec init schema
 const startServer = async () => {
   try {

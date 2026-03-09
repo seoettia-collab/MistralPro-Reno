@@ -126,6 +126,21 @@
         <button class="btn-primary" onclick="toggleContentForm()">+ Créer contenu</button>
         <button class="btn-primary" onclick="generateEditorialPlan()">📋 Générer plan éditorial</button>
       </div>
+      
+      <!-- SEO Executor Section -->
+      <div id="seo-executor-section" class="executor-section">
+        <h3 class="subsection-title">⚡ Auto SEO Executor</h3>
+        <p class="section-description">Générez automatiquement des pages SEO optimisées à partir de vos contenus.</p>
+        <div class="executor-actions">
+          <button class="btn-primary btn-execute" onclick="loadSEOCandidates()">🔍 Voir les candidats</button>
+          <button class="btn-warning btn-execute" onclick="executeAllSEO()">⚡ Exécuter tout</button>
+        </div>
+        <div id="seo-candidates-container" class="hidden">
+          <p class="loading">Chargement...</p>
+        </div>
+        <div id="seo-execution-result" class="hidden"></div>
+      </div>
+      
       <div id="content-form" class="form-container hidden">
         <h3>Nouveau contenu</h3>
         <form onsubmit="submitContent(event)">

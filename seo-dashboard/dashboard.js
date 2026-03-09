@@ -2223,3 +2223,252 @@ async function refreshContentIdeas() {
   summaryContainer.innerHTML = '<p class="loading">Analyse en cours...</p>';
   await loadContentIdeas();
 }
+
+// =====================================================
+// AUTO SEO EXECUTOR
+// =====================================================
+
+/**
+ * Charger les candidats pour l'exécution SEO
+ */
+async function loadSEOCandidates() {
+  const container = document.getElementById('seo-candidates-container');
+  container.classList.remove('hidden');
+  container.innerHTML = '<p class="loading">Chargement des candidats...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/seo/candidates`);
+    const result = await response.json();
+
+    if (result.status !== 'ok' || result.count === 0) {
+      container.innerHTML = '<p class="empty-state">Aucun contenu prêt pour l\'exécution SEO. Créez d\'abord des contenus depuis le Plan Contenu.</p>';
+      return;
+    }
+
+    let html = `
+      <p class="info-text">${result.count} contenu(s) prêt(s) pour l'exécution SEO</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Mot-clé</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th>Impressions</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for (const content of result.data) {
+      html += `
+        <tr>
+          <td>${content.id}</td>
+          <td class="keyword-cell">${escapeHtml(content.keyword || '-')}</td>
+          <td><span class="type-badge">${content.type}</span></td>
+          <td><span class="status-badge status-${content.status}">${content.status}</span></td>
+          <td>${content.impressions || '-'}</td>
+          <td class="actions-cell">
+            <button class="btn-small" onclick="previewSEO(${content.id})">👁️ Preview</button>
+            <button class="btn-small btn-execute-single" onclick="executeSingleSEO(${content.id})">⚡ Exécuter</button>
+          </td>
+        </tr>
+      `;
+    }
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+
+  } catch (err) {
+    container.innerHTML = '<p class="error">Erreur de chargement</p>';
+    console.error('loadSEOCandidates error:', err);
+  }
+}
+
+/**
+ * Prévisualiser le contenu SEO généré
+ */
+async function previewSEO(contentId) {
+  const resultContainer = document.getElementById('seo-execution-result');
+  resultContainer.classList.remove('hidden');
+  resultContainer.innerHTML = '<p class="loading">Génération de la prévisualisation...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/seo/preview/${contentId}`, {
+      method: 'POST'
+    });
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      resultContainer.innerHTML = `<p class="error">Erreur: ${result.message}</p>`;
+      return;
+    }
+
+    const preview = result.preview;
+    
+    resultContainer.innerHTML = `
+      <div class="seo-preview">
+        <div class="preview-header">
+          <h4>📄 Prévisualisation SEO</h4>
+          <button class="btn-small" onclick="closeSEOPreview()">✕ Fermer</button>
+        </div>
+        <div class="preview-meta">
+          <p><strong>Title:</strong> ${escapeHtml(preview.title)}</p>
+          <p><strong>Meta Description:</strong> ${escapeHtml(preview.metaDescription)}</p>
+          <p><strong>H1:</strong> ${escapeHtml(preview.h1)}</p>
+          <p><strong>Slug:</strong> /${preview.type === 'service' ? 'services' : 'blog'}/${preview.slug}.html</p>
+          <p><strong>Mots:</strong> ~${preview.wordCount} mots</p>
+        </div>
+        <div class="preview-structure">
+          <p><strong>Structure H2:</strong></p>
+          <ul>
+            ${preview.h2Structure.map(h2 => `<li>${escapeHtml(h2)}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="preview-content">
+          <p><strong>Aperçu du contenu:</strong></p>
+          <div class="content-preview">${escapeHtml(preview.content)}</div>
+        </div>
+        <div class="preview-actions">
+          <button class="btn-primary" onclick="executeSingleSEO(${contentId})">⚡ Générer cette page</button>
+          <a href="${API_BASE}/api/seo/execute/${contentId}/html" target="_blank" class="btn-secondary">🔗 Voir HTML complet</a>
+        </div>
+      </div>
+    `;
+
+  } catch (err) {
+    resultContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('previewSEO error:', err);
+  }
+}
+
+/**
+ * Fermer la prévisualisation
+ */
+function closeSEOPreview() {
+  const resultContainer = document.getElementById('seo-execution-result');
+  resultContainer.classList.add('hidden');
+}
+
+/**
+ * Exécuter l'optimisation SEO pour un contenu
+ */
+async function executeSingleSEO(contentId) {
+  if (!confirm('Voulez-vous générer la page SEO pour ce contenu ?')) {
+    return;
+  }
+
+  const resultContainer = document.getElementById('seo-execution-result');
+  resultContainer.classList.remove('hidden');
+  resultContainer.innerHTML = '<p class="loading">⚡ Génération en cours...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/seo/execute/${contentId}`, {
+      method: 'POST'
+    });
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      resultContainer.innerHTML = `<p class="error">Erreur: ${result.message}</p>`;
+      return;
+    }
+
+    const r = result.result;
+    
+    resultContainer.innerHTML = `
+      <div class="seo-result success">
+        <h4>✅ Page SEO générée avec succès</h4>
+        <div class="result-details">
+          <p><strong>Titre:</strong> ${escapeHtml(r.title)}</p>
+          <p><strong>Fichier:</strong> ${r.filePath}</p>
+          <p><strong>Mots:</strong> ${r.wordCount}</p>
+          <p><strong>Statut:</strong> <span class="status-badge status-validated">validated</span></p>
+        </div>
+        <div class="result-actions">
+          <a href="${API_BASE}/api/seo/execute/${contentId}/html" target="_blank" class="btn-primary">📄 Voir la page générée</a>
+          <button class="btn-secondary" onclick="closeSEOPreview()">Fermer</button>
+        </div>
+        <p class="info-note">⚠️ La page est générée mais pas encore déployée. Téléchargez le HTML et ajoutez-le au site.</p>
+      </div>
+    `;
+
+    // Recharger les candidats
+    loadSEOCandidates();
+
+  } catch (err) {
+    resultContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('executeSingleSEO error:', err);
+  }
+}
+
+/**
+ * Exécuter l'optimisation SEO pour tous les contenus
+ */
+async function executeAllSEO() {
+  if (!confirm('Voulez-vous générer les pages SEO pour TOUS les contenus en attente ? (max 5)')) {
+    return;
+  }
+
+  const resultContainer = document.getElementById('seo-execution-result');
+  resultContainer.classList.remove('hidden');
+  resultContainer.innerHTML = '<p class="loading">⚡ Génération en cours pour tous les contenus...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/seo/execute-all`, {
+      method: 'POST'
+    });
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      resultContainer.innerHTML = `<p class="error">Erreur: ${result.message}</p>`;
+      return;
+    }
+
+    let html = `
+      <div class="seo-result success">
+        <h4>✅ ${result.executed} page(s) générée(s)</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Titre</th>
+              <th>Slug</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    for (const r of result.results) {
+      html += `
+        <tr>
+          <td>${r.id}</td>
+          <td>${escapeHtml(r.title)}</td>
+          <td>${r.slug}</td>
+          <td><span class="status-badge status-success">${r.status}</span></td>
+        </tr>
+      `;
+    }
+
+    html += `
+          </tbody>
+        </table>
+        <div class="result-actions">
+          <button class="btn-secondary" onclick="closeSEOPreview()">Fermer</button>
+        </div>
+      </div>
+    `;
+
+    resultContainer.innerHTML = html;
+
+    // Recharger les candidats
+    loadSEOCandidates();
+    // Recharger les contenus
+    loadContents();
+
+  } catch (err) {
+    resultContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('executeAllSEO error:', err);
+  }
+}
