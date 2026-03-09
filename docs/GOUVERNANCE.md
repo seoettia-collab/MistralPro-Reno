@@ -221,10 +221,74 @@ CLÔTURE — Correction images blog.html
 
 ---
 
-## 6. APPLICATION
+## 6. MÉTHODE QA — CHECKLIST INTERACTIVE
+
+### 6.1 Principe
+
+À chaque phase de vérification (fin de lot, déploiement, correction), Claude utilise la **méthode QA interactive** pour valider le fonctionnement avec Ricardo.
+
+### 6.2 Format
+
+1. **Questionnaires interactifs** : Cases à cocher Oui/Non dans l'interface Claude
+2. **Test par onglet/module** : Chaque section testée séparément
+3. **Rapport synthétique** : Généré automatiquement après les tests
+
+### 6.3 Structure des questions
+
+Pour chaque test :
+- **Manipulation** : Action à effectuer
+- **Question** : Ce que Ricardo doit vérifier (Oui/Non)
+- **Utilité** : Pourquoi cette fonction existe
+
+### 6.4 Format rapport QA
+
+```
+RAPPORT QA — [Nom du module/lot]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RÉSUMÉ DES TESTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Module 1 ............... OK
+❌ Module 2 ............... PROBLÈME
+✅ Module 3 ............... OK
+
+SCORE : X/Y modules OK (XX%)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BUGS DÉTECTÉS — PRIORITÉ HAUTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. [Description bug]
+2. [Description bug]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AMÉLIORATIONS — PRIORITÉ MOYENNE/BASSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. [Description amélioration]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROCHAINES ACTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Corriger bugs prioritaires
+2. Améliorer UX si temps disponible
+
+— Claude
+```
+
+### 6.5 Application
+
+Cette méthode QA est **obligatoire** pour :
+- Validation de fin de lot
+- Déploiement majeur
+- Correction de bugs critiques
+- Nouvelle fonctionnalité
+
+---
+
+## 7. APPLICATION
 
 Cette directive de gouvernance est **effective immédiatement** et s'applique à toutes les communications techniques structurantes du projet.
 
 ---
 
-*Document créé le 8 mars 2026 — Gouvernance v1.0*
+*Document créé le 8 mars 2026 — Gouvernance v1.1*
+*Mise à jour 9 mars 2026 — Ajout méthode QA*
