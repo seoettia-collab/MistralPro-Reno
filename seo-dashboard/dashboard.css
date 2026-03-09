@@ -5456,3 +5456,160 @@ select:focus {
     flex-direction: column !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.7.1 — FIX LAYOUT COCKPIT HEADER (Score + KPIs en ligne)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Header en ligne horizontale */
+.cockpit-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 0.75rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* Score compact à gauche */
+.cockpit-score-section {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  background: var(--bg-card) !important;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border) !important;
+  min-width: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* Score circle petit */
+.cockpit-score-circle.large {
+  width: 60px !important;
+  height: 60px !important;
+  flex-shrink: 0 !important;
+}
+
+.cockpit-score-circle.large svg {
+  width: 60px !important;
+  height: 60px !important;
+}
+
+.score-center .score-num {
+  font-size: 1.2rem !important;
+}
+
+.score-center .score-label {
+  font-size: 0.5rem !important;
+}
+
+/* Meta score compact */
+.score-meta {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.15rem !important;
+}
+
+.score-level {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+}
+
+.score-breakdown {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+
+.breakdown-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 0.5rem !important;
+  font-size: 0.65rem !important;
+  padding: 0 !important;
+  line-height: 1.3 !important;
+}
+
+.bd-label {
+  color: var(--text-secondary) !important;
+}
+
+.bd-value {
+  font-weight: 500 !important;
+}
+
+/* KPIs grid - prend tout l'espace restant */
+.cockpit-kpis-grid {
+  flex: 1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 0.5rem !important;
+}
+
+/* KPI cards compactes */
+.kpi-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem 0.25rem !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 6px !important;
+  min-height: 70px !important;
+}
+
+.kpi-icon {
+  font-size: 0.9rem !important;
+  margin-bottom: 0.15rem !important;
+}
+
+.kpi-value {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+}
+
+.kpi-label {
+  font-size: 0.6rem !important;
+  color: var(--text-secondary) !important;
+  text-align: center !important;
+}
+
+/* KPI avec bordure colorée */
+.kpi-live {
+  border-color: var(--success) !important;
+}
+
+.kpi-pending {
+  border-color: var(--warning) !important;
+}
+
+.kpi-opportunities.has-high {
+  border-color: #ec4899 !important;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .cockpit-kpis-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .cockpit-header {
+    flex-direction: column !important;
+  }
+  
+  .cockpit-kpis-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .cockpit-kpis-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
