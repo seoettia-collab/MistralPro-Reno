@@ -2075,21 +2075,21 @@ async function loadContentIdeas() {
 
     // Afficher Content Gaps
     if (ideas.contentGaps && ideas.contentGaps.length > 0) {
-      contentGapsContainer.innerHTML = renderContentIdeasTable(ideas.contentGaps);
+      contentGapsContainer.innerHTML = renderContentIdeasTable(ideas.contentGaps, 'contentGaps');
     } else {
       contentGapsContainer.innerHTML = '<p class="empty-state">Aucun content gap détecté. Importez plus de données GSC.</p>';
     }
 
     // Afficher High Potential
     if (ideas.highPotential && ideas.highPotential.length > 0) {
-      highPotentialContainer.innerHTML = renderContentIdeasTable(ideas.highPotential);
+      highPotentialContainer.innerHTML = renderContentIdeasTable(ideas.highPotential, 'highPotential');
     } else {
       highPotentialContainer.innerHTML = '<p class="empty-state">Aucune requête à fort potentiel détectée.</p>';
     }
 
     // Afficher Low Performers
     if (ideas.lowPerformers && ideas.lowPerformers.length > 0) {
-      lowPerformersContainer.innerHTML = renderContentIdeasTable(ideas.lowPerformers);
+      lowPerformersContainer.innerHTML = renderContentIdeasTable(ideas.lowPerformers, 'lowPerformers');
     } else {
       lowPerformersContainer.innerHTML = '<p class="empty-state">Aucune requête à améliorer détectée.</p>';
     }
@@ -2103,17 +2103,21 @@ async function loadContentIdeas() {
 /**
  * Générer le tableau des idées de contenu
  */
-function renderContentIdeasTable(ideas) {
+function renderContentIdeasTable(ideas, category) {
+  // Stocker les idées globalement pour le onclick
+  if (!window.contentIdeasData) {
+    window.contentIdeasData = {};
+  }
+  window.contentIdeasData[category] = ideas;
+
   let html = `
     <table class="data-table">
       <thead>
         <tr>
           <th>Requête</th>
-          <th>Impressions</th>
-          <th>Position</th>
+          <th>Imp.</th>
+          <th>Pos.</th>
           <th>Type</th>
-          <th>Titre suggéré</th>
-          <th>Intent</th>
           <th>Priorité</th>
           <th>Action</th>
         </tr>
@@ -2121,11 +2125,11 @@ function renderContentIdeasTable(ideas) {
       <tbody>
   `;
 
-  for (const idea of ideas) {
+  for (let i = 0; i < ideas.length; i++) {
+    const idea = ideas[i];
     const priorityClass = idea.priority === 'high' ? 'priority-high' : 
                           idea.priority === 'medium' ? 'priority-medium' : 'priority-low';
     
-    const intentClass = `intent-${idea.intent.replace('é', 'e')}`;
     const typeLabel = getContentTypeLabel(idea.contentType);
     
     html += `
@@ -2134,11 +2138,9 @@ function renderContentIdeasTable(ideas) {
         <td>${idea.impressions}</td>
         <td>${idea.position}</td>
         <td><span class="type-badge">${typeLabel}</span></td>
-        <td class="title-cell" title="${escapeHtml(idea.titleSuggestion)}">${escapeHtml(idea.titleSuggestion)}</td>
-        <td><span class="intent-badge ${intentClass}">${idea.intent}</span></td>
         <td><span class="priority-badge ${priorityClass}">${idea.priority}</span></td>
         <td>
-          <button class="btn-small btn-save-idea" onclick='saveContentIdea(${JSON.stringify(idea).replace(/'/g, "&#39;")})'>
+          <button class="btn-small btn-save-idea" onclick="saveContentIdeaByIndex('${category}', ${i})">
             💾 Créer
           </button>
         </td>
@@ -2161,6 +2163,18 @@ function getContentTypeLabel(type) {
     'guide': '📚 Guide'
   };
   return labels[type] || type;
+}
+
+/**
+ * Sauvegarder une idée par son index
+ */
+async function saveContentIdeaByIndex(category, index) {
+  const idea = window.contentIdeasData[category][index];
+  if (!idea) {
+    alert('Erreur: idée non trouvée');
+    return;
+  }
+  await saveContentIdea(idea);
 }
 
 /**
