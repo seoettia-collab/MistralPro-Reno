@@ -2900,6 +2900,48 @@ function renderLineChart(containerId, labels, values, color, title) {
 }
 
 // =====================================================
+// QA PANEL - CHECKLIST & GUIDE
+// =====================================================
+
+/**
+ * Toggle QA panel open/closed
+ */
+function toggleQaPanel(button) {
+  const panel = button.closest('.qa-panel');
+  panel.classList.toggle('open');
+}
+
+/**
+ * Update progress bar when checkbox changes
+ */
+function updateQaProgress(checkbox) {
+  const panel = checkbox.closest('.qa-panel');
+  const checklist = checkbox.closest('.qa-checklist');
+  const checkboxes = checklist.querySelectorAll('input[type="checkbox"]');
+  const label = checkbox.closest('label');
+  
+  // Toggle checked style on label
+  if (checkbox.checked) {
+    label.classList.add('checked');
+  } else {
+    label.classList.remove('checked');
+  }
+  
+  // Count checked
+  const total = checkboxes.length;
+  const checked = checklist.querySelectorAll('input[type="checkbox"]:checked').length;
+  
+  // Update progress text
+  const progressText = panel.querySelector('.qa-progress-text');
+  progressText.textContent = `${checked} / ${total} tests`;
+  
+  // Update progress bar
+  const progressFill = panel.querySelector('.qa-progress-fill');
+  const percentage = (checked / total) * 100;
+  progressFill.style.width = `${percentage}%`;
+}
+
+// =====================================================
 // EXPOSITION GLOBALE DES FONCTIONS ONCLICK
 // =====================================================
 // Toutes les fonctions appelées via onclick dans le HTML doivent être sur window
@@ -2925,3 +2967,5 @@ window.viewBriefDetail = viewBriefDetail;
 window.submitContent = submitContent;
 window.submitCompetitor = submitCompetitor;
 window.escapeHtml = escapeHtml;
+window.toggleQaPanel = toggleQaPanel;
+window.updateQaProgress = updateQaProgress;

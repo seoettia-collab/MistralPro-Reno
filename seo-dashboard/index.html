@@ -32,6 +32,37 @@
   <main class="main-container">
     <section id="cockpit" class="tab-section active">
       <h2>Cockpit SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="cockpit">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Vue d'ensemble de la santé SEO du site avec score global et alertes prioritaires.</p>
+            <ul>
+              <li>Consulter le score SEO global</li>
+              <li>Vérifier les alertes prioritaires</li>
+              <li>Analyser les métriques clés</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier score SEO affiché</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier alertes prioritaires</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier statistiques GSC</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier statistiques contenu</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 4 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div id="priority-alerts-container" class="priority-alerts-container">
         <p class="loading">Chargement des alertes...</p>
       </div>
@@ -42,6 +73,39 @@
 
     <section id="searchconsole" class="tab-section">
       <h2>Search Console Data</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="searchconsole">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Analyser les requêtes Google Search Console et suivre leur évolution.</p>
+            <ul>
+              <li>Importer les données GSC</li>
+              <li>Filtrer par requête ou page</li>
+              <li>Identifier les opportunités SEO</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Importer données GSC</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier affichage graphiques</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Tester filtre "global"</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Tester filtre "requête"</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Tester filtre "page"</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier tableau des requêtes</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 6 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="section-actions">
         <button class="btn-primary" onclick="importGscData()">🔄 Importer données GSC</button>
       </div>
@@ -111,6 +175,36 @@
 
     <section id="opportunities" class="tab-section">
       <h2>Opportunités SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="opportunities">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Identifier les opportunités d'amélioration SEO basées sur les données GSC.</p>
+            <ul>
+              <li>Détecter les quick wins (position 5-15)</li>
+              <li>Identifier les pages à faible CTR</li>
+              <li>Repérer les content gaps</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier liste opportunités</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier pages à optimiser</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier priorités affichées</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 3 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div id="opportunities-container">
         <p class="loading">Chargement des opportunités...</p>
       </div>
@@ -123,6 +217,38 @@
 
     <section id="pages" class="tab-section">
       <h2>Pages SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="pages">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Analyser les performances SEO de chaque page du site.</p>
+            <ul>
+              <li>Identifier les meilleures pages</li>
+              <li>Détecter les pages à faible CTR</li>
+              <li>Trouver les quick wins positionnels</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Rafraîchir l'analyse</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier Top 10 pages</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier pages CTR faible</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier Quick Wins</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier toutes les pages</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 5 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="section-actions">
         <button class="btn-primary" onclick="refreshPagesAnalysis()">🔄 Rafraîchir l'analyse</button>
       </div>
@@ -153,6 +279,38 @@
 
     <section id="contentplan" class="tab-section">
       <h2>Plan de Contenu SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="contentplan">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Détecter les sujets SEO à créer à partir des requêtes.</p>
+            <ul>
+              <li>Analyser les requêtes GSC</li>
+              <li>Générer des idées de contenu</li>
+              <li>Sauvegarder les idées pertinentes</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier statistiques</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Analyser les requêtes</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier Content Gaps</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Sauvegarder une idée</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier apparition dans contenus</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 5 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <p class="section-description">Idées de contenu générées automatiquement à partir de vos données Google Search Console.</p>
       <div class="section-actions">
         <button class="btn-primary" onclick="refreshContentIdeas()">🔄 Analyser les requêtes</button>
@@ -180,6 +338,39 @@
 
     <section id="content" class="tab-section">
       <h2>Contenu</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="content">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Gérer les contenus SEO et lancer la génération automatique.</p>
+            <ul>
+              <li>Créer un contenu</li>
+              <li>Changer le statut éditorial</li>
+              <li>Générer la page SEO automatiquement</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Ouvrir un contenu</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Changer statut éditorial</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Voir candidats SEO Executor</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Lancer Auto SEO Executor</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier HTML généré</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier qualité SEO</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 6 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="section-actions">
         <button class="btn-primary" onclick="toggleContentForm()">+ Créer contenu</button>
         <button class="btn-primary" onclick="generateEditorialPlan()">📋 Générer plan éditorial</button>
@@ -255,6 +446,37 @@
 
     <section id="audit" class="tab-section">
       <h2>Audit technique</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="audit">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Identifier les problèmes SEO techniques sur le site.</p>
+            <ul>
+              <li>Analyser une page spécifique</li>
+              <li>Scanner tout le site</li>
+              <li>Vérifier title, meta, H1, maillage</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Lancer audit page</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Lancer crawl site</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier résultats SEO</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier maillage interne</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 4 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="section-actions">
         <button class="btn-primary" onclick="runAudit()">🔍 Audit page</button>
         <button class="btn-primary" onclick="runCrawl()">🕷️ Crawl site</button>
@@ -271,6 +493,36 @@
 
     <section id="conversions" class="tab-section">
       <h2>Conversions SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="conversions">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Suivre les conversions générées par le SEO.</p>
+            <ul>
+              <li>Consulter les statistiques de conversion</li>
+              <li>Analyser l'historique</li>
+              <li>Mesurer le ROI SEO</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier statistiques</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier historique</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> État vide propre si aucune donnée</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 3 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div id="conversions-stats">
         <p class="loading">Chargement des statistiques...</p>
       </div>
@@ -282,6 +534,36 @@
 
     <section id="competitors" class="tab-section">
       <h2>Concurrents SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="competitors">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Surveiller les concurrents SEO.</p>
+            <ul>
+              <li>Ajouter des domaines concurrents</li>
+              <li>Comparer les performances</li>
+              <li>Identifier les opportunités</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Ajouter un concurrent</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier liste affichée</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Supprimer un concurrent</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 3 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="section-actions">
         <button class="btn-primary" onclick="toggleCompetitorForm()">+ Ajouter concurrent</button>
       </div>
@@ -305,6 +587,36 @@
 
     <section id="brief" class="tab-section">
       <h2>Brief Claude</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="brief">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Générer des briefs de rédaction SEO pour Claude.</p>
+            <ul>
+              <li>Consulter les briefs générés</li>
+              <li>Ouvrir le détail d'un brief</li>
+              <li>Copier les instructions pour Claude</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier liste briefs</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Ouvrir détail brief</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier contenu affiché</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 3 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div id="briefs-container">
         <p class="loading">Chargement des briefs...</p>
       </div>
