@@ -81,8 +81,8 @@ async function generateContentIdeas(siteId) {
       hasExistingPage: query.page_count > 0
     };
 
-    // Content Gap : impressions > 20, position > 15, pas de page bien positionnée
-    if (query.impressions > 20 && query.position > 15) {
+    // Content Gap : impressions > 10, position > 10 (car peu de données)
+    if (query.impressions > 10 && query.position > 10) {
       ideas.contentGaps.push({
         ...idea,
         reason: 'Requête avec impressions mais mal positionnée',
@@ -91,7 +91,7 @@ async function generateContentIdeas(siteId) {
     }
 
     // High Potential : beaucoup d'impressions mais peu de clics
-    if (query.impressions > 30 && query.ctr < 0.02) {
+    if (query.impressions > 15 && query.ctr < 0.03) {
       ideas.highPotential.push({
         ...idea,
         reason: 'Fort volume de recherche, CTR à améliorer',
@@ -99,8 +99,8 @@ async function generateContentIdeas(siteId) {
       });
     }
 
-    // Low Performers : position entre 10-30, potentiel d'amélioration
-    if (query.position >= 10 && query.position <= 30 && query.impressions > 15) {
+    // Low Performers : position entre 10-50, potentiel d'amélioration
+    if (query.position >= 10 && query.position <= 50 && query.impressions > 5) {
       ideas.lowPerformers.push({
         ...idea,
         reason: 'Position améliorable avec du contenu de qualité',
@@ -245,13 +245,13 @@ function generateTitleSuggestion(query, contentType, intent) {
  * @returns {string}
  */
 function calculatePriority(query) {
-  // High : beaucoup d'impressions et position proche du top 10
-  if (query.impressions > 50 && query.position < 20) {
+  // High : beaucoup d'impressions et position améliorable
+  if (query.impressions > 20 && query.position < 40) {
     return 'high';
   }
   
   // Medium : impressions moyennes ou position améliorable
-  if (query.impressions > 20 || query.position < 30) {
+  if (query.impressions > 10 || query.position < 50) {
     return 'medium';
   }
   
