@@ -2042,12 +2042,21 @@ async function loadContentIdeas() {
   const highPotentialContainer = document.getElementById('high-potential-container');
   const lowPerformersContainer = document.getElementById('low-performers-container');
 
+  // Afficher loading
+  summaryContainer.innerHTML = '<p class="loading">Chargement en cours...</p>';
+
   try {
     const response = await fetch(`${API_BASE}/api/content/ideas`);
+    
+    if (!response.ok) {
+      summaryContainer.innerHTML = `<p class="error">Erreur HTTP: ${response.status}</p>`;
+      return;
+    }
+    
     const result = await response.json();
 
     if (result.status !== 'ok') {
-      summaryContainer.innerHTML = '<p class="error">Erreur de chargement</p>';
+      summaryContainer.innerHTML = '<p class="error">Erreur API</p>';
       return;
     }
 
@@ -2077,26 +2086,28 @@ async function loadContentIdeas() {
     if (ideas.contentGaps && ideas.contentGaps.length > 0) {
       contentGapsContainer.innerHTML = renderContentIdeasTable(ideas.contentGaps, 'contentGaps');
     } else {
-      contentGapsContainer.innerHTML = '<p class="empty-state">Aucun content gap détecté. Importez plus de données GSC.</p>';
+      contentGapsContainer.innerHTML = '<p class="empty-state">Aucun content gap détecté.</p>';
     }
 
     // Afficher High Potential
     if (ideas.highPotential && ideas.highPotential.length > 0) {
       highPotentialContainer.innerHTML = renderContentIdeasTable(ideas.highPotential, 'highPotential');
     } else {
-      highPotentialContainer.innerHTML = '<p class="empty-state">Aucune requête à fort potentiel détectée.</p>';
+      highPotentialContainer.innerHTML = '<p class="empty-state">Aucune requête à fort potentiel.</p>';
     }
 
     // Afficher Low Performers
     if (ideas.lowPerformers && ideas.lowPerformers.length > 0) {
       lowPerformersContainer.innerHTML = renderContentIdeasTable(ideas.lowPerformers, 'lowPerformers');
     } else {
-      lowPerformersContainer.innerHTML = '<p class="empty-state">Aucune requête à améliorer détectée.</p>';
+      lowPerformersContainer.innerHTML = '<p class="empty-state">Aucune requête à améliorer.</p>';
     }
 
   } catch (err) {
-    summaryContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
-    console.error('loadContentIdeas error:', err);
+    summaryContainer.innerHTML = `<p class="error">Erreur: ${err.message}</p>`;
+    contentGapsContainer.innerHTML = '';
+    highPotentialContainer.innerHTML = '';
+    lowPerformersContainer.innerHTML = '';
   }
 }
 
