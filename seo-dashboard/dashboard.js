@@ -3007,7 +3007,7 @@ function changeHistoryFilter() {
  */
 async function loadHistoryData() {
   const filter = document.getElementById('history-filter').value;
-  let url = `${API_BASE}/api/gsc/history`;
+  let endpoint = '/api/gsc/history';
 
   if (filter === 'query') {
     const query = document.getElementById('history-query').value;
@@ -3015,18 +3015,18 @@ async function loadHistoryData() {
       renderEmptyCharts('Sélectionnez une requête');
       return;
     }
-    url += `?query=${encodeURIComponent(query)}`;
+    endpoint += `?query=${encodeURIComponent(query)}`;
   } else if (filter === 'page') {
     const page = document.getElementById('history-page').value;
     if (!page) {
       renderEmptyCharts('Sélectionnez une page');
       return;
     }
-    url += `?page=${encodeURIComponent(page)}`;
+    endpoint += `?page=${encodeURIComponent(page)}`;
   }
 
   try {
-    const response = await fetch(url);
+    const response = await fetchAPI(endpoint);
     const result = await response.json();
 
     if (result.status !== 'ok' || !result.data || result.data.length === 0) {
