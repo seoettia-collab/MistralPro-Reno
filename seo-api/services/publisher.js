@@ -391,11 +391,21 @@ async function publishContent(contentId) {
       return { success: false, error: 'Contenu non trouvé' };
     }
 
-    // 2. Récupérer le brief associé
-    const brief = await dbGet('SELECT * FROM briefs WHERE content_id = ?', [contentId]);
-    if (!brief) {
-      return { success: false, error: 'Brief non trouvé. Générez d\'abord un brief.' };
-    }
+    // 2. Récupérer le brief associé (via target = slug ou titre)
+    const brief = await dbGet(
+      'SELECT * FROM briefs WHERE target = ? OR target LIKE ? ORDER BY id DESC LIMIT 1', 
+      [content.slug_suggested || '', `%${content.keyword}%`]
+    );
+    
+    // Si pas de brief, créer un brief par défaut
+    const briefData = brief || {
+      instructions: '',
+      h1: content.title,
+      meta_description: `${content.keyword} - Guide complet par Mistral Pro Reno, expert en rénovation à Paris.`,
+      introduction: `Découvrez notre guide complet sur ${content.keyword}.`,
+      conclusion: `Pour votre projet de ${content.keyword}, faites confiance à Mistral Pro Reno.`,
+      brief_content: ''
+    };
 
     // 3. Générer le slug
     const slug = content.slug_suggested || generateSlug(content.title);
@@ -403,7 +413,7 @@ async function publishContent(contentId) {
     const filepath = `blog/${filename}`;
 
     // 4. Générer le HTML
-    const html = generateHTMLFromBrief(brief, content);
+    const html = generateHTMLFromBrief(briefData, content);
 
     // 5. Mettre à jour le contenu avec le slug
     await dbRun('UPDATE contents SET slug_suggested = ? WHERE id = ?', [slug, contentId]);
