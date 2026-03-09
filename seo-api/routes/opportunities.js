@@ -94,6 +94,39 @@ router.get('/opportunities', async (req, res) => {
   }
 });
 
+// POST /api/opportunities - Créer une opportunité manuellement
+router.post('/opportunities', async (req, res) => {
+  try {
+    const { keyword, position, impressions, clicks, ctr, priority, opportunity_type, potential_gain, action_recommended } = req.body;
+
+    if (!keyword) {
+      return res.status(400).json({ status: 'error', message: 'keyword requis' });
+    }
+
+    const result = await dbRun(`
+      INSERT INTO opportunities (
+        type, keyword, position, impressions, clicks, ctr,
+        opportunity_type, priority, status, action_recommended, potential_gain
+      ) VALUES ('seo', ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+    `, [
+      keyword,
+      position || null,
+      impressions || 0,
+      clicks || 0,
+      ctr || 0,
+      opportunity_type || 'quick_win',
+      priority || 'medium',
+      action_recommended || `Optimiser pour "${keyword}"`,
+      potential_gain || 0
+    ]);
+
+    res.json({ status: 'ok', id: result.lastID });
+
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 // PATCH /api/opportunities/:id/status - Mettre à jour le statut
 router.patch('/opportunities/:id/status', async (req, res) => {
   try {
