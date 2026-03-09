@@ -798,6 +798,17 @@ body {
   gap: 0.5rem;
 }
 
+.page-link {
+  text-decoration: none;
+  font-size: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.page-link:hover {
+  opacity: 1;
+}
+
 .seo-title {
   flex: 1;
 }

@@ -647,6 +647,9 @@ async function loadContents() {
       const statusClass = `status-${normalizedStatus}`;
       const allowedTransitions = transitions[c.status] || [];
       
+      // Générer l'URL de la page si slug disponible
+      const pageUrl = c.slug_suggested ? `https://www.mistralpro-reno.fr/${c.slug_suggested}.html` : null;
+      
       // Générer les boutons d'action selon le statut
       let actionsHtml = '<div class="action-buttons">';
       
@@ -671,18 +674,18 @@ async function loadContents() {
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'deployed')" title="Retour déployé">↩️</button>`;
       }
       
-      // Ajouter icône lien pour contenus déployés ou live
-      if ((c.status === 'deployed' || c.status === 'published' || c.status === 'live') && c.slug_suggested) {
-        const pageUrl = `https://www.mistralpro-reno.fr/${c.slug_suggested}.html`;
-        actionsHtml += `<a href="${pageUrl}" target="_blank" class="btn-small btn-link" title="Voir la page">🔗</a>`;
-      }
-      
       actionsHtml += '</div>';
       
+      // Icône lien vers la page (pour deployed/published/live)
+      const isDeployed = ['deployed', 'published', 'live'].includes(c.status);
+      const linkHtml = (isDeployed && pageUrl) 
+        ? `<a href="${pageUrl}" target="_blank" class="page-link" title="Ouvrir ${pageUrl}">🔗</a>` 
+        : '';
+      
       html += `
-        <tr class="content-row status-row-${c.status}">
+        <tr class="content-row status-row-${normalizedStatus}">
           <td>${typeLabel}</td>
-          <td class="title-cell" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</td>
+          <td class="title-cell" title="${escapeHtml(c.title)}">${escapeHtml(c.title)} ${linkHtml}</td>
           <td>${escapeHtml(c.keyword) || '-'}</td>
           <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
           <td class="actions-cell">${actionsHtml}</td>
