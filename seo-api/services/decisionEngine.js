@@ -121,32 +121,37 @@ async function collectPageSignals() {
  * Signaux Audit Technique
  */
 async function collectAuditSignals() {
-  const audits = await dbAll(`
-    SELECT * FROM audits
-    ORDER BY created_at DESC
-    LIMIT 1
-  `);
+  try {
+    const audits = await dbAll(`
+      SELECT * FROM audits
+      ORDER BY id DESC
+      LIMIT 1
+    `);
 
-  if (audits.length === 0) {
+    if (audits.length === 0) {
+      return { has_audit: false, issues: [] };
+    }
+
+    const audit = audits[0];
+    let issues = [];
+    
+    try {
+      issues = JSON.parse(audit.issues || '[]');
+    } catch (e) {
+      issues = [];
+    }
+
+    return {
+      has_audit: true,
+      last_audit: audit.date || audit.id,
+      critical_issues: issues.filter(i => i.severity === 'critical').length,
+      warning_issues: issues.filter(i => i.severity === 'warning').length,
+      issues: issues.slice(0, 10)
+    };
+  } catch (err) {
+    console.error('collectAuditSignals error:', err.message);
     return { has_audit: false, issues: [] };
   }
-
-  const audit = audits[0];
-  let issues = [];
-  
-  try {
-    issues = JSON.parse(audit.issues || '[]');
-  } catch (e) {
-    issues = [];
-  }
-
-  return {
-    has_audit: true,
-    last_audit: audit.created_at,
-    critical_issues: issues.filter(i => i.severity === 'critical').length,
-    warning_issues: issues.filter(i => i.severity === 'warning').length,
-    issues: issues.slice(0, 10)
-  };
 }
 
 /**
