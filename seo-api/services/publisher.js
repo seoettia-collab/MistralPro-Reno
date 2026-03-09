@@ -91,8 +91,8 @@ async function autoPublish(contentId) {
     
     const deployedUrl = `${SITE_URL}/blog/${filename}`;
     await dbRun(
-      'UPDATE contents SET status = ?, deployed_at = ?, deployed_url = ? WHERE id = ?',
-      ['deployed', new Date().toISOString(), deployedUrl, contentId]
+      'UPDATE contents SET status = ?, deployed_url = ? WHERE id = ?',
+      ['deployed', deployedUrl, contentId]
     );
     steps[steps.length - 1].status = 'ok';
 
@@ -115,8 +115,8 @@ async function autoPublish(contentId) {
       steps.push({ step: currentStep, status: 'running' });
       
       await dbRun(
-        'UPDATE contents SET status = ?, live_at = ? WHERE id = ?',
-        ['live', new Date().toISOString(), contentId]
+        'UPDATE contents SET status = ? WHERE id = ?',
+        ['live', contentId]
       );
       steps[steps.length - 1].status = 'ok';
       
