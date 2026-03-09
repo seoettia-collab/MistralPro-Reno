@@ -109,6 +109,27 @@ app.use('/api', pagesRoutes);
 const seoExecutorRoutes = require('./routes/seoExecutor');
 app.use('/api', seoExecutorRoutes);
 
+// Import error handlers
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+
+// 404 handler - doit être après toutes les routes
+app.use(notFoundHandler);
+
+// Error handler global - doit être le dernier middleware
+app.use(errorHandler);
+
+// Gestion erreurs non capturées
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] Uncaught Exception:', err.message);
+  console.error(err.stack);
+  // Ne pas exit en production Vercel
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[FATAL] Unhandled Rejection at:', promise);
+  console.error('Reason:', reason);
+});
+
 // Démarrage serveur avec init schema
 const startServer = async () => {
   try {
