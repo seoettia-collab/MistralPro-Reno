@@ -5613,3 +5613,303 @@ select:focus {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.7.2 — GRILLES MULTI-COLONNES DENSES (Cockpit)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Container cockpit en grille */
+.cockpit-v2 {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0.5rem !important;
+}
+
+/* Sections cockpit en grille 2 colonnes */
+.cockpit-sections-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0.5rem !important;
+}
+
+/* Opportunités en grille 4 colonnes */
+.opportunities-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.4rem !important;
+}
+
+.opportunity-card {
+  padding: 0.4rem 0.6rem !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.2rem !important;
+  min-height: auto !important;
+}
+
+.opp-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.1rem !important;
+}
+
+.opp-keyword {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.opp-meta {
+  font-size: 0.65rem !important;
+}
+
+.opp-actions {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  margin-top: 0.2rem !important;
+}
+
+.opp-type {
+  font-size: 0.6rem !important;
+  padding: 0.1rem 0.3rem !important;
+}
+
+/* Actions en grille 4 colonnes */
+.actions-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.4rem !important;
+}
+
+.action-card {
+  padding: 0.4rem 0.6rem !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  min-height: auto !important;
+}
+
+.action-icon-cockpit {
+  font-size: 1.2rem !important;
+  flex-shrink: 0 !important;
+}
+
+.action-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.action-info h5 {
+  font-size: 0.75rem !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.action-meta {
+  font-size: 0.65rem !important;
+  color: var(--success) !important;
+}
+
+/* Alertes en grille */
+.alerts-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 0.3rem !important;
+}
+
+.alert-item {
+  padding: 0.3rem 0.5rem !important;
+  margin: 0 !important;
+  font-size: 0.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+
+/* Accordéons sous-modules en grille 4 colonnes */
+.cockpit-submodules {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.4rem !important;
+}
+
+.submodule-accordion {
+  margin: 0 !important;
+}
+
+.accordion-btn {
+  padding: 0.4rem 0.6rem !important;
+  font-size: 0.75rem !important;
+}
+
+.accordion-title {
+  font-size: 0.75rem !important;
+}
+
+.accordion-summary {
+  font-size: 0.65rem !important;
+}
+
+/* CTA Audit IA compact */
+.cockpit-cta {
+  padding: 0 !important;
+}
+
+.cta-box {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.5rem 0.75rem !important;
+  gap: 1rem !important;
+}
+
+.cta-info {
+  flex: 1 !important;
+}
+
+.cta-info h4 {
+  font-size: 0.85rem !important;
+  margin: 0 !important;
+}
+
+.cta-info p {
+  font-size: 0.7rem !important;
+  margin: 0.15rem 0 0 0 !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Sections titres compacts */
+.cockpit-section {
+  padding: 0.5rem !important;
+}
+
+.cockpit-section h4 {
+  font-size: 0.8rem !important;
+  margin-bottom: 0.4rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+}
+
+.section-count {
+  font-size: 0.65rem !important;
+  opacity: 0.7 !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .opportunities-list,
+  .actions-list,
+  .cockpit-submodules {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .opportunities-list,
+  .actions-list,
+  .alerts-list,
+  .cockpit-submodules {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .cta-box {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+}
+
+/* Wrapper sous-modules */
+.cockpit-submodules-wrapper {
+  background: var(--bg-card) !important;
+  border-radius: 8px !important;
+  padding: 0.5rem !important;
+  border: 1px solid var(--border) !important;
+}
+
+.cockpit-submodules-wrapper > h4 {
+  font-size: 0.8rem !important;
+  margin-bottom: 0.4rem !important;
+  padding-left: 0.25rem !important;
+}
+
+/* Accordéon compact */
+.submodule-accordion {
+  background: var(--bg-dark) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+.accordion-btn {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.35rem 0.5rem !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+  cursor: pointer !important;
+  font-size: 0.7rem !important;
+  gap: 0.3rem !important;
+}
+
+.accordion-btn:hover {
+  background: rgba(255,255,255,0.05) !important;
+}
+
+.accordion-title {
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+}
+
+.accordion-summary {
+  flex: 1 !important;
+  text-align: right !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.6rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.accordion-icon {
+  font-size: 0.5rem !important;
+  transition: transform 0.2s !important;
+}
+
+.accordion-content {
+  display: none !important;
+  padding: 0.4rem !important;
+  background: rgba(0,0,0,0.2) !important;
+  font-size: 0.7rem !important;
+}
+
+.accordion-content.open {
+  display: block !important;
+}
+
+.submodule-stats {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.15rem !important;
+  margin-bottom: 0.3rem !important;
+}
+
+.stat-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 0.65rem !important;
+}
+
+.stat-row span:first-child {
+  color: var(--text-secondary) !important;
+}

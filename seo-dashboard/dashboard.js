@@ -405,78 +405,80 @@ function renderCockpitV2(data) {
           </div>
         </div>
 
-        <!-- SECTION 5 : Sous-modules techniques (accordéons) -->
-        <div class="cockpit-section cockpit-submodules">
-          <h4>📊 Détails par module</h4>
+        <!-- SECTION 5 : Sous-modules techniques (accordéons en grille) -->
+        <div class="cockpit-submodules-wrapper">
+          <h4>📊 Modules</h4>
+          <div class="cockpit-submodules">
           
-          <!-- Search Console -->
-          <div class="submodule-accordion">
-            <button class="accordion-header" onclick="toggleAccordion(this)">
-              <span>📈 Search Console</span>
-              <span class="accordion-summary">${stats.total_queries || 0} requêtes • ${stats.total_clicks || 0} clics</span>
-              <span class="accordion-icon">▼</span>
-            </button>
-            <div class="accordion-content">
-              <div class="submodule-stats">
-                <div class="stat-row"><span>Requêtes suivies</span><span>${stats.total_queries || 0}</span></div>
-                <div class="stat-row"><span>Clics totaux</span><span>${stats.total_clicks || 0}</span></div>
-                <div class="stat-row"><span>Impressions</span><span>${formatNumber(stats.total_impressions || 0)}</span></div>
-                <div class="stat-row"><span>Position moyenne</span><span>${stats.avg_position ? stats.avg_position.toFixed(1) : '-'}</span></div>
+            <!-- Search Console -->
+            <div class="submodule-accordion">
+              <button class="accordion-btn" onclick="toggleAccordion(this)">
+                <span class="accordion-title">📈 Search Console</span>
+                <span class="accordion-summary">${stats.total_queries || 0} req. • ${stats.total_clicks || 0} clics</span>
+                <span class="accordion-icon">▼</span>
+              </button>
+              <div class="accordion-content">
+                <div class="submodule-stats">
+                  <div class="stat-row"><span>Requêtes</span><span>${stats.total_queries || 0}</span></div>
+                  <div class="stat-row"><span>Clics</span><span>${stats.total_clicks || 0}</span></div>
+                  <div class="stat-row"><span>Impressions</span><span>${formatNumber(stats.total_impressions || 0)}</span></div>
+                  <div class="stat-row"><span>Position</span><span>${stats.avg_position ? stats.avg_position.toFixed(1) : '-'}</span></div>
+                </div>
+                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=searchconsole]').click()">→</button>
               </div>
-              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=searchconsole]').click()">Voir détails →</button>
             </div>
-          </div>
 
-          <!-- Contenu -->
-          <div class="submodule-accordion">
-            <button class="accordion-header" onclick="toggleAccordion(this)">
-              <span>📄 Contenu</span>
-              <span class="accordion-summary">${liveCount} live • ${pendingCount} en attente</span>
-              <span class="accordion-icon">▼</span>
-            </button>
-            <div class="accordion-content">
-              <div class="submodule-stats">
-                <div class="stat-row"><span>Contenus totaux</span><span>${contents.length}</span></div>
-                <div class="stat-row"><span>Publiés (live)</span><span>${liveCount}</span></div>
-                <div class="stat-row"><span>En attente</span><span>${pendingCount}</span></div>
+            <!-- Contenu -->
+            <div class="submodule-accordion">
+              <button class="accordion-btn" onclick="toggleAccordion(this)">
+                <span class="accordion-title">📄 Contenu</span>
+                <span class="accordion-summary">${liveCount} live • ${pendingCount} att.</span>
+                <span class="accordion-icon">▼</span>
+              </button>
+              <div class="accordion-content">
+                <div class="submodule-stats">
+                  <div class="stat-row"><span>Total</span><span>${contents.length}</span></div>
+                  <div class="stat-row"><span>Live</span><span>${liveCount}</span></div>
+                  <div class="stat-row"><span>Attente</span><span>${pendingCount}</span></div>
+                </div>
+                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=content]').click()">→</button>
               </div>
-              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=content]').click()">Voir détails →</button>
             </div>
-          </div>
 
-          <!-- Audit technique -->
-          <div class="submodule-accordion">
-            <button class="accordion-header" onclick="toggleAccordion(this)">
-              <span>🔍 Audit technique</span>
-              <span class="accordion-summary">${auditOk}/${auditTotal} pages OK</span>
-              <span class="accordion-icon">▼</span>
-            </button>
-            <div class="accordion-content">
-              <div class="submodule-stats">
-                <div class="stat-row"><span>Pages analysées</span><span>${auditTotal}</span></div>
-                <div class="stat-row"><span>Pages conformes</span><span>${auditOk}</span></div>
-                <div class="stat-row"><span>Problèmes détectés</span><span>${auditTotal - auditOk}</span></div>
+            <!-- Audit technique -->
+            <div class="submodule-accordion">
+              <button class="accordion-btn" onclick="toggleAccordion(this)">
+                <span class="accordion-title">🔍 Audit</span>
+                <span class="accordion-summary">${auditOk}/${auditTotal} OK</span>
+                <span class="accordion-icon">▼</span>
+              </button>
+              <div class="accordion-content">
+                <div class="submodule-stats">
+                  <div class="stat-row"><span>Pages</span><span>${auditTotal}</span></div>
+                  <div class="stat-row"><span>OK</span><span>${auditOk}</span></div>
+                  <div class="stat-row"><span>Erreurs</span><span>${auditTotal - auditOk}</span></div>
+                </div>
+                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=audit]').click()">→</button>
               </div>
-              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=audit]').click()">Voir détails →</button>
             </div>
-          </div>
 
-          <!-- Conversions -->
-          <div class="submodule-accordion">
-            <button class="accordion-header" onclick="toggleAccordion(this)">
-              <span>🎯 Conversions</span>
-              <span class="accordion-summary">${conversions.total || 0} total • ${conversions.this_month || 0} ce mois</span>
-              <span class="accordion-icon">▼</span>
-            </button>
-            <div class="accordion-content">
-              <div class="submodule-stats">
-                <div class="stat-row"><span>Conversions totales</span><span>${conversions.total || 0}</span></div>
-                <div class="stat-row"><span>Ce mois</span><span>${conversions.this_month || 0}</span></div>
-                <div class="stat-row"><span>Cette semaine</span><span>${conversions.this_week || 0}</span></div>
-                <div class="stat-row"><span>Aujourd'hui</span><span>${conversions.today || 0}</span></div>
+            <!-- Conversions -->
+            <div class="submodule-accordion">
+              <button class="accordion-btn" onclick="toggleAccordion(this)">
+                <span class="accordion-title">🎯 Conv.</span>
+                <span class="accordion-summary">${conversions.total || 0} tot.</span>
+                <span class="accordion-icon">▼</span>
+              </button>
+              <div class="accordion-content">
+                <div class="submodule-stats">
+                  <div class="stat-row"><span>Total</span><span>${conversions.total || 0}</span></div>
+                  <div class="stat-row"><span>Mois</span><span>${conversions.this_month || 0}</span></div>
+                  <div class="stat-row"><span>Semaine</span><span>${conversions.this_week || 0}</span></div>
+                </div>
+                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=conversions]').click()">→</button>
               </div>
-              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=conversions]').click()">Voir détails →</button>
             </div>
+            
           </div>
         </div>
 
