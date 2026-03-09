@@ -1,0 +1,26 @@
+# =========================================
+# PROTECTION SEO DASHBOARD - Mistral Pro Reno
+# =========================================
+
+# Authentification requise
+AuthType Basic
+AuthName "Mistral SEO Dashboard"
+AuthUserFile /home/mistralprorenovp/.htpasswd
+Require valid-user
+
+# Interdiction indexation
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+
+# Protection fichier .htpasswd
+<Files ".htpasswd">
+  Order Allow,Deny
+  Deny from all
+</Files>
+
+# Protection fichiers sensibles
+<FilesMatch "\.(env|json|log|db)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
