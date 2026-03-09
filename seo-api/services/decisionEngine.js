@@ -87,21 +87,34 @@ async function collectOpportunitySignals() {
  * Signaux Pages SEO
  */
 async function collectPageSignals() {
-  const pages = await dbAll(`
-    SELECT url, title, meta_description, h1_count, word_count, 
-           internal_links_count, images_without_alt
-    FROM pages
-    ORDER BY url
-  `);
+  try {
+    // Utiliser gsc_pages qui contient les données SEO
+    const pages = await dbAll(`
+      SELECT page_url as url, clicks, impressions, ctr, position
+      FROM gsc_pages
+      ORDER BY impressions DESC
+      LIMIT 50
+    `);
 
-  return {
-    total_pages: pages.length,
-    missing_meta: pages.filter(p => !p.meta_description || p.meta_description.length < 50).length,
-    missing_h1: pages.filter(p => p.h1_count === 0).length,
-    thin_content: pages.filter(p => p.word_count && p.word_count < 300).length,
-    images_no_alt: pages.filter(p => p.images_without_alt > 0).length,
-    pages: pages
-  };
+    return {
+      total_pages: pages.length,
+      missing_meta: 0, // Pas de données meta dans la DB actuelle
+      missing_h1: 0,
+      thin_content: 0,
+      images_no_alt: 0,
+      pages: pages
+    };
+  } catch (err) {
+    console.error('collectPageSignals error:', err.message);
+    return {
+      total_pages: 0,
+      missing_meta: 0,
+      missing_h1: 0,
+      thin_content: 0,
+      images_no_alt: 0,
+      pages: []
+    };
+  }
 }
 
 /**
@@ -161,24 +174,27 @@ async function collectImpactSignals() {
  * Signaux Conversions
  */
 async function collectConversionSignals() {
-  const conversions = await dbAll(`
-    SELECT * FROM conversions
-    ORDER BY date DESC
-    LIMIT 30
-  `);
+  try {
+    // Table conversions peut ne pas avoir les colonnes attendues
+    const conversions = await dbAll(`
+      SELECT * FROM conversions
+      ORDER BY id DESC
+      LIMIT 30
+    `);
 
-  const pages = await dbAll(`
-    SELECT url, has_cta, cta_count
-    FROM pages
-    WHERE has_cta IS NOT NULL
-  `);
-
-  return {
-    recent_conversions: conversions.length,
-    pages_without_cta: pages.filter(p => !p.has_cta || p.cta_count === 0).length,
-    conversion_rate: conversions.length > 0 ? 
-      (conversions.filter(c => c.converted).length / conversions.length * 100).toFixed(1) : 0
-  };
+    return {
+      recent_conversions: conversions.length,
+      pages_without_cta: 0, // Pas de données CTA dans la DB actuelle
+      conversion_rate: 0
+    };
+  } catch (err) {
+    console.error('collectConversionSignals error:', err.message);
+    return {
+      recent_conversions: 0,
+      pages_without_cta: 0,
+      conversion_rate: 0
+    };
+  }
 }
 
 /**
@@ -280,30 +296,8 @@ function generateActions(signals) {
     }
   }
 
-  // 3. Actions depuis Pages SEO (problèmes techniques)
-  if (signals.pages.missing_meta > 0) {
-    const pagesNoMeta = signals.pages.pages.filter(p => 
-      !p.meta_description || p.meta_description.length < 50
-    ).slice(0, 3);
-
-    for (const page of pagesNoMeta) {
-      actions.push({
-        action_type: ACTION_TYPES.OPTIMIZE_PAGE,
-        label: ACTION_LABELS.optimize_page,
-        target: page.url,
-        description: `Ajouter meta description à ${page.url}`,
-        impact_estimated: 20,
-        impact_label: '+20 clics/mois',
-        effort: 'low',
-        urgency: 'medium',
-        source: 'pages',
-        data: {
-          url: page.url,
-          issue: 'missing_meta'
-        }
-      });
-    }
-  }
+  // 3. Actions depuis Pages SEO - désactivé temporairement (pas de données meta dans DB)
+  // Les données pages SEO seront enrichies dans une prochaine version
 
   // 4. Actions depuis Audit (erreurs critiques)
   if (signals.audit.has_audit && signals.audit.critical_issues > 0) {
@@ -353,23 +347,8 @@ function generateActions(signals) {
     }
   }
 
-  // 6. Actions depuis Conversions (pages sans CTA)
-  if (signals.conversions.pages_without_cta > 0) {
-    actions.push({
-      action_type: ACTION_TYPES.ADD_CONVERSION,
-      label: ACTION_LABELS.add_conversion,
-      target: 'Pages principales',
-      description: `Ajouter CTA sur ${signals.conversions.pages_without_cta} pages`,
-      impact_estimated: signals.conversions.pages_without_cta * 5,
-      impact_label: `+${signals.conversions.pages_without_cta * 5} conversions/mois`,
-      effort: 'medium',
-      urgency: 'medium',
-      source: 'conversions',
-      data: {
-        pages_count: signals.conversions.pages_without_cta
-      }
-    });
-  }
+  // 6. Actions depuis Conversions - désactivé temporairement (pas de données CTA)
+  // Les données conversions seront enrichies dans une prochaine version
 
   // Évaluer et trier les actions par priorité
   const evaluatedActions = actions.map(action => {
