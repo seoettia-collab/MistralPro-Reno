@@ -31,7 +31,8 @@ const corsOptions = {
     'http://localhost:3000'
   ],
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
+  exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset']
 };
 app.use(cors(corsOptions));
 app.use(express.json());
