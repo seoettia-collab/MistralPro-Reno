@@ -4,37 +4,30 @@
 
 const express = require('express');
 const router = express.Router();
-const { dbAll, dbGet } = require('../services/db');
+const { dbAll, dbGet, dbRun } = require('../services/db');
 const { 
-  generateOpportunities, 
-  getPagesToOptimize, 
-  analyzeOpportunities,
-  generateAndSaveOpportunities,
-  OPPORTUNITY_TYPES,
-  RECOMMENDED_ACTIONS
-} = require('../services/opportunities');
+  runOpportunityDetection,
+  getAllOpportunities,
+  updateOpportunityStatus,
+  getOpportunityStats,
+  OPPORTUNITY_TYPES
+} = require('../services/opportunityDetection');
 
-// GET /api/opportunities/analyze - Analyser et classifier les opportunités
-router.get('/opportunities/analyze', async (req, res) => {
+// GET /api/opportunities/detect - Lancer la détection automatique
+router.get('/opportunities/detect', async (req, res) => {
   try {
-    // Récupérer site pilote
     const site = await dbGet('SELECT * FROM sites WHERE id = 1');
     
     if (!site) {
       return res.status(404).json({ status: 'error', message: 'Site not found' });
     }
 
-    // Analyser les opportunités
-    const analysis = await analyzeOpportunities(site.id);
-
-    // Sauvegarder les opportunités en base
-    const saveResult = await generateAndSaveOpportunities(site.id);
+    const result = await runOpportunityDetection(site.id);
 
     res.json({ 
       status: 'ok', 
-      summary: analysis.summary,
-      saved: saveResult,
-      opportunities: analysis.opportunities
+      message: `${result.saved} nouvelles opportunités détectées`,
+      data: result
     });
 
   } catch (err) {
@@ -42,89 +35,56 @@ router.get('/opportunities/analyze', async (req, res) => {
   }
 });
 
-// POST /api/opportunities/generate
-router.post('/opportunities/generate', async (req, res) => {
+// GET /api/opportunities/stats - Statistiques des opportunités
+router.get('/opportunities/stats', async (req, res) => {
   try {
-    // Récupérer site pilote
-    const site = await dbGet('SELECT * FROM sites WHERE id = 1');
-    
-    if (!site) {
-      return res.status(404).json({ status: 'error', message: 'Site not found' });
-    }
-
-    const result = await generateOpportunities(site.id);
-
-    res.json({ status: 'ok', generated: result.generated });
-
+    const stats = await getOpportunityStats();
+    res.json({ status: 'ok', data: stats });
   } catch (err) {
     res.status(500).json({ status: 'error', message: err.message });
   }
 });
 
-// GET /api/opportunities/pages-to-optimize
-router.get('/opportunities/pages-to-optimize', async (req, res) => {
-  try {
-    const pages = await getPagesToOptimize();
-    
-    // Calculer statistiques
-    const stats = {
-      total: pages.length,
-      high: pages.filter(p => p.priority === 'high').length,
-      medium: pages.filter(p => p.priority === 'medium').length,
-      low: pages.filter(p => p.priority === 'low').length,
-      total_potential_gain: pages.reduce((sum, p) => sum + p.potential_gain, 0)
-    };
-
-    res.json({ status: 'ok', data: pages, stats });
-
-  } catch (err) {
-    res.status(500).json({ status: 'error', message: err.message });
-  }
-});
-
-// GET /api/opportunities (avec données queries jointes)
+// GET /api/opportunities - Liste des opportunités
 router.get('/opportunities', async (req, res) => {
   try {
-    const opportunities = await dbAll(`
-      SELECT o.*, q.impressions, q.position, q.clicks, q.ctr
-      FROM opportunities o
-      LEFT JOIN queries q ON q.query = o.target
-      ORDER BY 
-        CASE o.priority 
-          WHEN 'high' THEN 1 
-          WHEN 'medium' THEN 2 
-          ELSE 3 
-        END,
-        CASE o.type
-          WHEN 'quick-win' THEN 1
-          WHEN 'low-ctr' THEN 2
-          WHEN 'content-gap' THEN 3
-          ELSE 4
-        END,
-        q.impressions DESC
-    `);
+    const { status, priority, type } = req.query;
+    
+    const opportunities = await getAllOpportunities({
+      status,
+      priority,
+      opportunity_type: type
+    });
 
-    // Enrichir avec les actions recommandées
+    // Enrichir avec données formatées
     const enriched = opportunities.map(o => ({
       ...o,
-      action_recommended: o.action_recommended || RECOMMENDED_ACTIONS[o.type] || 'Analyser cette opportunité',
       ctr_percent: o.ctr ? Math.round(o.ctr * 10000) / 100 : 0,
-      position_rounded: o.position ? Math.round(o.position * 10) / 10 : null
+      position_rounded: o.position ? Math.round(o.position * 10) / 10 : null,
+      type_label: getTypeLabel(o.opportunity_type),
+      priority_label: getPriorityLabel(o.priority),
+      status_label: getStatusLabel(o.status)
     }));
 
-    // Statistiques par type
+    // Statistiques
     const stats = {
       total: enriched.length,
       byType: {
-        'quick-win': enriched.filter(o => o.type === 'quick-win').length,
-        'low-ctr': enriched.filter(o => o.type === 'low-ctr').length,
-        'content-gap': enriched.filter(o => o.type === 'content-gap').length
+        quick_win: enriched.filter(o => o.opportunity_type === 'quick_win').length,
+        low_ctr: enriched.filter(o => o.opportunity_type === 'low_ctr').length,
+        position: enriched.filter(o => o.opportunity_type === 'position').length
       },
       byPriority: {
         high: enriched.filter(o => o.priority === 'high').length,
         medium: enriched.filter(o => o.priority === 'medium').length,
         low: enriched.filter(o => o.priority === 'low').length
-      }
+      },
+      byStatus: {
+        pending: enriched.filter(o => o.status === 'pending').length,
+        in_progress: enriched.filter(o => o.status === 'in_progress').length,
+        completed: enriched.filter(o => o.status === 'completed').length
+      },
+      total_potential_gain: enriched.reduce((sum, o) => sum + (o.potential_gain || 0), 0)
     };
 
     res.json({ status: 'ok', data: enriched, stats });
@@ -133,5 +93,65 @@ router.get('/opportunities', async (req, res) => {
     res.status(500).json({ status: 'error', message: err.message });
   }
 });
+
+// PATCH /api/opportunities/:id/status - Mettre à jour le statut
+router.patch('/opportunities/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const result = await updateOpportunityStatus(id, status);
+    
+    res.json({ status: 'ok', changes: result.changes });
+
+  } catch (err) {
+    res.status(400).json({ status: 'error', message: err.message });
+  }
+});
+
+// DELETE /api/opportunities/:id - Supprimer une opportunité
+router.delete('/opportunities/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await dbRun('DELETE FROM opportunities WHERE id = ?', [id]);
+    
+    res.json({ status: 'ok', changes: result.changes });
+
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+// Helpers pour les labels
+function getTypeLabel(type) {
+  const labels = {
+    'quick_win': '🎯 Quick Win',
+    'low_ctr': '📉 CTR Faible',
+    'position': '📈 Amélioration Position',
+    'new_content': '📝 Nouveau Contenu',
+    'cannibalization': '⚠️ Cannibalisation'
+  };
+  return labels[type] || type;
+}
+
+function getPriorityLabel(priority) {
+  const labels = {
+    'high': '🔴 Haute',
+    'medium': '🟡 Moyenne',
+    'low': '🟢 Basse'
+  };
+  return labels[priority] || priority;
+}
+
+function getStatusLabel(status) {
+  const labels = {
+    'pending': '⏳ En attente',
+    'in_progress': '🔄 En cours',
+    'completed': '✅ Terminé',
+    'dismissed': '❌ Ignoré'
+  };
+  return labels[status] || status;
+}
 
 module.exports = router;

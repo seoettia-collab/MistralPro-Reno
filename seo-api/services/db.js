@@ -125,9 +125,17 @@ const initSchema = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       type TEXT NOT NULL,
       target TEXT,
+      keyword TEXT,
+      page_url TEXT,
+      position REAL,
+      impressions INTEGER DEFAULT 0,
+      clicks INTEGER DEFAULT 0,
+      ctr REAL DEFAULT 0,
+      opportunity_type TEXT,
       priority TEXT DEFAULT 'medium',
       status TEXT DEFAULT 'pending',
       action_recommended TEXT,
+      potential_gain INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -185,20 +193,26 @@ const initSchema = async () => {
   }
   
   // Migration: ajouter colonnes manquantes à opportunities
-  try {
-    await db.execute("ALTER TABLE opportunities ADD COLUMN action_recommended TEXT");
-  } catch (e) {
-    // Colonne existe déjà, ignorer
-  }
-  try {
-    await db.execute("ALTER TABLE opportunities ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP");
-  } catch (e) {
-    // Colonne existe déjà, ignorer
-  }
-  try {
-    await db.execute("ALTER TABLE opportunities ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP");
-  } catch (e) {
-    // Colonne existe déjà, ignorer
+  const opportunityMigrations = [
+    "ALTER TABLE opportunities ADD COLUMN action_recommended TEXT",
+    "ALTER TABLE opportunities ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP",
+    "ALTER TABLE opportunities ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP",
+    "ALTER TABLE opportunities ADD COLUMN keyword TEXT",
+    "ALTER TABLE opportunities ADD COLUMN page_url TEXT",
+    "ALTER TABLE opportunities ADD COLUMN position REAL",
+    "ALTER TABLE opportunities ADD COLUMN impressions INTEGER DEFAULT 0",
+    "ALTER TABLE opportunities ADD COLUMN clicks INTEGER DEFAULT 0",
+    "ALTER TABLE opportunities ADD COLUMN ctr REAL DEFAULT 0",
+    "ALTER TABLE opportunities ADD COLUMN opportunity_type TEXT",
+    "ALTER TABLE opportunities ADD COLUMN potential_gain INTEGER DEFAULT 0"
+  ];
+  
+  for (const migration of opportunityMigrations) {
+    try {
+      await db.execute(migration);
+    } catch (e) {
+      // Colonne existe déjà, ignorer
+    }
   }
   
   // Insérer site pilote
