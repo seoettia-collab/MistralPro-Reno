@@ -855,7 +855,7 @@ async function generateBrief(contentId) {
  */
 async function viewBrief(briefId) {
   try {
-    const response = await fetchAPI('/api/briefs/${briefId}');
+    const response = await fetchAPI(`/api/briefs/${briefId}`);
     const result = await response.json();
 
     if (result.status !== 'ok') {
