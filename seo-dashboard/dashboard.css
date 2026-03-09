@@ -6077,3 +6077,447 @@ select:focus {
     flex: 1 1 calc(50% - 0.3rem) !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.7.4 — HARMONISATION UI (Audit IA + Studio SEO)
+   Référence : proportions Cockpit
+   ══════════════════════════════════════════════════════════════ */
+
+/* === AUDIT IA === */
+
+.audit-ia-intro {
+  padding: 0.35rem 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.75rem !important;
+}
+
+.audit-ia-intro p {
+  font-size: 0.75rem !important;
+  margin: 0 !important;
+}
+
+/* État initial compact */
+.audit-ia-start {
+  padding: 1rem !important;
+  gap: 0.5rem !important;
+}
+
+.audit-ia-icon {
+  font-size: 2rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.audit-ia-start h3 {
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+}
+
+.audit-ia-start p {
+  font-size: 0.75rem !important;
+  margin: 0.25rem 0 !important;
+}
+
+.audit-ia-start ul {
+  margin: 0.5rem 0 !important;
+  padding: 0 !important;
+}
+
+.audit-ia-start li {
+  font-size: 0.75rem !important;
+  padding: 0.15rem 0 !important;
+}
+
+.audit-ia-note {
+  font-size: 0.7rem !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Résultat Audit compact */
+.audit-ia-result {
+  gap: 0.5rem !important;
+}
+
+.audit-section {
+  padding: 0.5rem !important;
+  border-radius: 6px !important;
+}
+
+.audit-section h3 {
+  font-size: 0.8rem !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.audit-summary .summary-text {
+  font-size: 0.8rem !important;
+  line-height: 1.35 !important;
+}
+
+.audit-meta {
+  padding-top: 0.35rem !important;
+  font-size: 0.7rem !important;
+}
+
+/* Forces/Faiblesses en grille compacte */
+.audit-two-cols {
+  gap: 0.5rem !important;
+}
+
+.audit-list li {
+  padding: 0.25rem 0 !important;
+  font-size: 0.75rem !important;
+  gap: 0.4rem !important;
+}
+
+.list-icon {
+  font-size: 0.7rem !important;
+}
+
+.audit-strengths,
+.audit-weaknesses {
+  border-left-width: 3px !important;
+}
+
+/* Actions Audit en grille 2 colonnes */
+.audit-actions-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 0.4rem !important;
+}
+
+.audit-action-card {
+  margin: 0 !important;
+  border-radius: 6px !important;
+}
+
+.action-header {
+  padding: 0.35rem 0.5rem !important;
+  gap: 0.4rem !important;
+}
+
+.action-icon-large {
+  font-size: 1.2rem !important;
+}
+
+.action-type-label {
+  font-size: 0.7rem !important;
+}
+
+.action-priority-badge {
+  font-size: 0.55rem !important;
+  padding: 0.1rem 0.35rem !important;
+}
+
+.action-impact-score {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.impact-value {
+  font-size: 0.55rem !important;
+}
+
+.action-body {
+  padding: 0.35rem 0.5rem !important;
+}
+
+.action-target {
+  font-size: 0.8rem !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.action-reason {
+  font-size: 0.7rem !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.action-impact {
+  font-size: 0.7rem !important;
+}
+
+.action-footer {
+  padding: 0.35rem 0.5rem !important;
+}
+
+.action-footer button {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.7rem !important;
+}
+
+/* === STUDIO SEO === */
+
+.studio-intro {
+  padding: 0.35rem 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.studio-intro p {
+  font-size: 0.75rem !important;
+}
+
+/* Formulaire compact */
+.studio-form-section {
+  padding: 0.6rem !important;
+  border-radius: 6px !important;
+}
+
+.studio-form-section h3 {
+  font-size: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.studio-form {
+  gap: 0.5rem !important;
+}
+
+.form-row {
+  gap: 0.5rem !important;
+}
+
+.form-group {
+  gap: 0.2rem !important;
+}
+
+.form-group label {
+  font-size: 0.7rem !important;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.35rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  border-radius: 4px !important;
+}
+
+.form-actions {
+  margin-top: 0.5rem !important;
+}
+
+/* Résultat Studio compact */
+.studio-result {
+  padding: 0.6rem !important;
+  border-radius: 6px !important;
+}
+
+.result-header {
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
+.result-header h3 {
+  font-size: 0.85rem !important;
+}
+
+.result-meta {
+  gap: 0.5rem !important;
+}
+
+.result-meta span {
+  font-size: 0.65rem !important;
+}
+
+/* SEO Preview compact */
+.result-preview {
+  margin-bottom: 0.5rem !important;
+}
+
+.preview-header h4 {
+  font-size: 0.75rem !important;
+  margin-bottom: 0.3rem !important;
+}
+
+.seo-preview-card {
+  padding: 0.5rem !important;
+  border-radius: 4px !important;
+}
+
+.seo-preview-url {
+  font-size: 0.65rem !important;
+}
+
+.seo-preview-title {
+  font-size: 0.85rem !important;
+}
+
+.seo-preview-meta {
+  font-size: 0.7rem !important;
+}
+
+/* Image Section compact */
+.result-image-section {
+  padding: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  border-radius: 6px !important;
+}
+
+.image-header {
+  margin-bottom: 0.4rem !important;
+}
+
+.image-header h4 {
+  font-size: 0.75rem !important;
+}
+
+.image-badge {
+  font-size: 0.55rem !important;
+  padding: 0.1rem 0.35rem !important;
+}
+
+.image-placeholder {
+  padding: 0.75rem !important;
+}
+
+.placeholder-icon {
+  font-size: 1.5rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.image-placeholder p {
+  font-size: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.image-note {
+  font-size: 0.65rem !important;
+}
+
+/* Content Preview compact */
+.result-content {
+  margin-bottom: 0.5rem !important;
+}
+
+.content-header {
+  margin-bottom: 0.35rem !important;
+}
+
+.content-header h4 {
+  font-size: 0.75rem !important;
+}
+
+.content-preview {
+  padding: 0.6rem !important;
+  max-height: 180px !important;
+  border-radius: 4px !important;
+}
+
+.content-preview h1 {
+  font-size: 1rem !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.preview-body {
+  font-size: 0.7rem !important;
+  line-height: 1.4 !important;
+}
+
+.preview-body h2 {
+  font-size: 0.85rem !important;
+  margin: 0.6rem 0 0.3rem !important;
+}
+
+/* Actions compact */
+.result-actions {
+  gap: 0.5rem !important;
+}
+
+/* Publication compact */
+.publish-form,
+.publish-success,
+.publish-loading {
+  padding: 0.75rem !important;
+  border-radius: 6px !important;
+}
+
+.publish-form h3,
+.publish-success h3 {
+  font-size: 0.9rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.publish-info {
+  font-size: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.publish-details {
+  padding: 0.5rem !important;
+  border-radius: 4px !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.detail-row {
+  font-size: 0.75rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.detail-label {
+  font-size: 0.7rem !important;
+}
+
+.publish-steps-preview,
+.publish-steps-progress {
+  gap: 0.3rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.step-item,
+.step-progress {
+  padding: 0.3rem 0.5rem !important;
+  font-size: 0.7rem !important;
+  border-radius: 4px !important;
+}
+
+.publish-actions {
+  gap: 0.5rem !important;
+}
+
+.success-icon {
+  font-size: 2rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.publish-note {
+  font-size: 0.7rem !important;
+  padding: 0.4rem !important;
+  margin-top: 0.5rem !important;
+}
+
+/* === BOUTONS HARMONISÉS === */
+
+.btn-large {
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.8rem !important;
+  border-radius: 4px !important;
+}
+
+.btn-small {
+  padding: 0.2rem 0.4rem !important;
+  font-size: 0.65rem !important;
+  border-radius: 3px !important;
+}
+
+/* === LOADING STATES === */
+
+.studio-loading,
+.audit-ia-loading {
+  padding: 1.5rem !important;
+}
+
+.studio-loading-spinner,
+.audit-loading-spinner {
+  width: 40px !important;
+  height: 40px !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.loading-progress,
+.loading-steps {
+  gap: 0.4rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.progress-step,
+.loading-steps .step {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.7rem !important;
+}
