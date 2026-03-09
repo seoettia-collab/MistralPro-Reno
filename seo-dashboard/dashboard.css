@@ -344,6 +344,21 @@ body {
   background: var(--primary);
 }
 
+.btn-link {
+  background: transparent;
+  color: var(--primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.4rem;
+}
+
+.btn-link:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
 /* Brief detail */
 .brief-detail {
   background: var(--bg-dark);

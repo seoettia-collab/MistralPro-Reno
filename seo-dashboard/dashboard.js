@@ -671,6 +671,12 @@ async function loadContents() {
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'deployed')" title="Retour déployé">↩️</button>`;
       }
       
+      // Ajouter icône lien pour contenus déployés ou live
+      if ((c.status === 'deployed' || c.status === 'published' || c.status === 'live') && c.slug_suggested) {
+        const pageUrl = `https://www.mistralpro-reno.fr/${c.slug_suggested}.html`;
+        actionsHtml += `<a href="${pageUrl}" target="_blank" class="btn-small btn-link" title="Voir la page">🔗</a>`;
+      }
+      
       actionsHtml += '</div>';
       
       html += `
