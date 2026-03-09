@@ -234,15 +234,30 @@ async function generateContentIdeas(siteId) {
     ...ideas.lowPerformers
   ];
 
+  // Ajouter les opportunités dans highPotential pour l'affichage dashboard
+  // (car c'est la catégorie la plus pertinente pour les quick wins)
+  const enrichedHighPotential = [
+    ...ideas.fromOpportunities,
+    ...ideas.highPotential
+  ];
+
   return {
     summary: {
       total: allIdeas.length,
       fromOpportunities: ideas.fromOpportunities.length,
       contentGaps: ideas.contentGaps.length,
       lowPerformers: ideas.lowPerformers.length,
-      highPotential: ideas.highPotential.length
+      highPotential: enrichedHighPotential.length
     },
-    ideas: allIdeas
+    // Structure pour compatibilité dashboard
+    ideas: {
+      fromOpportunities: ideas.fromOpportunities,
+      contentGaps: ideas.contentGaps,
+      highPotential: enrichedHighPotential,
+      lowPerformers: ideas.lowPerformers
+    },
+    // Liste plate pour autres usages
+    allIdeas
   };
 }
 
