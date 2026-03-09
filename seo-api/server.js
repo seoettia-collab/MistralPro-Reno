@@ -7,6 +7,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const apiAuth = require('./middleware/auth');
+const rateLimiter = require('./middleware/rateLimiter');
 const { db, dbAll, initSchema } = require('./services/db');
 const seoRoutes = require('./routes/seo');
 const gscRoutes = require('./routes/gsc');
@@ -35,10 +36,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Route test /api/health (sans authentification pour monitoring)
+// Route test /api/health (sans authentification ni rate limiting pour monitoring)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Appliquer rate limiting sur toutes les routes /api/*
+app.use('/api', rateLimiter);
 
 // Appliquer middleware authentification API sur toutes les routes /api/*
 app.use('/api', apiAuth);
