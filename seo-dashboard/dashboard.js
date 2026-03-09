@@ -1247,11 +1247,22 @@ function capitalizeFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// V2.5 — Génération image DALL-E (optionnel)
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Cache pour l'image générée
+let studioGeneratedImage = null;
+let imageGenerationInProgress = false;
+
 /**
  * Affiche le résultat de la génération
  */
 function renderStudioResult(content) {
   const resultSection = document.getElementById('studio-result');
+  
+  // Reset image
+  studioGeneratedImage = null;
   
   resultSection.innerHTML = `
     <div class="studio-result">
@@ -1272,6 +1283,24 @@ function renderStudioResult(content) {
           <div class="seo-preview-url">mistralpro-reno.fr/blog/${content.slug}.html</div>
           <div class="seo-preview-title">${escapeHtml(content.title)}</div>
           <div class="seo-preview-meta">${escapeHtml(content.metaDescription)}</div>
+        </div>
+      </div>
+      
+      <!-- Section Image IA (optionnel) -->
+      <div class="result-image-section">
+        <div class="image-header">
+          <h4>🖼️ Image article (optionnel)</h4>
+          <span class="image-badge">DALL-E</span>
+        </div>
+        <div id="image-container" class="image-container">
+          <div class="image-placeholder">
+            <span class="placeholder-icon">🖼️</span>
+            <p>Générez une image pour illustrer votre article</p>
+            <button class="btn-primary" onclick="generateArticleImage()">
+              ✨ Générer une image
+            </button>
+            <p class="image-note">⚡ La publication du texte n'est pas bloquée par l'image</p>
+          </div>
         </div>
       </div>
       
@@ -1297,6 +1326,236 @@ function renderStudioResult(content) {
           💾 Télécharger HTML
         </button>
       </div>
+    </div>
+  `;
+}
+
+/**
+ * Génère une image pour l'article via DALL-E
+ */
+async function generateArticleImage() {
+  if (imageGenerationInProgress || !studioGeneratedContent) return;
+  
+  imageGenerationInProgress = true;
+  const container = document.getElementById('image-container');
+  
+  // Afficher le loader
+  container.innerHTML = `
+    <div class="image-loading">
+      <div class="studio-loading-spinner small"></div>
+      <p>Génération de l'image en cours...</p>
+      <p class="loading-note">DALL-E crée une image unique pour votre article</p>
+    </div>
+  `;
+  
+  try {
+    // Générer le prompt pour DALL-E
+    const prompt = generateImagePrompt(studioGeneratedContent.keyword, studioGeneratedContent.type);
+    
+    // Appel API (simulation ou réel)
+    const imageResult = await callDALLEForImage(prompt);
+    
+    // Stocker l'image
+    studioGeneratedImage = imageResult;
+    
+    // Afficher le résultat
+    renderImageResult(imageResult);
+    
+  } catch (error) {
+    console.error('[Image IA] Erreur:', error);
+    container.innerHTML = `
+      <div class="image-error">
+        <span class="error-icon">⚠️</span>
+        <p>Erreur lors de la génération</p>
+        <button class="btn-small btn-primary" onclick="generateArticleImage()">🔄 Réessayer</button>
+        <button class="btn-small btn-secondary" onclick="skipImage()">Continuer sans image</button>
+      </div>
+    `;
+  } finally {
+    imageGenerationInProgress = false;
+  }
+}
+
+/**
+ * Génère le prompt DALL-E basé sur le contenu
+ */
+function generateImagePrompt(keyword, contentType) {
+  // Thèmes visuels pour rénovation
+  const themes = {
+    'cuisine': 'modern kitchen renovation, bright natural light, marble countertops, professional photography',
+    'salle de bain': 'luxury bathroom renovation, elegant tiles, modern fixtures, soft lighting',
+    'appartement': 'Parisian apartment renovation, hardwood floors, high ceilings, contemporary design',
+    'maison': 'house renovation, before and after, modern architecture, professional real estate photo',
+    'peinture': 'fresh paint job, color samples, professional painters at work, clean lines',
+    'plomberie': 'modern plumbing fixtures, bathroom renovation, clean installation',
+    'électricité': 'modern electrical installation, smart home, professional work',
+    'default': 'home renovation project, professional construction, modern interior design, Paris apartment'
+  };
+  
+  // Trouver le thème correspondant
+  let theme = themes.default;
+  const keywordLower = keyword.toLowerCase();
+  for (const [key, value] of Object.entries(themes)) {
+    if (keywordLower.includes(key)) {
+      theme = value;
+      break;
+    }
+  }
+  
+  return `Professional photograph of ${theme}, high quality, 16:9 aspect ratio, photorealistic, no text or watermarks`;
+}
+
+/**
+ * Appelle DALL-E pour générer l'image (simulation ou API)
+ */
+async function callDALLEForImage(prompt) {
+  try {
+    // Appel API backend pour DALL-E
+    const response = await fetchAPI('/api/dalle/generate', {
+      method: 'POST',
+      body: JSON.stringify({ prompt, size: '1792x1024' })
+    });
+    
+    if (!response.ok) {
+      // Fallback: image placeholder si API non disponible
+      console.warn('[Image IA] Endpoint DALL-E non disponible, utilisation placeholder');
+      await simulateDelay(2000);
+      return {
+        url: 'https://placehold.co/1792x1024/1a1a2e/ffffff?text=Image+Article',
+        prompt: prompt,
+        simulated: true,
+        generatedAt: new Date().toISOString()
+      };
+    }
+    
+    const result = await response.json();
+    return {
+      url: result.data?.url,
+      prompt: prompt,
+      simulated: false,
+      generatedAt: new Date().toISOString()
+    };
+    
+  } catch (error) {
+    console.error('[DALL-E] Erreur:', error);
+    // Fallback placeholder
+    return {
+      url: 'https://placehold.co/1792x1024/1a1a2e/ffffff?text=Image+Article',
+      prompt: prompt,
+      simulated: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+}
+
+/**
+ * Affiche le résultat de l'image générée
+ */
+function renderImageResult(imageResult) {
+  const container = document.getElementById('image-container');
+  
+  container.innerHTML = `
+    <div class="image-result">
+      <div class="image-preview">
+        <img src="${imageResult.url}" alt="Image générée pour l'article" />
+      </div>
+      <div class="image-actions">
+        <button class="btn-small btn-primary" onclick="useGeneratedImage()">✅ Utiliser cette image</button>
+        <button class="btn-small btn-secondary" onclick="generateArticleImage()">🔄 Régénérer</button>
+        <button class="btn-small btn-secondary" onclick="skipImage()">❌ Ne pas utiliser</button>
+      </div>
+      ${imageResult.simulated ? `
+        <p class="image-simulated-note">⚠️ Mode simulation - Image placeholder</p>
+      ` : ''}
+    </div>
+  `;
+}
+
+/**
+ * Utilise l'image générée dans l'article
+ */
+function useGeneratedImage() {
+  if (!studioGeneratedImage || !studioGeneratedContent) return;
+  
+  // Ajouter l'image au contenu HTML
+  const imageHTML = `
+        <figure class="article-image">
+          <img src="/images/blog/${studioGeneratedContent.slug}.webp" alt="${studioGeneratedContent.h1}" loading="lazy" />
+        </figure>
+`;
+  
+  // Insérer après l'intro
+  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+    '<p class="article-intro">',
+    imageHTML + '\n        <p class="article-intro">'
+  );
+  
+  // Mettre à jour l'aperçu
+  const previewBody = document.querySelector('.preview-body');
+  if (previewBody) {
+    previewBody.innerHTML = formatPreviewContent(studioGeneratedContent.htmlContent);
+  }
+  
+  // Marquer l'image comme utilisée
+  const container = document.getElementById('image-container');
+  container.innerHTML = `
+    <div class="image-used">
+      <div class="image-thumb">
+        <img src="${studioGeneratedImage.url}" alt="Image sélectionnée" />
+      </div>
+      <div class="image-info">
+        <span class="image-status">✅ Image ajoutée à l'article</span>
+        <span class="image-path">/images/blog/${studioGeneratedContent.slug}.webp</span>
+      </div>
+      <button class="btn-small btn-secondary" onclick="removeImage()">❌ Retirer</button>
+    </div>
+  `;
+  
+  // Stocker l'info pour la publication
+  studioGeneratedContent.hasImage = true;
+  studioGeneratedContent.imageUrl = studioGeneratedImage.url;
+}
+
+/**
+ * Ignore l'image et continue
+ */
+function skipImage() {
+  studioGeneratedImage = null;
+  const container = document.getElementById('image-container');
+  container.innerHTML = `
+    <div class="image-skipped">
+      <span>📝 Publication sans image</span>
+      <button class="btn-small btn-secondary" onclick="generateArticleImage()">Ajouter une image</button>
+    </div>
+  `;
+}
+
+/**
+ * Retire l'image de l'article
+ */
+function removeImage() {
+  if (!studioGeneratedContent) return;
+  
+  // Retirer l'image du HTML
+  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+    /<figure class="article-image">[\s\S]*?<\/figure>\s*/,
+    ''
+  );
+  
+  studioGeneratedContent.hasImage = false;
+  studioGeneratedContent.imageUrl = null;
+  studioGeneratedImage = null;
+  
+  // Reset l'interface
+  const container = document.getElementById('image-container');
+  container.innerHTML = `
+    <div class="image-placeholder">
+      <span class="placeholder-icon">🖼️</span>
+      <p>Générez une image pour illustrer votre article</p>
+      <button class="btn-primary" onclick="generateArticleImage()">
+        ✨ Générer une image
+      </button>
+      <p class="image-note">⚡ La publication du texte n'est pas bloquée par l'image</p>
     </div>
   `;
 }
