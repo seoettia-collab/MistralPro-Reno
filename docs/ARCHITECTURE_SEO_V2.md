@@ -1,8 +1,9 @@
 # ARCHITECTURE SEO DASHBOARD V2
 
-**Document d'analyse et proposition**  
-**Date :** 9 mars 2026  
-**Auteur :** Claude (Ingénieur technique)
+**Document d'architecture technique**  
+**Date :** 10 mars 2026  
+**Auteur :** Claude (Ingénieur technique)  
+**Basé sur :** Analyse du Facebook Ads Dashboard (voir ANALYSE_FACEBOOK_ADS_DASHBOARD.md)
 
 ---
 
