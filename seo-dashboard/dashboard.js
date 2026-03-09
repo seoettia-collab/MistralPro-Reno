@@ -2994,3 +2994,14 @@ window.updateQaProgress = updateQaProgress;
 window.updateContentStatus = updateContentStatus;
 window.refreshPagesAnalysis = refreshPagesAnalysis;
 window.refreshContentIdeas = refreshContentIdeas;
+
+// Fonctions dynamiques générées dans le JS
+window.showContentDetails = showContentDetails;
+window.closeContentDetails = closeContentDetails;
+window.generatePublicationBrief = generatePublicationBrief;
+window.copyBriefToClipboard = copyBriefToClipboard;
+window.deleteCompetitor = deleteCompetitor;
+window.generateOptimizationBrief = generateOptimizationBrief;
+window.copyOptimizationBrief = copyOptimizationBrief;
+window.closeOptimizationBrief = closeOptimizationBrief;
+window.viewBrief = viewBrief;
