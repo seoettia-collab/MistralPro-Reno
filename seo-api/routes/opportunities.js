@@ -123,6 +123,43 @@ router.delete('/opportunities/:id', async (req, res) => {
   }
 });
 
+// GET /api/opportunities/pages-to-optimize - Compatibilité dashboard existant
+router.get('/opportunities/pages-to-optimize', async (req, res) => {
+  try {
+    // Récupérer les opportunités avec données enrichies
+    const opportunities = await getAllOpportunities({ status: 'pending' });
+    
+    // Formater pour compatibilité avec le dashboard
+    const pages = opportunities.map(o => ({
+      id: o.id,
+      keyword: o.keyword || o.target,
+      page_url: o.page_url,
+      position: o.position,
+      impressions: o.impressions || 0,
+      clicks: o.clicks || 0,
+      ctr: o.ctr || 0,
+      priority: o.priority,
+      potential_gain: o.potential_gain || 0,
+      action_recommended: o.action_recommended,
+      type: o.opportunity_type || o.type
+    }));
+    
+    // Calculer statistiques
+    const stats = {
+      total: pages.length,
+      high: pages.filter(p => p.priority === 'high').length,
+      medium: pages.filter(p => p.priority === 'medium').length,
+      low: pages.filter(p => p.priority === 'low').length,
+      total_potential_gain: pages.reduce((sum, p) => sum + (p.potential_gain || 0), 0)
+    };
+
+    res.json({ status: 'ok', data: pages, stats });
+
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 // Helpers pour les labels
 function getTypeLabel(type) {
   const labels = {
