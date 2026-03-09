@@ -1,6 +1,6 @@
 /**
  * SEO Dashboard - Crawler Service
- * Avec gestion robuste des erreurs
+ * Avec gestion robuste des erreurs et optimisation performance
  */
 
 const cheerio = require('cheerio');
@@ -11,8 +11,47 @@ const CRAWLER_CONFIG = {
   timeout: 10000,        // 10 secondes timeout
   maxRetries: 2,         // Nombre de tentatives
   retryDelay: 1000,      // Délai entre tentatives (ms)
-  userAgent: 'MistralSEOBot/1.0'
+  userAgent: 'MistralSEOBot/1.0',
+  concurrency: 3,        // Requêtes parallèles max
+  maxDepth: 2            // Profondeur de crawl max
 };
+
+// Cache en mémoire pour éviter les requêtes doublons
+const crawlCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Vérifier si une URL est en cache et valide
+ */
+function getCachedResult(url) {
+  const cached = crawlCache.get(url);
+  if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+    return cached.data;
+  }
+  return null;
+}
+
+/**
+ * Mettre en cache le résultat d'un crawl
+ */
+function setCachedResult(url, data) {
+  crawlCache.set(url, { data, timestamp: Date.now() });
+}
+
+/**
+ * Nettoyer le cache expiré
+ */
+function cleanCache() {
+  const now = Date.now();
+  for (const [url, cached] of crawlCache.entries()) {
+    if (now - cached.timestamp > CACHE_TTL) {
+      crawlCache.delete(url);
+    }
+  }
+}
+
+// Nettoyage périodique du cache
+setInterval(cleanCache, CACHE_TTL);
 
 /**
  * Fetch avec timeout et retry
@@ -104,79 +143,144 @@ function extractInternalLinks(html, baseUrl) {
 }
 
 /**
+ * Crawler une seule page avec cache
+ */
+async function crawlPage(url) {
+  // Vérifier le cache
+  const cached = getCachedResult(url);
+  if (cached) {
+    console.log(`Cache hit: ${url}`);
+    return { ...cached, fromCache: true };
+  }
+  
+  try {
+    const response = await fetchWithRetry(url);
+
+    if (!response.ok) {
+      return { url, error: `HTTP ${response.status}`, status: response.status };
+    }
+    
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('text/html')) {
+      return { url, error: 'Not HTML', status: response.status };
+    }
+
+    const html = await response.text();
+    const result = { url, html, status: response.status };
+    
+    // Mettre en cache
+    setCachedResult(url, result);
+    
+    return result;
+  } catch (err) {
+    return { url, error: err.message, type: err.name || 'Error' };
+  }
+}
+
+/**
+ * Crawler plusieurs URLs en parallèle (contrôlé)
+ */
+async function crawlBatch(urls, concurrency = CRAWLER_CONFIG.concurrency) {
+  const results = [];
+  
+  for (let i = 0; i < urls.length; i += concurrency) {
+    const batch = urls.slice(i, i + concurrency);
+    const batchResults = await Promise.all(batch.map(url => crawlPage(url)));
+    results.push(...batchResults);
+  }
+  
+  return results;
+}
+
+/**
  * Crawler le site et retourner les URLs à auditer
+ * Version optimisée avec parallélisation et cache
  * @param {string} siteUrl - URL du site
  * @param {number} maxPages - Nombre maximum de pages
- * @returns {Promise<Array<{url: string, html: string, error?: string}>>}
+ * @returns {Promise<{pages: Array, errors: Array, stats: Object}>}
  */
 async function crawlSite(siteUrl, maxPages = 10) {
+  const startTime = Date.now();
   const baseUrl = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
-  const toVisit = [baseUrl + '/'];
   const visited = new Set();
   const pages = [];
   const errors = [];
+  let cacheHits = 0;
+  let depth = 0;
 
-  while (toVisit.length > 0 && pages.length < maxPages) {
-    const url = toVisit.shift();
+  // Phase 1: Crawler la page d'accueil
+  const homeResult = await crawlPage(baseUrl + '/');
+  visited.add(baseUrl + '/');
+  
+  if (homeResult.error) {
+    errors.push(homeResult);
+  } else {
+    pages.push(homeResult);
+    if (homeResult.fromCache) cacheHits++;
+  }
+
+  // Phase 2: Extraire les liens et crawler en parallèle
+  if (pages.length > 0 && pages[0].html) {
+    const links = extractInternalLinks(pages[0].html, baseUrl);
+    const toVisit = links.filter(link => !visited.has(link)).slice(0, maxPages - 1);
     
-    // Éviter les doublons
-    if (visited.has(url)) continue;
-    visited.add(url);
-
-    try {
-      const response = await fetchWithRetry(url);
-
-      // Gérer les codes d'erreur HTTP
-      if (!response.ok) {
-        errors.push({
-          url,
-          status: response.status,
-          message: `HTTP ${response.status}`
-        });
-        console.warn(`Crawl warning: ${url} returned ${response.status}`);
-        continue;
-      }
+    // Marquer comme visités
+    toVisit.forEach(link => visited.add(link));
+    
+    // Crawler en parallèle par lots
+    if (toVisit.length > 0 && depth < CRAWLER_CONFIG.maxDepth) {
+      depth++;
+      const batchResults = await crawlBatch(toVisit);
       
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('text/html')) {
-        console.log(`Skipping non-HTML: ${url}`);
-        continue;
-      }
-
-      const html = await response.text();
-      pages.push({ url, html, status: response.status });
-
-      // Extraire liens internes (seulement depuis page accueil)
-      if (pages.length === 1) {
-        const links = extractInternalLinks(html, baseUrl);
-        for (const link of links) {
-          if (!visited.has(link) && !toVisit.includes(link)) {
-            toVisit.push(link);
-          }
+      for (const result of batchResults) {
+        if (result.error) {
+          errors.push(result);
+        } else {
+          pages.push(result);
+          if (result.fromCache) cacheHits++;
         }
+        
+        if (pages.length >= maxPages) break;
       }
-
-    } catch (err) {
-      // Logger l'erreur mais ne pas crasher
-      const errorInfo = {
-        url,
-        message: err.message,
-        type: err.name || 'Error'
-      };
-      errors.push(errorInfo);
-      console.error(`Crawl error for ${url}:`, err.message);
     }
   }
 
-  // Log résumé
-  console.log(`Crawl complete: ${pages.length} pages, ${errors.length} errors`);
+  const duration = Date.now() - startTime;
   
-  return { pages, errors };
+  // Log résumé
+  console.log(`Crawl complete: ${pages.length} pages, ${errors.length} errors, ${cacheHits} cache hits, ${duration}ms`);
+  
+  return { 
+    pages, 
+    errors,
+    stats: {
+      duration,
+      pagesCount: pages.length,
+      errorsCount: errors.length,
+      cacheHits,
+      depth
+    }
+  };
+}
+
+/**
+ * Invalider le cache pour une URL ou tout le cache
+ */
+function invalidateCache(url = null) {
+  if (url) {
+    crawlCache.delete(url);
+  } else {
+    crawlCache.clear();
+  }
 }
 
 module.exports = {
   extractInternalLinks,
   crawlSite,
+  crawlPage,
+  crawlBatch,
   fetchWithRetry,
+  invalidateCache,
+  getCachedResult,
   CRAWLER_CONFIG
 };

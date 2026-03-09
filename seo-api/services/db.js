@@ -208,6 +208,32 @@ const initSchema = async () => {
   });
   
   console.log('Schema initialized');
+  
+  // Créer les index de performance
+  const indexes = [
+    "CREATE INDEX IF NOT EXISTS idx_pages_site_id ON pages(site_id)",
+    "CREATE INDEX IF NOT EXISTS idx_pages_url ON pages(url)",
+    "CREATE INDEX IF NOT EXISTS idx_pages_last_crawl ON pages(last_crawl)",
+    "CREATE INDEX IF NOT EXISTS idx_queries_site_id ON queries(site_id)",
+    "CREATE INDEX IF NOT EXISTS idx_audits_page_id ON audits(page_id)",
+    "CREATE INDEX IF NOT EXISTS idx_alerts_created_at ON alerts(created_at)",
+    "CREATE INDEX IF NOT EXISTS idx_alerts_type ON alerts(type)",
+    "CREATE INDEX IF NOT EXISTS idx_opportunities_status ON opportunities(status)",
+    "CREATE INDEX IF NOT EXISTS idx_opportunities_priority ON opportunities(priority)",
+    "CREATE INDEX IF NOT EXISTS idx_gsc_pages_site_id ON gsc_pages(site_id)",
+    "CREATE INDEX IF NOT EXISTS idx_query_daily_site_date ON query_daily(site_id, date)",
+    "CREATE INDEX IF NOT EXISTS idx_page_queries_site_id ON page_queries(site_id)"
+  ];
+  
+  for (const idx of indexes) {
+    try {
+      await db.execute(idx);
+    } catch (e) {
+      // Index existe déjà ou erreur mineure, ignorer
+    }
+  }
+  
+  console.log('Indexes created');
 };
 
 module.exports = {
