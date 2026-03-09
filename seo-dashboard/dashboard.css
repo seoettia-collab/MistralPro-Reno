@@ -2573,3 +2573,23 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+/* =====================================================
+   SELECT MENUS - STYLE SOMBRE
+   ===================================================== */
+
+select {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+}
+
+select option {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
