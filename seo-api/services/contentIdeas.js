@@ -88,8 +88,8 @@ async function generateContentIdeas(siteId) {
       hasExistingPage: query.page_count > 0
     };
 
-    // Content Gap : impressions > 10, position > 10 (car peu de données)
-    if (query.impressions > 10 && query.position > 10) {
+    // Content Gap : impressions > 5, position > 15
+    if (query.impressions >= 5 && query.position > 15) {
       ideas.contentGaps.push({
         ...idea,
         reason: 'Requête avec impressions mais mal positionnée',
@@ -97,8 +97,8 @@ async function generateContentIdeas(siteId) {
       });
     }
 
-    // High Potential : beaucoup d'impressions mais peu de clics
-    if (query.impressions > 15 && query.ctr < 0.03) {
+    // High Potential : impressions significatives mais peu de clics
+    if (query.impressions >= 8 && query.ctr < 0.05) {
       ideas.highPotential.push({
         ...idea,
         reason: 'Fort volume de recherche, CTR à améliorer',
@@ -106,8 +106,8 @@ async function generateContentIdeas(siteId) {
       });
     }
 
-    // Low Performers : position entre 10-50, potentiel d'amélioration
-    if (query.position >= 10 && query.position <= 50 && query.impressions > 5) {
+    // Low Performers : position entre 8-60, potentiel d'amélioration
+    if (query.position >= 8 && query.position <= 60 && query.impressions >= 3) {
       ideas.lowPerformers.push({
         ...idea,
         reason: 'Position améliorable avec du contenu de qualité',
