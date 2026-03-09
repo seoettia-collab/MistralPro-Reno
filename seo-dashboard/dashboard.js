@@ -2182,7 +2182,7 @@ function renderContentIdeasTable(ideas, category) {
           <th>Pos.</th>
           <th>Type</th>
           <th>Priorité</th>
-          <th>Action</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -2197,14 +2197,20 @@ function renderContentIdeasTable(ideas, category) {
     
     html += `
       <tr>
-        <td class="query-cell" title="${escapeHtml(idea.query)}">${escapeHtml(idea.query)}</td>
+        <td class="query-cell" title="${escapeHtml(idea.titleSuggestion || idea.query)}">${escapeHtml(idea.query)}</td>
         <td>${idea.impressions}</td>
-        <td>${idea.position}</td>
+        <td>${idea.position || '-'}</td>
         <td><span class="type-badge">${typeLabel}</span></td>
         <td><span class="priority-badge ${priorityClass}">${idea.priority}</span></td>
-        <td>
-          <button class="btn-small btn-save-idea" onclick="saveContentIdeaByIndex('${category}', ${i})">
-            💾 Créer
+        <td class="actions-cell">
+          <button class="btn-small btn-primary" onclick="generateBriefFromIdea('${category}', ${i})" title="Générer brief Claude">
+            🚀 Brief
+          </button>
+          <button class="btn-small btn-secondary" onclick="planContentIdea('${category}', ${i})" title="Planifier">
+            ⏳
+          </button>
+          <button class="btn-small btn-danger" onclick="dismissContentIdea('${category}', ${i})" title="Ignorer">
+            ❌
           </button>
         </td>
       </tr>
@@ -2264,6 +2270,124 @@ async function saveContentIdea(idea) {
   } catch (err) {
     alert('❌ Erreur de connexion');
     console.error('saveContentIdea error:', err);
+  }
+}
+
+/**
+ * Générer un brief Claude directement depuis une idée
+ */
+async function generateBriefFromIdea(category, index) {
+  const idea = window.contentIdeasData[category][index];
+  if (!idea) {
+    alert('Erreur: idée non trouvée');
+    return;
+  }
+
+  try {
+    // 1. Sauvegarder l'idée comme contenu
+    const saveResponse = await fetchAPI('/api/content/ideas/save', {
+      method: 'POST',
+      body: JSON.stringify(idea)
+    });
+    const saveResult = await saveResponse.json();
+
+    if (saveResult.status !== 'ok') {
+      alert(`❌ Erreur: ${saveResult.message}`);
+      return;
+    }
+
+    const contentId = saveResult.id;
+
+    // 2. Générer le brief pour ce contenu
+    const briefResponse = await fetchAPI(`/api/briefs/generate/${contentId}`, {
+      method: 'POST'
+    });
+    const briefResult = await briefResponse.json();
+
+    if (briefResult.status === 'ok') {
+      alert(`✅ Brief généré avec succès !\nBrief ID: ${briefResult.id}\n\nRendez-vous dans l'onglet "Brief Claude" pour voir le détail.`);
+      // Recharger les idées
+      loadContentIdeas();
+    } else {
+      alert(`❌ Erreur génération brief: ${briefResult.message}`);
+    }
+
+  } catch (err) {
+    alert('❌ Erreur de connexion');
+    console.error('generateBriefFromIdea error:', err);
+  }
+}
+
+/**
+ * Planifier une idée de contenu (créer en statut idea)
+ */
+async function planContentIdea(category, index) {
+  const idea = window.contentIdeasData[category][index];
+  if (!idea) {
+    alert('Erreur: idée non trouvée');
+    return;
+  }
+
+  try {
+    const response = await fetchAPI('/api/content/ideas/save', {
+      method: 'POST',
+      body: JSON.stringify(idea)
+    });
+    const result = await response.json();
+
+    if (result.status === 'ok') {
+      alert(`⏳ Idée planifiée !\nID: ${result.id}\nStatut: idea\n\nVous pourrez la retrouver dans l'onglet "Contenu".`);
+      loadContentIdeas();
+    } else {
+      alert(`❌ Erreur: ${result.message}`);
+    }
+
+  } catch (err) {
+    alert('❌ Erreur de connexion');
+    console.error('planContentIdea error:', err);
+  }
+}
+
+/**
+ * Ignorer/Rejeter une idée de contenu
+ */
+async function dismissContentIdea(category, index) {
+  const idea = window.contentIdeasData[category][index];
+  if (!idea) {
+    alert('Erreur: idée non trouvée');
+    return;
+  }
+
+  if (!confirm(`Voulez-vous vraiment ignorer cette idée ?\n\n"${idea.query}"`)) {
+    return;
+  }
+
+  try {
+    // Si l'idée vient d'une opportunité, mettre à jour le statut
+    if (idea.opportunity_id) {
+      const response = await fetchAPI(`/api/opportunities/${idea.opportunity_id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: 'dismissed' })
+      });
+      const result = await response.json();
+
+      if (result.status === 'ok') {
+        alert(`❌ Opportunité ignorée.`);
+        loadContentIdeas();
+      } else {
+        alert(`❌ Erreur: ${result.message}`);
+      }
+    } else {
+      // Pour les idées GSC, on les ignore simplement en les masquant
+      alert(`❌ Idée ignorée.`);
+      // Retirer visuellement l'idée
+      window.contentIdeasData[category].splice(index, 1);
+      loadContentIdeas();
+    }
+
+  } catch (err) {
+    alert('❌ Erreur de connexion');
+    console.error('dismissContentIdea error:', err);
   }
 }
 
