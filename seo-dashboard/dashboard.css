@@ -5913,3 +5913,167 @@ select:focus {
 .stat-row span:first-child {
   color: var(--text-secondary) !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.7.3 — KPI ULTRA-COMPACTS (style trading dashboard)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Header cockpit : tout en ligne */
+.cockpit-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  padding: 0.4rem !important;
+  background: var(--bg-card) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Score mini inline */
+.cockpit-score-section {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background: transparent !important;
+  border: none !important;
+  border-right: 1px solid var(--border) !important;
+  padding-right: 0.6rem !important;
+}
+
+.cockpit-score-circle.large {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.cockpit-score-circle.large svg {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.score-center .score-num {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+
+.score-center .score-label {
+  display: none !important;
+}
+
+.score-meta {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+
+.score-level {
+  font-size: 0.65rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+}
+
+.score-breakdown {
+  display: none !important;
+}
+
+/* KPIs en ligne compacte */
+.cockpit-kpis-grid {
+  flex: 1 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 0.3rem !important;
+}
+
+.kpi-card {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.3rem !important;
+  padding: 0.3rem 0.4rem !important;
+  background: var(--bg-dark) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 4px !important;
+  min-height: auto !important;
+  height: 36px !important;
+}
+
+.kpi-icon {
+  font-size: 0.75rem !important;
+  margin: 0 !important;
+  opacity: 0.8 !important;
+}
+
+.kpi-value {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+.kpi-label {
+  font-size: 0.55rem !important;
+  color: var(--text-secondary) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.02em !important;
+  white-space: nowrap !important;
+}
+
+/* KPI layout vertical compact sur petit écran */
+@media (min-width: 900px) {
+  .kpi-card {
+    flex-direction: column !important;
+    gap: 0.1rem !important;
+    padding: 0.25rem 0.3rem !important;
+    height: 50px !important;
+  }
+  
+  .kpi-icon {
+    display: none !important;
+  }
+}
+
+/* Bordures colorées subtiles */
+.kpi-live {
+  border-left: 2px solid var(--success) !important;
+}
+
+.kpi-pending {
+  border-left: 2px solid var(--warning) !important;
+}
+
+.kpi-opportunities.has-high {
+  border-left: 2px solid #ec4899 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cockpit-header {
+    flex-wrap: wrap !important;
+  }
+  
+  .cockpit-score-section {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding-bottom: 0.4rem !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  .cockpit-kpis-grid {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+  
+  .kpi-card {
+    flex: 1 1 calc(33% - 0.3rem) !important;
+    min-width: 80px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-card {
+    flex: 1 1 calc(50% - 0.3rem) !important;
+  }
+}
