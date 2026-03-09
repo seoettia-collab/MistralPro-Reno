@@ -4574,3 +4574,106 @@ select:focus {
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
 }
+
+/* Vérification URL doublons V2.3.1 */
+.publish-checking {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  justify-content: center;
+}
+
+.studio-loading-spinner.small {
+  width: 30px;
+  height: 30px;
+}
+
+.publish-warning {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid var(--warning);
+  text-align: center;
+}
+
+.warning-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.publish-warning h3 {
+  color: var(--warning);
+  margin-bottom: 0.5rem;
+}
+
+.warning-note {
+  color: var(--text-secondary);
+  margin: 1rem 0;
+}
+
+.alternative-action {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.slug-edit {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.slug-edit input {
+  padding: 0.5rem 1rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  width: 250px;
+}
+
+.url-status {
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.url-available {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid #10b981;
+}
+
+.url-exists {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+}
+
+/* Publication V2.4 - États supplémentaires */
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.error-note {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.success-note {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+}
+
+.step-progress.error {
+  background: var(--error);
+  color: white;
+}
