@@ -5,6 +5,30 @@
 // URL API Backend (Vercel)
 const API_BASE = 'https://mistral-pro-reno.vercel.app';
 
+// Clé API pour authentification backend
+const API_KEY = 'mpr-seo-2026-secure-key';
+
+// Fonction fetch avec authentification API
+async function fetchAPI(endpoint, options = {}) {
+  const defaultOptions = {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': API_KEY
+    }
+  };
+  
+  const mergedOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers
+    }
+  };
+  
+  return fetch(`${API_BASE}${endpoint}`, mergedOptions);
+}
+
 // Handler d'erreurs global pour éviter les crashs silencieux
 window.onerror = function(msg, url, lineNo, columnNo, error) {
   console.error('Erreur JS Dashboard:', msg, 'at', url, 'line', lineNo);
@@ -66,9 +90,9 @@ async function loadCockpit() {
   try {
     // Charger stats, alertes et score en parallèle
     const [statsResponse, alertsResponse, scoreResponse] = await Promise.all([
-      fetch(`${API_BASE}/api/stats`),
-      fetch(`${API_BASE}/api/alerts`),
-      fetch(`${API_BASE}/api/seo-score`)
+      fetchAPI('/api/stats'),
+      fetchAPI('/api/alerts'),
+      fetchAPI('/api/seo-score')
     ]);
     
     const statsResult = await statsResponse.json();
@@ -264,7 +288,7 @@ async function loadQueries() {
   const container = document.getElementById('queries-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/queries`);
+    const response = await fetchAPI('/api/queries');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -330,7 +354,7 @@ async function importGscData() {
   statusDiv.innerHTML = '⏳ Import en cours...';
   
   try {
-    const response = await fetch(`${API_BASE}/api/gsc/fetch`);
+    const response = await fetchAPI('/api/gsc/fetch');
     const result = await response.json();
 
     if (result.status === 'ok') {
@@ -375,7 +399,7 @@ async function loadOpportunities() {
   const container = document.getElementById('opportunities-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/opportunities`);
+    const response = await fetchAPI('/api/opportunities');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -449,7 +473,7 @@ async function loadContents() {
   const container = document.getElementById('content-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/content`);
+    const response = await fetchAPI('/api/content');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -573,7 +597,7 @@ async function loadEditorialPlan() {
   }
   
   try {
-    const response = await fetch(`${API_BASE}/api/editorial`);
+    const response = await fetchAPI('/api/editorial');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -665,7 +689,7 @@ async function generateEditorialPlan() {
   }
 
   try {
-    const response = await fetch(`${API_BASE}/api/editorial/generate`, {
+    const response = await fetchAPI('/api/editorial/generate', {
       method: 'POST'
     });
 
@@ -708,7 +732,7 @@ async function submitContent(event) {
   const keyword = document.getElementById('content-keyword').value;
 
   try {
-    const response = await fetch(`${API_BASE}/api/content/create`, {
+    const response = await fetchAPI('/api/content/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type, title, keyword })
@@ -739,7 +763,7 @@ async function loadBriefs() {
   const container = document.getElementById('briefs-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/briefs`);
+    const response = await fetchAPI('/api/briefs');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -807,7 +831,7 @@ async function loadBriefs() {
  */
 async function generateBrief(contentId) {
   try {
-    const response = await fetch(`${API_BASE}/api/briefs/generate/${contentId}`, {
+    const response = await fetchAPI(`/api/briefs/generate/${contentId}`, {
       method: 'POST'
     });
 
@@ -831,7 +855,7 @@ async function generateBrief(contentId) {
  */
 async function viewBrief(briefId) {
   try {
-    const response = await fetch(`${API_BASE}/api/briefs/${briefId}`);
+    const response = await fetchAPI('/api/briefs/${briefId}');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -882,7 +906,7 @@ async function loadAudit() {
   const container = document.getElementById('audit-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/audit`);
+    const response = await fetchAPI('/api/audit');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -950,7 +974,7 @@ async function loadInternalLinks() {
   const container = document.getElementById('internal-links-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/audit/internal-links`);
+    const response = await fetchAPI('/api/audit/internal-links');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1022,7 +1046,7 @@ async function runAudit() {
   container.innerHTML = '<p class="loading">Audit en cours...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/audit/run`, {
+    const response = await fetchAPI('/api/audit/run', {
       method: 'POST'
     });
 
@@ -1048,7 +1072,7 @@ async function runCrawl() {
   container.innerHTML = '<p class="loading">Crawl en cours (jusqu\'à 10 pages)...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/audit/crawl`, {
+    const response = await fetchAPI('/api/audit/crawl', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ maxPages: 10 })
@@ -1079,8 +1103,8 @@ async function loadConversions() {
   try {
     // Charger stats et conversions en parallèle
     const [statsResponse, conversionsResponse] = await Promise.all([
-      fetch(`${API_BASE}/api/conversions/stats`),
-      fetch(`${API_BASE}/api/conversions`)
+      fetchAPI('/api/conversions/stats'),
+      fetchAPI('/api/conversions')
     ]);
     
     const statsResult = await statsResponse.json();
@@ -1172,7 +1196,7 @@ async function loadCompetitors() {
   const container = document.getElementById('competitors-container');
   
   try {
-    const response = await fetch(`${API_BASE}/api/competitors`);
+    const response = await fetchAPI('/api/competitors');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1245,7 +1269,7 @@ async function submitCompetitor(event) {
   const domain = document.getElementById('competitor-domain').value;
 
   try {
-    const response = await fetch(`${API_BASE}/api/competitors/add`, {
+    const response = await fetchAPI('/api/competitors/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ domain })
@@ -1274,7 +1298,7 @@ async function deleteCompetitor(id) {
   if (!confirm('Supprimer ce concurrent ?')) return;
 
   try {
-    const response = await fetch(`${API_BASE}/api/competitors/${id}`, {
+    const response = await fetchAPI(`/api/competitors/${id}`, {
       method: 'DELETE'
     });
 
@@ -1299,7 +1323,7 @@ async function showContentDetails(contentId) {
   const panel = document.getElementById('content-details-panel');
   
   try {
-    const response = await fetch(`${API_BASE}/api/editorial`);
+    const response = await fetchAPI('/api/editorial');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1432,7 +1456,7 @@ async function generatePublicationBrief(contentId) {
   output.innerHTML = '<p class="loading">Génération du brief...</p>';
   
   try {
-    const response = await fetch(`${API_BASE}/api/briefs/publication/${contentId}`);
+    const response = await fetchAPI('/api/briefs/publication/${contentId}');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1474,7 +1498,7 @@ function copyBriefToClipboard() {
  */
 async function updateContentStatus(contentId, newStatus) {
   try {
-    const response = await fetch(`${API_BASE}/api/content/${contentId}/status`, {
+    const response = await fetchAPI(`/api/content/${contentId}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: newStatus })
@@ -1510,7 +1534,7 @@ async function loadHistory() {
   if (!container) return;
   
   try {
-    const response = await fetch(`${API_BASE}/api/history?limit=10`);
+    const response = await fetchAPI('/api/history?limit=10');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1584,7 +1608,7 @@ async function loadMonthlyPlan() {
   if (!container) return;
   
   try {
-    const response = await fetch(`${API_BASE}/api/editorial/monthly-plan`);
+    const response = await fetchAPI('/api/editorial/monthly-plan');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1673,7 +1697,7 @@ async function loadPriorityAlerts() {
   if (!container) return;
   
   try {
-    const response = await fetch(`${API_BASE}/api/alerts/priority`);
+    const response = await fetchAPI('/api/alerts/priority');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1731,7 +1755,7 @@ async function loadPagesToOptimize() {
   if (!container) return;
   
   try {
-    const response = await fetch(`${API_BASE}/api/opportunities/pages-to-optimize`);
+    const response = await fetchAPI('/api/opportunities/pages-to-optimize');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -1832,7 +1856,7 @@ async function generateOptimizationBrief(keyword) {
   output.innerHTML = '<p class="loading">Génération du brief d\'optimisation...</p>';
   
   try {
-    const response = await fetch(`${API_BASE}/api/briefs/optimize`, {
+    const response = await fetchAPI('/api/briefs/optimize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ keyword })
@@ -1910,7 +1934,7 @@ async function loadPagesAnalysis() {
   const allPagesContainer = document.getElementById('all-pages-container');
 
   try {
-    const response = await fetch(`${API_BASE}/api/pages/analysis`);
+    const response = await fetchAPI('/api/pages/analysis');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -2040,7 +2064,7 @@ async function refreshPagesAnalysis() {
   statusDiv.innerHTML = '<p class="loading">Import des données GSC en cours...</p>';
 
   try {
-    const importResponse = await fetch(`${API_BASE}/api/gsc/fetch`);
+    const importResponse = await fetchAPI('/api/gsc/fetch');
     const importResult = await importResponse.json();
 
     if (importResult.status !== 'ok') {
@@ -2074,7 +2098,7 @@ async function loadContentIdeas() {
   summaryContainer.innerHTML = '<p class="loading">Chargement en cours...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/content/ideas`);
+    const response = await fetchAPI('/api/content/ideas');
     
     if (!response.ok) {
       summaryContainer.innerHTML = `<p class="error">Erreur HTTP: ${response.status}</p>`;
@@ -2221,7 +2245,7 @@ async function saveContentIdeaByIndex(category, index) {
  */
 async function saveContentIdea(idea) {
   try {
-    const response = await fetch(`${API_BASE}/api/content/ideas/save`, {
+    const response = await fetchAPI('/api/content/ideas/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(idea)
@@ -2265,7 +2289,7 @@ async function loadSEOCandidates() {
   container.innerHTML = '<p class="loading">Chargement des candidats...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/seo/candidates`);
+    const response = await fetchAPI('/api/seo/candidates');
     const result = await response.json();
 
     if (result.status !== 'ok' || result.count === 0) {
@@ -2328,7 +2352,7 @@ async function loadQualityBadge(contentId) {
   if (!badgeContainer) return;
 
   try {
-    const response = await fetch(`${API_BASE}/api/seo/quality/${contentId}`);
+    const response = await fetchAPI('/api/seo/quality/${contentId}');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -2367,7 +2391,7 @@ async function checkQuality(contentId) {
   resultContainer.innerHTML = '<p class="loading">Analyse qualité en cours...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/seo/quality/${contentId}`);
+    const response = await fetchAPI('/api/seo/quality/${contentId}');
     const result = await response.json();
 
     if (result.status !== 'ok') {
@@ -2459,7 +2483,7 @@ async function previewSEO(contentId) {
   resultContainer.innerHTML = '<p class="loading">Génération de la prévisualisation...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/seo/preview/${contentId}`, {
+    const response = await fetchAPI(`/api/seo/preview/${contentId}`, {
       method: 'POST'
     });
     const result = await response.json();
@@ -2528,7 +2552,7 @@ async function executeSingleSEO(contentId) {
   resultContainer.innerHTML = '<p class="loading">⚡ Génération en cours...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/seo/execute/${contentId}`, {
+    const response = await fetchAPI(`/api/seo/execute/${contentId}`, {
       method: 'POST'
     });
     const result = await response.json();
@@ -2579,7 +2603,7 @@ async function executeAllSEO() {
   resultContainer.innerHTML = '<p class="loading">⚡ Génération en cours pour tous les contenus...</p>';
 
   try {
-    const response = await fetch(`${API_BASE}/api/seo/execute-all`, {
+    const response = await fetchAPI('/api/seo/execute-all', {
       method: 'POST'
     });
     const result = await response.json();
@@ -2665,7 +2689,7 @@ async function initHistorySection() {
 async function loadHistoryLists() {
   try {
     // Charger les requêtes
-    const queriesResponse = await fetch(`${API_BASE}/api/gsc/history/queries`);
+    const queriesResponse = await fetchAPI('/api/gsc/history/queries');
     const queriesResult = await queriesResponse.json();
     
     if (queriesResult.status === 'ok') {
@@ -2678,7 +2702,7 @@ async function loadHistoryLists() {
     }
 
     // Charger les pages
-    const pagesResponse = await fetch(`${API_BASE}/api/gsc/history/pages`);
+    const pagesResponse = await fetchAPI('/api/gsc/history/pages');
     const pagesResult = await pagesResponse.json();
     
     if (pagesResult.status === 'ok') {
@@ -2764,7 +2788,7 @@ async function loadEvolutionSummary() {
   const container = document.getElementById('history-evolution-summary');
   
   try {
-    const response = await fetch(`${API_BASE}/api/gsc/history/evolution`);
+    const response = await fetchAPI('/api/gsc/history/evolution');
     const result = await response.json();
 
     if (result.status !== 'ok') {

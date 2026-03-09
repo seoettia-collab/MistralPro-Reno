@@ -6,6 +6,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const apiAuth = require('./middleware/auth');
 const { db, dbAll, initSchema } = require('./services/db');
 const seoRoutes = require('./routes/seo');
 const gscRoutes = require('./routes/gsc');
@@ -29,15 +30,18 @@ const corsOptions = {
     'http://localhost:3000'
   ],
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key']
 };
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Route test /api/health
+// Route test /api/health (sans authentification pour monitoring)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Appliquer middleware authentification API sur toutes les routes /api/*
+app.use('/api', apiAuth);
 
 // Route test /api/db-check
 app.get('/api/db-check', async (req, res) => {
