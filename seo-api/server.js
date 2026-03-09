@@ -97,6 +97,10 @@ app.use('/api', impactRoutes);
 const actionsRoutes = require('./routes/actions');
 app.use('/api', actionsRoutes);
 
+// Routes Publisher (Auto SEO)
+const publisherRoutes = require('./routes/publisher');
+app.use('/api', publisherRoutes);
+
 // Routes Competitors
 const competitorsRoutes = require('./routes/competitors');
 app.use('/api', competitorsRoutes);

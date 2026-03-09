@@ -661,12 +661,16 @@ async function loadContents() {
         actionsHtml += `<button class="btn-small btn-success" onclick="updateContentStatus(${c.id}, 'ready')">✅ Marquer Prêt</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'idea')" title="Retour idée">↩️</button>`;
       } else if (c.status === 'ready' || c.status === 'validated') {
-        // Prêt → peut déployer ou retour brouillon
-        actionsHtml += `<button class="btn-small btn-primary" onclick="updateContentStatus(${c.id}, 'deployed')">🚀 Déployer</button>`;
+        // Prêt → peut publier (génère HTML) ou retour brouillon
+        actionsHtml += `<button class="btn-small btn-primary" onclick="publishContent(${c.id})">🚀 Publier</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'draft')" title="Retour brouillon">↩️</button>`;
+      } else if (c.status === 'deploying') {
+        // En cours de déploiement
+        actionsHtml += `<span class="deploying-badge">⏳ Déploiement...</span>`;
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'ready')" title="Annuler">❌</button>`;
       } else if (c.status === 'deployed' || c.status === 'published') {
-        // Déployé → peut marquer live ou retour ready
-        actionsHtml += `<button class="btn-small btn-success" onclick="checkAndMarkLive(${c.id}, '${escapeHtml(c.slug_suggested || '')}')">🟢 Vérifier Live</button>`;
+        // Déployé → peut vérifier live ou retour ready
+        actionsHtml += `<button class="btn-small btn-success" onclick="verifyAndMarkLive(${c.id})">🟢 Vérifier Live</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'ready')" title="Retour prêt">↩️</button>`;
       } else if (c.status === 'live') {
         // Live → badge confirmé + retour possible
@@ -3302,6 +3306,193 @@ window.viewBrief = viewBrief;
 window.loadImpactAnalysis = loadImpactAnalysis;
 window.executeAction = executeAction;
 window.checkAndMarkLive = checkAndMarkLive;
+window.publishContent = publishContent;
+window.verifyAndMarkLive = verifyAndMarkLive;
+
+/**
+ * Publier un contenu : générer HTML et afficher pour copie
+ */
+async function publishContent(contentId) {
+  try {
+    // Afficher message de chargement
+    const confirmPublish = confirm('🚀 Publication du contenu\n\nCette action va :\n1. Générer la page HTML\n2. Afficher le code à copier dans le repo\n\nContinuer ?');
+    if (!confirmPublish) return;
+
+    // Appeler l'API de publication
+    const response = await fetchAPI(`/api/publish/${contentId}`, {
+      method: 'POST'
+    });
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      alert(`❌ Erreur : ${result.message}`);
+      return;
+    }
+
+    // Afficher le HTML généré dans une modal
+    showPublishModal(result);
+
+  } catch (err) {
+    alert(`❌ Erreur : ${err.message}`);
+    console.error('publishContent error:', err);
+  }
+}
+
+/**
+ * Afficher la modal de publication avec le HTML généré
+ */
+function showPublishModal(result) {
+  // Créer la modal
+  const modal = document.createElement('div');
+  modal.className = 'publish-modal';
+  modal.innerHTML = `
+    <div class="publish-modal-content">
+      <div class="publish-modal-header">
+        <h2>🚀 Page HTML Générée</h2>
+        <button onclick="closePublishModal()" class="close-btn">×</button>
+      </div>
+      <div class="publish-modal-body">
+        <div class="publish-info">
+          <p><strong>Fichier :</strong> <code>${result.data.filepath}</code></p>
+          <p><strong>URL finale :</strong> <a href="${result.data.url}" target="_blank">${result.data.url}</a></p>
+          <p><strong>Taille :</strong> ${(result.data.html_length / 1024).toFixed(1)} Ko</p>
+        </div>
+        
+        <div class="publish-instructions">
+          <h3>📋 Instructions de déploiement</h3>
+          <ol>
+            <li>Cliquez sur <strong>"Copier le HTML"</strong></li>
+            <li>Dans votre repo local, créez le fichier <code>blog/${result.data.filename}</code></li>
+            <li>Collez le contenu et sauvegardez</li>
+            <li>Faites un <code>git add . && git commit -m "Ajout article ${result.data.slug}" && git push</code></li>
+            <li>Attendez le déploiement (~60s)</li>
+            <li>Revenez ici et cliquez sur <strong>"Confirmer déploiement"</strong></li>
+          </ol>
+        </div>
+
+        <div class="publish-actions">
+          <button onclick="copyPublishHTML()" class="btn btn-primary">📋 Copier le HTML</button>
+          <button onclick="downloadPublishHTML('${result.data.filename}')" class="btn btn-secondary">💾 Télécharger</button>
+          <button onclick="confirmDeployment(${result.data.content_id || 'null'}, '${result.data.url}')" class="btn btn-success">✅ Confirmer déploiement</button>
+        </div>
+
+        <div class="publish-preview">
+          <h3>Aperçu du code (début)</h3>
+          <pre><code>${escapeHtml(result.html.substring(0, 1000))}...</code></pre>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Stocker le HTML complet pour copie
+  window._publishHTML = result.html;
+  window._publishContentId = result.data.content_id;
+
+  document.body.appendChild(modal);
+}
+
+/**
+ * Fermer la modal de publication
+ */
+function closePublishModal() {
+  const modal = document.querySelector('.publish-modal');
+  if (modal) {
+    modal.remove();
+  }
+  // Rafraîchir la liste des contenus
+  loadContents();
+}
+
+/**
+ * Copier le HTML dans le presse-papier
+ */
+async function copyPublishHTML() {
+  try {
+    await navigator.clipboard.writeText(window._publishHTML);
+    alert('✅ HTML copié dans le presse-papier !');
+  } catch (err) {
+    // Fallback pour les navigateurs qui ne supportent pas clipboard
+    const textarea = document.createElement('textarea');
+    textarea.value = window._publishHTML;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('✅ HTML copié !');
+  }
+}
+
+/**
+ * Télécharger le HTML comme fichier
+ */
+function downloadPublishHTML(filename) {
+  const blob = new Blob([window._publishHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Confirmer le déploiement après push Git
+ */
+async function confirmDeployment(contentId, deployedUrl) {
+  if (!contentId) {
+    // Extraire l'ID depuis l'URL ou demander
+    const idInput = prompt('ID du contenu déployé ?');
+    if (!idInput) return;
+    contentId = parseInt(idInput);
+  }
+
+  try {
+    const response = await fetchAPI(`/api/publish/${contentId}/confirm`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deployed_url: deployedUrl })
+    });
+    const result = await response.json();
+
+    if (result.status === 'ok') {
+      alert('✅ Déploiement confirmé !\n\nLe contenu est maintenant en statut "Déployé".\nCliquez sur "Vérifier Live" pour confirmer que l\'URL est accessible.');
+      closePublishModal();
+    } else {
+      alert(`❌ Erreur : ${result.message}`);
+    }
+  } catch (err) {
+    alert(`❌ Erreur : ${err.message}`);
+  }
+}
+
+/**
+ * Vérifier si l'URL est accessible et marquer "live"
+ */
+async function verifyAndMarkLive(contentId) {
+  try {
+    const response = await fetchAPI(`/api/publish/${contentId}/verify`, {
+      method: 'POST'
+    });
+    const result = await response.json();
+
+    if (result.status === 'ok') {
+      alert(`✅ Page en ligne !\n\nURL : ${result.data.url}\nStatut HTTP : ${result.data.http_status}`);
+      loadContents();
+    } else {
+      alert(`❌ Page non accessible\n\nURL : ${result.data.url}\nStatut HTTP : ${result.data.http_status}\n\n${result.data.error || 'Vérifiez que le fichier est bien déployé.'}`);
+    }
+  } catch (err) {
+    alert(`❌ Erreur : ${err.message}`);
+  }
+}
+
+// Exposer les fonctions globalement
+window.closePublishModal = closePublishModal;
+window.copyPublishHTML = copyPublishHTML;
+window.downloadPublishHTML = downloadPublishHTML;
+window.confirmDeployment = confirmDeployment;
 
 /**
  * Vérifier si l'URL est accessible avant de marquer "live"

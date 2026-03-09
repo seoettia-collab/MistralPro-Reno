@@ -108,7 +108,7 @@ router.patch('/content/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['idea', 'draft', 'ready', 'deployed', 'live'];
+    const validStatuses = ['idea', 'draft', 'ready', 'deploying', 'deployed', 'live'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ status: 'error', message: 'Statut invalide' });
     }

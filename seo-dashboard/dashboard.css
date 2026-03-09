@@ -2753,3 +2753,146 @@ select:focus {
   border-radius: 2px;
   transition: width 0.3s;
 }
+
+/* Modal Publication */
+.publish-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.publish-modal-content {
+  background: var(--bg-dark);
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+}
+
+.publish-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.publish-modal-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.publish-modal-header .close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.publish-modal-header .close-btn:hover {
+  color: var(--danger);
+}
+
+.publish-modal-body {
+  padding: 1.5rem;
+}
+
+.publish-info {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.publish-info p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+}
+
+.publish-info code {
+  background: var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--primary);
+}
+
+.publish-instructions {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.publish-instructions h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+.publish-instructions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.publish-instructions li {
+  margin: 0.5rem 0;
+}
+
+.publish-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.publish-preview {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.publish-preview h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+.publish-preview pre {
+  background: #1a1a2e;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.publish-preview code {
+  color: #a8d5a2;
+}
+
+/* Badge deploying */
+.deploying-badge {
+  background: var(--warning);
+  color: var(--black);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
