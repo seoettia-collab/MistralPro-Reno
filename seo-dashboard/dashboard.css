@@ -3016,3 +3016,198 @@ select:focus {
   background: rgba(46, 204, 113, 0.1);
   border: 1px solid var(--success);
 }
+
+/* =====================================================
+   COCKPIT COMPACT - Vue unique
+   ===================================================== */
+
+.cockpit-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Ligne principale : Score + KPIs */
+.cockpit-row-main {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+/* Score circulaire */
+.cockpit-score-circle {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.cockpit-score-circle svg {
+  width: 100%;
+  height: 100%;
+}
+
+.score-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-num {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* KPIs horizontaux */
+.cockpit-kpis {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.kpi-item {
+  text-align: center;
+  min-width: 70px;
+}
+
+.kpi-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.kpi-live .kpi-value {
+  color: var(--success);
+}
+
+.kpi-pending .kpi-value {
+  color: var(--warning);
+}
+
+/* Actions rapides */
+.cockpit-actions-row {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid var(--border);
+}
+
+.cockpit-actions-row h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quick-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-dark);
+  border-radius: 8px;
+  gap: 1rem;
+}
+
+.qa-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.qa-title {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qa-impact {
+  font-size: 0.75rem;
+  color: var(--success);
+}
+
+.qa-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.qa-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+}
+
+.no-actions {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Alertes mini */
+.cockpit-alerts-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.alert-mini {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.6rem 1rem;
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--danger);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cockpit-row-main {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .cockpit-kpis {
+    justify-content: center;
+  }
+}

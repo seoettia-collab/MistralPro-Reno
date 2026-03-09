@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Charger et afficher le Cockpit SEO
+ * Charger et afficher le Cockpit SEO - Vue compacte
  */
 async function loadCockpit() {
   const container = document.getElementById('cockpit-container');
@@ -95,7 +95,7 @@ async function loadCockpit() {
       fetchAPI('/api/stats'),
       fetchAPI('/api/alerts'),
       fetchAPI('/api/seo-score'),
-      fetchAPI('/api/actions/top?limit=5')
+      fetchAPI('/api/actions/top?limit=3')
     ]);
     
     const statsResult = await statsResponse.json();
@@ -113,194 +113,84 @@ async function loadCockpit() {
     const seoScore = scoreResult.status === 'ok' ? scoreResult.data : null;
     const topActions = actionsResult.status === 'ok' ? actionsResult.actions : [];
 
-    // Charger les alertes prioritaires
-    loadPriorityAlerts();
-
-    // Déterminer l'état général
-    let statusMessage, statusClass;
-    const totalOpportunities = stats.opportunities_high + stats.opportunities_medium + stats.opportunities_low;
+    // Score SEO
+    const score = seoScore ? seoScore.score : 0;
+    const scoreColor = score >= 70 ? '#2ecc71' : score >= 40 ? '#f4c430' : '#e74c3c';
     
-    if (stats.total_queries === 0 && stats.contents_total === 0) {
-      statusMessage = '⚪ Aucune donnée';
-      statusClass = 'status-neutral';
-    } else if (alerts.length > 0) {
-      statusMessage = '🔴 Alertes actives';
-      statusClass = 'status-alert';
-    } else if (totalOpportunities > 0) {
-      statusMessage = '🟠 Opportunités détectées';
-      statusClass = 'status-warning';
-    } else {
-      statusMessage = '🟢 SEO actif';
-      statusClass = 'status-success';
-    }
+    // Stats contenus
+    const liveCount = stats.contents_published || 0;
+    const pendingCount = stats.contents_total - liveCount;
 
-    // Construire section alertes
-    let alertsHtml = '';
-    if (alerts.length > 0) {
-      alertsHtml = `
-        <div class="alerts-section">
-          <div class="alerts-header">
-            <h3>🚨 Alertes SEO (${alerts.length})</h3>
+    // Construire le HTML compact
+    const html = `
+      <div class="cockpit-compact">
+        <!-- Ligne 1 : Score + Stats principales -->
+        <div class="cockpit-row-main">
+          <!-- Score circulaire -->
+          <div class="cockpit-score-circle">
+            <svg viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#2a2a3e" stroke-width="8"/>
+              <circle cx="60" cy="60" r="54" fill="none" stroke="${scoreColor}" stroke-width="8" 
+                stroke-dasharray="${score * 3.39} 339" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="score-center">
+              <span class="score-num">${score}</span>
+              <span class="score-label">SEO</span>
+            </div>
           </div>
-          <ul class="alerts-list">
-            ${alerts.slice(0, 5).map(a => `
-              <li class="alert-item alert-${a.type.split('_')[0]}">
-                <span class="alert-message">${escapeHtml(a.message)}</span>
-              </li>
-            `).join('')}
-          </ul>
-          ${alerts.length > 5 ? `<p class="alerts-more">+ ${alerts.length - 5} autres alertes</p>` : ''}
-        </div>
-      `;
-    }
 
-    // Construire bloc score SEO
-    let scoreHtml = '';
-    if (seoScore) {
-      const scoreColorClass = `score-${seoScore.color}`;
-      const levelLabels = { 'bon': '🟢 Bon', 'moyen': '🟠 Moyen', 'faible': '🔴 Faible' };
-      const levelLabel = levelLabels[seoScore.level] || seoScore.level;
-      
-      scoreHtml = `
-        <div class="seo-score-section">
-          <div class="score-main ${scoreColorClass}">
-            <span class="score-value">${seoScore.score}</span>
-            <span class="score-max">/100</span>
-          </div>
-          <div class="score-level">${levelLabel}</div>
-          <div class="score-breakdown">
-            <div class="breakdown-item">
-              <span class="breakdown-label">Technique (${seoScore.breakdown.technique.weight}%)</span>
-              <span class="breakdown-value">${seoScore.breakdown.technique.score}/100</span>
+          <!-- KPIs principaux -->
+          <div class="cockpit-kpis">
+            <div class="kpi-item">
+              <span class="kpi-value">${stats.total_clicks}</span>
+              <span class="kpi-label">Clics</span>
             </div>
-            <div class="breakdown-item">
-              <span class="breakdown-label">Contenu (${seoScore.breakdown.contenu.weight}%)</span>
-              <span class="breakdown-value">${seoScore.breakdown.contenu.score}/100</span>
+            <div class="kpi-item">
+              <span class="kpi-value">${formatNumber(stats.total_impressions)}</span>
+              <span class="kpi-label">Impressions</span>
             </div>
-            <div class="breakdown-item">
-              <span class="breakdown-label">Performance (${seoScore.breakdown.performance.weight}%)</span>
-              <span class="breakdown-value">${seoScore.breakdown.performance.score}/100</span>
+            <div class="kpi-item">
+              <span class="kpi-value">${stats.avg_position || '-'}</span>
+              <span class="kpi-label">Position</span>
+            </div>
+            <div class="kpi-item kpi-live">
+              <span class="kpi-value">${liveCount}</span>
+              <span class="kpi-label">🟢 Live</span>
+            </div>
+            <div class="kpi-item kpi-pending">
+              <span class="kpi-value">${pendingCount}</span>
+              <span class="kpi-label">⏳ En attente</span>
             </div>
           </div>
         </div>
-      `;
-    }
 
-    // Construire section Actions Recommandées (NOUVEAU)
-    let actionsHtml = '';
-    if (topActions.length > 0) {
-      actionsHtml = `
-        <div class="actions-section">
-          <div class="actions-header">
-            <h3>🎯 Actions Recommandées</h3>
-            <span class="actions-count">${topActions.length} actions prioritaires</span>
-          </div>
-          <div class="actions-list">
-            ${topActions.map((action, index) => {
-              const priorityClass = action.priority === 'HIGH' ? 'priority-high' : 
-                                   action.priority === 'MEDIUM' ? 'priority-medium' : 'priority-low';
-              const buttonAction = getActionButton(action);
-              
+        <!-- Ligne 2 : Actions rapides -->
+        <div class="cockpit-actions-row">
+          <h4>🎯 Actions prioritaires</h4>
+          <div class="quick-actions">
+            ${topActions.length > 0 ? topActions.map(action => {
+              const priorityColor = action.priority === 'HIGH' ? '#e74c3c' : action.priority === 'MEDIUM' ? '#f4c430' : '#2ecc71';
               return `
-                <div class="action-card ${priorityClass}">
-                  <div class="action-rank">#${index + 1}</div>
-                  <div class="action-content">
-                    <div class="action-type">${action.label}</div>
-                    <div class="action-description">${escapeHtml(action.description)}</div>
-                    <div class="action-meta">
-                      <span class="action-impact">📈 ${action.impact_label}</span>
-                      <span class="action-priority priority-badge ${priorityClass}">${action.priority}</span>
-                    </div>
+                <div class="quick-action" style="border-left: 3px solid ${priorityColor}">
+                  <div class="qa-info">
+                    <span class="qa-title">${escapeHtml(action.description.substring(0, 40))}${action.description.length > 40 ? '...' : ''}</span>
+                    <span class="qa-impact">${action.impact_label}</span>
                   </div>
-                  <div class="action-button">
-                    ${buttonAction}
-                  </div>
+                  <button class="qa-btn" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}', ${action.source_id || 'null'})">▶</button>
                 </div>
               `;
-            }).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    // Construire les blocs
-    const html = `
-      ${alertsHtml}
-      ${actionsHtml}
-      ${scoreHtml}
-      <div class="cockpit-grid">
-        <div class="cockpit-card">
-          <div class="card-header">
-            <span class="card-icon">📊</span>
-            <h3>Search Console</h3>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <span class="stat-value">${stats.total_queries}</span>
-              <span class="stat-label">Requêtes</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">${stats.total_clicks}</span>
-              <span class="stat-label">Clics</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">${formatNumber(stats.total_impressions)}</span>
-              <span class="stat-label">Impressions</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">${stats.avg_position || '-'}</span>
-              <span class="stat-label">Position moy.</span>
-            </div>
+            }).join('') : '<p class="no-actions">Aucune action recommandée</p>'}
           </div>
         </div>
 
-        <div class="cockpit-card">
-          <div class="card-header">
-            <span class="card-icon">🎯</span>
-            <h3>Opportunités</h3>
+        <!-- Ligne 3 : Alertes (si présentes) -->
+        ${alerts.length > 0 ? `
+          <div class="cockpit-alerts-row">
+            ${alerts.slice(0, 2).map(a => `
+              <div class="alert-mini">⚠️ ${escapeHtml(a.message)}</div>
+            `).join('')}
           </div>
-          <div class="card-stats">
-            <div class="stat-item priority-high">
-              <span class="stat-value">${stats.opportunities_high}</span>
-              <span class="stat-label">🔴 Haute</span>
-            </div>
-            <div class="stat-item priority-medium">
-              <span class="stat-value">${stats.opportunities_medium}</span>
-              <span class="stat-label">🟠 Moyenne</span>
-            </div>
-            <div class="stat-item priority-low">
-              <span class="stat-value">${stats.opportunities_low}</span>
-              <span class="stat-label">🟢 Basse</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="cockpit-card">
-          <div class="card-header">
-            <span class="card-icon">📝</span>
-            <h3>Contenu SEO</h3>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <span class="stat-value">${stats.contents_total}</span>
-              <span class="stat-label">Contenus créés</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">${stats.contents_published}</span>
-              <span class="stat-label">Déployés/Live</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="cockpit-card ${statusClass}">
-          <div class="card-header">
-            <span class="card-icon">⚡</span>
-            <h3>État général</h3>
-          </div>
-          <div class="card-status">
-            <span class="status-message">${statusMessage}</span>
-          </div>
-        </div>
+        ` : ''}
       </div>
     `;
 
