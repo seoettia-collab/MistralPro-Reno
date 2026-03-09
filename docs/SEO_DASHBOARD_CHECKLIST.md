@@ -4,6 +4,65 @@
 
 ---
 
+## 📋 PHASES DU PROJET
+
+| Phase | Nom | Statut |
+|-------|-----|--------|
+| **LOT 1** | Infrastructure & Dashboard | ✅ TERMINÉ |
+| **LOT 2** | Production & Automatisation SEO | 🔵 PHASE ACTIVE |
+| **LOT 3** | Stabilisation & Sécurité | ⚪ À venir |
+| **LOT 4** | Expansion marketing (Facebook, etc.) | ⚪ À venir |
+
+### LOT 1 — Infrastructure & Dashboard ✅
+
+```
+✅ Structure frontend (HTML/CSS/JS)
+✅ Backend API (Node.js + Express)
+✅ Base de données (Turso/LibSQL)
+✅ Intégration Google Search Console
+✅ Déploiement Vercel (backend)
+✅ Déploiement OVH (frontend)
+✅ 11/11 onglets fonctionnels
+✅ Documentation technique synchronisée
+✅ QA Console JS validé
+```
+
+### LOT 2 — Production & Automatisation SEO 🔵
+
+**Objectif** : Exploiter le dashboard pour produire du contenu SEO et optimiser le site.
+
+```
+□ Exploitation données Google Search Console
+□ Détection opportunités SEO
+□ Génération idées contenus
+□ Génération briefs Claude
+□ Optimisation pages existantes
+□ Suivi conversions
+□ Création articles via Auto SEO Executor
+□ Publication et déploiement automatisé
+```
+
+### LOT 3 — Stabilisation & Sécurité
+
+```
+□ Sécurisation appels API (fallback si erreur)
+□ Optimisation chargement modules
+□ Rate limiting avancé
+□ Monitoring erreurs
+□ Backup automatique base de données
+```
+
+### LOT 4 — Expansion marketing
+
+```
+□ Module Facebook Visibility
+□ Module IA Conversations (leads formulaire)
+□ Monitoring SEO automatisé
+□ Alertes email/Slack
+```
+
+---
+
 ## A. CHECKLIST DÉMARRAGE PROJET
 
 ### Environnement
