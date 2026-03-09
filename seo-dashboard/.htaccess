@@ -5,7 +5,7 @@
 # Authentification requise
 AuthType Basic
 AuthName "Mistral SEO Dashboard"
-AuthUserFile /home/mistralprorenovp/.htpasswd
+AuthUserFile /home/gardvjx/www/seo-dashboard/.htpasswd
 Require valid-user
 
 # Interdiction indexation
