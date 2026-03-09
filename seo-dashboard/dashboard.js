@@ -54,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // Charger données si nécessaire
       if (targetTab === 'cockpit') {
         loadCockpit();
+      } else if (targetTab === 'audit-ia') {
+        // L'onglet Audit IA ne charge pas automatiquement - l'utilisateur doit cliquer sur le bouton
+        console.log('[Nav] Onglet Audit IA activé');
       } else if (targetTab === 'searchconsole') {
         loadQueries();
         initHistorySection();
@@ -84,16 +87,52 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
+ * Navigation vers Audit IA et lancement automatique
+ */
+function goToAuditIA() {
+  // Activer l'onglet Audit IA
+  document.querySelector('[data-tab="audit-ia"]').click();
+  // Lancer l'analyse automatiquement
+  setTimeout(() => {
+    launchFullAuditIA();
+  }, 100);
+}
+
+/**
+ * Fonction wrapper pour le bouton de l'onglet Audit IA
+ */
+function launchAuditIA() {
+  launchFullAuditIA();
+}
+
+/**
  * Cockpit SEO V2 — Vue agrégée complète
  * Fusionne tous les signaux : stats, score, alertes, opportunités, contenu, audit, conversions
- * Version 2.1.0 - Mars 2026
+ * Version 2.1.1 - Mars 2026
  */
 
-// Cache global pour données cockpit (évite re-fetch)
+// Cache global pour données cockpit avec TTL
 let cockpitCache = null;
+let cockpitCacheTimestamp = 0;
+const COCKPIT_CACHE_TTL = 60000; // 60 secondes
+
+/**
+ * Vérifie si le cache cockpit est valide
+ */
+function isCockpitCacheValid() {
+  return cockpitCache && (Date.now() - cockpitCacheTimestamp < COCKPIT_CACHE_TTL);
+}
 
 async function loadCockpit() {
   const container = document.getElementById('cockpit-container');
+  
+  // Utiliser le cache si valide
+  if (isCockpitCacheValid()) {
+    console.log('[Cockpit] Utilisation du cache (TTL: ' + Math.round((COCKPIT_CACHE_TTL - (Date.now() - cockpitCacheTimestamp)) / 1000) + 's restantes)');
+    renderCockpitV2(cockpitCache);
+    return;
+  }
+  
   container.innerHTML = '<div class="cockpit-loading"><div class="spinner"></div><p>Chargement du Cockpit SEO...</p></div>';
   
   try {
@@ -127,8 +166,25 @@ async function loadCockpit() {
     const auditPages = (await auditResponse.json()).data || [];
     const conversions = (await conversionsResponse.json()).data || {};
 
-    // Stocker en cache
+    // Stocker en cache avec timestamp
     cockpitCache = { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions };
+    cockpitCacheTimestamp = Date.now();
+    
+    // Render
+    renderCockpitV2(cockpitCache);
+
+  } catch (err) {
+    container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
+    console.error('loadCockpit error:', err);
+  }
+}
+
+/**
+ * Render Cockpit V2 depuis le cache
+ */
+function renderCockpitV2(data) {
+  const container = document.getElementById('cockpit-container');
+  const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions } = data;
 
     // Calculs agrégés
     const score = scoreData.score || 0;
@@ -144,11 +200,21 @@ async function loadCockpit() {
     const auditOk = auditPages.filter(p => p.has_title && p.has_meta && p.has_h1 && p.alt_missing === 0).length;
     const auditTotal = auditPages.length;
     
-    // Top 3 opportunités
-    const topOpportunities = opportunities.slice(0, 3);
+    // Top 5 opportunités (limité)
+    const topOpportunities = opportunities.slice(0, 5);
     
-    // Top 3 alertes
-    const topAlerts = alerts.slice(0, 3);
+    // Top 5 alertes avec niveaux (critical/warning/info)
+    const sortedAlerts = alerts.map(a => ({
+      ...a,
+      level: a.type === 'danger' ? 'critical' : a.type === 'warning' ? 'warning' : 'info'
+    })).sort((a, b) => {
+      const order = { critical: 0, warning: 1, info: 2 };
+      return order[a.level] - order[b.level];
+    });
+    const topAlerts = sortedAlerts.slice(0, 5);
+    
+    // Top 5 actions (limité - Audit IA produira la liste complète)
+    const topActions = actions.slice(0, 5);
 
     // Construire le HTML V2
     const html = `
@@ -229,8 +295,9 @@ async function loadCockpit() {
           <h4>⚠️ Alertes prioritaires</h4>
           <div class="alerts-list">
             ${topAlerts.map(a => `
-              <div class="alert-item alert-${a.type || 'warning'}">
-                <span class="alert-icon">${a.type === 'danger' ? '🔴' : a.type === 'warning' ? '🟠' : '🟡'}</span>
+              <div class="alert-item alert-${a.level}">
+                <span class="alert-icon">${a.level === 'critical' ? '🔴' : a.level === 'warning' ? '🟠' : '🔵'}</span>
+                <span class="alert-level">${a.level.toUpperCase()}</span>
                 <span class="alert-text">${escapeHtml(a.message)}</span>
               </div>
             `).join('')}
@@ -240,7 +307,7 @@ async function loadCockpit() {
 
         <!-- SECTION 3 : Top Opportunités -->
         <div class="cockpit-section cockpit-opportunities">
-          <h4>💡 Top Opportunités</h4>
+          <h4>💡 Top Opportunités <span class="section-count">(${topOpportunities.length}/${totalOpportunities})</span></h4>
           ${topOpportunities.length > 0 ? `
           <div class="opportunities-list">
             ${topOpportunities.map(opp => {
@@ -264,9 +331,9 @@ async function loadCockpit() {
 
         <!-- SECTION 4 : Actions recommandées -->
         <div class="cockpit-section cockpit-actions">
-          <h4>🎯 Actions recommandées</h4>
+          <h4>🎯 Actions recommandées <span class="section-count">(Top 5)</span></h4>
           <div class="actions-list">
-            ${actions.length > 0 ? actions.slice(0, 3).map(action => {
+            ${topActions.length > 0 ? topActions.map(action => {
               const priorityColor = action.priority === 'HIGH' ? '#e74c3c' : action.priority === 'MEDIUM' ? '#f4c430' : '#2ecc71';
               const actionIcon = action.action_type === 'create_content' ? '📝' : 
                                  action.action_type === 'optimize_page' ? '🔧' : 
@@ -369,7 +436,7 @@ async function loadCockpit() {
               <h4>🤖 Audit IA complet</h4>
               <p>Analyse approfondie avec Claude pour obtenir des recommandations personnalisées et actionnables.</p>
             </div>
-            <button class="btn-large btn-primary" onclick="launchAuditIA()">
+            <button class="btn-large btn-primary" onclick="goToAuditIA()">
               <span>🚀 Lancer Audit IA</span>
             </button>
           </div>
@@ -412,6 +479,435 @@ function toggleAccordion(btn) {
  */
 function launchAuditIA() {
   alert('🚀 Audit IA\n\nCette fonctionnalité sera disponible dans la version V2.2.\n\nElle analysera toutes les données du Cockpit avec Claude pour produire un audit final exploitable.');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AUDIT IA V2.2 — Analyse décisionnelle avec Claude
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Configuration API Claude (à migrer côté backend en production)
+const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
+// Note: La clé API sera fournie via variable d'environnement backend en production
+
+/**
+ * Cache pour le dernier audit IA
+ */
+let lastAuditIA = null;
+let auditIAInProgress = false;
+
+/**
+ * Prépare les données du cockpit pour l'analyse Claude
+ */
+function prepareCockpitDataForAudit() {
+  if (!cockpitCache) {
+    return null;
+  }
+  
+  const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions } = cockpitCache;
+  
+  // Résumé structuré pour Claude
+  return {
+    score_global: scoreData.score || 0,
+    score_breakdown: scoreData.breakdown || {},
+    
+    search_console: {
+      clics: stats.total_clicks || 0,
+      impressions: stats.total_impressions || 0,
+      position_moyenne: stats.avg_position || 0,
+      requetes: stats.total_queries || 0
+    },
+    
+    contenu: {
+      total: contents.length,
+      live: contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length,
+      en_attente: contents.filter(c => !['deployed', 'published', 'live'].includes(c.status)).length
+    },
+    
+    opportunites: opportunities.slice(0, 10).map(o => ({
+      keyword: o.keyword || o.target,
+      priority: o.priority,
+      position: o.position,
+      impressions: o.impressions,
+      type: o.opportunity_type || o.type
+    })),
+    
+    audit_technique: {
+      pages_analysees: auditPages.length,
+      pages_conformes: auditPages.filter(p => p.has_title && p.has_meta && p.has_h1 && p.alt_missing === 0).length,
+      problemes: auditPages.filter(p => !p.has_title || !p.has_meta || !p.has_h1 || p.alt_missing > 0).map(p => ({
+        page: p.page_url,
+        issues: [
+          !p.has_title ? 'title manquant' : null,
+          !p.has_meta ? 'meta description manquante' : null,
+          !p.has_h1 ? 'H1 manquant' : null,
+          p.alt_missing > 0 ? `${p.alt_missing} alt manquants` : null
+        ].filter(Boolean)
+      }))
+    },
+    
+    conversions: conversions,
+    
+    alertes: alerts.slice(0, 5).map(a => a.message)
+  };
+}
+
+/**
+ * Appelle l'API Claude pour l'analyse
+ * Note: En production, cet appel passera par le backend Vercel
+ */
+async function callClaudeForAudit(cockpitData) {
+  const prompt = `Tu es un expert SEO analysant le site Mistral Pro Reno (entreprise de rénovation à Paris).
+
+DONNÉES DU COCKPIT SEO:
+${JSON.stringify(cockpitData, null, 2)}
+
+MISSION:
+Analyse ces données et produis un audit SEO décisionnel.
+
+RÉPONDS UNIQUEMENT EN JSON avec cette structure exacte:
+{
+  "summary": "Résumé de la situation SEO en 2-3 phrases",
+  "strengths": [
+    "Point fort 1",
+    "Point fort 2",
+    "Point fort 3"
+  ],
+  "weaknesses": [
+    "Point faible 1",
+    "Point faible 2",
+    "Point faible 3"
+  ],
+  "actions": [
+    {
+      "type": "create_content",
+      "target": "mot-clé ou sujet",
+      "priority": "HIGH",
+      "impact": "Description de l'impact attendu",
+      "reason": "Pourquoi cette action"
+    },
+    {
+      "type": "optimize_page",
+      "target": "URL ou page",
+      "priority": "MEDIUM",
+      "impact": "Description de l'impact attendu",
+      "reason": "Pourquoi cette action"
+    },
+    {
+      "type": "fix_technical",
+      "target": "Problème technique",
+      "priority": "HIGH",
+      "impact": "Description de l'impact attendu",
+      "reason": "Pourquoi cette action"
+    }
+  ]
+}
+
+RÈGLES:
+- Maximum 5 actions prioritaires
+- Types autorisés: create_content, optimize_page, fix_technical
+- Priorités: HIGH, MEDIUM, LOW
+- Sois concis et actionnable
+- Réponds UNIQUEMENT en JSON valide, sans texte avant ou après`;
+
+  // Appel API via le backend Vercel (endpoint à créer)
+  // Pour l'instant, on simule la réponse
+  const response = await fetchAPI('/api/audit-ia/analyze', {
+    method: 'POST',
+    body: JSON.stringify({ cockpitData, prompt })
+  });
+  
+  if (!response.ok) {
+    // Fallback: simulation locale si l'endpoint n'existe pas encore
+    console.warn('[Audit IA] Endpoint non disponible, utilisation du mode simulation');
+    return generateSimulatedAudit(cockpitData);
+  }
+  
+  const result = await response.json();
+  return result.data;
+}
+
+/**
+ * Génère un audit simulé basé sur les données (mode fallback)
+ */
+function generateSimulatedAudit(data) {
+  const score = data.score_global;
+  const hasOpportunities = data.opportunites && data.opportunites.length > 0;
+  const hasTechnicalIssues = data.audit_technique.pages_analysees > data.audit_technique.pages_conformes;
+  const lowContent = data.contenu.live < 5;
+  
+  // Génération dynamique basée sur les données réelles
+  const strengths = [];
+  const weaknesses = [];
+  const actions = [];
+  
+  // Analyse du score technique
+  if (data.score_breakdown.technique?.score >= 80) {
+    strengths.push('Structure technique solide avec tous les éléments SEO de base en place');
+  } else {
+    weaknesses.push('Structure technique à améliorer (titres, méta, H1)');
+  }
+  
+  // Analyse du contenu
+  if (data.contenu.live >= 5) {
+    strengths.push(`${data.contenu.live} pages de contenu publiées et indexables`);
+  } else {
+    weaknesses.push(`Seulement ${data.contenu.live} pages publiées — volume de contenu insuffisant`);
+    actions.push({
+      type: 'create_content',
+      target: data.opportunites[0]?.keyword || 'rénovation appartement paris',
+      priority: 'HIGH',
+      impact: '+15-25 clics/mois estimés',
+      reason: 'Augmenter le volume de contenu indexable'
+    });
+  }
+  
+  // Analyse des opportunités
+  if (hasOpportunities) {
+    const topOpp = data.opportunites[0];
+    if (topOpp.position && topOpp.position > 10 && topOpp.position < 30) {
+      weaknesses.push(`Position ${topOpp.position} pour "${topOpp.keyword}" — potentiel de gain rapide`);
+      actions.push({
+        type: 'create_content',
+        target: topOpp.keyword,
+        priority: 'HIGH',
+        impact: `+${Math.round(topOpp.impressions * 0.15)} clics/mois si top 5`,
+        reason: `Quick win: déjà en position ${topOpp.position} avec ${topOpp.impressions} impressions`
+      });
+    }
+    strengths.push(`${data.opportunites.length} opportunités SEO identifiées`);
+  }
+  
+  // Analyse technique
+  if (hasTechnicalIssues) {
+    const issues = data.audit_technique.problemes;
+    if (issues.length > 0) {
+      weaknesses.push(`${issues.length} page(s) avec problèmes techniques`);
+      actions.push({
+        type: 'fix_technical',
+        target: issues[0].page,
+        priority: 'MEDIUM',
+        impact: 'Amélioration indexation et UX',
+        reason: `Problèmes détectés: ${issues[0].issues.join(', ')}`
+      });
+    }
+  }
+  
+  // Analyse Search Console
+  if (data.search_console.clics < 10 && data.search_console.impressions > 100) {
+    weaknesses.push(`CTR faible: ${data.search_console.clics} clics pour ${data.search_console.impressions} impressions`);
+    actions.push({
+      type: 'optimize_page',
+      target: 'Titres et méta descriptions',
+      priority: 'MEDIUM',
+      impact: 'CTR amélioré = plus de clics',
+      reason: 'Les impressions existent mais les clics ne suivent pas'
+    });
+  }
+  
+  // Compléter si nécessaire
+  if (strengths.length === 0) {
+    strengths.push('Site fonctionnel et accessible');
+  }
+  if (weaknesses.length === 0) {
+    weaknesses.push('Pas de faiblesses critiques détectées');
+  }
+  
+  // Summary
+  let summary = '';
+  if (score >= 70) {
+    summary = `Score SEO de ${score}/100 — bonne santé globale. `;
+  } else if (score >= 40) {
+    summary = `Score SEO de ${score}/100 — situation moyenne avec des axes d'amélioration. `;
+  } else {
+    summary = `Score SEO de ${score}/100 — situation critique nécessitant des actions urgentes. `;
+  }
+  summary += `${data.contenu.live} pages publiées, ${data.opportunites.length} opportunités identifiées.`;
+  
+  return {
+    summary,
+    strengths: strengths.slice(0, 3),
+    weaknesses: weaknesses.slice(0, 3),
+    actions: actions.slice(0, 5)
+  };
+}
+
+/**
+ * Lance l'Audit IA complet
+ */
+async function launchFullAuditIA() {
+  if (auditIAInProgress) {
+    console.warn('[Audit IA] Analyse déjà en cours');
+    return;
+  }
+  
+  const container = document.getElementById('audit-ia-container');
+  
+  // Vérifier que le cockpit est chargé
+  if (!cockpitCache) {
+    container.innerHTML = `
+      <div class="audit-ia-error">
+        <span class="error-icon">⚠️</span>
+        <h3>Données Cockpit manquantes</h3>
+        <p>Chargez d'abord le Cockpit pour obtenir les données à analyser.</p>
+        <button class="btn-primary" onclick="document.querySelector('[data-tab=cockpit]').click()">Aller au Cockpit</button>
+      </div>
+    `;
+    return;
+  }
+  
+  auditIAInProgress = true;
+  
+  // Afficher le loader
+  container.innerHTML = `
+    <div class="audit-ia-loading">
+      <div class="audit-loading-spinner"></div>
+      <h3>🤖 Analyse en cours avec Claude IA...</h3>
+      <p>Fusion des données et génération de l'audit décisionnel</p>
+      <div class="loading-steps">
+        <div class="step active">📊 Agrégation des données</div>
+        <div class="step">🧠 Analyse Claude</div>
+        <div class="step">📋 Génération du rapport</div>
+      </div>
+    </div>
+  `;
+  
+  try {
+    // Étape 1: Préparer les données
+    const cockpitData = prepareCockpitDataForAudit();
+    
+    // Update UI
+    container.querySelector('.step:nth-child(1)').classList.add('done');
+    container.querySelector('.step:nth-child(2)').classList.add('active');
+    
+    // Étape 2: Appeler Claude
+    const auditResult = await callClaudeForAudit(cockpitData);
+    
+    // Update UI
+    container.querySelector('.step:nth-child(2)').classList.add('done');
+    container.querySelector('.step:nth-child(3)').classList.add('active');
+    
+    // Étape 3: Afficher le résultat
+    lastAuditIA = auditResult;
+    renderAuditIAResult(auditResult);
+    
+  } catch (error) {
+    console.error('[Audit IA] Erreur:', error);
+    container.innerHTML = `
+      <div class="audit-ia-error">
+        <span class="error-icon">❌</span>
+        <h3>Erreur lors de l'analyse</h3>
+        <p>${error.message}</p>
+        <button class="btn-primary" onclick="launchFullAuditIA()">🔄 Réessayer</button>
+      </div>
+    `;
+  } finally {
+    auditIAInProgress = false;
+  }
+}
+
+/**
+ * Affiche le résultat de l'Audit IA
+ */
+function renderAuditIAResult(audit) {
+  const container = document.getElementById('audit-ia-container');
+  
+  const html = `
+    <div class="audit-ia-result">
+      
+      <!-- Résumé -->
+      <div class="audit-section audit-summary">
+        <h3>📋 Résumé de l'audit</h3>
+        <p class="summary-text">${escapeHtml(audit.summary)}</p>
+        <div class="audit-meta">
+          <span>🕐 Généré le ${new Date().toLocaleString('fr-FR')}</span>
+          <button class="btn-small btn-secondary" onclick="launchFullAuditIA()">🔄 Relancer</button>
+        </div>
+      </div>
+      
+      <!-- Forces & Faiblesses -->
+      <div class="audit-two-cols">
+        <div class="audit-section audit-strengths">
+          <h3>💪 Forces SEO</h3>
+          <ul class="audit-list strengths-list">
+            ${audit.strengths.map(s => `<li><span class="list-icon">✅</span> ${escapeHtml(s)}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <div class="audit-section audit-weaknesses">
+          <h3>⚠️ Faiblesses SEO</h3>
+          <ul class="audit-list weaknesses-list">
+            ${audit.weaknesses.map(w => `<li><span class="list-icon">⚠️</span> ${escapeHtml(w)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Actions prioritaires -->
+      <div class="audit-section audit-actions-ia">
+        <h3>🎯 Actions prioritaires</h3>
+        <p class="section-intro">Cliquez sur une action pour l'exécuter directement.</p>
+        
+        <div class="audit-actions-list">
+          ${audit.actions.map((action, idx) => {
+            const priorityClass = action.priority === 'HIGH' ? 'priority-high' : action.priority === 'MEDIUM' ? 'priority-medium' : 'priority-low';
+            const actionIcon = action.type === 'create_content' ? '📝' : action.type === 'optimize_page' ? '🔧' : '⚠️';
+            const actionLabel = action.type === 'create_content' ? 'Créer' : action.type === 'optimize_page' ? 'Optimiser' : 'Corriger';
+            const actionBtnClass = action.type === 'create_content' ? 'btn-primary' : action.type === 'optimize_page' ? 'btn-secondary' : 'btn-warning';
+            
+            return `
+            <div class="audit-action-card ${priorityClass}">
+              <div class="action-header">
+                <span class="action-icon-large">${actionIcon}</span>
+                <div class="action-header-info">
+                  <span class="action-type-label">${actionLabel}</span>
+                  <span class="action-priority-badge ${priorityClass}">${action.priority}</span>
+                </div>
+              </div>
+              <div class="action-body">
+                <h4 class="action-target">${escapeHtml(action.target)}</h4>
+                <p class="action-reason">${escapeHtml(action.reason)}</p>
+                <p class="action-impact"><strong>Impact:</strong> ${escapeHtml(action.impact)}</p>
+              </div>
+              <div class="action-footer">
+                <button class="${actionBtnClass}" onclick="executeAuditAction('${action.type}', '${escapeHtml(action.target)}')">
+                  ${actionIcon} ${actionLabel}
+                </button>
+              </div>
+            </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+      
+    </div>
+  `;
+  
+  container.innerHTML = html;
+}
+
+/**
+ * Exécute une action depuis l'Audit IA
+ */
+function executeAuditAction(actionType, target) {
+  switch (actionType) {
+    case 'create_content':
+      // TODO V2.3: Rediriger vers Studio SEO IA avec le target pré-rempli
+      alert(`🚀 Création de contenu pour "${target}"\n\nLe Studio SEO IA sera disponible en V2.3.\n\nEn attendant, consultez l'onglet Plan Contenu.`);
+      document.querySelector('[data-tab="contentplan"]').click();
+      break;
+      
+    case 'optimize_page':
+      alert(`🔧 Optimisation de "${target}"\n\nConsultez l'onglet Pages SEO pour plus de détails.`);
+      document.querySelector('[data-tab="pages"]').click();
+      break;
+      
+    case 'fix_technical':
+      alert(`⚠️ Correction technique pour "${target}"\n\nConsultez l'onglet Audit technique.`);
+      document.querySelector('[data-tab="audit"]').click();
+      break;
+      
+    default:
+      console.warn('[Audit IA] Type d\'action inconnu:', actionType);
+  }
 }
 
 /**

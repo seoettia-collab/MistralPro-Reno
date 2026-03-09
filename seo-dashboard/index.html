@@ -17,17 +17,18 @@
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" data-tab="cockpit">1. Cockpit SEO</button>
-    <button class="tab-btn" data-tab="searchconsole">2. Search Console</button>
-    <button class="tab-btn" data-tab="opportunities">3. Opportunités</button>
-    <button class="tab-btn" data-tab="pages">4. Pages SEO</button>
-    <button class="tab-btn" data-tab="contentplan">5. Plan Contenu</button>
-    <button class="tab-btn" data-tab="content">6. Contenu</button>
-    <button class="tab-btn" data-tab="audit">7. Audit technique</button>
-    <button class="tab-btn" data-tab="conversions">8. Conversions</button>
-    <button class="tab-btn" data-tab="competitors">9. Concurrents</button>
-    <button class="tab-btn" data-tab="brief">10. Brief Claude</button>
-    <button class="tab-btn" data-tab="impact">11. Impact SEO</button>
+    <button class="tab-btn active" data-tab="cockpit">🏠 Cockpit</button>
+    <button class="tab-btn tab-btn-primary" data-tab="audit-ia">🤖 Audit IA</button>
+    <button class="tab-btn" data-tab="searchconsole">Search Console</button>
+    <button class="tab-btn" data-tab="opportunities">Opportunités</button>
+    <button class="tab-btn" data-tab="pages">Pages SEO</button>
+    <button class="tab-btn" data-tab="contentplan">Plan Contenu</button>
+    <button class="tab-btn" data-tab="content">Contenu</button>
+    <button class="tab-btn" data-tab="audit">Audit technique</button>
+    <button class="tab-btn" data-tab="conversions">Conversions</button>
+    <button class="tab-btn" data-tab="competitors">Concurrents</button>
+    <button class="tab-btn" data-tab="brief">Brief Claude</button>
+    <button class="tab-btn" data-tab="impact">Impact SEO</button>
   </nav>
 
   <main class="main-container">
@@ -66,6 +67,35 @@
       
       <div id="cockpit-container">
         <p class="loading">Chargement...</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- AUDIT IA — V2.2 -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section id="audit-ia" class="tab-section">
+      <h2>🤖 Audit IA Décisionnel</h2>
+      
+      <div class="audit-ia-intro">
+        <p>L'Audit IA analyse toutes les données du Cockpit avec Claude pour produire un diagnostic complet et des actions prioritaires.</p>
+      </div>
+      
+      <div id="audit-ia-container">
+        <div class="audit-ia-start">
+          <div class="audit-ia-icon">🤖</div>
+          <h3>Prêt à lancer l'analyse ?</h3>
+          <p>Claude va analyser vos données SEO et produire :</p>
+          <ul>
+            <li>✅ Résumé de la situation</li>
+            <li>💪 Forces SEO identifiées</li>
+            <li>⚠️ Faiblesses à corriger</li>
+            <li>🎯 Actions prioritaires avec boutons d'exécution</li>
+          </ul>
+          <button class="btn-large btn-primary" onclick="launchAuditIA()">
+            🚀 Lancer l'Audit IA
+          </button>
+          <p class="audit-ia-note">⏱️ Durée estimée : 10-20 secondes</p>
+        </div>
       </div>
     </section>
 
