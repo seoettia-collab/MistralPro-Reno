@@ -84,113 +84,297 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Charger et afficher le Cockpit SEO - Vue compacte
+ * Cockpit SEO V2 — Vue agrégée complète
+ * Fusionne tous les signaux : stats, score, alertes, opportunités, contenu, audit, conversions
+ * Version 2.1.0 - Mars 2026
  */
+
+// Cache global pour données cockpit (évite re-fetch)
+let cockpitCache = null;
+
 async function loadCockpit() {
   const container = document.getElementById('cockpit-container');
+  container.innerHTML = '<div class="cockpit-loading"><div class="spinner"></div><p>Chargement du Cockpit SEO...</p></div>';
   
   try {
-    // Charger stats, alertes, score et actions en parallèle
-    const [statsResponse, alertsResponse, scoreResponse, actionsResponse] = await Promise.all([
+    // Charger TOUS les signaux en parallèle (agrégation V2)
+    const [
+      statsResponse, 
+      scoreResponse, 
+      alertsResponse, 
+      actionsResponse,
+      opportunitiesResponse,
+      contentResponse,
+      auditResponse,
+      conversionsResponse
+    ] = await Promise.all([
       fetchAPI('/api/stats'),
-      fetchAPI('/api/alerts'),
       fetchAPI('/api/seo-score'),
-      fetchAPI('/api/actions/top?limit=3')
+      fetchAPI('/api/alerts'),
+      fetchAPI('/api/actions/top?limit=5'),
+      fetchAPI('/api/opportunities'),
+      fetchAPI('/api/content'),
+      fetchAPI('/api/audit'),
+      fetchAPI('/api/conversions/stats')
     ]);
     
-    const statsResult = await statsResponse.json();
-    const alertsResult = await alertsResponse.json();
-    const scoreResult = await scoreResponse.json();
-    const actionsResult = await actionsResponse.json();
+    const stats = (await statsResponse.json()).data || {};
+    const scoreData = (await scoreResponse.json()).data || { score: 0 };
+    const alerts = (await alertsResponse.json()).data || [];
+    const actions = (await actionsResponse.json()).actions || [];
+    const opportunities = (await opportunitiesResponse.json()).data || [];
+    const contents = (await contentResponse.json()).data || [];
+    const auditPages = (await auditResponse.json()).data || [];
+    const conversions = (await conversionsResponse.json()).data || {};
 
-    if (statsResult.status !== 'ok') {
-      container.innerHTML = '<p class="error">Erreur de chargement</p>';
-      return;
-    }
+    // Stocker en cache
+    cockpitCache = { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions };
 
-    const stats = statsResult.data;
-    const alerts = alertsResult.status === 'ok' ? alertsResult.data : [];
-    const seoScore = scoreResult.status === 'ok' ? scoreResult.data : null;
-    const topActions = actionsResult.status === 'ok' ? actionsResult.actions : [];
-
-    // Score SEO
-    const score = seoScore ? seoScore.score : 0;
+    // Calculs agrégés
+    const score = scoreData.score || 0;
     const scoreColor = score >= 70 ? '#2ecc71' : score >= 40 ? '#f4c430' : '#e74c3c';
+    const scoreLevel = score >= 70 ? 'Bon' : score >= 40 ? 'Moyen' : 'Critique';
     
-    // Stats contenus
-    const liveCount = stats.contents_published || 0;
-    const pendingCount = stats.contents_total - liveCount;
+    const liveCount = contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
+    const pendingCount = contents.length - liveCount;
+    
+    const highOpportunities = opportunities.filter(o => o.priority === 'high').length;
+    const totalOpportunities = opportunities.length;
+    
+    const auditOk = auditPages.filter(p => p.has_title && p.has_meta && p.has_h1 && p.alt_missing === 0).length;
+    const auditTotal = auditPages.length;
+    
+    // Top 3 opportunités
+    const topOpportunities = opportunities.slice(0, 3);
+    
+    // Top 3 alertes
+    const topAlerts = alerts.slice(0, 3);
 
-    // Construire le HTML compact
+    // Construire le HTML V2
     const html = `
-      <div class="cockpit-compact">
-        <!-- Ligne 1 : Score + Stats principales -->
-        <div class="cockpit-row-main">
-          <!-- Score circulaire -->
-          <div class="cockpit-score-circle">
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="54" fill="none" stroke="#2a2a3e" stroke-width="8"/>
-              <circle cx="60" cy="60" r="54" fill="none" stroke="${scoreColor}" stroke-width="8" 
-                stroke-dasharray="${score * 3.39} 339" stroke-linecap="round" transform="rotate(-90 60 60)"/>
-            </svg>
-            <div class="score-center">
-              <span class="score-num">${score}</span>
-              <span class="score-label">SEO</span>
+      <div class="cockpit-v2">
+        
+        <!-- SECTION 1 : Score Global + KPIs -->
+        <div class="cockpit-header">
+          <div class="cockpit-score-section">
+            <div class="cockpit-score-circle large">
+              <svg viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="62" fill="none" stroke="#2a2a3e" stroke-width="10"/>
+                <circle cx="70" cy="70" r="62" fill="none" stroke="${scoreColor}" stroke-width="10" 
+                  stroke-dasharray="${score * 3.89} 389" stroke-linecap="round" transform="rotate(-90 70 70)"/>
+              </svg>
+              <div class="score-center">
+                <span class="score-num">${score}</span>
+                <span class="score-label">SEO</span>
+              </div>
+            </div>
+            <div class="score-meta">
+              <span class="score-level" style="color: ${scoreColor}">${scoreLevel}</span>
+              <div class="score-breakdown">
+                ${scoreData.breakdown ? `
+                  <div class="breakdown-item">
+                    <span class="bd-label">Technique</span>
+                    <span class="bd-value">${scoreData.breakdown.technique?.score || 0}%</span>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="bd-label">Contenu</span>
+                    <span class="bd-value">${scoreData.breakdown.contenu?.score || 0}%</span>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="bd-label">Performance</span>
+                    <span class="bd-value">${scoreData.breakdown.performance?.score || 0}%</span>
+                  </div>
+                ` : ''}
+              </div>
             </div>
           </div>
-
-          <!-- KPIs principaux -->
-          <div class="cockpit-kpis">
-            <div class="kpi-item">
-              <span class="kpi-value">${stats.total_clicks}</span>
+          
+          <div class="cockpit-kpis-grid">
+            <div class="kpi-card">
+              <span class="kpi-icon">🖱️</span>
+              <span class="kpi-value">${stats.total_clicks || 0}</span>
               <span class="kpi-label">Clics</span>
             </div>
-            <div class="kpi-item">
-              <span class="kpi-value">${formatNumber(stats.total_impressions)}</span>
+            <div class="kpi-card">
+              <span class="kpi-icon">👁️</span>
+              <span class="kpi-value">${formatNumber(stats.total_impressions || 0)}</span>
               <span class="kpi-label">Impressions</span>
             </div>
-            <div class="kpi-item">
-              <span class="kpi-value">${stats.avg_position || '-'}</span>
-              <span class="kpi-label">Position</span>
+            <div class="kpi-card">
+              <span class="kpi-icon">📍</span>
+              <span class="kpi-value">${stats.avg_position ? stats.avg_position.toFixed(1) : '-'}</span>
+              <span class="kpi-label">Position moy.</span>
             </div>
-            <div class="kpi-item kpi-live">
+            <div class="kpi-card kpi-live">
+              <span class="kpi-icon">🟢</span>
               <span class="kpi-value">${liveCount}</span>
-              <span class="kpi-label">🟢 Live</span>
+              <span class="kpi-label">Pages live</span>
             </div>
-            <div class="kpi-item kpi-pending">
+            <div class="kpi-card kpi-pending">
+              <span class="kpi-icon">⏳</span>
               <span class="kpi-value">${pendingCount}</span>
-              <span class="kpi-label">⏳ En attente</span>
+              <span class="kpi-label">En attente</span>
+            </div>
+            <div class="kpi-card kpi-opportunities ${highOpportunities > 0 ? 'has-high' : ''}">
+              <span class="kpi-icon">💡</span>
+              <span class="kpi-value">${totalOpportunities}</span>
+              <span class="kpi-label">Opportunités</span>
             </div>
           </div>
         </div>
 
-        <!-- Ligne 2 : Actions rapides -->
-        <div class="cockpit-actions-row">
-          <h4>🎯 Actions prioritaires</h4>
-          <div class="quick-actions">
-            ${topActions.length > 0 ? topActions.map(action => {
-              const priorityColor = action.priority === 'HIGH' ? '#e74c3c' : action.priority === 'MEDIUM' ? '#f4c430' : '#2ecc71';
-              return `
-                <div class="quick-action" style="border-left: 3px solid ${priorityColor}">
-                  <div class="qa-info">
-                    <span class="qa-title">${escapeHtml(action.description.substring(0, 40))}${action.description.length > 40 ? '...' : ''}</span>
-                    <span class="qa-impact">${action.impact_label}</span>
-                  </div>
-                  <button class="qa-btn" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}', ${action.source_id || 'null'})">▶</button>
-                </div>
-              `;
-            }).join('') : '<p class="no-actions">Aucune action recommandée</p>'}
-          </div>
-        </div>
-
-        <!-- Ligne 3 : Alertes (si présentes) -->
-        ${alerts.length > 0 ? `
-          <div class="cockpit-alerts-row">
-            ${alerts.slice(0, 2).map(a => `
-              <div class="alert-mini">⚠️ ${escapeHtml(a.message)}</div>
+        <!-- SECTION 2 : Alertes prioritaires -->
+        ${topAlerts.length > 0 ? `
+        <div class="cockpit-section cockpit-alerts">
+          <h4>⚠️ Alertes prioritaires</h4>
+          <div class="alerts-list">
+            ${topAlerts.map(a => `
+              <div class="alert-item alert-${a.type || 'warning'}">
+                <span class="alert-icon">${a.type === 'danger' ? '🔴' : a.type === 'warning' ? '🟠' : '🟡'}</span>
+                <span class="alert-text">${escapeHtml(a.message)}</span>
+              </div>
             `).join('')}
           </div>
+        </div>
         ` : ''}
+
+        <!-- SECTION 3 : Top Opportunités -->
+        <div class="cockpit-section cockpit-opportunities">
+          <h4>💡 Top Opportunités</h4>
+          ${topOpportunities.length > 0 ? `
+          <div class="opportunities-list">
+            ${topOpportunities.map(opp => {
+              const priorityClass = opp.priority === 'high' ? 'priority-high' : opp.priority === 'medium' ? 'priority-medium' : 'priority-low';
+              return `
+              <div class="opportunity-card ${priorityClass}">
+                <div class="opp-info">
+                  <span class="opp-keyword">${escapeHtml(opp.keyword || opp.target || 'N/A')}</span>
+                  <span class="opp-meta">Position ${opp.position || '-'} • ${opp.impressions || 0} imp.</span>
+                </div>
+                <div class="opp-actions">
+                  <span class="opp-type">${opp.opportunity_type || opp.type || 'SEO'}</span>
+                  <button class="btn-small btn-primary" onclick="executeAction('create_content', '${escapeHtml(opp.keyword || opp.target || '')}', ${opp.id || 'null'})">🚀 Créer</button>
+                </div>
+              </div>
+              `;
+            }).join('')}
+          </div>
+          ` : '<p class="no-data">Aucune opportunité détectée</p>'}
+        </div>
+
+        <!-- SECTION 4 : Actions recommandées -->
+        <div class="cockpit-section cockpit-actions">
+          <h4>🎯 Actions recommandées</h4>
+          <div class="actions-list">
+            ${actions.length > 0 ? actions.slice(0, 3).map(action => {
+              const priorityColor = action.priority === 'HIGH' ? '#e74c3c' : action.priority === 'MEDIUM' ? '#f4c430' : '#2ecc71';
+              const actionIcon = action.action_type === 'create_content' ? '📝' : 
+                                 action.action_type === 'optimize_page' ? '🔧' : 
+                                 action.action_type === 'fix_technical' ? '⚠️' : '▶️';
+              return `
+              <div class="action-card" style="border-left: 4px solid ${priorityColor}">
+                <div class="action-info">
+                  <span class="action-icon">${actionIcon}</span>
+                  <div class="action-details">
+                    <span class="action-title">${escapeHtml(action.description)}</span>
+                    <span class="action-impact">${action.impact_label || ''}</span>
+                  </div>
+                </div>
+                <button class="btn-action" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}', ${action.source_id || 'null'})">▶</button>
+              </div>
+              `;
+            }).join('') : '<p class="no-data">Aucune action recommandée</p>'}
+          </div>
+        </div>
+
+        <!-- SECTION 5 : Sous-modules techniques (accordéons) -->
+        <div class="cockpit-section cockpit-submodules">
+          <h4>📊 Détails par module</h4>
+          
+          <!-- Search Console -->
+          <div class="submodule-accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>📈 Search Console</span>
+              <span class="accordion-summary">${stats.total_queries || 0} requêtes • ${stats.total_clicks || 0} clics</span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="submodule-stats">
+                <div class="stat-row"><span>Requêtes suivies</span><span>${stats.total_queries || 0}</span></div>
+                <div class="stat-row"><span>Clics totaux</span><span>${stats.total_clicks || 0}</span></div>
+                <div class="stat-row"><span>Impressions</span><span>${formatNumber(stats.total_impressions || 0)}</span></div>
+                <div class="stat-row"><span>Position moyenne</span><span>${stats.avg_position ? stats.avg_position.toFixed(1) : '-'}</span></div>
+              </div>
+              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=searchconsole]').click()">Voir détails →</button>
+            </div>
+          </div>
+
+          <!-- Contenu -->
+          <div class="submodule-accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>📄 Contenu</span>
+              <span class="accordion-summary">${liveCount} live • ${pendingCount} en attente</span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="submodule-stats">
+                <div class="stat-row"><span>Contenus totaux</span><span>${contents.length}</span></div>
+                <div class="stat-row"><span>Publiés (live)</span><span>${liveCount}</span></div>
+                <div class="stat-row"><span>En attente</span><span>${pendingCount}</span></div>
+              </div>
+              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=content]').click()">Voir détails →</button>
+            </div>
+          </div>
+
+          <!-- Audit technique -->
+          <div class="submodule-accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>🔍 Audit technique</span>
+              <span class="accordion-summary">${auditOk}/${auditTotal} pages OK</span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="submodule-stats">
+                <div class="stat-row"><span>Pages analysées</span><span>${auditTotal}</span></div>
+                <div class="stat-row"><span>Pages conformes</span><span>${auditOk}</span></div>
+                <div class="stat-row"><span>Problèmes détectés</span><span>${auditTotal - auditOk}</span></div>
+              </div>
+              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=audit]').click()">Voir détails →</button>
+            </div>
+          </div>
+
+          <!-- Conversions -->
+          <div class="submodule-accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>🎯 Conversions</span>
+              <span class="accordion-summary">${conversions.total || 0} total • ${conversions.this_month || 0} ce mois</span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="submodule-stats">
+                <div class="stat-row"><span>Conversions totales</span><span>${conversions.total || 0}</span></div>
+                <div class="stat-row"><span>Ce mois</span><span>${conversions.this_month || 0}</span></div>
+                <div class="stat-row"><span>Cette semaine</span><span>${conversions.this_week || 0}</span></div>
+                <div class="stat-row"><span>Aujourd'hui</span><span>${conversions.today || 0}</span></div>
+              </div>
+              <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=conversions]').click()">Voir détails →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 6 : Bouton Audit IA -->
+        <div class="cockpit-section cockpit-cta">
+          <div class="cta-box">
+            <div class="cta-info">
+              <h4>🤖 Audit IA complet</h4>
+              <p>Analyse approfondie avec Claude pour obtenir des recommandations personnalisées et actionnables.</p>
+            </div>
+            <button class="btn-large btn-primary" onclick="launchAuditIA()">
+              <span>🚀 Lancer Audit IA</span>
+            </button>
+          </div>
+        </div>
+
       </div>
     `;
 
@@ -200,6 +384,34 @@ async function loadCockpit() {
     container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
     console.error('loadCockpit error:', err);
   }
+}
+
+/**
+ * Toggle accordéon sous-module
+ */
+function toggleAccordion(btn) {
+  const content = btn.nextElementSibling;
+  const icon = btn.querySelector('.accordion-icon');
+  const isOpen = content.classList.contains('open');
+  
+  // Fermer tous les autres
+  document.querySelectorAll('.accordion-content.open').forEach(el => {
+    el.classList.remove('open');
+    el.previousElementSibling.querySelector('.accordion-icon').textContent = '▼';
+  });
+  
+  // Toggle celui-ci
+  if (!isOpen) {
+    content.classList.add('open');
+    icon.textContent = '▲';
+  }
+}
+
+/**
+ * Lancer Audit IA (placeholder - sera implémenté en V2.2)
+ */
+function launchAuditIA() {
+  alert('🚀 Audit IA\n\nCette fonctionnalité sera disponible dans la version V2.2.\n\nElle analysera toutes les données du Cockpit avec Claude pour produire un audit final exploitable.');
 }
 
 /**
