@@ -488,19 +488,26 @@ async function loadContents() {
       return;
     }
 
-    // Transitions autorisées
+    // Transitions autorisées (workflow: idea → draft → ready → published)
     const transitions = {
       'idea': ['draft'],
-      'draft': ['validated', 'idea'],
-      'validated': ['published', 'draft'],
-      'published': ['validated']
+      'draft': ['ready', 'idea'],
+      'ready': ['published', 'draft'],
+      'published': ['ready']
     };
 
     const transitionLabels = {
-      'draft': '📝 Brouillon',
-      'validated': '✅ Valider',
+      'draft': '📄 Brouillon',
+      'ready': '✅ Prêt',
       'published': '🚀 Publier',
       'idea': '💡 Idée'
+    };
+
+    const transitionButtons = {
+      'draft': { label: '📄 Marquer Draft', class: 'btn-secondary' },
+      'ready': { label: '✅ Marquer Prêt', class: 'btn-success' },
+      'published': { label: '🚀 Publier', class: 'btn-primary' },
+      'idea': { label: '↩️ Retour Idée', class: 'btn-secondary' }
     };
 
     // Construire tableau
@@ -527,7 +534,7 @@ async function loadContents() {
     const statusLabels = {
       'idea': '💡 Idée',
       'draft': '📋 Brouillon',
-      'validated': '✅ Validé',
+      'ready': '✅ Prêt',
       'published': '🚀 Publié'
     };
 
@@ -537,29 +544,32 @@ async function loadContents() {
       const statusClass = `status-${c.status}`;
       const allowedTransitions = transitions[c.status] || [];
       
-      // Générer les boutons d'action
-      let actionsHtml = '';
+      // Générer les boutons d'action selon le statut
+      let actionsHtml = '<div class="action-buttons">';
       
-      // Bouton principal (avancer dans le workflow)
-      if (allowedTransitions.length > 0) {
-        const nextStatus = allowedTransitions[0]; // Premier = action principale
-        actionsHtml += `<button class="btn-small btn-action-${nextStatus}" onclick="updateContentStatus(${c.id}, '${nextStatus}')">${transitionLabels[nextStatus]}</button>`;
+      if (c.status === 'idea') {
+        // Idée → peut passer en brouillon
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'draft')">📄 Marquer Draft</button>`;
+      } else if (c.status === 'draft') {
+        // Brouillon → peut passer en prêt ou retour idée
+        actionsHtml += `<button class="btn-small btn-success" onclick="updateContentStatus(${c.id}, 'ready')">✅ Marquer Prêt</button>`;
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'idea')" title="Retour idée">↩️</button>`;
+      } else if (c.status === 'ready') {
+        // Prêt → peut publier ou retour brouillon
+        actionsHtml += `<button class="btn-small btn-primary" onclick="updateContentStatus(${c.id}, 'published')">🚀 Publier</button>`;
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'draft')" title="Retour brouillon">↩️</button>`;
+      } else if (c.status === 'published') {
+        // Publié → badge confirmé + retour possible
+        actionsHtml += `<span class="published-badge">✅ Publié</span>`;
+        actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'ready')" title="Dépublier">↩️</button>`;
       }
       
-      // Bouton secondaire (retour si possible)
-      if (allowedTransitions.length > 1) {
-        const prevStatus = allowedTransitions[1];
-        actionsHtml += ` <button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, '${prevStatus}')">↩️</button>`;
-      }
-      
-      if (!actionsHtml) {
-        actionsHtml = '-';
-      }
+      actionsHtml += '</div>';
       
       html += `
-        <tr>
+        <tr class="content-row status-row-${c.status}">
           <td>${typeLabel}</td>
-          <td>${escapeHtml(c.title)}</td>
+          <td class="title-cell" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</td>
           <td>${escapeHtml(c.keyword) || '-'}</td>
           <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
           <td class="actions-cell">${actionsHtml}</td>
@@ -568,7 +578,25 @@ async function loadContents() {
     }
 
     html += '</tbody></table>';
-    container.innerHTML = html;
+    
+    // Ajouter résumé par statut
+    const statsCounts = {
+      idea: contents.filter(c => c.status === 'idea').length,
+      draft: contents.filter(c => c.status === 'draft').length,
+      ready: contents.filter(c => c.status === 'ready').length,
+      published: contents.filter(c => c.status === 'published').length
+    };
+    
+    const statsHtml = `
+      <div class="content-stats">
+        <span class="stat-item">💡 ${statsCounts.idea} idées</span>
+        <span class="stat-item">📋 ${statsCounts.draft} brouillons</span>
+        <span class="stat-item">✅ ${statsCounts.ready} prêts</span>
+        <span class="stat-item">🚀 ${statsCounts.published} publiés</span>
+      </div>
+    `;
+    
+    container.innerHTML = statsHtml + html;
 
     // Charger le plan mensuel
     loadMonthlyPlan();

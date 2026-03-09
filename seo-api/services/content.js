@@ -8,16 +8,16 @@ const { logEvent, ACTION_TYPES } = require('./history');
 // Transitions autorisées
 const VALID_TRANSITIONS = {
   'idea': ['draft'],
-  'draft': ['validated', 'idea'],
-  'validated': ['published', 'draft'],
-  'published': ['validated']
+  'draft': ['ready', 'idea'],
+  'ready': ['published', 'draft'],
+  'published': ['ready']
 };
 
 // Labels des statuts
 const STATUS_LABELS = {
   'idea': '💡 Idée',
   'draft': '📝 Brouillon',
-  'validated': '✅ Validé',
+  'ready': '✅ Prêt',
   'published': '🚀 Publié'
 };
 
@@ -32,7 +32,7 @@ async function getAllContents() {
       CASE status 
         WHEN 'idea' THEN 1 
         WHEN 'draft' THEN 2 
-        WHEN 'validated' THEN 3 
+        WHEN 'ready' THEN 3 
         WHEN 'published' THEN 4 
       END,
       created_at DESC
