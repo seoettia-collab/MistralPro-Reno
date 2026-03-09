@@ -121,6 +121,10 @@ app.use('/api', pagesRoutes);
 const seoExecutorRoutes = require('./routes/seoExecutor');
 app.use('/api', seoExecutorRoutes);
 
+// Routes Audit IA (Claude)
+const auditIARoutes = require('./routes/auditIA');
+app.use('/api', auditIARoutes);
+
 // Import error handlers
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
