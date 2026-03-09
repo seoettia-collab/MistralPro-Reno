@@ -90,16 +90,18 @@ async function loadCockpit() {
   const container = document.getElementById('cockpit-container');
   
   try {
-    // Charger stats, alertes et score en parallèle
-    const [statsResponse, alertsResponse, scoreResponse] = await Promise.all([
+    // Charger stats, alertes, score et actions en parallèle
+    const [statsResponse, alertsResponse, scoreResponse, actionsResponse] = await Promise.all([
       fetchAPI('/api/stats'),
       fetchAPI('/api/alerts'),
-      fetchAPI('/api/seo-score')
+      fetchAPI('/api/seo-score'),
+      fetchAPI('/api/actions/top?limit=5')
     ]);
     
     const statsResult = await statsResponse.json();
     const alertsResult = await alertsResponse.json();
     const scoreResult = await scoreResponse.json();
+    const actionsResult = await actionsResponse.json();
 
     if (statsResult.status !== 'ok') {
       container.innerHTML = '<p class="error">Erreur de chargement</p>';
@@ -109,6 +111,7 @@ async function loadCockpit() {
     const stats = statsResult.data;
     const alerts = alertsResult.status === 'ok' ? alertsResult.data : [];
     const seoScore = scoreResult.status === 'ok' ? scoreResult.data : null;
+    const topActions = actionsResult.status === 'ok' ? actionsResult.actions : [];
 
     // Charger les alertes prioritaires
     loadPriorityAlerts();
@@ -183,9 +186,47 @@ async function loadCockpit() {
       `;
     }
 
+    // Construire section Actions Recommandées (NOUVEAU)
+    let actionsHtml = '';
+    if (topActions.length > 0) {
+      actionsHtml = `
+        <div class="actions-section">
+          <div class="actions-header">
+            <h3>🎯 Actions Recommandées</h3>
+            <span class="actions-count">${topActions.length} actions prioritaires</span>
+          </div>
+          <div class="actions-list">
+            ${topActions.map((action, index) => {
+              const priorityClass = action.priority === 'HIGH' ? 'priority-high' : 
+                                   action.priority === 'MEDIUM' ? 'priority-medium' : 'priority-low';
+              const buttonAction = getActionButton(action);
+              
+              return `
+                <div class="action-card ${priorityClass}">
+                  <div class="action-rank">#${index + 1}</div>
+                  <div class="action-content">
+                    <div class="action-type">${action.label}</div>
+                    <div class="action-description">${escapeHtml(action.description)}</div>
+                    <div class="action-meta">
+                      <span class="action-impact">📈 ${action.impact_label}</span>
+                      <span class="action-priority priority-badge ${priorityClass}">${action.priority}</span>
+                    </div>
+                  </div>
+                  <div class="action-button">
+                    ${buttonAction}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     // Construire les blocs
     const html = `
       ${alertsHtml}
+      ${actionsHtml}
       ${scoreHtml}
       <div class="cockpit-grid">
         <div class="cockpit-card">
@@ -268,6 +309,58 @@ async function loadCockpit() {
   } catch (err) {
     container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
     console.error('loadCockpit error:', err);
+  }
+}
+
+/**
+ * Générer le bouton d'action approprié selon le type
+ */
+function getActionButton(action) {
+  switch (action.action_type) {
+    case 'create_content':
+      return `<button class="btn-small btn-primary" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}', ${action.source_id || 'null'})">🚀 Générer</button>`;
+    case 'optimize_page':
+    case 'improve_ctr':
+      return `<button class="btn-small btn-secondary" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}')">🔧 Optimiser</button>`;
+    case 'fix_technical':
+      return `<button class="btn-small btn-danger" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}')">⚠️ Corriger</button>`;
+    case 'add_conversion':
+      return `<button class="btn-small btn-success" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}')">🎯 Ajouter</button>`;
+    default:
+      return `<button class="btn-small btn-secondary" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}')">▶️ Exécuter</button>`;
+  }
+}
+
+/**
+ * Exécuter une action recommandée
+ */
+async function executeAction(actionType, target, sourceId) {
+  switch (actionType) {
+    case 'create_content':
+      // Rediriger vers Plan Contenu avec le mot-clé
+      alert(`🚀 Création de contenu pour "${target}"\n\nRedirection vers le Plan Contenu...`);
+      // Activer l'onglet Plan Contenu
+      document.querySelector('[data-tab="contentplan"]').click();
+      break;
+      
+    case 'optimize_page':
+    case 'improve_ctr':
+      alert(`🔧 Optimisation de "${target}"\n\nConsultez l'onglet Pages SEO pour plus de détails.`);
+      document.querySelector('[data-tab="pages"]').click();
+      break;
+      
+    case 'fix_technical':
+      alert(`⚠️ Correction technique pour "${target}"\n\nConsultez l'onglet Audit technique.`);
+      document.querySelector('[data-tab="audit"]').click();
+      break;
+      
+    case 'add_conversion':
+      alert(`🎯 Ajout de CTA\n\nConsultez l'onglet Conversions pour ajouter des appels à l'action.`);
+      document.querySelector('[data-tab="conversions"]').click();
+      break;
+      
+    default:
+      alert(`Action "${actionType}" pour "${target}"`);
   }
 }
 
@@ -3184,6 +3277,7 @@ window.copyOptimizationBrief = copyOptimizationBrief;
 window.closeOptimizationBrief = closeOptimizationBrief;
 window.viewBrief = viewBrief;
 window.loadImpactAnalysis = loadImpactAnalysis;
+window.executeAction = executeAction;
 
 // =====================================================
 // IMPACT ANALYSIS

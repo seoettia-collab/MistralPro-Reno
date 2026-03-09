@@ -93,6 +93,10 @@ app.use('/api', conversionsRoutes);
 const impactRoutes = require('./routes/impact');
 app.use('/api', impactRoutes);
 
+// Routes Actions (Decision Engine)
+const actionsRoutes = require('./routes/actions');
+app.use('/api', actionsRoutes);
+
 // Routes Competitors
 const competitorsRoutes = require('./routes/competitors');
 app.use('/api', competitorsRoutes);
