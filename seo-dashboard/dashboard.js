@@ -567,6 +567,11 @@ async function loadContents() {
 async function loadEditorialPlan() {
   const container = document.getElementById('editorial-container');
   
+  // Si le conteneur n'existe pas, ne rien faire
+  if (!container) {
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_BASE}/api/editorial`);
     const result = await response.json();
@@ -642,7 +647,9 @@ async function loadEditorialPlan() {
     container.innerHTML = html;
 
   } catch (err) {
-    container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
+    if (container) {
+      container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
+    }
     console.error('loadEditorialPlan error:', err);
   }
 }
@@ -652,7 +659,10 @@ async function loadEditorialPlan() {
  */
 async function generateEditorialPlan() {
   const container = document.getElementById('editorial-container');
-  container.innerHTML = '<p class="loading">Génération du plan éditorial...</p>';
+  
+  if (container) {
+    container.innerHTML = '<p class="loading">Génération du plan éditorial...</p>';
+  }
 
   try {
     const response = await fetch(`${API_BASE}/api/editorial/generate`, {
@@ -665,11 +675,16 @@ async function generateEditorialPlan() {
       alert(`Plan généré : ${result.generated} proposition(s) créée(s)`);
       loadContents(); // Recharge contenus et plan
     } else {
-      container.innerHTML = '<p class="error">Erreur: ' + result.message + '</p>';
+      if (container) {
+        container.innerHTML = '<p class="error">Erreur: ' + result.message + '</p>';
+      }
+      alert('Erreur: ' + result.message);
     }
 
   } catch (err) {
-    container.innerHTML = '<p class="error">Erreur de connexion</p>';
+    if (container) {
+      container.innerHTML = '<p class="error">Erreur de connexion</p>';
+    }
     console.error('generateEditorialPlan error:', err);
   }
 }
@@ -1475,8 +1490,10 @@ async function updateContentStatus(contentId, newStatus) {
     // Rafraîchir le tableau contenus
     loadContents();
     
-    // Rafraîchir le cockpit
-    loadStats();
+    // Rafraîchir le cockpit si visible
+    if (document.getElementById('cockpit').classList.contains('active')) {
+      loadCockpit();
+    }
 
   } catch (err) {
     alert('Erreur de connexion');
@@ -2968,7 +2985,7 @@ window.saveContentIdeaByIndex = saveContentIdeaByIndex;
 window.saveContentIdea = saveContentIdea;
 window.changeHistoryFilter = changeHistoryFilter;
 window.loadHistoryData = loadHistoryData;
-window.viewBriefDetail = viewBriefDetail;
+window.viewBriefDetail = viewBrief;
 window.submitContent = submitContent;
 window.submitCompetitor = submitCompetitor;
 window.escapeHtml = escapeHtml;
