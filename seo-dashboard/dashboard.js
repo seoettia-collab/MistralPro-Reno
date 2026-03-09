@@ -633,14 +633,18 @@ async function loadContents() {
       'idea': '💡 Idée',
       'draft': '📋 Brouillon',
       'ready': '✅ Prêt',
+      'validated': '✅ Prêt',
       'deployed': '🚀 Déployé',
+      'published': '🚀 Déployé',
       'live': '🟢 En ligne'
     };
 
     for (const c of contents) {
       const typeLabel = typeLabels[c.type] || c.type;
       const statusLabel = statusLabels[c.status] || c.status;
-      const statusClass = `status-${c.status}`;
+      // Normaliser les anciens statuts pour les classes CSS
+      const normalizedStatus = c.status === 'published' ? 'deployed' : (c.status === 'validated' ? 'ready' : c.status);
+      const statusClass = `status-${normalizedStatus}`;
       const allowedTransitions = transitions[c.status] || [];
       
       // Générer les boutons d'action selon le statut
@@ -653,11 +657,11 @@ async function loadContents() {
         // Brouillon → peut passer en prêt ou retour idée
         actionsHtml += `<button class="btn-small btn-success" onclick="updateContentStatus(${c.id}, 'ready')">✅ Marquer Prêt</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'idea')" title="Retour idée">↩️</button>`;
-      } else if (c.status === 'ready') {
+      } else if (c.status === 'ready' || c.status === 'validated') {
         // Prêt → peut déployer ou retour brouillon
         actionsHtml += `<button class="btn-small btn-primary" onclick="updateContentStatus(${c.id}, 'deployed')">🚀 Déployer</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'draft')" title="Retour brouillon">↩️</button>`;
-      } else if (c.status === 'deployed') {
+      } else if (c.status === 'deployed' || c.status === 'published') {
         // Déployé → peut marquer live ou retour ready
         actionsHtml += `<button class="btn-small btn-success" onclick="checkAndMarkLive(${c.id}, '${escapeHtml(c.slug_suggested || '')}')">🟢 Vérifier Live</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'ready')" title="Retour prêt">↩️</button>`;

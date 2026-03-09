@@ -6,12 +6,16 @@ const { dbAll, dbRun, dbGet } = require('./db');
 const { logEvent, ACTION_TYPES } = require('./history');
 
 // Transitions autorisées (workflow: idea → draft → ready → deployed → live)
+// Note: 'published' et 'validated' sont des anciens statuts, mappés vers deployed
 const VALID_TRANSITIONS = {
   'idea': ['draft'],
   'draft': ['ready', 'idea'],
   'ready': ['deployed', 'draft'],
   'deployed': ['live', 'ready'],
-  'live': ['deployed']
+  'live': ['deployed'],
+  // Compatibilité anciens statuts
+  'published': ['live', 'ready', 'deployed'],
+  'validated': ['deployed', 'draft', 'ready']
 };
 
 // Labels des statuts
@@ -20,7 +24,10 @@ const STATUS_LABELS = {
   'draft': '📝 Brouillon',
   'ready': '✅ Prêt',
   'deployed': '🚀 Déployé',
-  'live': '🟢 En ligne'
+  'live': '🟢 En ligne',
+  // Compatibilité anciens statuts
+  'published': '🚀 Déployé',
+  'validated': '✅ Prêt'
 };
 
 /**
@@ -35,7 +42,9 @@ async function getAllContents() {
         WHEN 'idea' THEN 1 
         WHEN 'draft' THEN 2 
         WHEN 'ready' THEN 3 
+        WHEN 'validated' THEN 3 
         WHEN 'deployed' THEN 4 
+        WHEN 'published' THEN 4 
         WHEN 'live' THEN 5 
       END,
       created_at DESC
