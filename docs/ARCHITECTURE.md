@@ -450,4 +450,57 @@ Application indépendante permettant l'analyse et l'optimisation SEO automatisé
 
 ---
 
-*Dernière mise à jour : 8 mars 2026*
+## 13. GESTION DES HANDLERS UI — SEO DASHBOARD
+
+### Principe
+
+Le SEO Dashboard utilise des fonctions JavaScript appelées via `onclick` dans le HTML statique ou généré dynamiquement. Pour fonctionner correctement, ces fonctions doivent être exposées sur l'objet global `window`.
+
+### Exposition sur window
+
+```javascript
+// Fin de dashboard.js
+window.maFonction = maFonction;
+```
+
+**Règle** : Toute fonction appelée via `onclick="nomFonction()"` doit être exposée sur `window`.
+
+### Liste des fonctions exposées (v1.0 stable)
+
+| Catégorie | Fonctions |
+|-----------|-----------|
+| **Navigation** | `toggleContentForm`, `toggleCompetitorForm`, `toggleQaPanel` |
+| **GSC** | `importGscData`, `changeHistoryFilter`, `loadHistoryData` |
+| **Contenu** | `submitContent`, `updateContentStatus`, `loadSEOCandidates`, `refreshContentIdeas` |
+| **Éditorial** | `generateEditorialPlan`, `showContentDetails`, `closeContentDetails` |
+| **Briefs** | `viewBrief`, `viewBriefDetail`, `closeBriefDetail`, `generatePublicationBrief`, `copyBriefToClipboard` |
+| **SEO Executor** | `previewSEO`, `executeSingleSEO`, `executeAllSEO`, `closeSEOPreview`, `checkQuality`, `loadQualityBadge` |
+| **Optimisation** | `generateOptimizationBrief`, `copyOptimizationBrief`, `closeOptimizationBrief` |
+| **Pages** | `refreshPagesAnalysis` |
+| **Audit** | `runAudit`, `runCrawl` |
+| **Concurrents** | `submitCompetitor`, `deleteCompetitor` |
+| **Idées** | `saveContentIdea`, `saveContentIdeaByIndex` |
+| **QA** | `updateQaProgress` |
+| **Utilitaires** | `escapeHtml` |
+
+### Audit et maintenance
+
+Avant chaque déploiement majeur, vérifier :
+
+```bash
+# Lister fonctions onclick dans HTML
+grep -o "onclick=\"[a-zA-Z]*(" index.html | sort -u
+
+# Lister fonctions onclick générées dans JS
+grep -o "onclick=\"[a-zA-Z]*(" dashboard.js | sort -u
+
+# Vérifier exposition window
+grep "window\." dashboard.js | grep -v "//"
+```
+
+**Erreur typique** : `ReferenceError: nomFonction is not defined`
+**Solution** : Ajouter `window.nomFonction = nomFonction;` en fin de fichier.
+
+---
+
+*Dernière mise à jour : 9 mars 2026*

@@ -476,4 +476,45 @@ CDN uniquement : Chart.js
 
 ---
 
-*Dernière mise à jour : 8 mars 2026*
+## 🖥️ FRONTEND RUNTIME
+
+### Endpoints API utilisés
+
+Le dashboard utilise **35 endpoints API distincts** pour ses fonctionnalités :
+
+| Catégorie | Endpoints |
+|-----------|-----------|
+| **Core** | `/api/health`, `/api/stats`, `/api/seo-score`, `/api/alerts` |
+| **GSC** | `/api/gsc/fetch`, `/api/gsc/history`, `/api/gsc/history/queries`, `/api/gsc/history/pages`, `/api/gsc/history/evolution` |
+| **Opportunités** | `/api/opportunities`, `/api/opportunities/pages-to-optimize` |
+| **Contenu** | `/api/content`, `/api/content/create`, `/api/content/:id/status`, `/api/content/ideas`, `/api/content/ideas/save` |
+| **Éditorial** | `/api/editorial`, `/api/editorial/generate`, `/api/editorial/monthly-plan` |
+| **Briefs** | `/api/briefs`, `/api/briefs/:id`, `/api/briefs/generate/:id`, `/api/briefs/publication/:id`, `/api/briefs/optimize` |
+| **SEO Executor** | `/api/seo/candidates`, `/api/seo/preview/:id`, `/api/seo/execute/:id`, `/api/seo/execute-all`, `/api/seo/quality/:id` |
+| **Audit** | `/api/audit`, `/api/audit/run`, `/api/audit/crawl`, `/api/audit/internal-links` |
+| **Conversions** | `/api/conversions`, `/api/conversions/stats` |
+| **Concurrents** | `/api/competitors`, `/api/competitors/add`, `/api/competitors/:id` |
+| **Pages** | `/api/pages/analysis` |
+| **Historique** | `/api/history` |
+
+### Fonctions UI globales exposées
+
+Voir section **ARCHITECTURE.md § 13** pour la liste complète des fonctions exposées sur `window`.
+
+**Total** : 30+ fonctions onclick exposées.
+
+### Scan Console JS
+
+**Statut** : ✅ Validé (9 mars 2026)
+
+| Vérification | Résultat |
+|--------------|----------|
+| Syntaxe JS | ✅ OK |
+| Fonctions onclick HTML | ✅ 12/12 exposées |
+| Fonctions onclick dynamiques | ✅ 30+ exposées |
+| Endpoints API | ✅ 14/14 répondent 200 |
+| ReferenceError | ✅ Aucune |
+
+---
+
+*Dernière mise à jour : 9 mars 2026*

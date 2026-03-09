@@ -536,4 +536,94 @@ CLÔTURE — [Description]
 
 ---
 
-*Dernière mise à jour : 8 mars 2026*
+## H. CHECKLIST QA — SCAN CONSOLE JS
+
+> **Objectif** : Vérifier l'absence d'erreurs JavaScript avant chaque déploiement majeur.
+
+### H.1 Vérification syntaxe JS
+
+```bash
+# Depuis le dossier seo-dashboard/
+node --check dashboard.js
+```
+
+**Résultat attendu** : Aucune erreur
+
+### H.2 Vérification fonctions onclick HTML
+
+```bash
+# Lister fonctions onclick dans index.html
+grep -o "onclick=\"[a-zA-Z]*(" index.html | sed 's/onclick="\([a-zA-Z]*\)(/\1/' | sort -u
+
+# Vérifier chaque fonction est exposée sur window
+grep "window.nomFonction" dashboard.js
+```
+
+**Critère** : Toutes les fonctions onclick doivent être exposées sur `window`.
+
+### H.3 Vérification fonctions onclick dynamiques
+
+```bash
+# Lister fonctions onclick générées dans dashboard.js
+grep -o "onclick=\"[a-zA-Z]*(" dashboard.js | sed 's/onclick="\([a-zA-Z]*\)(/\1/' | sort -u
+
+# Vérifier exposition
+grep "window.nomFonction" dashboard.js
+```
+
+**Critère** : Toutes les fonctions générées dynamiquement doivent être sur `window`.
+
+### H.4 Vérification endpoints API
+
+```bash
+# Tester endpoints principaux
+curl -s -o /dev/null -w "%{http_code}" "https://mistral-pro-reno.vercel.app/api/health"
+curl -s -o /dev/null -w "%{http_code}" "https://mistral-pro-reno.vercel.app/api/stats"
+# etc.
+```
+
+**Critère** : Tous les endpoints doivent retourner 200.
+
+### H.5 Vérification console navigateur
+
+```
+□ Ouvrir le dashboard dans Chrome/Firefox
+□ Ouvrir DevTools (F12) → Console
+□ Naviguer sur tous les onglets
+□ Cliquer sur tous les boutons d'action
+□ Aucune erreur ReferenceError
+□ Aucune erreur TypeError
+□ Aucune erreur réseau (sauf 404 favicon)
+```
+
+### H.6 Rapport QA Console JS
+
+Format de rapport :
+
+```
+=== AUDIT CONSOLE JS ===
+Date : [date]
+Version : [commit hash]
+
+SYNTAXE JS : ✅ OK / ❌ Erreur
+FONCTIONS HTML : ✅ X/X exposées / ❌ Manquantes: [liste]
+FONCTIONS DYNAMIQUES : ✅ X/X exposées / ❌ Manquantes: [liste]
+ENDPOINTS API : ✅ X/X répondent 200 / ❌ Erreurs: [liste]
+CONSOLE NAVIGATEUR : ✅ Aucune erreur / ❌ Erreurs: [liste]
+
+STATUT FINAL : ✅ VALIDÉ / ❌ À CORRIGER
+```
+
+### H.7 Quand effectuer ce scan
+
+```
+□ Fin de chaque lot de développement
+□ Avant déploiement majeur
+□ Après correction de bugs critiques
+□ Après ajout de nouvelles fonctionnalités
+□ Lors de la phase de stabilisation
+```
+
+---
+
+*Dernière mise à jour : 9 mars 2026*
