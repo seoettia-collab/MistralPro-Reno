@@ -73,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPagesAnalysis();
       } else if (targetTab === 'contentplan') {
         loadContentIdeas();
+      } else if (targetTab === 'impact') {
+        loadImpactAnalysis();
       }
     });
   });
@@ -3181,3 +3183,144 @@ window.generateOptimizationBrief = generateOptimizationBrief;
 window.copyOptimizationBrief = copyOptimizationBrief;
 window.closeOptimizationBrief = closeOptimizationBrief;
 window.viewBrief = viewBrief;
+window.loadImpactAnalysis = loadImpactAnalysis;
+
+// =====================================================
+// IMPACT ANALYSIS
+// =====================================================
+
+/**
+ * Charger et afficher l'analyse d'impact SEO
+ */
+async function loadImpactAnalysis() {
+  const summaryContainer = document.getElementById('impact-summary');
+  const contentsContainer = document.getElementById('impact-contents');
+  const recoContainer = document.getElementById('impact-recommendations');
+  
+  summaryContainer.innerHTML = '<p class="loading">Analyse en cours...</p>';
+  contentsContainer.innerHTML = '';
+  recoContainer.innerHTML = '';
+
+  try {
+    const response = await fetchAPI('/api/impact');
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      summaryContainer.innerHTML = `<p class="error">Erreur: ${result.message}</p>`;
+      return;
+    }
+
+    const { summary, contents, recommendations } = result;
+
+    // Afficher le résumé
+    summaryContainer.innerHTML = `
+      <div class="impact-stats">
+        <div class="stat-card">
+          <span class="stat-value">${summary.total_published}</span>
+          <span class="stat-label">Publiés</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">${summary.with_data}</span>
+          <span class="stat-label">Avec données</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">${summary.average_score}/100</span>
+          <span class="stat-label">Score moyen</span>
+        </div>
+        <div class="stat-card performance-card">
+          <span class="stat-value performance-breakdown">
+            <span class="perf-excellent">🟢 ${summary.performance.excellent}</span>
+            <span class="perf-good">🟡 ${summary.performance.good}</span>
+            <span class="perf-improve">🟠 ${summary.performance.needs_improvement}</span>
+          </span>
+          <span class="stat-label">Performance</span>
+        </div>
+      </div>
+    `;
+
+    // Afficher les contenus
+    if (contents.length > 0) {
+      let html = `
+        <h3>📊 Impact par contenu</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Mot-clé</th>
+              <th>Score</th>
+              <th>Position</th>
+              <th>Impressions</th>
+              <th>CTR</th>
+              <th>Tendance</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      for (const c of contents) {
+        const scoreClass = c.impact_score >= 70 ? 'score-excellent' : 
+                          c.impact_score >= 40 ? 'score-good' : 
+                          c.impact_score > 0 ? 'score-improve' : 'score-nodata';
+        
+        const trendIcon = c.trend ? 
+          (c.trend.direction === 'improving' ? '📈' : 
+           c.trend.direction === 'declining' ? '📉' : '➡️') : '-';
+
+        html += `
+          <tr>
+            <td class="title-cell" title="${escapeHtml(c.title)}">${escapeHtml(c.title.substring(0, 40))}${c.title.length > 40 ? '...' : ''}</td>
+            <td>${escapeHtml(c.keyword) || '-'}</td>
+            <td><span class="impact-score ${scoreClass}">${c.impact_score}</span></td>
+            <td>${c.metrics?.position || '-'}</td>
+            <td>${c.metrics?.impressions || 0}</td>
+            <td>${c.metrics?.ctr || 0}%</td>
+            <td>${trendIcon}</td>
+          </tr>
+        `;
+      }
+
+      html += '</tbody></table>';
+      contentsContainer.innerHTML = html;
+    } else {
+      contentsContainer.innerHTML = '<p class="empty-state">Aucun contenu publié à analyser.</p>';
+    }
+
+    // Afficher les recommandations
+    if (recommendations.length > 0) {
+      let recoHtml = '<h3>💡 Recommandations</h3><div class="recommendations-list">';
+      
+      for (const reco of recommendations) {
+        const priorityClass = reco.priority === 'high' ? 'priority-high' : 'priority-medium';
+        recoHtml += `
+          <div class="recommendation-card ${priorityClass}">
+            <div class="reco-header">
+              <span class="reco-type">${getRecoTypeIcon(reco.type)}</span>
+              <span class="reco-priority">${reco.priority.toUpperCase()}</span>
+            </div>
+            <p class="reco-message">${reco.message}</p>
+            <p class="reco-action"><strong>Action :</strong> ${reco.action}</p>
+          </div>
+        `;
+      }
+      
+      recoHtml += '</div>';
+      recoContainer.innerHTML = recoHtml;
+    }
+
+  } catch (err) {
+    summaryContainer.innerHTML = `<p class="error">Erreur de connexion: ${err.message}</p>`;
+    console.error('loadImpactAnalysis error:', err);
+  }
+}
+
+/**
+ * Obtenir l'icône du type de recommandation
+ */
+function getRecoTypeIcon(type) {
+  const icons = {
+    'optimize_ctr': '📝',
+    'quick_win': '🎯',
+    'waiting_indexation': '⏳'
+  };
+  return icons[type] || '💡';
+}

@@ -27,6 +27,7 @@
     <button class="tab-btn" data-tab="conversions">8. Conversions</button>
     <button class="tab-btn" data-tab="competitors">9. Concurrents</button>
     <button class="tab-btn" data-tab="brief">10. Brief Claude</button>
+    <button class="tab-btn" data-tab="impact">11. Impact SEO</button>
   </nav>
 
   <main class="main-container">
@@ -627,6 +628,51 @@
         </div>
         <div id="brief-detail-content" class="brief-content"></div>
       </div>
+    </section>
+
+    <section id="impact" class="tab-section">
+      <h2>Impact SEO</h2>
+      
+      <!-- QA Panel -->
+      <div class="qa-panel" data-qa="impact">
+        <button class="qa-toggle" onclick="toggleQaPanel(this)">
+          <span>📋 Guide & Checklist</span>
+          <span class="qa-toggle-icon">▼</span>
+        </button>
+        <div class="qa-content">
+          <div class="qa-guide">
+            <h5>📖 Guide rapide</h5>
+            <p><strong>Utilité :</strong> Mesurer l'effet réel des contenus publiés sur les métriques SEO.</p>
+            <ul>
+              <li>Analyser l'impact de chaque contenu</li>
+              <li>Comparer avant/après publication</li>
+              <li>Identifier les contenus performants</li>
+            </ul>
+          </div>
+          <div class="qa-checklist">
+            <h5>✅ Checklist de test</h5>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier score moyen</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier liste contenus</label>
+            <label><input type="checkbox" onchange="updateQaProgress(this)"> Vérifier recommandations</label>
+            <div class="qa-progress">
+              <span class="qa-progress-text">0 / 3 tests</span>
+              <div class="qa-progress-bar"><div class="qa-progress-fill" style="width: 0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-bar">
+        <button class="btn-primary" onclick="loadImpactAnalysis()">🔄 Actualiser l'analyse</button>
+      </div>
+      
+      <div id="impact-summary" class="impact-summary">
+        <p class="loading">Chargement de l'analyse d'impact...</p>
+      </div>
+      
+      <div id="impact-contents" class="impact-contents"></div>
+      
+      <div id="impact-recommendations" class="impact-recommendations"></div>
     </section>
   </main>
 

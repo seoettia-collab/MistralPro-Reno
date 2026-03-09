@@ -89,6 +89,10 @@ app.use('/api', editorialRoutes);
 // Routes Conversions
 app.use('/api', conversionsRoutes);
 
+// Routes Impact Analysis
+const impactRoutes = require('./routes/impact');
+app.use('/api', impactRoutes);
+
 // Routes Competitors
 const competitorsRoutes = require('./routes/competitors');
 app.use('/api', competitorsRoutes);
