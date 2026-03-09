@@ -16,19 +16,33 @@
     <div class="header-site">mistralpro-reno.fr</div>
   </header>
 
-  <nav class="nav-tabs">
-    <button class="tab-btn active" data-tab="cockpit">🏠 Cockpit</button>
-    <button class="tab-btn tab-btn-primary" data-tab="audit-ia">🤖 Audit IA</button>
-    <button class="tab-btn tab-btn-studio" data-tab="studio-seo">🚀 Studio SEO</button>
-    <button class="tab-btn" data-tab="searchconsole">Search Console</button>
-    <button class="tab-btn" data-tab="opportunities">Opportunités</button>
-    <button class="tab-btn" data-tab="pages">Pages SEO</button>
-    <button class="tab-btn" data-tab="contentplan">Plan Contenu</button>
-    <button class="tab-btn" data-tab="content">Contenu</button>
-    <button class="tab-btn" data-tab="audit">Audit technique</button>
-    <button class="tab-btn" data-tab="conversions">Conversions</button>
-    <button class="tab-btn" data-tab="brief">Brief Claude</button>
-    <button class="tab-btn" data-tab="impact">Impact SEO</button>
+  <nav class="nav-tabs nav-v2">
+    <!-- Onglets principaux -->
+    <div class="nav-main">
+      <button class="tab-btn active" data-tab="cockpit">🏠 Cockpit</button>
+      <button class="tab-btn tab-btn-primary" data-tab="audit-ia">🤖 Audit IA</button>
+      <button class="tab-btn tab-btn-studio" data-tab="studio-seo">🚀 Studio SEO</button>
+    </div>
+    
+    <!-- Sous-modules (menu déroulant) -->
+    <div class="nav-submenu">
+      <button class="submenu-toggle" onclick="toggleSubMenu()">
+        <span>📊 Modules</span>
+        <span class="submenu-icon">▼</span>
+      </button>
+      <div class="submenu-dropdown" id="submenu-dropdown">
+        <button class="submenu-item" data-tab="searchconsole">📈 Search Console</button>
+        <button class="submenu-item" data-tab="opportunities">💡 Opportunités</button>
+        <button class="submenu-item" data-tab="pages">📄 Pages SEO</button>
+        <button class="submenu-item" data-tab="contentplan">📝 Plan Contenu</button>
+        <button class="submenu-item" data-tab="content">📚 Contenu</button>
+        <button class="submenu-item" data-tab="audit">🔍 Audit technique</button>
+        <button class="submenu-item" data-tab="conversions">🎯 Conversions</button>
+        <button class="submenu-item" data-tab="competitors">👥 Concurrents</button>
+        <button class="submenu-item" data-tab="brief">✍️ Brief Claude</button>
+        <button class="submenu-item" data-tab="impact">📊 Impact SEO</button>
+      </div>
+    </div>
   </nav>
 
   <main class="main-container">

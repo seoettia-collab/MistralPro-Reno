@@ -36,58 +36,106 @@ window.onerror = function(msg, url, lineNo, columnNo, error) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const tabButtons = document.querySelectorAll('.tab-btn');
+  // Sélectionner tous les boutons d'onglets (principaux + sous-modules)
+  const mainTabButtons = document.querySelectorAll('.tab-btn');
+  const submenuItems = document.querySelectorAll('.submenu-item');
   const tabSections = document.querySelectorAll('.tab-section');
 
-  tabButtons.forEach(btn => {
+  // Fonction commune pour activer un onglet
+  function activateTab(targetTab, btn) {
+    // Désactiver tous les onglets
+    mainTabButtons.forEach(b => b.classList.remove('active'));
+    submenuItems.forEach(b => b.classList.remove('active'));
+    tabSections.forEach(s => s.classList.remove('active'));
+
+    // Activer l'onglet cliqué
+    if (btn) btn.classList.add('active');
+    const section = document.getElementById(targetTab);
+    if (section) section.classList.add('active');
+    
+    // Fermer le sous-menu
+    closeSubMenu();
+
+    // Charger données si nécessaire
+    if (targetTab === 'cockpit') {
+      loadCockpit();
+    } else if (targetTab === 'audit-ia') {
+      console.log('[Nav] Onglet Audit IA activé');
+    } else if (targetTab === 'studio-seo') {
+      console.log('[Nav] Onglet Studio SEO activé');
+    } else if (targetTab === 'searchconsole') {
+      loadQueries();
+      initHistorySection();
+    } else if (targetTab === 'opportunities') {
+      loadOpportunities();
+    } else if (targetTab === 'content') {
+      loadContents();
+    } else if (targetTab === 'brief') {
+      loadBriefs();
+    } else if (targetTab === 'audit') {
+      loadAudit();
+    } else if (targetTab === 'conversions') {
+      loadConversions();
+    } else if (targetTab === 'competitors') {
+      loadCompetitors();
+    } else if (targetTab === 'pages') {
+      loadPagesAnalysis();
+    } else if (targetTab === 'contentplan') {
+      loadContentIdeas();
+    } else if (targetTab === 'impact') {
+      loadImpactAnalysis();
+    }
+  }
+
+  // Event listeners pour les onglets principaux
+  mainTabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      const targetTab = btn.dataset.tab;
-
-      // Désactiver tous les onglets
-      tabButtons.forEach(b => b.classList.remove('active'));
-      tabSections.forEach(s => s.classList.remove('active'));
-
-      // Activer l'onglet cliqué
-      btn.classList.add('active');
-      document.getElementById(targetTab).classList.add('active');
-
-      // Charger données si nécessaire
-      if (targetTab === 'cockpit') {
-        loadCockpit();
-      } else if (targetTab === 'audit-ia') {
-        // L'onglet Audit IA ne charge pas automatiquement - l'utilisateur doit cliquer sur le bouton
-        console.log('[Nav] Onglet Audit IA activé');
-      } else if (targetTab === 'studio-seo') {
-        // L'onglet Studio SEO ne charge pas automatiquement
-        console.log('[Nav] Onglet Studio SEO activé');
-      } else if (targetTab === 'searchconsole') {
-        loadQueries();
-        initHistorySection();
-      } else if (targetTab === 'opportunities') {
-        loadOpportunities();
-      } else if (targetTab === 'content') {
-        loadContents();
-      } else if (targetTab === 'brief') {
-        loadBriefs();
-      } else if (targetTab === 'audit') {
-        loadAudit();
-      } else if (targetTab === 'conversions') {
-        loadConversions();
-      } else if (targetTab === 'competitors') {
-        loadCompetitors();
-      } else if (targetTab === 'pages') {
-        loadPagesAnalysis();
-      } else if (targetTab === 'contentplan') {
-        loadContentIdeas();
-      } else if (targetTab === 'impact') {
-        loadImpactAnalysis();
-      }
+      activateTab(btn.dataset.tab, btn);
     });
   });
 
-  // Charger Cockpit au démarrage (onglet actif par défaut)
+  // Event listeners pour les sous-modules
+  submenuItems.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activateTab(btn.dataset.tab, btn);
+    });
+  });
+
+  // Charger Cockpit au démarrage
   loadCockpit();
+  
+  // Fermer le sous-menu si clic en dehors
+  document.addEventListener('click', (e) => {
+    const submenu = document.querySelector('.nav-submenu');
+    if (submenu && !submenu.contains(e.target)) {
+      closeSubMenu();
+    }
+  });
 });
+
+/**
+ * Toggle le sous-menu des modules
+ */
+function toggleSubMenu() {
+  const dropdown = document.getElementById('submenu-dropdown');
+  const toggle = document.querySelector('.submenu-toggle');
+  if (dropdown) {
+    dropdown.classList.toggle('open');
+    toggle.classList.toggle('open');
+  }
+}
+
+/**
+ * Ferme le sous-menu
+ */
+function closeSubMenu() {
+  const dropdown = document.getElementById('submenu-dropdown');
+  const toggle = document.querySelector('.submenu-toggle');
+  if (dropdown) {
+    dropdown.classList.remove('open');
+    toggle.classList.remove('open');
+  }
+}
 
 /**
  * Navigation vers Audit IA et lancement automatique
