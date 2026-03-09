@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (targetTab === 'audit-ia') {
         // L'onglet Audit IA ne charge pas automatiquement - l'utilisateur doit cliquer sur le bouton
         console.log('[Nav] Onglet Audit IA activé');
+      } else if (targetTab === 'studio-seo') {
+        // L'onglet Studio SEO ne charge pas automatiquement
+        console.log('[Nav] Onglet Studio SEO activé');
       } else if (targetTab === 'searchconsole') {
         loadQueries();
         initHistorySection();
@@ -628,6 +631,7 @@ RÈGLES:
 
 /**
  * Génère un audit simulé basé sur les données (mode fallback)
+ * V2.2.1 - Ajout actionId, impactScore, tri par priorité
  */
 function generateSimulatedAudit(data) {
   const score = data.score_global;
@@ -639,6 +643,26 @@ function generateSimulatedAudit(data) {
   const strengths = [];
   const weaknesses = [];
   const actions = [];
+  let actionCounter = 1;
+  
+  // Fonction helper pour créer une action normalisée
+  function createAction(type, target, priority, impact, reason, impactScore) {
+    // Types autorisés uniquement : create_content, optimize_page, fix_technical
+    const validTypes = ['create_content', 'optimize_page', 'fix_technical'];
+    if (!validTypes.includes(type)) {
+      console.warn('[Audit] Type action invalide:', type);
+      type = 'optimize_page';
+    }
+    return {
+      actionId: `action_${Date.now()}_${actionCounter++}`,
+      type,
+      target,
+      priority,
+      impact,
+      reason,
+      impactScore: Math.min(100, Math.max(0, impactScore)) // 0-100
+    };
+  }
   
   // Analyse du score technique
   if (data.score_breakdown.technique?.score >= 80) {
@@ -652,13 +676,14 @@ function generateSimulatedAudit(data) {
     strengths.push(`${data.contenu.live} pages de contenu publiées et indexables`);
   } else {
     weaknesses.push(`Seulement ${data.contenu.live} pages publiées — volume de contenu insuffisant`);
-    actions.push({
-      type: 'create_content',
-      target: data.opportunites[0]?.keyword || 'rénovation appartement paris',
-      priority: 'HIGH',
-      impact: '+15-25 clics/mois estimés',
-      reason: 'Augmenter le volume de contenu indexable'
-    });
+    actions.push(createAction(
+      'create_content',
+      data.opportunites[0]?.keyword || 'rénovation appartement paris',
+      'HIGH',
+      '+15-25 clics/mois estimés',
+      'Augmenter le volume de contenu indexable',
+      75
+    ));
   }
   
   // Analyse des opportunités
@@ -666,13 +691,15 @@ function generateSimulatedAudit(data) {
     const topOpp = data.opportunites[0];
     if (topOpp.position && topOpp.position > 10 && topOpp.position < 30) {
       weaknesses.push(`Position ${topOpp.position} pour "${topOpp.keyword}" — potentiel de gain rapide`);
-      actions.push({
-        type: 'create_content',
-        target: topOpp.keyword,
-        priority: 'HIGH',
-        impact: `+${Math.round(topOpp.impressions * 0.15)} clics/mois si top 5`,
-        reason: `Quick win: déjà en position ${topOpp.position} avec ${topOpp.impressions} impressions`
-      });
+      const estimatedClicks = Math.round(topOpp.impressions * 0.15);
+      actions.push(createAction(
+        'create_content',
+        topOpp.keyword,
+        'HIGH',
+        `+${estimatedClicks} clics/mois si top 5`,
+        `Quick win: déjà en position ${topOpp.position} avec ${topOpp.impressions} impressions`,
+        Math.min(90, 50 + estimatedClicks)
+      ));
     }
     strengths.push(`${data.opportunites.length} opportunités SEO identifiées`);
   }
@@ -682,26 +709,28 @@ function generateSimulatedAudit(data) {
     const issues = data.audit_technique.problemes;
     if (issues.length > 0) {
       weaknesses.push(`${issues.length} page(s) avec problèmes techniques`);
-      actions.push({
-        type: 'fix_technical',
-        target: issues[0].page,
-        priority: 'MEDIUM',
-        impact: 'Amélioration indexation et UX',
-        reason: `Problèmes détectés: ${issues[0].issues.join(', ')}`
-      });
+      actions.push(createAction(
+        'fix_technical',
+        issues[0].page,
+        'MEDIUM',
+        'Amélioration indexation et UX',
+        `Problèmes détectés: ${issues[0].issues.join(', ')}`,
+        60
+      ));
     }
   }
   
   // Analyse Search Console
   if (data.search_console.clics < 10 && data.search_console.impressions > 100) {
     weaknesses.push(`CTR faible: ${data.search_console.clics} clics pour ${data.search_console.impressions} impressions`);
-    actions.push({
-      type: 'optimize_page',
-      target: 'Titres et méta descriptions',
-      priority: 'MEDIUM',
-      impact: 'CTR amélioré = plus de clics',
-      reason: 'Les impressions existent mais les clics ne suivent pas'
-    });
+    actions.push(createAction(
+      'optimize_page',
+      'Titres et méta descriptions',
+      'MEDIUM',
+      'CTR amélioré = plus de clics',
+      'Les impressions existent mais les clics ne suivent pas',
+      55
+    ));
   }
   
   // Compléter si nécessaire
@@ -712,22 +741,30 @@ function generateSimulatedAudit(data) {
     weaknesses.push('Pas de faiblesses critiques détectées');
   }
   
-  // Summary
+  // Summary (max 6 lignes / ~200 caractères)
   let summary = '';
   if (score >= 70) {
-    summary = `Score SEO de ${score}/100 — bonne santé globale. `;
+    summary = `Score SEO ${score}/100 — bonne santé. `;
   } else if (score >= 40) {
-    summary = `Score SEO de ${score}/100 — situation moyenne avec des axes d'amélioration. `;
+    summary = `Score SEO ${score}/100 — axes d'amélioration identifiés. `;
   } else {
-    summary = `Score SEO de ${score}/100 — situation critique nécessitant des actions urgentes. `;
+    summary = `Score SEO ${score}/100 — actions urgentes requises. `;
   }
-  summary += `${data.contenu.live} pages publiées, ${data.opportunites.length} opportunités identifiées.`;
+  summary += `${data.contenu.live} pages live, ${data.opportunites.length} opportunités.`;
+  
+  // Tri des actions par priorité (HIGH > MEDIUM > LOW) puis par impactScore
+  const priorityOrder = { 'HIGH': 0, 'MEDIUM': 1, 'LOW': 2 };
+  const sortedActions = actions.sort((a, b) => {
+    const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+    if (priorityDiff !== 0) return priorityDiff;
+    return b.impactScore - a.impactScore; // Plus haut score en premier
+  });
   
   return {
     summary,
     strengths: strengths.slice(0, 3),
     weaknesses: weaknesses.slice(0, 3),
-    actions: actions.slice(0, 5)
+    actions: sortedActions.slice(0, 5)
   };
 }
 
@@ -852,14 +889,24 @@ function renderAuditIAResult(audit) {
             const actionIcon = action.type === 'create_content' ? '📝' : action.type === 'optimize_page' ? '🔧' : '⚠️';
             const actionLabel = action.type === 'create_content' ? 'Créer' : action.type === 'optimize_page' ? 'Optimiser' : 'Corriger';
             const actionBtnClass = action.type === 'create_content' ? 'btn-primary' : action.type === 'optimize_page' ? 'btn-secondary' : 'btn-warning';
+            const impactScore = action.impactScore || 50;
+            const impactColor = impactScore >= 70 ? '#10b981' : impactScore >= 40 ? '#f59e0b' : '#9ca3af';
             
             return `
-            <div class="audit-action-card ${priorityClass}">
+            <div class="audit-action-card ${priorityClass}" data-action-id="${action.actionId || ''}">
               <div class="action-header">
                 <span class="action-icon-large">${actionIcon}</span>
                 <div class="action-header-info">
                   <span class="action-type-label">${actionLabel}</span>
                   <span class="action-priority-badge ${priorityClass}">${action.priority}</span>
+                </div>
+                <div class="action-impact-score" title="Score d'impact">
+                  <svg viewBox="0 0 36 36" class="impact-circle">
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2a2a3e" stroke-width="3"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="${impactColor}" stroke-width="3" 
+                      stroke-dasharray="${impactScore} 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                  </svg>
+                  <span class="impact-value">${impactScore}</span>
                 </div>
               </div>
               <div class="action-body">
@@ -868,7 +915,7 @@ function renderAuditIAResult(audit) {
                 <p class="action-impact"><strong>Impact:</strong> ${escapeHtml(action.impact)}</p>
               </div>
               <div class="action-footer">
-                <button class="${actionBtnClass}" onclick="executeAuditAction('${action.type}', '${escapeHtml(action.target)}')">
+                <button class="${actionBtnClass}" onclick="executeAuditAction('${action.type}', '${escapeHtml(action.target)}', '${action.actionId || ''}')">
                   ${actionIcon} ${actionLabel}
                 </button>
               </div>
@@ -886,13 +933,15 @@ function renderAuditIAResult(audit) {
 
 /**
  * Exécute une action depuis l'Audit IA
+ * V2.3: Redirection vers Studio SEO IA pour create_content
  */
-function executeAuditAction(actionType, target) {
+function executeAuditAction(actionType, target, actionId) {
+  console.log('[Audit IA] Exécution action:', actionType, target, actionId);
+  
   switch (actionType) {
     case 'create_content':
-      // TODO V2.3: Rediriger vers Studio SEO IA avec le target pré-rempli
-      alert(`🚀 Création de contenu pour "${target}"\n\nLe Studio SEO IA sera disponible en V2.3.\n\nEn attendant, consultez l'onglet Plan Contenu.`);
-      document.querySelector('[data-tab="contentplan"]').click();
+      // V2.3: Rediriger vers Studio SEO IA avec le target pré-rempli
+      goToStudioSEO(target, actionId);
       break;
       
     case 'optimize_page':
@@ -908,6 +957,504 @@ function executeAuditAction(actionType, target) {
     default:
       console.warn('[Audit IA] Type d\'action inconnu:', actionType);
   }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STUDIO SEO IA V2.3 — Génération contenu final + Publication
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Cache pour le contenu généré
+let studioGeneratedContent = null;
+let studioInProgress = false;
+
+/**
+ * Navigation vers Studio SEO IA avec mot-clé pré-rempli
+ */
+function goToStudioSEO(keyword, actionId) {
+  // Activer l'onglet Studio SEO
+  document.querySelector('[data-tab="studio-seo"]').click();
+  
+  // Pré-remplir le mot-clé
+  setTimeout(() => {
+    const keywordInput = document.getElementById('studioKeyword');
+    if (keywordInput && keyword) {
+      keywordInput.value = keyword;
+      console.log('[Studio SEO] Mot-clé pré-rempli:', keyword);
+    }
+  }, 100);
+}
+
+/**
+ * Génère le contenu SEO complet via simulation (ou API Claude)
+ */
+async function generateSEOContent() {
+  if (studioInProgress) {
+    console.warn('[Studio SEO] Génération déjà en cours');
+    return;
+  }
+  
+  const keyword = document.getElementById('studioKeyword').value.trim();
+  if (!keyword) {
+    alert('Veuillez saisir un mot-clé principal');
+    return;
+  }
+  
+  const contentType = document.getElementById('studioType').value;
+  const tone = document.getElementById('studioTone').value;
+  const length = document.getElementById('studioLength').value;
+  const context = document.getElementById('studioContext').value.trim();
+  
+  studioInProgress = true;
+  
+  // Afficher le loader
+  const resultSection = document.getElementById('studio-result');
+  resultSection.style.display = 'block';
+  resultSection.innerHTML = `
+    <div class="studio-loading">
+      <div class="studio-loading-spinner"></div>
+      <h3>✨ Génération du contenu en cours...</h3>
+      <p>Claude rédige votre article SEO optimisé</p>
+      <div class="loading-progress">
+        <div class="progress-step active">📝 Création structure</div>
+        <div class="progress-step">✍️ Rédaction contenu</div>
+        <div class="progress-step">🔍 Optimisation SEO</div>
+      </div>
+    </div>
+  `;
+  resultSection.scrollIntoView({ behavior: 'smooth' });
+  
+  try {
+    // Appel API (simulation pour l'instant)
+    const content = await callClaudeForContent({
+      keyword,
+      type: contentType,
+      tone,
+      length,
+      context
+    });
+    
+    // Stocker le contenu
+    studioGeneratedContent = content;
+    
+    // Afficher le résultat
+    renderStudioResult(content);
+    
+  } catch (error) {
+    console.error('[Studio SEO] Erreur:', error);
+    resultSection.innerHTML = `
+      <div class="studio-error">
+        <span class="error-icon">❌</span>
+        <h3>Erreur lors de la génération</h3>
+        <p>${error.message}</p>
+        <button class="btn-primary" onclick="generateSEOContent()">🔄 Réessayer</button>
+      </div>
+    `;
+  } finally {
+    studioInProgress = false;
+  }
+}
+
+/**
+ * Appelle Claude pour générer le contenu (simulation)
+ */
+async function callClaudeForContent(params) {
+  // Simuler un délai de génération
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Update progress
+  document.querySelectorAll('.progress-step').forEach((el, i) => {
+    if (i === 0) el.classList.add('done');
+    if (i === 1) el.classList.add('active');
+  });
+  
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  document.querySelectorAll('.progress-step').forEach((el, i) => {
+    if (i === 1) el.classList.add('done');
+    if (i === 2) el.classList.add('active');
+  });
+  
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  // Générer le contenu simulé basé sur les paramètres
+  const wordCount = params.length === 'short' ? 500 : params.length === 'medium' ? 800 : 1200;
+  const slug = params.keyword.toLowerCase()
+    .replace(/[àáâãäå]/g, 'a')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/[òóôõö]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[ç]/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  
+  const title = `${capitalizeFirst(params.keyword)} | Guide Complet 2026 - Mistral Pro Reno`;
+  const h1 = `${capitalizeFirst(params.keyword)} : Guide et Conseils d'Experts`;
+  const metaDescription = `Découvrez tout sur ${params.keyword}. Conseils d'experts, prix, étapes et devis gratuit. Mistral Pro Reno, votre partenaire rénovation en Île-de-France.`;
+  
+  // Générer le contenu HTML complet
+  const htmlContent = generateArticleHTML({
+    keyword: params.keyword,
+    title,
+    h1,
+    metaDescription,
+    slug,
+    type: params.type,
+    tone: params.tone,
+    context: params.context
+  });
+  
+  return {
+    keyword: params.keyword,
+    type: params.type,
+    title,
+    h1,
+    slug,
+    metaDescription,
+    wordCount: wordCount,
+    htmlContent,
+    generatedAt: new Date().toISOString()
+  };
+}
+
+/**
+ * Génère le HTML complet de l'article
+ */
+function generateArticleHTML(params) {
+  const { keyword, title, h1, metaDescription, slug, type, tone, context } = params;
+  const keywordCap = capitalizeFirst(keyword);
+  
+  // Structure de l'article
+  const sections = [
+    {
+      h2: `Qu'est-ce que ${keyword} ?`,
+      content: `Le ${keyword} est un élément essentiel pour tout projet de rénovation en Île-de-France. Chez Mistral Pro Reno, nous accompagnons nos clients dans cette démarche avec expertise et professionnalisme.`
+    },
+    {
+      h2: `Les étapes clés pour ${keyword}`,
+      content: `Pour réussir votre projet de ${keyword}, plusieurs étapes sont essentielles :\n\n1. **Évaluation initiale** : Analyse de vos besoins et de l'existant\n2. **Devis détaillé** : Estimation précise des coûts\n3. **Planification** : Organisation du chantier\n4. **Réalisation** : Travaux par nos artisans certifiés\n5. **Réception** : Vérification et validation finale`
+    },
+    {
+      h2: `Prix et budget pour ${keyword}`,
+      content: `Le budget pour ${keyword} varie selon plusieurs facteurs : surface, matériaux, complexité. En moyenne en Île-de-France :\n\n- **Entrée de gamme** : à partir de 150€/m²\n- **Milieu de gamme** : 250 à 400€/m²\n- **Haut de gamme** : 500€/m² et plus\n\nContactez-nous pour un devis gratuit personnalisé.`
+    },
+    {
+      h2: `Pourquoi choisir Mistral Pro Reno ?`,
+      content: `Mistral Pro Reno est votre partenaire de confiance pour ${keyword} :\n\n- ✅ **+10 ans d'expérience** en rénovation\n- ✅ **Artisans certifiés RGE**\n- ✅ **Devis gratuit sous 24h**\n- ✅ **Garantie décennale**\n- ✅ **Intervention Paris et Île-de-France**`
+    }
+  ];
+  
+  // Générer le HTML
+  let articleHTML = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <meta name="description" content="${metaDescription}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.mistralpro-reno.fr/blog/${slug}.html">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/blog.css">
+</head>
+<body>
+  <!-- Header inclus via JS -->
+  
+  <main class="blog-article">
+    <article>
+      <header class="article-header">
+        <h1>${h1}</h1>
+        <div class="article-meta">
+          <span class="article-date">Publié le ${new Date().toLocaleDateString('fr-FR')}</span>
+          <span class="article-author">Par Mistral Pro Reno</span>
+        </div>
+      </header>
+      
+      <div class="article-content">
+        <p class="article-intro"><strong>${metaDescription}</strong></p>
+        
+`;
+
+  sections.forEach(section => {
+    articleHTML += `        <h2>${section.h2}</h2>
+        <p>${section.content.replace(/\n/g, '</p>\n        <p>')}</p>
+        
+`;
+  });
+
+  articleHTML += `        <div class="article-cta">
+          <h3>Besoin d'un devis pour ${keyword} ?</h3>
+          <p>Contactez Mistral Pro Reno pour un devis gratuit et personnalisé.</p>
+          <a href="/cost_calculator.html" class="btn-primary">Obtenir un devis gratuit</a>
+        </div>
+      </div>
+    </article>
+  </main>
+  
+  <!-- Footer inclus via JS -->
+  <script src="../js/main.js"></script>
+</body>
+</html>`;
+
+  return articleHTML;
+}
+
+/**
+ * Capitalize first letter
+ */
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Affiche le résultat de la génération
+ */
+function renderStudioResult(content) {
+  const resultSection = document.getElementById('studio-result');
+  
+  resultSection.innerHTML = `
+    <div class="studio-result">
+      <div class="result-header">
+        <h3>✅ Contenu généré avec succès</h3>
+        <div class="result-meta">
+          <span>📄 ${content.type === 'blog' ? 'Article blog' : content.type === 'service' ? 'Page service' : 'Landing page'}</span>
+          <span>📝 ~${content.wordCount} mots</span>
+          <span>🕐 ${new Date(content.generatedAt).toLocaleTimeString('fr-FR')}</span>
+        </div>
+      </div>
+      
+      <div class="result-preview">
+        <div class="preview-header">
+          <h4>Aperçu SEO</h4>
+        </div>
+        <div class="seo-preview-card">
+          <div class="seo-preview-url">mistralpro-reno.fr/blog/${content.slug}.html</div>
+          <div class="seo-preview-title">${escapeHtml(content.title)}</div>
+          <div class="seo-preview-meta">${escapeHtml(content.metaDescription)}</div>
+        </div>
+      </div>
+      
+      <div class="result-content">
+        <div class="content-header">
+          <h4>Contenu de l'article</h4>
+          <div class="content-actions">
+            <button class="btn-small btn-secondary" onclick="copyStudioContent()">📋 Copier</button>
+            <button class="btn-small btn-secondary" onclick="regenerateContent()">🔄 Régénérer</button>
+          </div>
+        </div>
+        <div class="content-preview">
+          <h1>${escapeHtml(content.h1)}</h1>
+          <div class="preview-body">${formatPreviewContent(content.htmlContent)}</div>
+        </div>
+      </div>
+      
+      <div class="result-actions">
+        <button class="btn-large btn-primary" onclick="showPublishForm()">
+          🚀 Publier maintenant
+        </button>
+        <button class="btn-large btn-secondary" onclick="downloadHTML()">
+          💾 Télécharger HTML
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Format le contenu HTML pour l'aperçu
+ */
+function formatPreviewContent(html) {
+  // Extraire le contenu entre <article> et </article>
+  const match = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
+  if (match) {
+    return match[1];
+  }
+  return '<p>Aperçu non disponible</p>';
+}
+
+/**
+ * Copier le contenu HTML
+ */
+function copyStudioContent() {
+  if (!studioGeneratedContent) return;
+  navigator.clipboard.writeText(studioGeneratedContent.htmlContent)
+    .then(() => alert('✅ Contenu HTML copié dans le presse-papiers'))
+    .catch(() => alert('❌ Erreur lors de la copie'));
+}
+
+/**
+ * Régénérer le contenu
+ */
+function regenerateContent() {
+  studioGeneratedContent = null;
+  generateSEOContent();
+}
+
+/**
+ * Télécharger le HTML
+ */
+function downloadHTML() {
+  if (!studioGeneratedContent) return;
+  const blob = new Blob([studioGeneratedContent.htmlContent], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${studioGeneratedContent.slug}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Affiche le formulaire de publication
+ */
+function showPublishForm() {
+  if (!studioGeneratedContent) return;
+  
+  const publishSection = document.getElementById('studio-publish');
+  publishSection.style.display = 'block';
+  
+  publishSection.innerHTML = `
+    <div class="publish-form">
+      <h3>🚀 Publication automatique</h3>
+      <p class="publish-info">Le fichier sera créé dans /blog/ et déployé automatiquement via GitHub → OVH.</p>
+      
+      <div class="publish-details">
+        <div class="detail-row">
+          <span class="detail-label">Fichier :</span>
+          <span class="detail-value">/blog/${studioGeneratedContent.slug}.html</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">URL finale :</span>
+          <span class="detail-value">https://www.mistralpro-reno.fr/blog/${studioGeneratedContent.slug}.html</span>
+        </div>
+      </div>
+      
+      <div class="publish-steps-preview">
+        <div class="step-item">1. Génération fichier HTML</div>
+        <div class="step-item">2. Push GitHub (main)</div>
+        <div class="step-item">3. Déploiement OVH</div>
+        <div class="step-item">4. Vérification URL</div>
+      </div>
+      
+      <div class="publish-actions">
+        <button class="btn-large btn-primary" onclick="publishContent()">
+          ✅ Confirmer la publication
+        </button>
+        <button class="btn-large btn-secondary" onclick="cancelPublish()">
+          Annuler
+        </button>
+      </div>
+    </div>
+  `;
+  
+  publishSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Annuler la publication
+ */
+function cancelPublish() {
+  document.getElementById('studio-publish').style.display = 'none';
+}
+
+/**
+ * Publie le contenu (simulation - en production via API backend)
+ */
+async function publishContent() {
+  if (!studioGeneratedContent) return;
+  
+  const publishSection = document.getElementById('studio-publish');
+  
+  // Afficher le loader
+  publishSection.innerHTML = `
+    <div class="publish-loading">
+      <div class="studio-loading-spinner"></div>
+      <h3>🚀 Publication en cours...</h3>
+      <div class="publish-steps-progress">
+        <div class="step-progress active" id="step1">1. Génération fichier HTML</div>
+        <div class="step-progress" id="step2">2. Push GitHub</div>
+        <div class="step-progress" id="step3">3. Déploiement OVH</div>
+        <div class="step-progress" id="step4">4. Vérification URL</div>
+      </div>
+    </div>
+  `;
+  
+  try {
+    // Simulation des étapes
+    await simulatePublishStep('step1', 1000);
+    await simulatePublishStep('step2', 1500);
+    await simulatePublishStep('step3', 2000);
+    await simulatePublishStep('step4', 1000);
+    
+    // Succès
+    const finalURL = `https://www.mistralpro-reno.fr/blog/${studioGeneratedContent.slug}.html`;
+    
+    publishSection.innerHTML = `
+      <div class="publish-success">
+        <div class="success-icon">🎉</div>
+        <h3>Publication réussie !</h3>
+        <p>Votre article est maintenant en ligne.</p>
+        
+        <div class="success-details">
+          <div class="detail-row">
+            <span class="detail-label">URL :</span>
+            <a href="${finalURL}" target="_blank" class="detail-link">${finalURL}</a>
+          </div>
+        </div>
+        
+        <div class="success-actions">
+          <a href="${finalURL}" target="_blank" class="btn-large btn-primary">
+            🔗 Voir la page
+          </a>
+          <button class="btn-large btn-secondary" onclick="resetStudio()">
+            ➕ Nouveau contenu
+          </button>
+        </div>
+        
+        <p class="publish-note">
+          <strong>Note :</strong> En mode simulation. En production, le fichier serait réellement créé et déployé via l'API backend.
+        </p>
+      </div>
+    `;
+    
+  } catch (error) {
+    publishSection.innerHTML = `
+      <div class="publish-error">
+        <span class="error-icon">❌</span>
+        <h3>Erreur de publication</h3>
+        <p>${error.message}</p>
+        <button class="btn-primary" onclick="publishContent()">🔄 Réessayer</button>
+      </div>
+    `;
+  }
+}
+
+/**
+ * Simule une étape de publication
+ */
+async function simulatePublishStep(stepId, delay) {
+  await new Promise(resolve => setTimeout(resolve, delay));
+  const step = document.getElementById(stepId);
+  if (step) {
+    step.classList.remove('active');
+    step.classList.add('done');
+    const nextStep = step.nextElementSibling;
+    if (nextStep) nextStep.classList.add('active');
+  }
+}
+
+/**
+ * Reset le Studio pour un nouveau contenu
+ */
+function resetStudio() {
+  studioGeneratedContent = null;
+  document.getElementById('studioKeyword').value = '';
+  document.getElementById('studioContext').value = '';
+  document.getElementById('studio-result').style.display = 'none';
+  document.getElementById('studio-publish').style.display = 'none';
+  document.getElementById('studio-params').scrollIntoView({ behavior: 'smooth' });
 }
 
 /**

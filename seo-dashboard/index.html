@@ -19,6 +19,7 @@
   <nav class="nav-tabs">
     <button class="tab-btn active" data-tab="cockpit">🏠 Cockpit</button>
     <button class="tab-btn tab-btn-primary" data-tab="audit-ia">🤖 Audit IA</button>
+    <button class="tab-btn tab-btn-studio" data-tab="studio-seo">🚀 Studio SEO</button>
     <button class="tab-btn" data-tab="searchconsole">Search Console</button>
     <button class="tab-btn" data-tab="opportunities">Opportunités</button>
     <button class="tab-btn" data-tab="pages">Pages SEO</button>
@@ -26,7 +27,6 @@
     <button class="tab-btn" data-tab="content">Contenu</button>
     <button class="tab-btn" data-tab="audit">Audit technique</button>
     <button class="tab-btn" data-tab="conversions">Conversions</button>
-    <button class="tab-btn" data-tab="competitors">Concurrents</button>
     <button class="tab-btn" data-tab="brief">Brief Claude</button>
     <button class="tab-btn" data-tab="impact">Impact SEO</button>
   </nav>
@@ -95,6 +95,84 @@
             🚀 Lancer l'Audit IA
           </button>
           <p class="audit-ia-note">⏱️ Durée estimée : 10-20 secondes</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- STUDIO SEO IA — V2.3 -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section id="studio-seo" class="tab-section">
+      <h2>🚀 Studio SEO IA</h2>
+      
+      <div class="studio-intro">
+        <p>Générez du contenu SEO final prêt à publier. Le Studio produit directement des articles complets, pas des briefs.</p>
+      </div>
+      
+      <div id="studio-seo-container">
+        <!-- État initial : Formulaire paramètres -->
+        <div class="studio-form-section" id="studio-params">
+          <h3>📝 Paramètres de génération</h3>
+          
+          <div class="studio-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="studioKeyword">Mot-clé principal *</label>
+                <input type="text" id="studioKeyword" placeholder="Ex: prix renovation cuisine paris" />
+              </div>
+              <div class="form-group">
+                <label for="studioType">Type de contenu</label>
+                <select id="studioType">
+                  <option value="blog">Article de blog</option>
+                  <option value="service">Page service</option>
+                  <option value="landing">Landing page</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="studioTone">Ton</label>
+                <select id="studioTone">
+                  <option value="professionnel">Professionnel</option>
+                  <option value="expert">Expert technique</option>
+                  <option value="accessible">Accessible / Grand public</option>
+                  <option value="commercial">Commercial / Persuasif</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="studioLength">Longueur</label>
+                <select id="studioLength">
+                  <option value="short">Court (~500 mots)</option>
+                  <option value="medium" selected>Moyen (~800 mots)</option>
+                  <option value="long">Long (~1200 mots)</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label for="studioContext">Contexte additionnel (optionnel)</label>
+                <textarea id="studioContext" rows="2" placeholder="Ex: Focus sur Paris 17ème, mentionner les dégâts des eaux..."></textarea>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button class="btn-large btn-primary" onclick="generateSEOContent()">
+                ✨ Générer le contenu
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Zone de résultat (cachée par défaut) -->
+        <div class="studio-result-section" id="studio-result" style="display: none;">
+          <!-- Sera rempli dynamiquement -->
+        </div>
+        
+        <!-- Zone de publication (cachée par défaut) -->
+        <div class="studio-publish-section" id="studio-publish" style="display: none;">
+          <!-- Sera rempli dynamiquement -->
         </div>
       </div>
     </section>
