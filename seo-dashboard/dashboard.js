@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCompetitors();
       } else if (targetTab === 'pages') {
         loadPagesAnalysis();
+      } else if (targetTab === 'contentplan') {
+        loadContentIdeas();
       }
     });
   });
@@ -2027,3 +2029,172 @@ async function refreshPagesAnalysis() {
   }
 }
 
+// =====================================================
+// PLAN DE CONTENU SEO
+// =====================================================
+
+/**
+ * Charger et afficher les idées de contenu
+ */
+async function loadContentIdeas() {
+  const summaryContainer = document.getElementById('content-ideas-summary');
+  const contentGapsContainer = document.getElementById('content-gaps-container');
+  const highPotentialContainer = document.getElementById('high-potential-container');
+  const lowPerformersContainer = document.getElementById('low-performers-container');
+
+  try {
+    const response = await fetch(`${API_BASE}/api/content/ideas`);
+    const result = await response.json();
+
+    if (result.status !== 'ok') {
+      summaryContainer.innerHTML = '<p class="error">Erreur de chargement</p>';
+      return;
+    }
+
+    const { summary, ideas } = result;
+
+    // Afficher le résumé
+    summaryContainer.innerHTML = `
+      <div class="stat-card">
+        <span class="stat-value">${summary.total}</span>
+        <span class="stat-label">Idées total</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${summary.contentGaps}</span>
+        <span class="stat-label">Content Gaps</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${summary.highPotential}</span>
+        <span class="stat-label">Fort potentiel</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">${summary.lowPerformers}</span>
+        <span class="stat-label">À améliorer</span>
+      </div>
+    `;
+
+    // Afficher Content Gaps
+    if (ideas.contentGaps && ideas.contentGaps.length > 0) {
+      contentGapsContainer.innerHTML = renderContentIdeasTable(ideas.contentGaps);
+    } else {
+      contentGapsContainer.innerHTML = '<p class="empty-state">Aucun content gap détecté. Importez plus de données GSC.</p>';
+    }
+
+    // Afficher High Potential
+    if (ideas.highPotential && ideas.highPotential.length > 0) {
+      highPotentialContainer.innerHTML = renderContentIdeasTable(ideas.highPotential);
+    } else {
+      highPotentialContainer.innerHTML = '<p class="empty-state">Aucune requête à fort potentiel détectée.</p>';
+    }
+
+    // Afficher Low Performers
+    if (ideas.lowPerformers && ideas.lowPerformers.length > 0) {
+      lowPerformersContainer.innerHTML = renderContentIdeasTable(ideas.lowPerformers);
+    } else {
+      lowPerformersContainer.innerHTML = '<p class="empty-state">Aucune requête à améliorer détectée.</p>';
+    }
+
+  } catch (err) {
+    summaryContainer.innerHTML = '<p class="error">Erreur de connexion</p>';
+    console.error('loadContentIdeas error:', err);
+  }
+}
+
+/**
+ * Générer le tableau des idées de contenu
+ */
+function renderContentIdeasTable(ideas) {
+  let html = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Requête</th>
+          <th>Impressions</th>
+          <th>Position</th>
+          <th>Type</th>
+          <th>Titre suggéré</th>
+          <th>Intent</th>
+          <th>Priorité</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  for (const idea of ideas) {
+    const priorityClass = idea.priority === 'high' ? 'priority-high' : 
+                          idea.priority === 'medium' ? 'priority-medium' : 'priority-low';
+    
+    const intentClass = `intent-${idea.intent.replace('é', 'e')}`;
+    const typeLabel = getContentTypeLabel(idea.contentType);
+    
+    html += `
+      <tr>
+        <td class="query-cell" title="${escapeHtml(idea.query)}">${escapeHtml(idea.query)}</td>
+        <td>${idea.impressions}</td>
+        <td>${idea.position}</td>
+        <td><span class="type-badge">${typeLabel}</span></td>
+        <td class="title-cell" title="${escapeHtml(idea.titleSuggestion)}">${escapeHtml(idea.titleSuggestion)}</td>
+        <td><span class="intent-badge ${intentClass}">${idea.intent}</span></td>
+        <td><span class="priority-badge ${priorityClass}">${idea.priority}</span></td>
+        <td>
+          <button class="btn-small btn-save-idea" onclick='saveContentIdea(${JSON.stringify(idea).replace(/'/g, "&#39;")})'>
+            💾 Créer
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+
+  html += '</tbody></table>';
+  return html;
+}
+
+/**
+ * Obtenir le label du type de contenu
+ */
+function getContentTypeLabel(type) {
+  const labels = {
+    'article': '📝 Article',
+    'service': '🏠 Service',
+    'faq': '❓ FAQ',
+    'guide': '📚 Guide'
+  };
+  return labels[type] || type;
+}
+
+/**
+ * Sauvegarder une idée comme contenu
+ */
+async function saveContentIdea(idea) {
+  try {
+    const response = await fetch(`${API_BASE}/api/content/ideas/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(idea)
+    });
+
+    const result = await response.json();
+
+    if (result.status === 'ok') {
+      alert(`✅ Contenu créé avec succès !\nID: ${result.id}\nTitre: ${idea.titleSuggestion}`);
+      // Recharger les idées (pour enlever celle qui a été sauvegardée)
+      loadContentIdeas();
+    } else {
+      alert(`❌ Erreur: ${result.message}`);
+    }
+
+  } catch (err) {
+    alert('❌ Erreur de connexion');
+    console.error('saveContentIdea error:', err);
+  }
+}
+
+/**
+ * Rafraîchir les idées de contenu
+ */
+async function refreshContentIdeas() {
+  const summaryContainer = document.getElementById('content-ideas-summary');
+  summaryContainer.innerHTML = '<p class="loading">Analyse en cours...</p>';
+  await loadContentIdeas();
+}
