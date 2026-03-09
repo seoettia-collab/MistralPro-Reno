@@ -3,8 +3,13 @@
  */
 
 // URL API Backend (Vercel)
-// À remplacer par l'URL réelle après déploiement
 const API_BASE = 'https://mistral-pro-reno.vercel.app';
+
+// Handler d'erreurs global pour éviter les crashs silencieux
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+  console.error('Erreur JS Dashboard:', msg, 'at', url, 'line', lineNo);
+  return false;
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const tabButtons = document.querySelectorAll('.tab-btn');
@@ -2893,3 +2898,30 @@ function renderLineChart(containerId, labels, values, color, title) {
     <p class="chart-total">Moyenne: ${avgVal}</p>
   `;
 }
+
+// =====================================================
+// EXPOSITION GLOBALE DES FONCTIONS ONCLICK
+// =====================================================
+// Toutes les fonctions appelées via onclick dans le HTML doivent être sur window
+window.importGscData = importGscData;
+window.generateEditorialPlan = generateEditorialPlan;
+window.toggleContentForm = toggleContentForm;
+window.runAudit = runAudit;
+window.runCrawl = runCrawl;
+window.toggleCompetitorForm = toggleCompetitorForm;
+window.closeBriefDetail = closeBriefDetail;
+window.loadSEOCandidates = loadSEOCandidates;
+window.executeAllSEO = executeAllSEO;
+window.previewSEO = previewSEO;
+window.executeSingleSEO = executeSingleSEO;
+window.closeSEOPreview = closeSEOPreview;
+window.checkQuality = checkQuality;
+window.loadQualityBadge = loadQualityBadge;
+window.saveContentIdeaByIndex = saveContentIdeaByIndex;
+window.saveContentIdea = saveContentIdea;
+window.changeHistoryFilter = changeHistoryFilter;
+window.loadHistoryData = loadHistoryData;
+window.viewBriefDetail = viewBriefDetail;
+window.submitContent = submitContent;
+window.submitCompetitor = submitCompetitor;
+window.escapeHtml = escapeHtml;
