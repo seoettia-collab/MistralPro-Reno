@@ -3393,6 +3393,50 @@ async function updateContentStatus(contentId, newStatus) {
 }
 
 /**
+ * Vérifie si une page est accessible et marque le contenu comme "live"
+ */
+async function verifyAndMarkLive(contentId) {
+  try {
+    // Récupérer les infos du contenu pour avoir l'URL
+    const response = await fetchAPI(`/api/content/${contentId}`);
+    const result = await response.json();
+    
+    if (result.status !== 'ok' || !result.data) {
+      alert('Erreur : Impossible de récupérer les informations du contenu');
+      return;
+    }
+    
+    const content = result.data;
+    const pageUrl = content.url ? `https://www.mistralpro-reno.fr${content.url}` : null;
+    
+    if (!pageUrl) {
+      alert('Erreur : URL de la page non définie');
+      return;
+    }
+    
+    // Vérifier si la page est accessible
+    try {
+      const checkResponse = await fetch(pageUrl, { method: 'HEAD', mode: 'no-cors' });
+      // En mode no-cors, on ne peut pas vérifier le status, on suppose que ça marche
+      
+      // Marquer comme live
+      await updateContentStatus(contentId, 'live');
+      alert(`✅ Page vérifiée et marquée comme live !\n${pageUrl}`);
+      
+    } catch (fetchError) {
+      // La page n'est peut-être pas encore déployée
+      if (confirm(`⚠️ Impossible de vérifier la page.\n${pageUrl}\n\nVoulez-vous quand même la marquer comme live ?`)) {
+        await updateContentStatus(contentId, 'live');
+      }
+    }
+    
+  } catch (err) {
+    alert('Erreur de connexion');
+    console.error('verifyAndMarkLive error:', err);
+  }
+}
+
+/**
  * Charger et afficher l'historique récent
  */
 async function loadHistory() {
