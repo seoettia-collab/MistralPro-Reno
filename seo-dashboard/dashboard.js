@@ -2234,13 +2234,20 @@ async function publishContent() {
   const filePath = `blog/${slug}.html`;
   const finalURL = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
   
-  // Afficher le loader
+  // Déterminer si on a une image à persister
+  const hasImageToPersist = studioGeneratedContent.hasImage && 
+                            studioGeneratedContent.imageUrl && 
+                            !studioGeneratedContent.imageSimulated &&
+                            studioGeneratedContent.imageUrl.includes('oaidalleapiprodscus');
+  
+  // Afficher le loader avec étapes adaptées
   publishSection.innerHTML = `
     <div class="publish-loading">
       <div class="studio-loading-spinner"></div>
       <h3>🚀 Publication en cours...</h3>
       <div class="publish-steps-progress">
-        <div class="step-progress active" id="step1">1. Génération fichier HTML</div>
+        ${hasImageToPersist ? '<div class="step-progress active" id="step0">0. Persistance image</div>' : ''}
+        <div class="step-progress ${hasImageToPersist ? '' : 'active'}" id="step1">1. Génération fichier HTML</div>
         <div class="step-progress" id="step2">2. Push GitHub</div>
         <div class="step-progress" id="step3">3. Déploiement OVH</div>
         <div class="step-progress" id="step4">4. Vérification URL</div>
@@ -2249,6 +2256,26 @@ async function publishContent() {
   `;
   
   try {
+    // Étape 0: Persister l'image DALL-E si présente
+    if (hasImageToPersist) {
+      console.log('[Publication] Persistance image DALL-E...');
+      const persistResult = await persistDALLEImage(studioGeneratedContent.imageUrl, slug);
+      
+      if (persistResult.success) {
+        // Mettre à jour le HTML pour utiliser le chemin local
+        studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+          studioGeneratedContent.imageUrl,
+          persistResult.localPath
+        );
+        studioGeneratedContent.persistedImagePath = persistResult.localPath;
+        console.log('[Publication] Image persistée:', persistResult.localPath);
+      } else {
+        console.warn('[Publication] Échec persistance image, utilisation URL temporaire');
+      }
+      
+      updatePublishStep('step0', 'done');
+    }
+    
     // Étape 1: Préparer le contenu
     updatePublishStep('step1', 'done');
     updatePublishStep('step2', 'active');
@@ -2294,6 +2321,42 @@ async function publishContent() {
         <p class="error-note">Vous pouvez télécharger le HTML et le publier manuellement.</p>
       </div>
     `;
+  }
+}
+
+/**
+ * Persiste une image DALL-E dans le repo GitHub
+ */
+async function persistDALLEImage(imageUrl, slug) {
+  try {
+    const response = await fetchAPI('/api/dalle/persist', {
+      method: 'POST',
+      body: JSON.stringify({
+        imageUrl: imageUrl,
+        slug: slug
+      })
+    });
+    
+    if (!response.ok) {
+      console.warn('[Persist Image] Endpoint non disponible, mode fallback');
+      return { success: false, localPath: `/images/blog/${slug}.webp` };
+    }
+    
+    const result = await response.json();
+    
+    if (result.status === 'ok' && result.data) {
+      return {
+        success: !result.data.simulated,
+        localPath: result.data.localPath,
+        githubUrl: result.data.githubUrl
+      };
+    }
+    
+    return { success: false, localPath: `/images/blog/${slug}.webp` };
+    
+  } catch (error) {
+    console.error('[Persist Image] Erreur:', error);
+    return { success: false, localPath: `/images/blog/${slug}.webp` };
   }
 }
 

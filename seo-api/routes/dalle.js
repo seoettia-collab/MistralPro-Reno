@@ -277,4 +277,147 @@ function generatePlaceholderUrl(keyword) {
   return `https://placehold.co/1792x1024/${bgColor}/${textColor}?text=${text}+Rénovation`;
 }
 
+// Configuration GitHub pour persistance images
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_REPO = 'seoettia-collab/MistralPro-Reno';
+const GITHUB_API_URL = 'https://api.github.com';
+
+/**
+ * POST /api/dalle/persist
+ * Télécharge une image DALL-E et la persiste dans le repo GitHub
+ * 
+ * Body: { imageUrl, slug }
+ * Returns: { localPath, githubUrl }
+ */
+router.post('/dalle/persist', async (req, res) => {
+  try {
+    const { imageUrl, slug } = req.body;
+    
+    if (!imageUrl || !slug) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'imageUrl et slug requis'
+      });
+    }
+    
+    // Vérifier le token GitHub
+    if (!GITHUB_TOKEN) {
+      console.warn('[DALL-E Persist] GITHUB_TOKEN non configuré, mode simulation');
+      return res.json({
+        status: 'ok',
+        data: {
+          localPath: `/images/blog/${slug}.webp`,
+          githubUrl: null,
+          simulated: true,
+          message: 'Token GitHub non configuré'
+        }
+      });
+    }
+    
+    // Générer le nom de fichier
+    const fileName = `${slug}.webp`;
+    const filePath = `images/blog/${fileName}`;
+    
+    console.log(`[DALL-E Persist] Téléchargement image pour: ${slug}`);
+    
+    // Télécharger l'image depuis l'URL DALL-E
+    const imageResponse = await fetch(imageUrl);
+    
+    if (!imageResponse.ok) {
+      throw new Error(`Erreur téléchargement image: ${imageResponse.status}`);
+    }
+    
+    // Récupérer le buffer de l'image
+    const imageBuffer = await imageResponse.arrayBuffer();
+    const imageBase64 = Buffer.from(imageBuffer).toString('base64');
+    
+    console.log(`[DALL-E Persist] Image téléchargée: ${Math.round(imageBuffer.byteLength / 1024)}KB`);
+    
+    // Vérifier si le fichier existe déjà (pour obtenir le SHA)
+    let existingSha = null;
+    try {
+      const checkResponse = await fetch(
+        `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/${filePath}?ref=main`,
+        {
+          headers: {
+            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        }
+      );
+      
+      if (checkResponse.ok) {
+        const existingFile = await checkResponse.json();
+        existingSha = existingFile.sha;
+        console.log(`[DALL-E Persist] Image existante détectée, SHA: ${existingSha.substring(0, 7)}`);
+      }
+    } catch (e) {
+      // Fichier n'existe pas, c'est OK
+    }
+    
+    // Push l'image vers GitHub
+    const publishBody = {
+      message: `feat(images): Ajout image blog ${fileName} via Studio SEO`,
+      content: imageBase64,
+      branch: 'main'
+    };
+    
+    if (existingSha) {
+      publishBody.sha = existingSha;
+    }
+    
+    const publishResponse = await fetch(
+      `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/${filePath}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(publishBody)
+      }
+    );
+    
+    if (!publishResponse.ok) {
+      const errorText = await publishResponse.text();
+      console.error('[DALL-E Persist] Erreur GitHub:', publishResponse.status, errorText);
+      throw new Error(`GitHub API error: ${publishResponse.status}`);
+    }
+    
+    const result = await publishResponse.json();
+    
+    console.log(`[DALL-E Persist] ✅ Image persistée: ${filePath}`);
+    console.log(`[DALL-E Persist] Commit: ${result.commit.sha.substring(0, 7)}`);
+    
+    res.json({
+      status: 'ok',
+      data: {
+        localPath: `/${filePath}`,
+        fileName: fileName,
+        githubUrl: result.content.html_url,
+        commitSha: result.commit.sha,
+        simulated: false
+      }
+    });
+    
+  } catch (error) {
+    console.error('[DALL-E Persist] Erreur:', error.message);
+    
+    // Fallback : retourner le chemin prévu même en cas d'erreur
+    const slug = req.body?.slug || 'image';
+    res.json({
+      status: 'ok',
+      data: {
+        localPath: `/images/blog/${slug}.webp`,
+        githubUrl: null,
+        simulated: true,
+        error: error.message
+      }
+    });
+  }
+});
+
 module.exports = router;
