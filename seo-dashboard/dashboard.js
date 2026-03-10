@@ -1539,8 +1539,8 @@ function generateArticleHTML(params) {
 ${JSON.stringify(schemaOrg, null, 2)}
   </script>
   
-  <link rel="stylesheet" href="../css/main.css">
-  <link rel="stylesheet" href="../css/blog.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/blog.css">
 </head>
 <body>
   <!-- Header inclus via JS -->
@@ -1579,7 +1579,7 @@ ${JSON.stringify(schemaOrg, null, 2)}
   </main>
   
   <!-- Footer inclus via JS -->
-  <script src="../js/main.js"></script>
+  <script src="/js/main.js"></script>
 </body>
 </html>`;
 
