@@ -188,47 +188,75 @@ async function loadCockpit() {
   
   try {
     // Charger TOUS les signaux en parallèle (agrégation V2)
-    const [
-      statsResponse, 
-      scoreResponse, 
-      alertsResponse, 
-      actionsResponse,
-      opportunitiesResponse,
-      contentResponse,
-      auditResponse,
-      conversionsResponse,
-      competitorsResponse
-    ] = await Promise.all([
-      fetchAPI('/api/stats'),
-      fetchAPI('/api/seo-score'),
-      fetchAPI('/api/alerts'),
-      fetchAPI('/api/actions/top?limit=5'),
-      fetchAPI('/api/opportunities'),
-      fetchAPI('/api/content'),
-      fetchAPI('/api/audit'),
-      fetchAPI('/api/conversions/stats'),
-      fetchAPI('/api/competitors')
-    ]);
+    // Avec gestion d'erreur individuelle pour chaque endpoint
+    const endpoints = [
+      { name: 'stats', url: '/api/stats' },
+      { name: 'score', url: '/api/seo-score' },
+      { name: 'alerts', url: '/api/alerts' },
+      { name: 'actions', url: '/api/actions/top?limit=5' },
+      { name: 'opportunities', url: '/api/opportunities' },
+      { name: 'content', url: '/api/content' },
+      { name: 'audit', url: '/api/audit' },
+      { name: 'conversions', url: '/api/conversions/stats' },
+      { name: 'competitors', url: '/api/competitors' }
+    ];
     
-    const stats = (await statsResponse.json()).data || {};
-    const scoreData = (await scoreResponse.json()).data || { score: 0 };
-    const alerts = (await alertsResponse.json()).data || [];
-    const actions = (await actionsResponse.json()).actions || [];
-    const opportunities = (await opportunitiesResponse.json()).data || [];
-    const contents = (await contentResponse.json()).data || [];
-    const auditPages = (await auditResponse.json()).data || [];
-    const conversions = (await conversionsResponse.json()).data || {};
-    const competitors = (await competitorsResponse.json()).data || [];
+    const results = await Promise.allSettled(
+      endpoints.map(async ep => {
+        try {
+          const response = await fetchAPI(ep.url);
+          const data = await response.json();
+          return { name: ep.name, data };
+        } catch (err) {
+          console.error(`[Cockpit] Erreur ${ep.name}:`, err.message);
+          return { name: ep.name, data: null, error: err.message };
+        }
+      })
+    );
+    
+    // Extraire les données avec fallback
+    const getData = (name, defaultValue) => {
+      const result = results.find(r => r.value?.name === name);
+      if (result?.status === 'fulfilled' && result.value?.data?.data !== undefined) {
+        return result.value.data.data;
+      }
+      if (result?.status === 'fulfilled' && result.value?.data?.actions !== undefined) {
+        return result.value.data.actions;
+      }
+      return defaultValue;
+    };
+    
+    const stats = getData('stats', {});
+    const scoreData = getData('score', { score: 0 });
+    const alerts = getData('alerts', []);
+    const actions = getData('actions', []);
+    const opportunities = getData('opportunities', []);
+    const contents = getData('content', []);
+    const auditPages = getData('audit', []);
+    const conversions = getData('conversions', {});
+    const competitors = getData('competitors', []);
 
     // Stocker en cache avec timestamp
     cockpitCache = { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors };
     cockpitCacheTimestamp = Date.now();
     
+    console.log('[Cockpit] Données chargées:', {
+      stats: !!stats.total_queries,
+      score: scoreData.score,
+      alerts: alerts.length,
+      actions: actions.length,
+      opportunities: opportunities.length,
+      contents: contents.length,
+      auditPages: auditPages.length,
+      conversions: !!conversions.total,
+      competitors: competitors.length
+    });
+    
     // Render
     renderCockpitV2(cockpitCache);
 
   } catch (err) {
-    container.innerHTML = '<p class="error">Erreur de connexion à l\'API</p>';
+    container.innerHTML = `<p class="error">Erreur de chargement</p><p class="error-detail">${escapeHtml(err.message)}</p>`;
     console.error('loadCockpit error:', err);
   }
 }
