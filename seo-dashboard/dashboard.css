@@ -6521,3 +6521,48 @@ select:focus {
   padding: 0.25rem 0.5rem !important;
   font-size: 0.7rem !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.8 — Auto-génération Image DALL-E
+   ══════════════════════════════════════════════════════════════ */
+
+.image-loading.auto-generate {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1)) !important;
+  border: 1px dashed #ec4899 !important;
+}
+
+.image-result.auto-integrated {
+  border: 1px solid var(--success) !important;
+}
+
+.image-status {
+  display: flex !important;
+  justify-content: center !important;
+  margin: 0.4rem 0 !important;
+}
+
+.status-badge {
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+}
+
+.status-badge.success {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+}
+
+.image-real-note {
+  font-size: 0.7rem !important;
+  color: #10b981 !important;
+  text-align: center !important;
+  margin-top: 0.3rem !important;
+}
+
+.image-simulated-note {
+  font-size: 0.7rem !important;
+  color: var(--warning) !important;
+  text-align: center !important;
+  margin-top: 0.3rem !important;
+}

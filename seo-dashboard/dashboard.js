@@ -1084,6 +1084,9 @@ async function generateSEOContent() {
     // Afficher le résultat
     renderStudioResult(content);
     
+    // Auto-génération de l'image (non-bloquante)
+    autoGenerateImage(content.keyword, content.type);
+    
   } catch (error) {
     console.error('[Studio SEO] Erreur:', error);
     resultSection.innerHTML = `
@@ -1381,6 +1384,121 @@ function renderStudioResult(content) {
 }
 
 /**
+ * Auto-génère une image après la création du contenu (non-bloquant)
+ */
+async function autoGenerateImage(keyword, contentType) {
+  // Délai court pour laisser le DOM se mettre à jour
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const container = document.getElementById('image-container');
+  if (!container) return;
+  
+  // Afficher le loader auto-génération
+  container.innerHTML = `
+    <div class="image-loading auto-generate">
+      <div class="studio-loading-spinner small"></div>
+      <p>🎨 Génération automatique de l'image...</p>
+      <p class="loading-note">DALL-E crée une illustration adaptée à votre contenu</p>
+    </div>
+  `;
+  
+  imageGenerationInProgress = true;
+  
+  try {
+    // Générer le prompt optimisé
+    const prompt = generateImagePrompt(keyword, contentType);
+    
+    // Appel API DALL-E
+    const imageResult = await callDALLEForImage(prompt, keyword);
+    
+    // Stocker l'image
+    studioGeneratedImage = imageResult;
+    
+    // Afficher le résultat avec auto-intégration
+    renderImageResultAutoIntegrated(imageResult);
+    
+  } catch (error) {
+    console.error('[Auto Image] Erreur:', error);
+    container.innerHTML = `
+      <div class="image-error">
+        <span class="error-icon">⚠️</span>
+        <p>Génération auto échouée</p>
+        <button class="btn-small btn-primary" onclick="generateArticleImage()">🔄 Réessayer</button>
+        <button class="btn-small btn-secondary" onclick="skipImage()">Continuer sans image</button>
+      </div>
+    `;
+  } finally {
+    imageGenerationInProgress = false;
+  }
+}
+
+/**
+ * Affiche l'image auto-générée et l'intègre automatiquement
+ */
+function renderImageResultAutoIntegrated(imageResult) {
+  const container = document.getElementById('image-container');
+  
+  // Auto-intégrer l'image dans le contenu
+  if (studioGeneratedContent && imageResult.url) {
+    integrateImageToContent(imageResult);
+  }
+  
+  container.innerHTML = `
+    <div class="image-result auto-integrated">
+      <div class="image-preview">
+        <img src="${imageResult.url}" alt="Image générée pour l'article" />
+      </div>
+      <div class="image-status">
+        <span class="status-badge success">✅ Image intégrée automatiquement</span>
+      </div>
+      <div class="image-actions">
+        <button class="btn-small btn-secondary" onclick="generateArticleImage()">🔄 Régénérer</button>
+        <button class="btn-small btn-secondary" onclick="removeImage()">❌ Retirer</button>
+      </div>
+      ${imageResult.simulated ? `
+        <p class="image-simulated-note">⚠️ Mode simulation - Image placeholder</p>
+      ` : `
+        <p class="image-real-note">✨ Image DALL-E réelle</p>
+      `}
+    </div>
+  `;
+}
+
+/**
+ * Intègre l'image dans le contenu HTML
+ */
+function integrateImageToContent(imageResult) {
+  if (!studioGeneratedContent) return;
+  
+  // Construire le HTML de l'image
+  const imageHTML = `
+        <figure class="article-image">
+          <img src="/images/blog/${studioGeneratedContent.slug}.webp" alt="${studioGeneratedContent.h1}" loading="lazy" />
+        </figure>
+`;
+  
+  // Vérifier si l'image n'est pas déjà intégrée
+  if (!studioGeneratedContent.htmlContent.includes('article-image')) {
+    // Insérer après l'intro
+    studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+      '<p class="article-intro">',
+      imageHTML + '\n        <p class="article-intro">'
+    );
+  }
+  
+  // Marquer comme ayant une image
+  studioGeneratedContent.hasImage = true;
+  studioGeneratedContent.imageUrl = imageResult.url;
+  studioGeneratedContent.imageSimulated = imageResult.simulated;
+  
+  // Mettre à jour l'aperçu
+  const previewBody = document.querySelector('.preview-body');
+  if (previewBody) {
+    previewBody.innerHTML = formatPreviewContent(studioGeneratedContent.htmlContent);
+  }
+}
+
+/**
  * Génère une image pour l'article via DALL-E
  */
 async function generateArticleImage() {
@@ -1458,20 +1576,20 @@ function generateImagePrompt(keyword, contentType) {
 /**
  * Appelle DALL-E pour générer l'image (simulation ou API)
  */
-async function callDALLEForImage(prompt) {
+async function callDALLEForImage(prompt, keyword = '') {
   try {
     // Appel API backend pour DALL-E
     const response = await fetchAPI('/api/dalle/generate', {
       method: 'POST',
-      body: JSON.stringify({ prompt, size: '1792x1024' })
+      body: JSON.stringify({ prompt, keyword, size: '1792x1024' })
     });
     
     if (!response.ok) {
       // Fallback: image placeholder si API non disponible
       console.warn('[Image IA] Endpoint DALL-E non disponible, utilisation placeholder');
-      await simulateDelay(2000);
+      await simulateDelay(1500);
       return {
-        url: 'https://placehold.co/1792x1024/1a1a2e/ffffff?text=Image+Article',
+        url: generatePlaceholderUrl(keyword || prompt),
         prompt: prompt,
         simulated: true,
         generatedAt: new Date().toISOString()
@@ -1482,7 +1600,7 @@ async function callDALLEForImage(prompt) {
     return {
       url: result.data?.url,
       prompt: prompt,
-      simulated: false,
+      simulated: result.data?.simulated || false,
       generatedAt: new Date().toISOString()
     };
     
@@ -1490,12 +1608,37 @@ async function callDALLEForImage(prompt) {
     console.error('[DALL-E] Erreur:', error);
     // Fallback placeholder
     return {
-      url: 'https://placehold.co/1792x1024/1a1a2e/ffffff?text=Image+Article',
+      url: generatePlaceholderUrl(keyword || prompt),
       prompt: prompt,
       simulated: true,
       generatedAt: new Date().toISOString()
     };
   }
+}
+
+/**
+ * Génère une URL placeholder locale
+ */
+function generatePlaceholderUrl(keyword) {
+  const keywordLower = (keyword || '').toLowerCase();
+  let bgColor = '1a1a2e';
+  let text = 'Renovation';
+  
+  if (keywordLower.includes('cuisine')) {
+    bgColor = '2d5016';
+    text = 'Cuisine';
+  } else if (keywordLower.includes('salle') || keywordLower.includes('bain')) {
+    bgColor = '164e63';
+    text = 'Salle+Bain';
+  } else if (keywordLower.includes('appartement')) {
+    bgColor = '7c3aed';
+    text = 'Appartement';
+  } else if (keywordLower.includes('peinture')) {
+    bgColor = 'dc2626';
+    text = 'Peinture';
+  }
+  
+  return `https://placehold.co/1792x1024/${bgColor}/ffffff?text=${text}`;
 }
 
 /**

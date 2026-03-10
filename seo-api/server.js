@@ -125,6 +125,10 @@ app.use('/api', seoExecutorRoutes);
 const auditIARoutes = require('./routes/auditIA');
 app.use('/api', auditIARoutes);
 
+// Routes DALL-E (Image Generation)
+const dalleRoutes = require('./routes/dalle');
+app.use('/api', dalleRoutes);
+
 // Import error handlers
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
