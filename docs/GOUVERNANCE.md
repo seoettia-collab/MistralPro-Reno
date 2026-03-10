@@ -284,7 +284,74 @@ Cette méthode QA est **obligatoire** pour :
 
 ---
 
-## 7. APPLICATION
+## 7. IDENTIFICATION DES MESSAGES PAR MODULE
+
+### 7.1 Objectif
+
+Maintenir une synchronisation claire entre GPT et Claude et éviter toute confusion entre les directives en cours. Chaque sujet actif est identifié par un identifiant basé sur le module concerné.
+
+### 7.2 Codes modules
+
+| Module | Code |
+|--------|------|
+| Cockpit | CK |
+| Audit IA | AU |
+| Studio SEO | SS |
+| Publication | PB |
+| Image IA | IM |
+| Gouvernance | GOV |
+| Architecture | ARCH |
+| Bug/Fix | FX |
+
+### 7.3 Format identifiant
+
+```
+[CODE]-[THÈME]-[NUMÉRO]
+```
+
+**Exemples :**
+- `CK-CONC-01` : Cockpit, Concurrence, message 1
+- `AU-PROMPT-03` : Audit IA, Prompt, message 3
+- `SS-GEN-02` : Studio SEO, Génération, message 2
+
+### 7.4 Numérotation continue
+
+Tant que le sujet n'est pas terminé, le même identifiant racine est conservé :
+
+```
+CK-CONC-01
+CK-CONC-02
+CK-CONC-03
+CK-CONC-04
+```
+
+### 7.5 Clôture
+
+Quand le sujet est terminé :
+
+```
+CK-CONC-FINAL
+```
+
+Après clôture, un nouveau sujet utilisera une nouvelle numérotation.
+
+### 7.6 Accusé de réception
+
+Après chaque directive GPT, Claude répond avec le même identifiant :
+
+```
+CK-CONC-02
+ACCUSÉ DE RÉCEPTION
+
+Directive comprise.
+Implémentation en cours.
+
+— Claude
+```
+
+---
+
+## 8. APPLICATION
 
 Cette directive de gouvernance est **effective immédiatement** et s'applique à toutes les communications techniques structurantes du projet.
 
@@ -292,3 +359,4 @@ Cette directive de gouvernance est **effective immédiatement** et s'applique à
 
 *Document créé le 8 mars 2026 — Gouvernance v1.1*
 *Mise à jour 9 mars 2026 — Ajout méthode QA*
+*Mise à jour 10 mars 2026 — Ajout protocole identification messages*
