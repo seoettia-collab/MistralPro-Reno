@@ -133,6 +133,10 @@ app.use('/api', dalleRoutes);
 const optimizeRoutes = require('./routes/optimize');
 app.use('/api', optimizeRoutes);
 
+// Routes GitHub (Publication)
+const githubRoutes = require('./routes/github');
+app.use('/api', githubRoutes);
+
 // Import error handlers
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
