@@ -214,20 +214,34 @@ function generateImagePrompt(keyword, contentType = 'blog') {
 
 Scene details: ${selectedTheme.details}.
 
-STRICT PHOTOGRAPHY RULES:
-- Shot with wide-angle lens (24mm equivalent)
-- Camera at chest height, straight horizon line
-- Balanced natural daylight from windows
-- No dramatic lighting, no lens flare, no glow effects
-- No motion blur, no depth of field blur
-- Sharp focus on entire room
-- Realistic proportions and perspective
-- Clean, uncluttered space
-- No people, no pets, no text, no watermarks
+COMPOSITION RULES:
+- Full room view, nothing cropped at edges
+- Camera at chest height (1.2m from floor)
+- Perfectly straight horizon line
+- Wide-angle lens (24mm), no distortion
+- Subject centered, walls visible on both sides
+- Floor and ceiling partially visible
 
-Style: Real estate magazine photography, similar to photos used by property agencies in Paris.
-Aspect ratio: 16:9 landscape format.
-Quality: High resolution, professional, commercially usable.`;
+LIGHTING RULES:
+- Soft natural daylight from windows
+- No harsh shadows, no overexposure
+- No lens flare, no glow effects
+- Even illumination across the room
+
+QUALITY RULES:
+- Sharp focus on entire scene
+- No motion blur, no bokeh
+- No vignette, no color cast
+- Clean professional look
+
+STRICT PROHIBITIONS:
+- No black bars or letterboxing
+- No cinematic effects
+- No people, pets, text, watermarks
+- No artificial dramatic lighting
+
+Output: Real estate magazine style, Paris property agency quality.
+Format: Landscape 1.75:1 ratio, fill entire frame edge to edge.`;
 
   return prompt;
 }
