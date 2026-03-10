@@ -7307,55 +7307,68 @@ select:focus {
   border-left: 3px solid #10b981 !important;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   V2.13 — GRILLE COMPACTE DÉCISIONS IA
+   ══════════════════════════════════════════════════════════════ */
+
 .decisions-list {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1rem !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 0.75rem !important;
 }
 
 .decision-card {
   background: var(--bg-card) !important;
-  border-radius: 10px !important;
-  padding: 1rem !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
   border: 1px solid var(--border-color) !important;
   transition: all 0.2s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 140px !important;
+  max-height: 180px !important;
 }
 
 .decision-card:hover {
   border-color: #10b981 !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15) !important;
+  transform: translateY(-1px) !important;
 }
 
 .decision-header {
   display: flex !important;
   align-items: center !important;
-  gap: 0.75rem !important;
-  margin-bottom: 0.75rem !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.4rem !important;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 .decision-icon {
-  font-size: 1.5rem !important;
+  font-size: 1.1rem !important;
 }
 
 .decision-type-info {
   flex: 1 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.5rem !important;
+  gap: 0.4rem !important;
+  min-width: 0 !important;
 }
 
 .decision-type-label {
   font-weight: 600 !important;
-  font-size: 0.95rem !important;
+  font-size: 0.8rem !important;
   color: var(--text-primary) !important;
 }
 
 .decision-type-badge {
-  font-size: 0.7rem !important;
-  padding: 0.2rem 0.5rem !important;
-  border-radius: 4px !important;
-  font-weight: 500 !important;
+  font-size: 0.6rem !important;
+  padding: 0.15rem 0.35rem !important;
+  border-radius: 3px !important;
+  font-weight: 600 !important;
   text-transform: uppercase !important;
+  white-space: nowrap !important;
 }
 
 .decision-type-badge.type-create_content {
@@ -7375,8 +7388,9 @@ select:focus {
 
 .decision-impact {
   position: relative !important;
-  width: 42px !important;
-  height: 42px !important;
+  width: 32px !important;
+  height: 32px !important;
+  flex-shrink: 0 !important;
 }
 
 .decision-impact .impact-circle {
@@ -7389,63 +7403,80 @@ select:focus {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  font-size: 0.75rem !important;
+  font-size: 0.65rem !important;
   font-weight: 700 !important;
   color: var(--text-primary) !important;
 }
 
 .decision-body {
-  margin-bottom: 0.75rem !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+  margin-bottom: 0.4rem !important;
 }
 
 .decision-title {
-  font-size: 1rem !important;
+  font-size: 0.85rem !important;
   font-weight: 600 !important;
   color: var(--text-primary) !important;
-  margin: 0 0 0.5rem 0 !important;
+  margin: 0 0 0.25rem 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .decision-keyword {
-  font-size: 0.85rem !important;
+  font-size: 0.75rem !important;
   color: #3b82f6 !important;
-  margin: 0.25rem 0 !important;
+  margin: 0.15rem 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .decision-reason {
-  font-size: 0.85rem !important;
+  font-size: 0.7rem !important;
   color: var(--text-secondary) !important;
-  margin: 0.25rem 0 !important;
+  margin: 0.15rem 0 !important;
+  line-height: 1.3 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
 }
 
 .decision-fixes {
-  font-size: 0.8rem !important;
+  font-size: 0.7rem !important;
   color: #f59e0b !important;
-  margin: 0.25rem 0 !important;
+  margin: 0.15rem 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .decision-competitor {
-  font-size: 0.8rem !important;
+  font-size: 0.65rem !important;
   color: #6366f1 !important;
-  margin: 0.5rem 0 0 0 !important;
+  margin: 0.2rem 0 0 0 !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.3rem !important;
-  padding: 0.2rem 0.5rem !important;
+  gap: 0.2rem !important;
+  padding: 0.1rem 0.3rem !important;
   background: rgba(99, 102, 241, 0.1) !important;
-  border-radius: 4px !important;
+  border-radius: 3px !important;
 }
 
 .decision-footer {
   display: flex !important;
   justify-content: flex-end !important;
-  padding-top: 0.5rem !important;
+  padding-top: 0.4rem !important;
   border-top: 1px dashed var(--border-color) !important;
+  margin-top: auto !important;
 }
 
 .decision-footer button {
-  padding: 0.5rem 1rem !important;
-  font-size: 0.85rem !important;
-  border-radius: 6px !important;
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.75rem !important;
+  border-radius: 5px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
@@ -7459,4 +7490,20 @@ select:focus {
 
 .btn-success:hover {
   background: #059669 !important;
+}
+
+/* État vide décisions */
+.empty-decisions {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem !important;
+  color: var(--text-secondary) !important;
+}
+
+.empty-decisions .empty-icon {
+  font-size: 2rem !important;
+  margin-bottom: 0.5rem !important;
 }
