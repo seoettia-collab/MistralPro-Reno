@@ -44,12 +44,24 @@ RÈGLES IMPORTANTES :
 - Sois concis et actionnable
 - Priorise les actions par impact potentiel
 - Adapte tes recommandations au secteur de la rénovation à Paris
+- Analyse les concurrents suivis pour contextualiser tes recommandations
 
 FORMAT DE RÉPONSE OBLIGATOIRE (JSON) :
 {
   "summary": "Résumé de 200 caractères max de l'état SEO",
   "strengths": ["Force 1", "Force 2", "Force 3"],
   "weaknesses": ["Faiblesse 1", "Faiblesse 2", "Faiblesse 3"],
+  "competition": {
+    "analysis": "Analyse concurrentielle en 1-2 phrases",
+    "competitors": [
+      {
+        "domain": "domaine.com",
+        "threat_level": "HIGH|MEDIUM|LOW",
+        "positioning": "Type de positionnement observé"
+      }
+    ],
+    "opportunities": ["Opportunité face aux concurrents 1", "Opportunité 2"]
+  },
   "actions": [
     {
       "type": "create_content|optimize_page|fix_technical",
@@ -57,7 +69,8 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON) :
       "priority": "HIGH|MEDIUM|LOW",
       "impact": "Description de l'impact attendu",
       "reason": "Pourquoi cette action est recommandée",
-      "impactScore": 0-100
+      "impactScore": 0-100,
+      "vs_competitor": "Domaine concurrent ciblé (optionnel)"
     }
   ]
 }`;
@@ -67,7 +80,12 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON) :
 DONNÉES COCKPIT :
 ${JSON.stringify(cockpitData, null, 2)}
 
-Fournis ton analyse en JSON selon le format spécifié.`;
+CONCURRENTS SUIVIS :
+${cockpitData.concurrents && cockpitData.concurrents.length > 0 
+  ? cockpitData.concurrents.map(c => `- ${c.domaine}`).join('\n')
+  : 'Aucun concurrent suivi'}
+
+Fournis ton analyse en JSON selon le format spécifié. Inclus une analyse concurrentielle basée sur les domaines suivis.`;
 
     // Appel API Claude
     const response = await fetch(ANTHROPIC_API_URL, {
@@ -160,7 +178,13 @@ Fournis ton analyse en JSON selon le format spécifié.`;
  * Génère un audit simulé basé sur les données cockpit
  */
 function generateSimulatedAudit(cockpitData) {
-  const { stats = {}, score = 0, opportunities = [], alerts = [] } = cockpitData;
+  const { 
+    score_global = 0, 
+    search_console = {}, 
+    opportunites = [], 
+    alertes = [],
+    concurrents = []
+  } = cockpitData;
   
   const timestamp = Date.now();
   let actionCounter = 0;
@@ -168,42 +192,44 @@ function generateSimulatedAudit(cockpitData) {
   // Analyser les données pour générer des recommandations pertinentes
   const actions = [];
   
-  // Actions basées sur les opportunités
-  if (opportunities.length > 0) {
-    opportunities.slice(0, 3).forEach(opp => {
+  // Actions basées sur les opportunités (avec référence concurrents)
+  if (opportunites.length > 0) {
+    opportunites.slice(0, 3).forEach((opp, idx) => {
+      const competitor = concurrents[idx % concurrents.length];
       actions.push({
         actionId: `action_${timestamp}_${actionCounter++}`,
         type: 'create_content',
-        target: opp.keyword || opp.query || 'mot-clé opportunité',
+        target: opp.keyword || 'mot-clé opportunité',
         priority: opp.priority === 'high' ? 'HIGH' : 'MEDIUM',
         impact: `+${Math.floor(Math.random() * 30 + 10)} clics/mois estimés`,
         reason: `Position ${opp.position || 'améliorable'} avec ${opp.impressions || 'N'} impressions`,
-        impactScore: Math.floor(Math.random() * 30 + 60)
+        impactScore: Math.floor(Math.random() * 30 + 60),
+        vs_competitor: competitor ? competitor.domaine : null
       });
     });
   }
   
   // Actions basées sur le score
-  if (score < 50) {
+  if (score_global < 50) {
     actions.push({
       actionId: `action_${timestamp}_${actionCounter++}`,
       type: 'fix_technical',
       target: 'Optimisation technique globale',
       priority: 'HIGH',
       impact: 'Amélioration score SEO +15-20 points',
-      reason: `Score actuel ${score}/100 - amélioration technique prioritaire`,
+      reason: `Score actuel ${score_global}/100 - amélioration technique prioritaire`,
       impactScore: 85
     });
   }
   
   // Actions basées sur les alertes
-  if (alerts.length > 0) {
-    const criticalAlert = alerts.find(a => a.type === 'danger' || a.level === 'critical');
+  if (alertes.length > 0) {
+    const criticalAlert = alertes.find(a => a.includes && (a.includes('critique') || a.includes('faible')));
     if (criticalAlert) {
       actions.push({
         actionId: `action_${timestamp}_${actionCounter++}`,
         type: 'fix_technical',
-        target: criticalAlert.message || 'Correction alerte critique',
+        target: criticalAlert,
         priority: 'HIGH',
         impact: 'Correction problème bloquant SEO',
         reason: 'Alerte critique détectée',
@@ -221,25 +247,50 @@ function generateSimulatedAudit(cockpitData) {
       priority: 'MEDIUM',
       impact: '+20 clics/mois estimés',
       reason: 'Mot-clé principal à renforcer',
-      impactScore: 65
+      impactScore: 65,
+      vs_competitor: concurrents[0] ? concurrents[0].domaine : null
     });
   }
   
   // Trier par impactScore décroissant
   actions.sort((a, b) => b.impactScore - a.impactScore);
   
+  // Générer l'analyse concurrentielle
+  const competition = {
+    analysis: concurrents.length > 0 
+      ? `${concurrents.length} concurrent(s) suivi(s). Positionnement sur le marché de la rénovation Paris à renforcer.`
+      : 'Aucun concurrent suivi. Recommandation : ajouter 3-5 concurrents directs pour benchmark.',
+    competitors: concurrents.slice(0, 4).map((c, idx) => ({
+      domain: c.domaine,
+      threat_level: idx === 0 ? 'HIGH' : idx < 2 ? 'MEDIUM' : 'LOW',
+      positioning: 'Rénovation généraliste Paris/IDF'
+    })),
+    opportunities: concurrents.length > 0 
+      ? [
+          'Se différencier par le contenu expert (guides détaillés)',
+          'Cibler des mots-clés longue traîne moins concurrentiels',
+          'Renforcer la présence locale (Paris 17, arrondissements)'
+        ]
+      : [
+          'Identifier les concurrents directs sur Google',
+          'Analyser leurs stratégies de contenu',
+          'Définir un positionnement différenciant'
+        ]
+  };
+  
   return {
-    summary: `Score SEO ${score}/100. ${stats.total_clicks || 0} clics, ${stats.total_impressions || 0} impressions. ${opportunities.length} opportunités détectées.`,
+    summary: `Score SEO ${score_global}/100. ${search_console.clics || 0} clics, ${search_console.impressions || 0} impressions. ${concurrents.length} concurrent(s) suivi(s).`,
     strengths: [
       'Site techniquement fonctionnel',
       'Présence locale Paris établie',
       'Structure de pages cohérente'
     ],
     weaknesses: [
-      score < 50 ? 'Score SEO faible nécessitant optimisation' : 'Contenu à enrichir',
+      score_global < 50 ? 'Score SEO faible nécessitant optimisation' : 'Contenu à enrichir',
       'Volume de clics à améliorer',
       'Opportunités de mots-clés non exploitées'
     ],
+    competition,
     actions: actions.slice(0, 5)
   };
 }

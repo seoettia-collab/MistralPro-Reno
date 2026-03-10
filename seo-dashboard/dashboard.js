@@ -610,7 +610,7 @@ function prepareCockpitDataForAudit() {
     return null;
   }
   
-  const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions } = cockpitCache;
+  const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = cockpitCache;
   
   // Résumé structuré pour Claude
   return {
@@ -636,6 +636,11 @@ function prepareCockpitDataForAudit() {
       position: o.position,
       impressions: o.impressions,
       type: o.opportunity_type || o.type
+    })),
+    
+    concurrents: (competitors || []).map(c => ({
+      domaine: c.domain,
+      suivi_depuis: c.tracked_since
     })),
     
     audit_technique: {
@@ -864,10 +869,35 @@ function generateSimulatedAudit(data) {
     return b.impactScore - a.impactScore; // Plus haut score en premier
   });
   
+  // Générer l'analyse concurrentielle basée sur cockpitCache
+  const concurrents = data.concurrents || [];
+  const competition = {
+    analysis: concurrents.length > 0 
+      ? `${concurrents.length} concurrent(s) suivi(s) dans le secteur rénovation Paris. Positionnement à renforcer.`
+      : 'Aucun concurrent suivi. Ajoutez des concurrents dans le Cockpit pour enrichir l\'analyse.',
+    competitors: concurrents.slice(0, 4).map((c, idx) => ({
+      domain: c.domaine,
+      threat_level: idx === 0 ? 'HIGH' : idx < 2 ? 'MEDIUM' : 'LOW',
+      positioning: 'Rénovation généraliste Paris/IDF'
+    })),
+    opportunities: concurrents.length > 0 
+      ? [
+          'Se différencier par le contenu expert (guides détaillés)',
+          'Cibler des mots-clés longue traîne moins concurrentiels',
+          'Renforcer la présence locale (Paris 17, arrondissements)'
+        ]
+      : [
+          'Identifier et suivre vos concurrents directs',
+          'Analyser leurs stratégies de contenu',
+          'Définir un positionnement différenciant'
+        ]
+  };
+  
   return {
     summary,
     strengths: strengths.slice(0, 3),
     weaknesses: weaknesses.slice(0, 3),
+    competition,
     actions: sortedActions.slice(0, 5)
   };
 }
@@ -982,6 +1012,41 @@ function renderAuditIAResult(audit) {
         </div>
       </div>
       
+      <!-- Analyse Concurrence -->
+      ${audit.competition ? `
+      <div class="audit-section audit-competition">
+        <h3>🏆 Analyse Concurrentielle</h3>
+        <p class="competition-analysis">${escapeHtml(audit.competition.analysis || '')}</p>
+        
+        ${audit.competition.competitors && audit.competition.competitors.length > 0 ? `
+        <div class="competitors-grid">
+          ${audit.competition.competitors.map(comp => {
+            const threatClass = comp.threat_level === 'HIGH' ? 'threat-high' : comp.threat_level === 'MEDIUM' ? 'threat-medium' : 'threat-low';
+            const threatIcon = comp.threat_level === 'HIGH' ? '🔴' : comp.threat_level === 'MEDIUM' ? '🟠' : '🟢';
+            return `
+            <div class="competitor-analysis-card ${threatClass}">
+              <div class="competitor-header">
+                <span class="competitor-domain-lg">${escapeHtml(comp.domain)}</span>
+                <span class="threat-badge ${threatClass}">${threatIcon} ${comp.threat_level}</span>
+              </div>
+              <p class="competitor-positioning">${escapeHtml(comp.positioning || 'Positionnement non analysé')}</p>
+            </div>
+            `;
+          }).join('')}
+        </div>
+        ` : ''}
+        
+        ${audit.competition.opportunities && audit.competition.opportunities.length > 0 ? `
+        <div class="competition-opportunities">
+          <h4>💡 Opportunités face aux concurrents</h4>
+          <ul class="opportunities-list">
+            ${audit.competition.opportunities.map(opp => `<li><span class="list-icon">→</span> ${escapeHtml(opp)}</li>`).join('')}
+          </ul>
+        </div>
+        ` : ''}
+      </div>
+      ` : ''}
+      
       <!-- Actions prioritaires -->
       <div class="audit-section audit-actions-ia">
         <h3>🎯 Actions prioritaires</h3>
@@ -1017,6 +1082,7 @@ function renderAuditIAResult(audit) {
                 <h4 class="action-target">${escapeHtml(action.target)}</h4>
                 <p class="action-reason">${escapeHtml(action.reason)}</p>
                 <p class="action-impact"><strong>Impact:</strong> ${escapeHtml(action.impact)}</p>
+                ${action.vs_competitor ? `<p class="action-vs-competitor"><span class="vs-icon">⚔️</span> vs ${escapeHtml(action.vs_competitor)}</p>` : ''}
               </div>
               <div class="action-footer">
                 <button class="${actionBtnClass}" onclick="executeAuditAction('${action.type}', '${escapeHtml(action.target)}', '${action.actionId || ''}')">

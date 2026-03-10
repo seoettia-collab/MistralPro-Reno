@@ -7166,3 +7166,134 @@ select:focus {
   font-weight: 600 !important;
   margin-bottom: 0.75rem !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.11 — SECTION CONCURRENCE AUDIT IA
+   ══════════════════════════════════════════════════════════════ */
+
+.audit-competition {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%) !important;
+  border-left: 3px solid #6366f1 !important;
+}
+
+.competition-analysis {
+  font-size: 0.9rem !important;
+  color: var(--text-secondary) !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.5 !important;
+}
+
+.competitors-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.75rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.competitor-analysis-card {
+  background: var(--bg-card) !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.competitor-analysis-card.threat-high {
+  border-left: 3px solid #ef4444 !important;
+}
+
+.competitor-analysis-card.threat-medium {
+  border-left: 3px solid #f59e0b !important;
+}
+
+.competitor-analysis-card.threat-low {
+  border-left: 3px solid #10b981 !important;
+}
+
+.competitor-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.competitor-domain-lg {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  color: var(--text-primary) !important;
+}
+
+.threat-badge {
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+}
+
+.threat-badge.threat-high {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #ef4444 !important;
+}
+
+.threat-badge.threat-medium {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #f59e0b !important;
+}
+
+.threat-badge.threat-low {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+}
+
+.competitor-positioning {
+  font-size: 0.8rem !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.competition-opportunities {
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px dashed var(--border-color) !important;
+}
+
+.competition-opportunities h4 {
+  font-size: 0.9rem !important;
+  color: var(--text-primary) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.opportunities-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.opportunities-list li {
+  padding: 0.4rem 0 !important;
+  font-size: 0.85rem !important;
+  color: var(--text-secondary) !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.5rem !important;
+}
+
+.opportunities-list .list-icon {
+  color: #6366f1 !important;
+}
+
+/* Action vs competitor badge */
+.action-vs-competitor {
+  font-size: 0.75rem !important;
+  color: #6366f1 !important;
+  margin-top: 0.5rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+}
+
+.vs-icon {
+  font-size: 0.85rem !important;
+}
