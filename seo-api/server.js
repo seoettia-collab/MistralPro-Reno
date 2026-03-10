@@ -161,6 +161,10 @@ process.on('unhandledRejection', (reason, promise) => {
 // Démarrage serveur avec init schema
 const startServer = async () => {
   try {
+    // Version log pour debug déploiement
+    console.log('[Server] Version: 2.12.1 - GitHub routes enabled');
+    console.log('[Server] Routes disponibles: github/publish, github/check-file');
+    
     await initSchema();
     app.listen(PORT, () => {
       console.log(`SEO API running on port ${PORT}`);
