@@ -1340,29 +1340,84 @@ async function generateSEOContent() {
 }
 
 /**
- * Appelle Claude pour générer le contenu (simulation)
+ * Appelle Claude API pour générer le contenu SEO
+ * Utilise l'endpoint /api/content/generate
  */
 async function callClaudeForContent(params) {
-  // Simuler un délai de génération
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Update progress
+  // Update progress - Étape 1
   document.querySelectorAll('.progress-step').forEach((el, i) => {
     if (i === 0) el.classList.add('done');
     if (i === 1) el.classList.add('active');
   });
   
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  document.querySelectorAll('.progress-step').forEach((el, i) => {
-    if (i === 1) el.classList.add('done');
-    if (i === 2) el.classList.add('active');
-  });
-  
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Générer le contenu simulé basé sur les paramètres
-  const wordCount = params.length === 'short' ? 500 : params.length === 'medium' ? 800 : 1200;
+  try {
+    // Appel API backend
+    const response = await fetchAPI('/api/content/generate', {
+      method: 'POST',
+      body: JSON.stringify({
+        keyword: params.keyword,
+        type: params.type,
+        tone: params.tone,
+        length: params.length,
+        context: params.context
+      })
+    });
+    
+    // Update progress - Étape 2
+    document.querySelectorAll('.progress-step').forEach((el, i) => {
+      if (i === 1) el.classList.add('done');
+      if (i === 2) el.classList.add('active');
+    });
+    
+    if (!response.ok) {
+      console.warn('[Studio SEO] API non disponible, fallback simulation');
+      return generateFallbackContent(params);
+    }
+    
+    const result = await response.json();
+    
+    if (result.status !== 'ok' || !result.data) {
+      console.warn('[Studio SEO] Réponse API invalide, fallback simulation');
+      return generateFallbackContent(params);
+    }
+    
+    // Update progress - Étape 3
+    document.querySelectorAll('.progress-step').forEach((el, i) => {
+      if (i === 2) el.classList.add('done');
+    });
+    
+    // Log si contenu simulé
+    if (result.simulated) {
+      console.log('[Studio SEO] Contenu généré en mode simulation');
+    } else {
+      console.log('[Studio SEO] ✅ Contenu généré via Claude API');
+    }
+    
+    return {
+      keyword: result.data.keyword,
+      type: result.data.type,
+      title: result.data.title,
+      h1: result.data.h1,
+      slug: result.data.slug,
+      metaDescription: result.data.metaDescription,
+      wordCount: result.data.wordCount,
+      htmlContent: result.data.htmlContent,
+      sections: result.data.sections,
+      faq: result.data.faq,
+      generatedAt: result.data.generatedAt,
+      simulated: result.simulated
+    };
+    
+  } catch (error) {
+    console.error('[Studio SEO] Erreur API:', error);
+    return generateFallbackContent(params);
+  }
+}
+
+/**
+ * Génère un contenu de fallback en cas d'erreur API
+ */
+function generateFallbackContent(params) {
   const slug = params.keyword.toLowerCase()
     .replace(/[àáâãäå]/g, 'a')
     .replace(/[èéêë]/g, 'e')
@@ -1373,11 +1428,11 @@ async function callClaudeForContent(params) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
   
+  const wordCount = params.length === 'short' ? 500 : params.length === 'medium' ? 800 : 1200;
   const title = `${capitalizeFirst(params.keyword)} | Guide Complet 2026 - Mistral Pro Reno`;
   const h1 = `${capitalizeFirst(params.keyword)} : Guide et Conseils d'Experts`;
   const metaDescription = `Découvrez tout sur ${params.keyword}. Conseils d'experts, prix, étapes et devis gratuit. Mistral Pro Reno, votre partenaire rénovation en Île-de-France.`;
   
-  // Générer le contenu HTML complet
   const htmlContent = generateArticleHTML({
     keyword: params.keyword,
     title,
@@ -1396,9 +1451,10 @@ async function callClaudeForContent(params) {
     h1,
     slug,
     metaDescription,
-    wordCount: wordCount,
+    wordCount,
     htmlContent,
-    generatedAt: new Date().toISOString()
+    generatedAt: new Date().toISOString(),
+    simulated: true
   };
 }
 

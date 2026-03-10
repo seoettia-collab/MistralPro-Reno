@@ -137,6 +137,10 @@ app.use('/api', optimizeRoutes);
 const githubRoutes = require('./routes/github');
 app.use('/api', githubRoutes);
 
+// Routes Content Generation (Claude API)
+const contentGenRoutes = require('./routes/contentGen');
+app.use('/api', contentGenRoutes);
+
 // Import error handlers
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
