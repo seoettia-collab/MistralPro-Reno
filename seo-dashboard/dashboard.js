@@ -1004,9 +1004,19 @@ async function launchFullAuditIA() {
 
 /**
  * Affiche le résultat de l'Audit IA
+ * Sécurisé contre les propriétés undefined
  */
 function renderAuditIAResult(audit) {
   const container = document.getElementById('audit-ia-container');
+  
+  // Sécuriser toutes les propriétés qui peuvent être undefined
+  const summary = audit.summary || 'Audit généré avec succès.';
+  const strengths = audit.strengths || [];
+  const weaknesses = audit.weaknesses || [];
+  const competition = audit.competition || null;
+  const competitors = competition?.competitors || [];
+  const opportunities = competition?.opportunities || [];
+  const decisions = audit.decisions || audit.actions || [];
   
   const html = `
     <div class="audit-ia-result">
@@ -1014,7 +1024,7 @@ function renderAuditIAResult(audit) {
       <!-- Résumé -->
       <div class="audit-section audit-summary">
         <h3>📋 Résumé de l'audit</h3>
-        <p class="summary-text">${escapeHtml(audit.summary)}</p>
+        <p class="summary-text">${escapeHtml(summary)}</p>
         <div class="audit-meta">
           <span>🕐 Généré le ${new Date().toLocaleString('fr-FR')}</span>
           <button class="btn-small btn-secondary" onclick="launchFullAuditIA()">🔄 Relancer</button>
@@ -1026,34 +1036,39 @@ function renderAuditIAResult(audit) {
         <div class="audit-section audit-strengths">
           <h3>💪 Forces SEO</h3>
           <ul class="audit-list strengths-list">
-            ${audit.strengths.map(s => `<li><span class="list-icon">✅</span> ${escapeHtml(s)}</li>`).join('')}
+            ${strengths.length > 0 
+              ? strengths.map(s => `<li><span class="list-icon">✅</span> ${escapeHtml(s)}</li>`).join('')
+              : '<li class="empty-state">Aucune force identifiée</li>'}
           </ul>
         </div>
         
         <div class="audit-section audit-weaknesses">
           <h3>⚠️ Faiblesses SEO</h3>
           <ul class="audit-list weaknesses-list">
-            ${audit.weaknesses.map(w => `<li><span class="list-icon">⚠️</span> ${escapeHtml(w)}</li>`).join('')}
+            ${weaknesses.length > 0
+              ? weaknesses.map(w => `<li><span class="list-icon">⚠️</span> ${escapeHtml(w)}</li>`).join('')
+              : '<li class="empty-state">Aucune faiblesse identifiée</li>'}
           </ul>
         </div>
       </div>
       
       <!-- Analyse Concurrence -->
-      ${audit.competition ? `
+      ${competition ? `
       <div class="audit-section audit-competition">
         <h3>🏆 Analyse Concurrentielle</h3>
-        <p class="competition-analysis">${escapeHtml(audit.competition.analysis || '')}</p>
+        <p class="competition-analysis">${escapeHtml(competition.analysis || 'Analyse en cours...')}</p>
         
-        ${audit.competition.competitors && audit.competition.competitors.length > 0 ? `
+        ${competitors.length > 0 ? `
         <div class="competitors-grid">
-          ${audit.competition.competitors.map(comp => {
-            const threatClass = comp.threat_level === 'HIGH' ? 'threat-high' : comp.threat_level === 'MEDIUM' ? 'threat-medium' : 'threat-low';
-            const threatIcon = comp.threat_level === 'HIGH' ? '🔴' : comp.threat_level === 'MEDIUM' ? '🟠' : '🟢';
+          ${competitors.map(comp => {
+            const threatLevel = comp.threat_level || 'LOW';
+            const threatClass = threatLevel === 'HIGH' ? 'threat-high' : threatLevel === 'MEDIUM' ? 'threat-medium' : 'threat-low';
+            const threatIcon = threatLevel === 'HIGH' ? '🔴' : threatLevel === 'MEDIUM' ? '🟠' : '🟢';
             return `
             <div class="competitor-analysis-card ${threatClass}">
               <div class="competitor-header">
-                <span class="competitor-domain-lg">${escapeHtml(comp.domain)}</span>
-                <span class="threat-badge ${threatClass}">${threatIcon} ${comp.threat_level}</span>
+                <span class="competitor-domain-lg">${escapeHtml(comp.domain || 'Concurrent')}</span>
+                <span class="threat-badge ${threatClass}">${threatIcon} ${threatLevel}</span>
               </div>
               <p class="competitor-positioning">${escapeHtml(comp.positioning || 'Positionnement non analysé')}</p>
             </div>
@@ -1062,11 +1077,11 @@ function renderAuditIAResult(audit) {
         </div>
         ` : ''}
         
-        ${audit.competition.opportunities && audit.competition.opportunities.length > 0 ? `
+        ${opportunities.length > 0 ? `
         <div class="competition-opportunities">
           <h4>💡 Opportunités face aux concurrents</h4>
           <ul class="opportunities-list">
-            ${audit.competition.opportunities.map(opp => `<li><span class="list-icon">→</span> ${escapeHtml(opp)}</li>`).join('')}
+            ${opportunities.map(opp => `<li><span class="list-icon">→</span> ${escapeHtml(opp)}</li>`).join('')}
           </ul>
         </div>
         ` : ''}
@@ -1079,13 +1094,14 @@ function renderAuditIAResult(audit) {
         <p class="section-intro">Décisions prêtes à exécuter. Cliquez pour lancer l'action.</p>
         
         <div class="decisions-list">
-          ${(audit.decisions || audit.actions || []).map((decision, idx) => {
+          ${decisions.length > 0 ? decisions.map((decision, idx) => {
             const impactScore = decision.impact_score || decision.impactScore || 50;
             const impactColor = impactScore >= 70 ? '#10b981' : impactScore >= 40 ? '#f59e0b' : '#9ca3af';
+            const decisionType = decision.type || 'unknown';
             
             // Déterminer l'icône et le label selon le type
             let decisionIcon, decisionLabel, btnClass, btnAction;
-            switch(decision.type) {
+            switch(decisionType) {
               case 'create_content':
                 decisionIcon = '📝';
                 decisionLabel = 'Créer';
@@ -1108,7 +1124,7 @@ function renderAuditIAResult(audit) {
                 decisionIcon = '⚙️';
                 decisionLabel = 'Exécuter';
                 btnClass = 'btn-secondary';
-                btnAction = `executeDecision('${decision.type}', '${escapeHtml(decision.target || decision.keyword || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+                btnAction = `executeDecision('${decisionType}', '${escapeHtml(decision.target || decision.keyword || '')}', '${decision.decisionId || decision.actionId || ''}')`;
             }
             
             // Extraire les infos de la décision
@@ -1123,7 +1139,7 @@ function renderAuditIAResult(audit) {
                 <span class="decision-icon">${decisionIcon}</span>
                 <div class="decision-type-info">
                   <span class="decision-type-label">${decisionLabel}</span>
-                  <span class="decision-type-badge type-${decision.type}">${decision.type.replace('_', ' ')}</span>
+                  <span class="decision-type-badge type-${decisionType}">${decisionType.replace('_', ' ')}</span>
                 </div>
                 <div class="decision-impact" title="Score d'impact: ${impactScore}/100">
                   <svg viewBox="0 0 36 36" class="impact-circle">
@@ -1148,7 +1164,12 @@ function renderAuditIAResult(audit) {
               </div>
             </div>
             `;
-          }).join('')}
+          }).join('') : `
+            <div class="empty-decisions">
+              <span class="empty-icon">📭</span>
+              <p>Aucune décision générée. Relancez l'audit.</p>
+            </div>
+          `}
         </div>
       </div>
       
