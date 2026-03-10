@@ -1610,6 +1610,9 @@ function renderStudioResult(content) {
   // Reset image
   studioGeneratedImage = null;
   
+  // Extraire le contenu article du HTML (sans doctype/head/body)
+  const articleContent = extractArticleContent(content.htmlContent);
+  
   resultSection.innerHTML = `
     <div class="studio-result">
       <div class="result-header">
@@ -1617,13 +1620,17 @@ function renderStudioResult(content) {
         <div class="result-meta">
           <span>📄 ${content.type === 'blog' ? 'Article blog' : content.type === 'service' ? 'Page service' : 'Landing page'}</span>
           <span>📝 ~${content.wordCount} mots</span>
+          <span>📊 ${content.sections || 0} sections</span>
+          ${content.faq ? `<span>❓ ${content.faq} FAQ</span>` : ''}
           <span>🕐 ${new Date(content.generatedAt).toLocaleTimeString('fr-FR')}</span>
+          ${content.simulated ? '<span class="simulated-tag">⚠️ Simulation</span>' : '<span class="real-tag">✨ Claude API</span>'}
         </div>
       </div>
       
+      <!-- Aperçu SEO Google -->
       <div class="result-preview">
         <div class="preview-header">
-          <h4>Aperçu SEO</h4>
+          <h4>🔍 Aperçu Google</h4>
         </div>
         <div class="seo-preview-card">
           <div class="seo-preview-url">mistralpro-reno.fr/blog/${content.slug}.html</div>
@@ -1632,10 +1639,10 @@ function renderStudioResult(content) {
         </div>
       </div>
       
-      <!-- Section Image IA (optionnel) -->
+      <!-- Section Image IA -->
       <div class="result-image-section">
         <div class="image-header">
-          <h4>🖼️ Image article (optionnel)</h4>
+          <h4>🖼️ Image article</h4>
           <span class="image-badge">DALL-E</span>
         </div>
         <div id="image-container" class="image-container">
@@ -1645,22 +1652,26 @@ function renderStudioResult(content) {
             <button class="btn-primary" onclick="generateArticleImage()">
               ✨ Générer une image
             </button>
-            <p class="image-note">⚡ La publication du texte n'est pas bloquée par l'image</p>
+            <p class="image-note">⚡ La publication n'est pas bloquée par l'image</p>
           </div>
         </div>
       </div>
       
-      <div class="result-content">
-        <div class="content-header">
-          <h4>Contenu de l'article</h4>
+      <!-- APERÇU ARTICLE COMPLET -->
+      <div class="result-article-preview">
+        <div class="article-preview-header">
+          <h4>📄 Aperçu de l'article</h4>
           <div class="content-actions">
-            <button class="btn-small btn-secondary" onclick="copyStudioContent()">📋 Copier</button>
+            <button class="btn-small btn-secondary" onclick="copyStudioContent()">📋 Copier HTML</button>
             <button class="btn-small btn-secondary" onclick="regenerateContent()">🔄 Régénérer</button>
           </div>
         </div>
-        <div class="content-preview">
-          <h1>${escapeHtml(content.h1)}</h1>
-          <div class="preview-body">${formatPreviewContent(content.htmlContent)}</div>
+        <div class="article-preview-container">
+          <div class="article-preview-scroll">
+            <article class="article-preview-content">
+              ${articleContent}
+            </article>
+          </div>
         </div>
       </div>
       
@@ -1674,6 +1685,26 @@ function renderStudioResult(content) {
       </div>
     </div>
   `;
+}
+
+/**
+ * Extrait le contenu article du HTML complet
+ */
+function extractArticleContent(htmlContent) {
+  // Extraire le contenu entre <article> et </article>
+  const articleMatch = htmlContent.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
+  if (articleMatch) {
+    return articleMatch[1];
+  }
+  
+  // Fallback: extraire le contenu du body
+  const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (bodyMatch) {
+    return bodyMatch[1];
+  }
+  
+  // Fallback: retourner le HTML tel quel
+  return htmlContent;
 }
 
 /**
