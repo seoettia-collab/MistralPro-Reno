@@ -196,7 +196,8 @@ async function loadCockpit() {
       opportunitiesResponse,
       contentResponse,
       auditResponse,
-      conversionsResponse
+      conversionsResponse,
+      competitorsResponse
     ] = await Promise.all([
       fetchAPI('/api/stats'),
       fetchAPI('/api/seo-score'),
@@ -205,7 +206,8 @@ async function loadCockpit() {
       fetchAPI('/api/opportunities'),
       fetchAPI('/api/content'),
       fetchAPI('/api/audit'),
-      fetchAPI('/api/conversions/stats')
+      fetchAPI('/api/conversions/stats'),
+      fetchAPI('/api/competitors')
     ]);
     
     const stats = (await statsResponse.json()).data || {};
@@ -216,9 +218,10 @@ async function loadCockpit() {
     const contents = (await contentResponse.json()).data || [];
     const auditPages = (await auditResponse.json()).data || [];
     const conversions = (await conversionsResponse.json()).data || {};
+    const competitors = (await competitorsResponse.json()).data || [];
 
     // Stocker en cache avec timestamp
-    cockpitCache = { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions };
+    cockpitCache = { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors };
     cockpitCacheTimestamp = Date.now();
     
     // Render
@@ -235,7 +238,7 @@ async function loadCockpit() {
  */
 function renderCockpitV2(data) {
   const container = document.getElementById('cockpit-container');
-  const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions } = data;
+  const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = data;
 
     // Calculs agrégés
     const score = scoreData.score || 0;
@@ -266,6 +269,9 @@ function renderCockpitV2(data) {
     
     // Top 5 actions (limité - Audit IA produira la liste complète)
     const topActions = actions.slice(0, 5);
+    
+    // Concurrents (max 5)
+    const topCompetitors = (competitors || []).slice(0, 5);
 
     // Construire le HTML V2
     const html = `
@@ -405,7 +411,33 @@ function renderCockpitV2(data) {
           </div>
         </div>
 
-        <!-- SECTION 5 : Sous-modules techniques (accordéons en grille) -->
+        <!-- SECTION 5 : Concurrence -->
+        <div class="cockpit-section cockpit-competitors">
+          <h4>👥 Concurrence <span class="section-count">(${topCompetitors.length}/5)</span></h4>
+          <div class="competitors-grid">
+            ${topCompetitors.length > 0 ? topCompetitors.map(c => {
+              const domain = c.domain || c.url || 'N/A';
+              const position = c.avg_position ? c.avg_position.toFixed(1) : '-';
+              const keywords = c.keywords_count || c.tracked_keywords || 0;
+              return `
+              <div class="competitor-card">
+                <div class="competitor-info">
+                  <span class="competitor-domain">${escapeHtml(domain)}</span>
+                  <span class="competitor-meta">Pos. moy: ${position} • ${keywords} mots-clés</span>
+                </div>
+                <a href="https://${domain}" target="_blank" class="competitor-link" title="Voir le site">🔗</a>
+              </div>
+              `;
+            }).join('') : `
+              <div class="competitors-empty">
+                <p>Aucun concurrent suivi</p>
+                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=competitors]').click()">+ Ajouter</button>
+              </div>
+            `}
+          </div>
+        </div>
+
+        <!-- SECTION 6 : Sous-modules techniques (accordéons en grille) -->
         <div class="cockpit-submodules-wrapper">
           <h4>📊 Modules</h4>
           <div class="cockpit-submodules">
@@ -482,7 +514,7 @@ function renderCockpitV2(data) {
           </div>
         </div>
 
-        <!-- SECTION 6 : Bouton Audit IA -->
+        <!-- SECTION 7 : Bouton Audit IA -->
         <div class="cockpit-section cockpit-cta">
           <div class="cta-box">
             <div class="cta-info">
