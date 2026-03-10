@@ -27,52 +27,50 @@ router.post('/optimize/analyze', async (req, res) => {
 
     // Déterminer l'URL de la page à analyser
     let targetUrl = pageUrl;
+    
+    // Générer l'URL par défaut basée sur le keyword
     if (!targetUrl && keyword) {
-      // Chercher la page correspondant au mot-clé dans GSC
-      const gscPage = await dbGet(`
-        SELECT page_url, clicks, impressions, ctr, position
-        FROM gsc_pages
-        WHERE page_url LIKE '%' || ? || '%'
-        ORDER BY impressions DESC
-        LIMIT 1
-      `, [keyword.toLowerCase().replace(/\s+/g, '-')]);
-      
-      if (gscPage) {
-        targetUrl = gscPage.page_url;
+      const slug = keyword.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+      targetUrl = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
+    }
+
+    // Récupérer les données SEO de cette page si elle existe
+    let pageData = null;
+    if (targetUrl) {
+      try {
+        pageData = await dbGet(`
+          SELECT page_url, clicks, impressions, ctr, position
+          FROM gsc_pages
+          WHERE page_url = ?
+        `, [targetUrl]);
+      } catch (e) {
+        console.log('[Optimize] Pas de données GSC pour cette URL');
       }
     }
 
-    // Si toujours pas d'URL, chercher dans les contenus
-    if (!targetUrl && keyword) {
-      const content = await dbGet(`
-        SELECT slug_suggested, title, keyword
-        FROM contents
-        WHERE LOWER(keyword) LIKE '%' || LOWER(?) || '%'
-        OR LOWER(title) LIKE '%' || LOWER(?) || '%'
-        ORDER BY id DESC
-        LIMIT 1
-      `, [keyword, keyword]);
-      
-      if (content && content.slug_suggested) {
-        targetUrl = `https://www.mistralpro-reno.fr/blog/${content.slug_suggested}.html`;
+    // Récupérer les requêtes associées au mot-clé
+    let relatedQueries = [];
+    if (keyword) {
+      try {
+        // Recherche simple avec le premier mot du keyword
+        const searchTerm = keyword.split(' ')[0].toLowerCase();
+        relatedQueries = await dbAll(`
+          SELECT query, clicks, impressions, ctr, position
+          FROM queries
+          ORDER BY impressions DESC
+          LIMIT 10
+        `);
+        // Filtrer côté JS
+        relatedQueries = relatedQueries.filter(q => 
+          q.query && q.query.toLowerCase().includes(searchTerm)
+        );
+      } catch (e) {
+        console.log('[Optimize] Pas de requêtes trouvées');
       }
     }
-
-    // Récupérer les données SEO de cette page
-    const pageData = await dbGet(`
-      SELECT page_url, clicks, impressions, ctr, position
-      FROM gsc_pages
-      WHERE page_url = ?
-    `, [targetUrl]);
-
-    // Récupérer les requêtes associées
-    const relatedQueries = await dbAll(`
-      SELECT query, clicks, impressions, ctr, position
-      FROM queries
-      WHERE LOWER(query) LIKE '%' || LOWER(?) || '%'
-      ORDER BY impressions DESC
-      LIMIT 10
-    `, [keyword || '']);
 
     // Si pas d'API key Anthropic, générer une analyse simulée
     if (!ANTHROPIC_API_KEY) {
