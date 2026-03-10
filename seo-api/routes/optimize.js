@@ -45,7 +45,7 @@ router.post('/optimize/analyze', async (req, res) => {
     // Si toujours pas d'URL, chercher dans les contenus
     if (!targetUrl && keyword) {
       const content = await dbGet(`
-        SELECT url, title, keyword
+        SELECT slug_suggested, title, keyword
         FROM contents
         WHERE LOWER(keyword) LIKE '%' || LOWER(?) || '%'
         OR LOWER(title) LIKE '%' || LOWER(?) || '%'
@@ -53,8 +53,8 @@ router.post('/optimize/analyze', async (req, res) => {
         LIMIT 1
       `, [keyword, keyword]);
       
-      if (content && content.url) {
-        targetUrl = content.url;
+      if (content && content.slug_suggested) {
+        targetUrl = `https://www.mistralpro-reno.fr/blog/${content.slug_suggested}.html`;
       }
     }
 
