@@ -869,6 +869,32 @@ function generateSimulatedAudit(data) {
     return b.impactScore - a.impactScore; // Plus haut score en premier
   });
   
+  // Convertir les actions en decisions pour le nouveau format
+  const decisions = sortedActions.map((action, idx) => ({
+    decisionId: `decision_frontend_${Date.now()}_${idx}`,
+    type: action.type,
+    keyword: action.target,
+    target_page: action.type === 'create_content' ? `/blog/${action.target.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.html` : action.target,
+    title_suggested: action.target,
+    reason: action.reason,
+    impact_score: action.impactScore,
+    competitor: action.vs_competitor || (data.concurrents && data.concurrents[idx] ? data.concurrents[idx].domaine : null),
+    fixes: action.type === 'optimize_page' ? ['Améliorer title', 'Enrichir meta', 'Ajouter H2'] : []
+  }));
+  
+  // Ajouter une décision publish_content si des contenus sont en attente
+  if (data.contenu.en_attente && data.contenu.en_attente > 0) {
+    decisions.unshift({
+      decisionId: `decision_frontend_${Date.now()}_publish`,
+      type: 'publish_content',
+      slug: 'contenus-ready',
+      title: `${data.contenu.en_attente} contenu(s) prêt(s) à publier`,
+      source: 'ready_content',
+      reason: 'Contenus validés en attente de publication',
+      impact_score: 80
+    });
+  }
+  
   // Générer l'analyse concurrentielle basée sur cockpitCache
   const concurrents = data.concurrents || [];
   const competition = {
@@ -898,7 +924,7 @@ function generateSimulatedAudit(data) {
     strengths: strengths.slice(0, 3),
     weaknesses: weaknesses.slice(0, 3),
     competition,
-    actions: sortedActions.slice(0, 5)
+    decisions: decisions.slice(0, 5)
   };
 }
 
@@ -1047,29 +1073,59 @@ function renderAuditIAResult(audit) {
       </div>
       ` : ''}
       
-      <!-- Actions prioritaires -->
-      <div class="audit-section audit-actions-ia">
-        <h3>🎯 Actions prioritaires</h3>
-        <p class="section-intro">Cliquez sur une action pour l'exécuter directement.</p>
+      <!-- Décisions IA exécutables -->
+      <div class="audit-section audit-decisions">
+        <h3>⚡ Décisions IA</h3>
+        <p class="section-intro">Décisions prêtes à exécuter. Cliquez pour lancer l'action.</p>
         
-        <div class="audit-actions-list">
-          ${audit.actions.map((action, idx) => {
-            const priorityClass = action.priority === 'HIGH' ? 'priority-high' : action.priority === 'MEDIUM' ? 'priority-medium' : 'priority-low';
-            const actionIcon = action.type === 'create_content' ? '📝' : action.type === 'optimize_page' ? '🔧' : '⚠️';
-            const actionLabel = action.type === 'create_content' ? 'Créer' : action.type === 'optimize_page' ? 'Optimiser' : 'Corriger';
-            const actionBtnClass = action.type === 'create_content' ? 'btn-primary' : action.type === 'optimize_page' ? 'btn-secondary' : 'btn-warning';
-            const impactScore = action.impactScore || 50;
+        <div class="decisions-list">
+          ${(audit.decisions || audit.actions || []).map((decision, idx) => {
+            const impactScore = decision.impact_score || decision.impactScore || 50;
             const impactColor = impactScore >= 70 ? '#10b981' : impactScore >= 40 ? '#f59e0b' : '#9ca3af';
             
+            // Déterminer l'icône et le label selon le type
+            let decisionIcon, decisionLabel, btnClass, btnAction;
+            switch(decision.type) {
+              case 'create_content':
+                decisionIcon = '📝';
+                decisionLabel = 'Créer';
+                btnClass = 'btn-primary';
+                btnAction = `executeDecision('create_content', '${escapeHtml(decision.keyword || decision.target || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+                break;
+              case 'optimize_page':
+                decisionIcon = '🔧';
+                decisionLabel = 'Optimiser';
+                btnClass = 'btn-secondary';
+                btnAction = `executeDecision('optimize_page', '${escapeHtml(decision.page || decision.keyword || decision.target || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+                break;
+              case 'publish_content':
+                decisionIcon = '🚀';
+                decisionLabel = 'Publier';
+                btnClass = 'btn-success';
+                btnAction = `executeDecision('publish_content', '${escapeHtml(decision.slug || '')}', '${decision.decisionId || ''}')`;
+                break;
+              default:
+                decisionIcon = '⚙️';
+                decisionLabel = 'Exécuter';
+                btnClass = 'btn-secondary';
+                btnAction = `executeDecision('${decision.type}', '${escapeHtml(decision.target || decision.keyword || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+            }
+            
+            // Extraire les infos de la décision
+            const title = decision.title_suggested || decision.title || decision.keyword || decision.target || decision.page || 'Décision';
+            const reason = decision.reason || '';
+            const competitor = decision.competitor || decision.vs_competitor;
+            const fixes = decision.fixes || [];
+            
             return `
-            <div class="audit-action-card ${priorityClass}" data-action-id="${action.actionId || ''}">
-              <div class="action-header">
-                <span class="action-icon-large">${actionIcon}</span>
-                <div class="action-header-info">
-                  <span class="action-type-label">${actionLabel}</span>
-                  <span class="action-priority-badge ${priorityClass}">${action.priority}</span>
+            <div class="decision-card" data-decision-id="${decision.decisionId || decision.actionId || ''}">
+              <div class="decision-header">
+                <span class="decision-icon">${decisionIcon}</span>
+                <div class="decision-type-info">
+                  <span class="decision-type-label">${decisionLabel}</span>
+                  <span class="decision-type-badge type-${decision.type}">${decision.type.replace('_', ' ')}</span>
                 </div>
-                <div class="action-impact-score" title="Score d'impact">
+                <div class="decision-impact" title="Score d'impact: ${impactScore}/100">
                   <svg viewBox="0 0 36 36" class="impact-circle">
                     <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2a2a3e" stroke-width="3"/>
                     <circle cx="18" cy="18" r="15.9" fill="none" stroke="${impactColor}" stroke-width="3" 
@@ -1078,15 +1134,16 @@ function renderAuditIAResult(audit) {
                   <span class="impact-value">${impactScore}</span>
                 </div>
               </div>
-              <div class="action-body">
-                <h4 class="action-target">${escapeHtml(action.target)}</h4>
-                <p class="action-reason">${escapeHtml(action.reason)}</p>
-                <p class="action-impact"><strong>Impact:</strong> ${escapeHtml(action.impact)}</p>
-                ${action.vs_competitor ? `<p class="action-vs-competitor"><span class="vs-icon">⚔️</span> vs ${escapeHtml(action.vs_competitor)}</p>` : ''}
+              <div class="decision-body">
+                <h4 class="decision-title">${escapeHtml(title)}</h4>
+                ${decision.keyword ? `<p class="decision-keyword">🔑 ${escapeHtml(decision.keyword)}</p>` : ''}
+                ${reason ? `<p class="decision-reason">${escapeHtml(reason)}</p>` : ''}
+                ${fixes.length > 0 ? `<p class="decision-fixes">📋 ${fixes.map(f => escapeHtml(f)).join(' • ')}</p>` : ''}
+                ${competitor ? `<p class="decision-competitor"><span class="vs-icon">⚔️</span> vs ${escapeHtml(competitor)}</p>` : ''}
               </div>
-              <div class="action-footer">
-                <button class="${actionBtnClass}" onclick="executeAuditAction('${action.type}', '${escapeHtml(action.target)}', '${action.actionId || ''}')">
-                  ${actionIcon} ${actionLabel}
+              <div class="decision-footer">
+                <button class="${btnClass}" onclick="${btnAction}">
+                  ${decisionIcon} ${decisionLabel}
                 </button>
               </div>
             </div>
@@ -1102,7 +1159,42 @@ function renderAuditIAResult(audit) {
 }
 
 /**
- * Exécute une action depuis l'Audit IA
+ * Exécute une DÉCISION depuis l'Audit IA
+ * Route vers le bon module selon le type
+ */
+function executeDecision(decisionType, target, decisionId) {
+  console.log('[Audit IA] Exécution décision:', decisionType, target, decisionId);
+  
+  switch (decisionType) {
+    case 'create_content':
+      // Ouvre Studio SEO avec le mot-clé pré-rempli
+      goToStudioSEO(target, decisionId);
+      break;
+      
+    case 'optimize_page':
+      // Ouvre le panneau d'optimisation
+      openOptimizePanel(target, 'optimize_page');
+      break;
+      
+    case 'publish_content':
+      // Redirige vers l'onglet Contenu pour publication
+      document.querySelector('[data-tab="content"]').click();
+      setTimeout(() => {
+        alert(`🚀 Publication de contenu\n\nSélectionnez les contenus "ready" à publier dans la liste.`);
+      }, 300);
+      break;
+      
+    default:
+      console.warn('[Audit IA] Type de décision inconnu:', decisionType);
+      alert(`Action "${decisionType}" pour "${target}"\n\nType non reconnu.`);
+  }
+}
+
+// Exposer executeDecision globalement
+window.executeDecision = executeDecision;
+
+/**
+ * Exécute une action depuis l'Audit IA (legacy - compatibilité)
  * V2.3: Redirection vers Studio SEO IA pour create_content
  */
 function executeAuditAction(actionType, target, actionId) {
@@ -1115,8 +1207,7 @@ function executeAuditAction(actionType, target, actionId) {
       break;
       
     case 'optimize_page':
-      alert(`🔧 Optimisation de "${target}"\n\nConsultez l'onglet Pages SEO pour plus de détails.`);
-      document.querySelector('[data-tab="pages"]').click();
+      openOptimizePanel(target, 'optimize_page');
       break;
       
     case 'fix_technical':

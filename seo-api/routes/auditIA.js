@@ -11,6 +11,92 @@ const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 
 /**
+ * Génère un slug URL-friendly à partir d'un texte
+ */
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Supprime les accents
+    .replace(/[^a-z0-9\s-]/g, '') // Supprime les caractères spéciaux
+    .trim()
+    .replace(/\s+/g, '-') // Remplace les espaces par des tirets
+    .replace(/-+/g, '-'); // Évite les tirets multiples
+}
+
+/**
+ * Génère des décisions de fallback structurées
+ */
+function generateFallbackDecisions(cockpitData, timestamp) {
+  const decisions = [];
+  let counter = 0;
+  
+  const { opportunites = [], concurrents = [], contenu = {} } = cockpitData;
+  
+  // Décision 1: Créer contenu depuis opportunité haute priorité
+  const highOpp = opportunites.find(o => o.priority === 'high');
+  if (highOpp) {
+    const keyword = highOpp.keyword || 'rénovation paris';
+    decisions.push({
+      decisionId: `decision_${timestamp}_${counter++}`,
+      type: 'create_content',
+      keyword: keyword,
+      target_page: `/blog/${slugify(keyword)}.html`,
+      title_suggested: `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} | Guide complet`,
+      reason: `Opportunité haute priorité avec position ${highOpp.position || 'améliorable'}`,
+      impact_score: 85,
+      competitor: concurrents[0]?.domaine || null
+    });
+  }
+  
+  // Décision 2: Publier contenu ready
+  if (contenu.en_attente && contenu.en_attente > 0) {
+    decisions.push({
+      decisionId: `decision_${timestamp}_${counter++}`,
+      type: 'publish_content',
+      slug: 'contenu-ready',
+      title: 'Contenu en attente de publication',
+      source: 'ready_content',
+      reason: `${contenu.en_attente} contenu(s) prêt(s) à publier`,
+      impact_score: 75
+    });
+  }
+  
+  // Décision 3: Optimiser page existante
+  if (opportunites.length > 0) {
+    const oppToOptimize = opportunites.find(o => o.position && o.position > 10 && o.position < 30);
+    if (oppToOptimize) {
+      decisions.push({
+        decisionId: `decision_${timestamp}_${counter++}`,
+        type: 'optimize_page',
+        page: '/',
+        keyword: oppToOptimize.keyword || 'rénovation appartement paris',
+        fixes: ['Améliorer title', 'Enrichir meta description', 'Ajouter contenu H2'],
+        reason: `Position ${oppToOptimize.position} proche du top 10`,
+        impact_score: 70
+      });
+    }
+  }
+  
+  // Décision par défaut si aucune autre
+  if (decisions.length === 0) {
+    decisions.push({
+      decisionId: `decision_${timestamp}_${counter++}`,
+      type: 'create_content',
+      keyword: 'rénovation appartement paris prix',
+      target_page: '/blog/renovation-appartement-paris-prix.html',
+      title_suggested: 'Prix rénovation appartement Paris 2026 | Guide complet',
+      reason: 'Mot-clé stratégique pour le secteur rénovation Paris',
+      impact_score: 65,
+      competitor: null
+    });
+  }
+  
+  return decisions;
+}
+
+/**
  * POST /api/audit-ia/analyze
  * Analyse les données cockpit avec Claude et retourne des recommandations
  */
@@ -37,18 +123,17 @@ router.post('/audit-ia/analyze', async (req, res) => {
     
     // Construire le prompt pour Claude
     const systemPrompt = `Tu es un expert SEO senior spécialisé dans les sites de rénovation et BTP en France.
-Tu analyses les données d'un dashboard SEO et tu fournis des recommandations actionnables.
+Tu analyses les données d'un dashboard SEO et tu produis des DÉCISIONS EXÉCUTABLES.
 
 RÈGLES IMPORTANTES :
 - Réponds UNIQUEMENT en JSON valide, sans markdown ni texte avant/après
-- Sois concis et actionnable
-- Priorise les actions par impact potentiel
-- Adapte tes recommandations au secteur de la rénovation à Paris
-- Analyse les concurrents suivis pour contextualiser tes recommandations
+- Chaque décision doit être directement exécutable par un système automatisé
+- Priorise par impact potentiel et faisabilité
+- Adapte au secteur rénovation Paris
 
 FORMAT DE RÉPONSE OBLIGATOIRE (JSON) :
 {
-  "summary": "Résumé de 200 caractères max de l'état SEO",
+  "summary": "Résumé de 200 caractères max",
   "strengths": ["Force 1", "Force 2", "Force 3"],
   "weaknesses": ["Faiblesse 1", "Faiblesse 2", "Faiblesse 3"],
   "competition": {
@@ -57,25 +142,48 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON) :
       {
         "domain": "domaine.com",
         "threat_level": "HIGH|MEDIUM|LOW",
-        "positioning": "Type de positionnement observé"
+        "positioning": "Positionnement observé"
       }
     ],
-    "opportunities": ["Opportunité face aux concurrents 1", "Opportunité 2"]
+    "opportunities": ["Opportunité 1", "Opportunité 2"]
   },
-  "actions": [
+  "decisions": [
     {
-      "type": "create_content|optimize_page|fix_technical",
-      "target": "Mot-clé ou page cible",
-      "priority": "HIGH|MEDIUM|LOW",
-      "impact": "Description de l'impact attendu",
-      "reason": "Pourquoi cette action est recommandée",
-      "impactScore": 0-100,
-      "vs_competitor": "Domaine concurrent ciblé (optionnel)"
+      "type": "create_content",
+      "keyword": "mot-clé principal",
+      "target_page": "/blog/slug-article.html",
+      "title_suggested": "Titre SEO optimisé",
+      "reason": "Pourquoi créer ce contenu",
+      "impact_score": 0-100,
+      "competitor": "domaine-concurrent.com ou null"
+    },
+    {
+      "type": "optimize_page",
+      "page": "/page-existante.html",
+      "keyword": "mot-clé à renforcer",
+      "fixes": ["Améliorer title", "Ajouter H2", "Enrichir contenu"],
+      "reason": "Pourquoi optimiser",
+      "impact_score": 0-100
+    },
+    {
+      "type": "publish_content",
+      "slug": "slug-contenu-ready",
+      "title": "Titre du contenu",
+      "source": "ready_content",
+      "reason": "Pourquoi publier maintenant",
+      "impact_score": 0-100
     }
   ]
-}`;
+}
 
-    const userPrompt = `Analyse ces données SEO du site mistralpro-reno.fr (entreprise de rénovation à Paris) et fournis tes recommandations :
+TYPES DE DÉCISIONS :
+- create_content : Créer un nouvel article/page (ouvre Studio SEO)
+- optimize_page : Optimiser une page existante (ouvre module optimisation)
+- publish_content : Publier un contenu status=ready (lance publication)
+
+Maximum 5 décisions, triées par impact_score décroissant.`;
+
+    const userPrompt = `Analyse ces données SEO du site mistralpro-reno.fr (entreprise de rénovation à Paris) et produis des DÉCISIONS EXÉCUTABLES :
 
 DONNÉES COCKPIT :
 ${JSON.stringify(cockpitData, null, 2)}
@@ -85,7 +193,12 @@ ${cockpitData.concurrents && cockpitData.concurrents.length > 0
   ? cockpitData.concurrents.map(c => `- ${c.domaine}`).join('\n')
   : 'Aucun concurrent suivi'}
 
-Fournis ton analyse en JSON selon le format spécifié. Inclus une analyse concurrentielle basée sur les domaines suivis.`;
+CONTENUS PRÊTS À PUBLIER :
+${cockpitData.contenu && cockpitData.contenu.en_attente > 0
+  ? `${cockpitData.contenu.en_attente} contenus en attente de publication`
+  : 'Aucun contenu en attente'}
+
+Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
 
     // Appel API Claude
     const response = await fetch(ANTHROPIC_API_URL, {
@@ -146,13 +259,33 @@ Fournis ton analyse en JSON selon le format spécifié. Inclus une analyse concu
       });
     }
     
-    // Ajouter les actionId aux actions
+    // Ajouter les decisionId aux decisions
     const timestamp = Date.now();
-    if (auditData.actions) {
-      auditData.actions = auditData.actions.map((action, index) => ({
-        ...action,
-        actionId: `action_${timestamp}_${index}`
+    if (auditData.decisions) {
+      auditData.decisions = auditData.decisions.map((decision, index) => ({
+        ...decision,
+        decisionId: `decision_${timestamp}_${index}`
       }));
+    }
+    
+    // Compatibilité : si Claude retourne actions au lieu de decisions, convertir
+    if (auditData.actions && !auditData.decisions) {
+      auditData.decisions = auditData.actions.map((action, index) => ({
+        decisionId: `decision_${timestamp}_${index}`,
+        type: action.type,
+        keyword: action.target,
+        target_page: action.type === 'create_content' ? `/blog/${slugify(action.target)}.html` : action.target,
+        title_suggested: action.target,
+        reason: action.reason,
+        impact_score: action.impactScore || 50,
+        competitor: action.vs_competitor || null
+      }));
+      delete auditData.actions;
+    }
+    
+    // Fallback decisions si Claude n'en a pas fourni
+    if (!auditData.decisions || auditData.decisions.length === 0) {
+      auditData.decisions = generateFallbackDecisions(cockpitData, timestamp);
     }
     
     // Fallback section competition si Claude ne l'a pas fournie
@@ -194,6 +327,7 @@ Fournis ton analyse en JSON selon le format spécifié. Inclus une analyse concu
 
 /**
  * Génère un audit simulé basé sur les données cockpit
+ * Produit des DECISIONS exécutables (pas des actions)
  */
 function generateSimulatedAudit(cockpitData) {
   const { 
@@ -201,77 +335,93 @@ function generateSimulatedAudit(cockpitData) {
     search_console = {}, 
     opportunites = [], 
     alertes = [],
-    concurrents = []
+    concurrents = [],
+    contenu = {}
   } = cockpitData;
   
   const timestamp = Date.now();
-  let actionCounter = 0;
+  let decisionCounter = 0;
   
-  // Analyser les données pour générer des recommandations pertinentes
-  const actions = [];
+  // Générer des décisions exécutables
+  const decisions = [];
   
-  // Actions basées sur les opportunités (avec référence concurrents)
-  if (opportunites.length > 0) {
-    opportunites.slice(0, 3).forEach((opp, idx) => {
-      const competitor = concurrents[idx % concurrents.length];
-      actions.push({
-        actionId: `action_${timestamp}_${actionCounter++}`,
+  // Décision 1: Publier contenus ready (priorité haute)
+  if (contenu.en_attente && contenu.en_attente > 0) {
+    decisions.push({
+      decisionId: `decision_${timestamp}_${decisionCounter++}`,
+      type: 'publish_content',
+      slug: 'contenus-ready',
+      title: `${contenu.en_attente} contenu(s) prêt(s)`,
+      source: 'ready_content',
+      reason: 'Contenus validés en attente de publication',
+      impact_score: 80
+    });
+  }
+  
+  // Décision 2: Créer contenu depuis opportunité haute priorité
+  const highOpp = opportunites.find(o => o.priority === 'high');
+  if (highOpp) {
+    const keyword = highOpp.keyword || 'rénovation paris';
+    decisions.push({
+      decisionId: `decision_${timestamp}_${decisionCounter++}`,
+      type: 'create_content',
+      keyword: keyword,
+      target_page: `/blog/${slugify(keyword)}.html`,
+      title_suggested: `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} | Guide complet`,
+      reason: `Position ${highOpp.position || 'N/A'} avec ${highOpp.impressions || 0} impressions`,
+      impact_score: 85,
+      competitor: concurrents[0]?.domaine || null
+    });
+  }
+  
+  // Décision 3: Optimiser page si position proche top 10
+  const nearTop10 = opportunites.find(o => o.position && o.position > 8 && o.position < 20);
+  if (nearTop10) {
+    decisions.push({
+      decisionId: `decision_${timestamp}_${decisionCounter++}`,
+      type: 'optimize_page',
+      page: '/',
+      keyword: nearTop10.keyword || 'rénovation appartement paris',
+      fixes: ['Améliorer title', 'Enrichir meta description', 'Ajouter sections H2'],
+      reason: `Quick win: position ${nearTop10.position} proche du top 10`,
+      impact_score: 75
+    });
+  }
+  
+  // Décision 4: Créer contenu additionnel si peu de contenu live
+  if (contenu.live !== undefined && contenu.live < 5) {
+    const mediumOpp = opportunites.find(o => o.priority === 'medium');
+    if (mediumOpp) {
+      const keyword = mediumOpp.keyword || 'devis rénovation paris';
+      decisions.push({
+        decisionId: `decision_${timestamp}_${decisionCounter++}`,
         type: 'create_content',
-        target: opp.keyword || 'mot-clé opportunité',
-        priority: opp.priority === 'high' ? 'HIGH' : 'MEDIUM',
-        impact: `+${Math.floor(Math.random() * 30 + 10)} clics/mois estimés`,
-        reason: `Position ${opp.position || 'améliorable'} avec ${opp.impressions || 'N'} impressions`,
-        impactScore: Math.floor(Math.random() * 30 + 60),
-        vs_competitor: competitor ? competitor.domaine : null
-      });
-    });
-  }
-  
-  // Actions basées sur le score
-  if (score_global < 50) {
-    actions.push({
-      actionId: `action_${timestamp}_${actionCounter++}`,
-      type: 'fix_technical',
-      target: 'Optimisation technique globale',
-      priority: 'HIGH',
-      impact: 'Amélioration score SEO +15-20 points',
-      reason: `Score actuel ${score_global}/100 - amélioration technique prioritaire`,
-      impactScore: 85
-    });
-  }
-  
-  // Actions basées sur les alertes
-  if (alertes.length > 0) {
-    const criticalAlert = alertes.find(a => a.includes && (a.includes('critique') || a.includes('faible')));
-    if (criticalAlert) {
-      actions.push({
-        actionId: `action_${timestamp}_${actionCounter++}`,
-        type: 'fix_technical',
-        target: criticalAlert,
-        priority: 'HIGH',
-        impact: 'Correction problème bloquant SEO',
-        reason: 'Alerte critique détectée',
-        impactScore: 90
+        keyword: keyword,
+        target_page: `/blog/${slugify(keyword)}.html`,
+        title_suggested: `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} | Mistral Pro Reno`,
+        reason: `Seulement ${contenu.live} pages live - volume insuffisant`,
+        impact_score: 70,
+        competitor: concurrents[1]?.domaine || null
       });
     }
   }
   
-  // Action par défaut si aucune autre
-  if (actions.length === 0) {
-    actions.push({
-      actionId: `action_${timestamp}_${actionCounter++}`,
+  // Décision par défaut si aucune autre
+  if (decisions.length === 0) {
+    decisions.push({
+      decisionId: `decision_${timestamp}_${decisionCounter++}`,
       type: 'create_content',
-      target: 'rénovation appartement paris',
-      priority: 'MEDIUM',
-      impact: '+20 clics/mois estimés',
-      reason: 'Mot-clé principal à renforcer',
-      impactScore: 65,
-      vs_competitor: concurrents[0] ? concurrents[0].domaine : null
+      keyword: 'rénovation appartement paris prix',
+      target_page: '/blog/renovation-appartement-paris-prix.html',
+      title_suggested: 'Prix rénovation appartement Paris 2026 | Guide complet',
+      reason: 'Mot-clé stratégique pour le secteur rénovation Paris',
+      impact_score: 65,
+      competitor: null
     });
   }
   
-  // Trier par impactScore décroissant
-  actions.sort((a, b) => b.impactScore - a.impactScore);
+  // Trier par impact_score décroissant
+  decisions.sort((a, b) => b.impact_score - a.impact_score);
   
   // Générer l'analyse concurrentielle
   const competition = {
@@ -297,7 +447,7 @@ function generateSimulatedAudit(cockpitData) {
   };
   
   return {
-    summary: `Score SEO ${score_global}/100. ${search_console.clics || 0} clics, ${search_console.impressions || 0} impressions. ${concurrents.length} concurrent(s) suivi(s).`,
+    summary: `Score SEO ${score_global}/100. ${search_console.clics || 0} clics, ${search_console.impressions || 0} impressions. ${decisions.length} décision(s) générée(s).`,
     strengths: [
       'Site techniquement fonctionnel',
       'Présence locale Paris établie',
@@ -309,7 +459,7 @@ function generateSimulatedAudit(cockpitData) {
       'Opportunités de mots-clés non exploitées'
     ],
     competition,
-    actions: actions.slice(0, 5)
+    decisions: decisions.slice(0, 5)
   };
 }
 

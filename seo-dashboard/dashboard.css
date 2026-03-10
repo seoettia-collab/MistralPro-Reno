@@ -7297,3 +7297,166 @@ select:focus {
 .vs-icon {
   font-size: 0.85rem !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.12 — DÉCISIONS IA EXÉCUTABLES
+   ══════════════════════════════════════════════════════════════ */
+
+.audit-decisions {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%) !important;
+  border-left: 3px solid #10b981 !important;
+}
+
+.decisions-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+}
+
+.decision-card {
+  background: var(--bg-card) !important;
+  border-radius: 10px !important;
+  padding: 1rem !important;
+  border: 1px solid var(--border-color) !important;
+  transition: all 0.2s ease !important;
+}
+
+.decision-card:hover {
+  border-color: #10b981 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
+}
+
+.decision-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.decision-icon {
+  font-size: 1.5rem !important;
+}
+
+.decision-type-info {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.decision-type-label {
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: var(--text-primary) !important;
+}
+
+.decision-type-badge {
+  font-size: 0.7rem !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+}
+
+.decision-type-badge.type-create_content {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #3b82f6 !important;
+}
+
+.decision-type-badge.type-optimize_page {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #f59e0b !important;
+}
+
+.decision-type-badge.type-publish_content {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+}
+
+.decision-impact {
+  position: relative !important;
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.decision-impact .impact-circle {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.decision-impact .impact-value {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.decision-body {
+  margin-bottom: 0.75rem !important;
+}
+
+.decision-title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  margin: 0 0 0.5rem 0 !important;
+}
+
+.decision-keyword {
+  font-size: 0.85rem !important;
+  color: #3b82f6 !important;
+  margin: 0.25rem 0 !important;
+}
+
+.decision-reason {
+  font-size: 0.85rem !important;
+  color: var(--text-secondary) !important;
+  margin: 0.25rem 0 !important;
+}
+
+.decision-fixes {
+  font-size: 0.8rem !important;
+  color: #f59e0b !important;
+  margin: 0.25rem 0 !important;
+}
+
+.decision-competitor {
+  font-size: 0.8rem !important;
+  color: #6366f1 !important;
+  margin: 0.5rem 0 0 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  padding: 0.2rem 0.5rem !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+.decision-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding-top: 0.5rem !important;
+  border-top: 1px dashed var(--border-color) !important;
+}
+
+.decision-footer button {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.85rem !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-success {
+  background: #10b981 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-success:hover {
+  background: #059669 !important;
+}
