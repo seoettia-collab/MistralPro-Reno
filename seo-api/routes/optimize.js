@@ -5,7 +5,6 @@
 
 const express = require('express');
 const router = express.Router();
-const fetch = require('node-fetch');
 const { dbGet, dbAll, dbRun } = require('../services/db');
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
