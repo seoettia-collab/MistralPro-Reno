@@ -24,17 +24,18 @@ async function generatePriorityAlerts() {
   const { calculateSeoScore } = require('./seoScore');
   try {
     const scoreResult = await calculateSeoScore();
-    if (scoreResult.global < 30) {
+    const score = scoreResult.score;
+    if (score < 30) {
       alerts.push({
         type: 'danger',
-        message: `Score SEO critique : ${scoreResult.global}/100`,
+        message: `Score SEO critique : ${score}/100`,
         priority: 'high',
         icon: '🔴'
       });
-    } else if (scoreResult.global < 50) {
+    } else if (score < 50) {
       alerts.push({
         type: 'warning',
-        message: `Score SEO faible : ${scoreResult.global}/100`,
+        message: `Score SEO faible : ${score}/100`,
         priority: 'medium',
         icon: '🟠'
       });
