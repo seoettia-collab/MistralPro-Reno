@@ -192,7 +192,7 @@ async function loadCockpit() {
     const endpoints = [
       { name: 'stats', url: '/api/stats' },
       { name: 'score', url: '/api/seo-score' },
-      { name: 'alerts', url: '/api/alerts' },
+      { name: 'alerts', url: '/api/alerts/priority' },
       { name: 'actions', url: '/api/actions/top?limit=5' },
       { name: 'opportunities', url: '/api/opportunities' },
       { name: 'content', url: '/api/content' },
