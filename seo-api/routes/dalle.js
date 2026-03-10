@@ -143,59 +143,60 @@ router.post('/dalle/generate-from-content', async (req, res) => {
 
 /**
  * Génère un prompt image optimisé pour le secteur rénovation
+ * Style : photo immobilière réaliste, magazine, exploitable commercialement
  */
 function generateImagePrompt(keyword, contentType = 'blog') {
   const keywordLower = (keyword || '').toLowerCase();
   
-  // Thèmes visuels pour rénovation (style magazine immobilier)
+  // Thèmes visuels pour rénovation (style photo immobilière réaliste)
   const themes = {
     'cuisine': {
-      scene: 'modern renovated kitchen interior',
-      details: 'white marble countertops, wooden cabinets, natural light from large window, minimalist design'
+      scene: 'renovated modern kitchen',
+      details: 'clean marble countertops, wooden cabinets, stainless steel appliances, tiled backsplash, clear view of the entire room'
     },
     'salle de bain': {
-      scene: 'luxury renovated bathroom',
-      details: 'walk-in shower with glass door, elegant tiles, modern fixtures, soft ambient lighting'
+      scene: 'renovated bathroom',
+      details: 'white tiles, modern vanity unit, wall-mounted mirror, walk-in shower with glass panel, chrome fixtures'
     },
     'appartement': {
-      scene: 'renovated Parisian apartment interior',
-      details: 'herringbone parquet floors, high ceilings, large windows, contemporary furniture, bright and airy'
+      scene: 'renovated Parisian apartment living room',
+      details: 'oak parquet flooring, white walls, large windows, neutral furniture, clean lines'
     },
     'maison': {
-      scene: 'beautifully renovated house interior',
-      details: 'open floor plan, modern finishes, natural materials, warm lighting'
+      scene: 'renovated house interior living space',
+      details: 'open plan layout, wooden floors, white painted walls, modern furniture, natural daylight'
     },
     'peinture': {
       scene: 'freshly painted living room',
-      details: 'smooth walls, neutral elegant colors, natural light, tasteful decoration'
+      details: 'smooth matte walls, neutral beige or white tones, wooden floor, simple furniture'
     },
     'parquet': {
-      scene: 'renovated room with beautiful hardwood floors',
-      details: 'oak parquet flooring, natural finish, sunlight reflections, minimalist interior'
+      scene: 'room with new hardwood flooring',
+      details: 'oak parquet in herringbone pattern, clean baseboards, minimal furniture, natural light from window'
     },
     'électricité': {
-      scene: 'modern smart home living room',
-      details: 'contemporary lighting fixtures, clean walls, elegant switches, ambient lighting'
+      scene: 'modern living room with contemporary lighting',
+      details: 'recessed ceiling lights, wall switches, clean white walls, simple decor'
     },
     'plomberie': {
-      scene: 'modern bathroom with elegant fixtures',
-      details: 'designer faucets, clean lines, marble surfaces, luxury atmosphere'
+      scene: 'modern bathroom with new plumbing fixtures',
+      details: 'chrome faucets, white ceramic sink, wall-mounted toilet, tiled floor'
     },
     'isolation': {
-      scene: 'cozy renovated living space',
-      details: 'comfortable interior, large windows, warm atmosphere, energy efficient home'
+      scene: 'cozy renovated living room',
+      details: 'double-glazed windows, warm interior, radiator, comfortable atmosphere'
     },
     'toiture': {
-      scene: 'beautiful house exterior with new roof',
-      details: 'quality slate or tile roofing, clear blue sky, well-maintained facade'
+      scene: 'house exterior with new roof',
+      details: 'slate or tile roofing, clean gutters, blue sky background, well-maintained facade'
     },
     'charpente': {
-      scene: 'attic renovation with exposed wooden beams',
-      details: 'beautiful oak beams, skylights, modern loft conversion, warm wood tones'
+      scene: 'attic conversion with exposed wooden beams',
+      details: 'oak ceiling beams, skylight window, wooden floor, simple furnishing'
     },
     'rénovation': {
-      scene: 'stunning before and after home renovation',
-      details: 'modern interior design, bright spaces, quality finishes, professional renovation'
+      scene: 'renovated apartment interior',
+      details: 'modern finishes, parquet floor, white walls, natural light, clean design'
     }
   };
   
@@ -208,12 +209,25 @@ function generateImagePrompt(keyword, contentType = 'blog') {
     }
   }
   
-  // Construire le prompt final
-  const prompt = `Professional interior photography of ${selectedTheme.scene}, ${selectedTheme.details}. 
-Style: high-end real estate magazine, photorealistic, 16:9 aspect ratio.
-Mood: bright, clean, inviting, luxurious yet accessible.
-Technical: soft natural lighting, shallow depth of field, no text or watermarks, no people.
-Location context: Paris, France renovation project.`;
+  // Construire le prompt final avec règles strictes
+  const prompt = `Professional real estate photography of a ${selectedTheme.scene}.
+
+Scene details: ${selectedTheme.details}.
+
+STRICT PHOTOGRAPHY RULES:
+- Shot with wide-angle lens (24mm equivalent)
+- Camera at chest height, straight horizon line
+- Balanced natural daylight from windows
+- No dramatic lighting, no lens flare, no glow effects
+- No motion blur, no depth of field blur
+- Sharp focus on entire room
+- Realistic proportions and perspective
+- Clean, uncluttered space
+- No people, no pets, no text, no watermarks
+
+Style: Real estate magazine photography, similar to photos used by property agencies in Paris.
+Aspect ratio: 16:9 landscape format.
+Quality: High resolution, professional, commercially usable.`;
 
   return prompt;
 }
