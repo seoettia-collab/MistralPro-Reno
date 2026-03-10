@@ -2256,10 +2256,12 @@ async function publishContent() {
   const finalURL = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
   
   // Déterminer si on a une image à persister
+  // L'image DALL-E réelle a une URL qui contient 'oaidalleapiprodscus' ou 'openai'
   const hasImageToPersist = studioGeneratedContent.hasImage && 
                             studioGeneratedContent.imageUrl && 
                             !studioGeneratedContent.imageSimulated &&
-                            studioGeneratedContent.imageUrl.includes('oaidalleapiprodscus');
+                            (studioGeneratedContent.imageUrl.includes('oaidalleapiprodscus') ||
+                             studioGeneratedContent.imageUrl.includes('openai'));
   
   // Afficher le loader avec étapes adaptées
   publishSection.innerHTML = `
@@ -2280,18 +2282,26 @@ async function publishContent() {
     // Étape 0: Persister l'image DALL-E si présente
     if (hasImageToPersist) {
       console.log('[Publication] Persistance image DALL-E...');
+      console.log('[Publication] URL source:', studioGeneratedContent.imageUrl);
+      
       const persistResult = await persistDALLEImage(studioGeneratedContent.imageUrl, slug);
       
       if (persistResult.success) {
-        // Mettre à jour le HTML pour utiliser le chemin local
-        studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-          studioGeneratedContent.imageUrl,
-          persistResult.localPath
-        );
+        // L'image est persistée - le HTML utilise déjà le bon chemin local
+        // car integrateImageToContent() a mis /images/blog/{slug}.webp
         studioGeneratedContent.persistedImagePath = persistResult.localPath;
-        console.log('[Publication] Image persistée:', persistResult.localPath);
+        studioGeneratedContent.imagePersisted = true;
+        console.log('[Publication] ✅ Image persistée:', persistResult.localPath);
       } else {
-        console.warn('[Publication] Échec persistance image, utilisation URL temporaire');
+        // Échec de persistance - on doit mettre l'URL DALL-E temporaire dans le HTML
+        // car le chemin local ne fonctionnera pas
+        console.warn('[Publication] ⚠️ Échec persistance, fallback URL temporaire');
+        const localImagePath = `/images/blog/${slug}.webp`;
+        studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+          localImagePath,
+          studioGeneratedContent.imageUrl
+        );
+        studioGeneratedContent.imagePersisted = false;
       }
       
       updatePublishStep('step0', 'done');
