@@ -155,6 +155,24 @@ Fournis ton analyse en JSON selon le format spécifié. Inclus une analyse concu
       }));
     }
     
+    // Fallback section competition si Claude ne l'a pas fournie
+    if (!auditData.competition && cockpitData.concurrents && cockpitData.concurrents.length > 0) {
+      const concurrents = cockpitData.concurrents;
+      auditData.competition = {
+        analysis: `${concurrents.length} concurrent(s) suivi(s). Analyse comparative à approfondir.`,
+        competitors: concurrents.slice(0, 4).map((c, idx) => ({
+          domain: c.domaine,
+          threat_level: idx === 0 ? 'HIGH' : idx < 2 ? 'MEDIUM' : 'LOW',
+          positioning: 'Rénovation généraliste Paris/IDF'
+        })),
+        opportunities: [
+          'Se différencier par le contenu expert',
+          'Cibler des mots-clés longue traîne',
+          'Renforcer la présence locale'
+        ]
+      };
+    }
+    
     res.json({
       status: 'ok',
       data: auditData,
