@@ -130,12 +130,12 @@ router.post('/github/publish', async (req, res) => {
 });
 
 /**
- * GET /api/github/file/:path
- * Vérifie si un fichier existe sur GitHub
+ * GET /api/github/check-file
+ * Vérifie si un fichier existe sur GitHub (path en query param)
  */
-router.get('/github/file/*', async (req, res) => {
+router.get('/github/check-file', async (req, res) => {
   try {
-    const filePath = req.params[0];
+    const filePath = req.query.path;
     
     if (!filePath) {
       return res.status(400).json({
