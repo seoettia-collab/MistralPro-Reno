@@ -14,102 +14,126 @@ const PRIORITY_ALERT_TYPES = {
 
 /**
  * Générer les alertes prioritaires basées sur l'état du site
+ * Alertes automatiques sans stockage en base
  * @returns {Promise<Array>}
  */
 async function generatePriorityAlerts() {
   const alerts = [];
 
-  // 1. Vérifier le score SEO
+  // 1. Vérifier le score SEO (< 50 = alerte)
   const { calculateSeoScore } = require('./seoScore');
   try {
     const scoreResult = await calculateSeoScore();
-    if (scoreResult.global < 40) {
+    if (scoreResult.global < 30) {
       alerts.push({
-        type: PRIORITY_ALERT_TYPES.SEO_SCORE_LOW,
-        message: `Score SEO critique : ${scoreResult.global}/100. Action immédiate requise.`,
+        type: 'danger',
+        message: `Score SEO critique : ${scoreResult.global}/100`,
         priority: 'high',
-        icon: '🚨',
-        value: scoreResult.global
+        icon: '🔴'
       });
-    } else if (scoreResult.global < 60) {
+    } else if (scoreResult.global < 50) {
       alerts.push({
-        type: PRIORITY_ALERT_TYPES.SEO_SCORE_LOW,
-        message: `Score SEO faible : ${scoreResult.global}/100. Améliorations recommandées.`,
+        type: 'warning',
+        message: `Score SEO faible : ${scoreResult.global}/100`,
         priority: 'medium',
-        icon: '⚠️',
-        value: scoreResult.global
+        icon: '🟠'
       });
     }
   } catch (e) {
     // Score non disponible
   }
 
-  // 2. Vérifier les opportunités haute priorité
+  // 2. Vérifier le CTR (< 1% avec impressions = alerte)
+  const gscStats = await dbGet(`
+    SELECT 
+      SUM(clicks) as total_clicks,
+      SUM(impressions) as total_impressions,
+      AVG(position) as avg_position
+    FROM queries
+  `);
+  
+  if (gscStats && gscStats.total_impressions > 50) {
+    const ctr = (gscStats.total_clicks / gscStats.total_impressions) * 100;
+    if (ctr < 1) {
+      alerts.push({
+        type: 'warning',
+        message: `CTR trop faible : ${ctr.toFixed(2)}% (objectif > 2%)`,
+        priority: 'high',
+        icon: '📉'
+      });
+    }
+  }
+
+  // 3. Vérifier la position moyenne (> 50 = alerte)
+  if (gscStats && gscStats.avg_position > 50) {
+    alerts.push({
+      type: 'warning',
+      message: `Position moyenne critique : ${gscStats.avg_position.toFixed(1)} (objectif < 30)`,
+      priority: 'medium',
+      icon: '📍'
+    });
+  }
+
+  // 4. Vérifier les contenus publiés (0 = alerte)
+  const publishedContent = await dbGet(`
+    SELECT COUNT(*) as count FROM contents WHERE status IN ('published', 'live')
+  `);
+  
+  const totalContents = await dbGet(`SELECT COUNT(*) as count FROM contents`);
+  
+  if (!publishedContent || publishedContent.count === 0) {
+    if (totalContents && totalContents.count > 0) {
+      alerts.push({
+        type: 'warning',
+        message: `Aucun contenu publié (${totalContents.count} en attente)`,
+        priority: 'high',
+        icon: '📝'
+      });
+    }
+  }
+
+  // 5. Vérifier les contenus en attente (> 5 = alerte)
+  const readyContents = await dbGet(`
+    SELECT COUNT(*) as count FROM contents WHERE status = 'ready'
+  `);
+  
+  if (readyContents && readyContents.count > 5) {
+    alerts.push({
+      type: 'info',
+      message: `${readyContents.count} contenus prêts à publier`,
+      priority: 'medium',
+      icon: '📋'
+    });
+  }
+
+  // 6. Vérifier les opportunités haute priorité non traitées
   const highOpps = await dbGet(`
     SELECT COUNT(*) as count FROM opportunities 
     WHERE priority = 'high' AND status = 'pending'
   `);
   
-  if (highOpps && highOpps.count >= 3) {
+  if (highOpps && highOpps.count >= 1) {
     alerts.push({
-      type: PRIORITY_ALERT_TYPES.HIGH_OPPORTUNITIES,
-      message: `${highOpps.count} opportunités haute priorité non traitées.`,
-      priority: 'high',
-      icon: '🎯',
-      value: highOpps.count
-    });
-  } else if (highOpps && highOpps.count >= 1) {
-    alerts.push({
-      type: PRIORITY_ALERT_TYPES.HIGH_OPPORTUNITIES,
-      message: `${highOpps.count} opportunité(s) haute priorité à traiter.`,
+      type: 'info',
+      message: `${highOpps.count} opportunité(s) haute priorité à traiter`,
       priority: 'medium',
-      icon: '🎯',
-      value: highOpps.count
+      icon: '🎯'
     });
   }
 
-  // 3. Vérifier les contenus publiés
-  const publishedContent = await dbGet(`
-    SELECT COUNT(*) as count FROM contents WHERE status = 'published'
-  `);
-  
-  if (!publishedContent || publishedContent.count === 0) {
-    // Vérifier s'il y a des contenus en attente
-    const totalContents = await dbGet(`SELECT COUNT(*) as count FROM contents`);
-    
-    if (totalContents && totalContents.count > 0) {
-      alerts.push({
-        type: PRIORITY_ALERT_TYPES.NO_PUBLISHED_CONTENT,
-        message: `Aucun contenu publié. ${totalContents.count} contenu(s) en attente.`,
-        priority: 'medium',
-        icon: '📝',
-        value: 0
-      });
-    } else {
-      alerts.push({
-        type: PRIORITY_ALERT_TYPES.NO_PUBLISHED_CONTENT,
-        message: `Aucun contenu créé. Commencez par générer le plan éditorial.`,
-        priority: 'medium',
-        icon: '📝',
-        value: 0
-      });
-    }
-  }
-
-  // 4. Vérifier les données Search Console
+  // 7. Vérifier les données Search Console
   const gscData = await dbGet(`SELECT COUNT(*) as count FROM queries`);
   
   if (!gscData || gscData.count === 0) {
     alerts.push({
-      type: PRIORITY_ALERT_TYPES.NO_GSC_DATA,
-      message: `Aucune donnée Search Console. Importez les données GSC.`,
+      type: 'danger',
+      message: `Aucune donnée Search Console importée`,
       priority: 'high',
-      icon: '📊',
-      value: 0
+      icon: '📊'
     });
   }
 
-  // Trier par priorité
+  // Trier par priorité (high d'abord)
   const priorityOrder = { 'high': 1, 'medium': 2 };
   alerts.sort((a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3));
 

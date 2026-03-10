@@ -451,7 +451,6 @@ function renderCockpitV2(data) {
               <div class="competitor-card">
                 <div class="competitor-info">
                   <span class="competitor-domain">${escapeHtml(domain)}</span>
-                  <span class="competitor-meta">Pos. moy: ${position} • ${keywords} mots-clés</span>
                 </div>
                 <a href="https://${domain}" target="_blank" class="competitor-link" title="Voir le site">🔗</a>
               </div>
@@ -2363,8 +2362,15 @@ async function executeAction(actionType, target, sourceId) {
       
     case 'optimize_page':
     case 'improve_ctr':
+    case 'improve_position':
       // Lancer le workflow d'optimisation
       openOptimizePanel(target, actionType);
+      break;
+      
+    case 'publish_content':
+      // Ouvrir l'onglet contenu pour publier
+      alert(`🚀 Publication de "${target}"\n\nRedirection vers l'onglet Contenu...`);
+      document.querySelector('[data-tab="content"]').click();
       break;
       
     case 'fix_technical':

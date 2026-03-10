@@ -10,8 +10,10 @@ const { dbAll, dbGet } = require('./db');
 const ACTION_TYPES = {
   CREATE_CONTENT: 'create_content',
   OPTIMIZE_PAGE: 'optimize_page',
+  PUBLISH_CONTENT: 'publish_content',
   FIX_TECHNICAL: 'fix_technical',
   IMPROVE_CTR: 'improve_ctr',
+  IMPROVE_POSITION: 'improve_position',
   ADD_CONVERSION: 'add_conversion',
   BUILD_LINKS: 'build_links'
 };
@@ -20,8 +22,10 @@ const ACTION_TYPES = {
 const ACTION_LABELS = {
   create_content: '📝 Créer contenu',
   optimize_page: '🔧 Optimiser page',
+  publish_content: '🚀 Publier contenu',
   fix_technical: '⚠️ Corriger technique',
   improve_ctr: '📈 Améliorer CTR',
+  improve_position: '📊 Améliorer position',
   add_conversion: '🎯 Ajouter CTA',
   build_links: '🔗 Maillage interne'
 };
@@ -55,8 +59,14 @@ async function collectGSCSignals() {
     LIMIT 50
   `);
 
+  // Calculer la position moyenne
+  const avgPosition = queries.length > 0 
+    ? queries.reduce((sum, q) => sum + (q.position || 0), 0) / queries.length 
+    : 0;
+
   return {
     total_queries: queries.length,
+    avg_position: avgPosition,
     high_impression_low_ctr: queries.filter(q => q.impressions > 50 && q.ctr < 0.02).length,
     near_top10: queries.filter(q => q.position >= 8 && q.position <= 15).length,
     top_queries: queries.slice(0, 10)
@@ -158,20 +168,31 @@ async function collectAuditSignals() {
  * Signaux Impact SEO
  */
 async function collectImpactSignals() {
-  const contents = await dbAll(`
-    SELECT c.id, c.title, c.keyword, c.status,
+  // Contenus publiés avec leurs performances
+  const publishedContents = await dbAll(`
+    SELECT c.id, c.title, c.keyword, c.status, c.meta_suggested,
            q.impressions, q.clicks, q.position, q.ctr
     FROM contents c
     LEFT JOIN queries q ON LOWER(q.query) LIKE '%' || LOWER(c.keyword) || '%'
-    WHERE c.status = 'published' AND c.keyword IS NOT NULL
+    WHERE c.status IN ('published', 'live') AND c.keyword IS NOT NULL
     ORDER BY q.impressions DESC
   `);
 
+  // Contenus prêts à publier (status = ready)
+  const readyContents = await dbAll(`
+    SELECT id, title, keyword, status, meta_suggested, slug_suggested
+    FROM contents
+    WHERE status = 'ready'
+    ORDER BY id DESC
+  `);
+
   return {
-    published_count: contents.length,
-    with_traffic: contents.filter(c => c.impressions > 0).length,
-    low_performers: contents.filter(c => c.impressions > 50 && c.ctr < 0.02),
-    high_performers: contents.filter(c => c.position && c.position < 10)
+    published_count: publishedContents.length,
+    with_traffic: publishedContents.filter(c => c.impressions > 0).length,
+    low_performers: publishedContents.filter(c => c.impressions > 50 && c.ctr < 0.02),
+    high_performers: publishedContents.filter(c => c.position && c.position < 10),
+    ready_contents: readyContents,
+    ready_count: readyContents.length
   };
 }
 
@@ -243,13 +264,62 @@ function evaluatePriority(action) {
 function generateActions(signals) {
   const actions = [];
 
-  // 1. Actions depuis les opportunités (Quick Wins)
+  // 1. Actions PUBLISH_CONTENT - Contenus prêts à publier (status = ready)
+  if (signals.impact.ready_contents && signals.impact.ready_contents.length > 0) {
+    for (const content of signals.impact.ready_contents.slice(0, 3)) {
+      actions.push({
+        action_type: ACTION_TYPES.PUBLISH_CONTENT,
+        label: ACTION_LABELS.publish_content,
+        target: content.keyword || content.title,
+        description: `Publier "${content.title}"`,
+        impact_estimated: 30,
+        impact_label: 'Publication immédiate',
+        effort: 'low',
+        urgency: 'high',
+        source: 'contents',
+        source_id: content.id,
+        data: {
+          content_id: content.id,
+          title: content.title,
+          keyword: content.keyword,
+          status: content.status
+        }
+      });
+    }
+  }
+
+  // 2. Actions OPTIMIZE_PAGE - Contenus prêts mais non optimisés
+  if (signals.impact.ready_contents && signals.impact.ready_contents.length > 0) {
+    for (const content of signals.impact.ready_contents.slice(0, 2)) {
+      if (!content.meta_suggested) {
+        actions.push({
+          action_type: ACTION_TYPES.OPTIMIZE_PAGE,
+          label: ACTION_LABELS.optimize_page,
+          target: content.keyword || content.title,
+          description: `Optimiser meta de "${content.title}"`,
+          impact_estimated: 20,
+          impact_label: '+CTR potentiel',
+          effort: 'low',
+          urgency: 'medium',
+          source: 'contents',
+          source_id: content.id,
+          data: {
+            content_id: content.id,
+            title: content.title,
+            keyword: content.keyword
+          }
+        });
+      }
+    }
+  }
+
+  // 3. Actions CREATE_CONTENT depuis les opportunités (Quick Wins)
   if (signals.opportunities.opportunities) {
-    for (const opp of signals.opportunities.opportunities.slice(0, 5)) {
+    for (const opp of signals.opportunities.opportunities.slice(0, 3)) {
       const keyword = opp.keyword || opp.target;
       if (!keyword) continue;
 
-      const impactEstimate = Math.round((opp.impressions || 100) * 0.05 * 3); // CTR cible 5%, gain position
+      const impactEstimate = Math.round((opp.impressions || 100) * 0.05 * 3);
       
       actions.push({
         action_type: ACTION_TYPES.CREATE_CONTENT,
@@ -272,14 +342,14 @@ function generateActions(signals) {
     }
   }
 
-  // 2. Actions depuis GSC (CTR faible)
+  // 4. Actions IMPROVE_CTR - CTR faible avec impressions
   if (signals.gsc.top_queries) {
     const lowCTRQueries = signals.gsc.top_queries.filter(q => 
-      q.impressions > 50 && q.ctr < 0.02 && q.position < 20
+      q.impressions > 50 && q.ctr < 0.02
     );
 
-    for (const query of lowCTRQueries.slice(0, 3)) {
-      const impactEstimate = Math.round(query.impressions * 0.03); // Gain CTR de 3%
+    for (const query of lowCTRQueries.slice(0, 2)) {
+      const impactEstimate = Math.round(query.impressions * 0.03);
       
       actions.push({
         action_type: ACTION_TYPES.IMPROVE_CTR,
@@ -289,7 +359,7 @@ function generateActions(signals) {
         impact_estimated: impactEstimate,
         impact_label: `+${impactEstimate} clics/mois`,
         effort: 'low',
-        urgency: 'medium',
+        urgency: query.impressions > 100 ? 'high' : 'medium',
         source: 'gsc',
         data: {
           query: query.query,
@@ -301,14 +371,37 @@ function generateActions(signals) {
     }
   }
 
-  // 3. Actions depuis Pages SEO - désactivé temporairement (pas de données meta dans DB)
-  // Les données pages SEO seront enrichies dans une prochaine version
+  // 5. Actions IMPROVE_POSITION - Position moyenne > 40
+  if (signals.gsc.avg_position && signals.gsc.avg_position > 40) {
+    const poorPositionQueries = signals.gsc.top_queries?.filter(q => 
+      q.position > 40 && q.impressions > 20
+    ) || [];
 
-  // 4. Actions depuis Audit (erreurs critiques)
+    for (const query of poorPositionQueries.slice(0, 2)) {
+      actions.push({
+        action_type: ACTION_TYPES.IMPROVE_POSITION,
+        label: ACTION_LABELS.improve_position,
+        target: query.query,
+        description: `Renforcer contenu pour "${query.query}" (pos. ${query.position?.toFixed(0)})`,
+        impact_estimated: 15,
+        impact_label: 'Visibilité +',
+        effort: 'medium',
+        urgency: 'medium',
+        source: 'gsc',
+        data: {
+          query: query.query,
+          current_position: query.position,
+          impressions: query.impressions
+        }
+      });
+    }
+  }
+
+  // 6. Actions FIX_TECHNICAL depuis Audit (erreurs critiques)
   if (signals.audit.has_audit && signals.audit.critical_issues > 0) {
     const criticalIssues = signals.audit.issues.filter(i => i.severity === 'critical');
     
-    for (const issue of criticalIssues.slice(0, 3)) {
+    for (const issue of criticalIssues.slice(0, 2)) {
       actions.push({
         action_type: ACTION_TYPES.FIX_TECHNICAL,
         label: ACTION_LABELS.fix_technical,
@@ -327,15 +420,15 @@ function generateActions(signals) {
     }
   }
 
-  // 5. Actions depuis Impact (contenus sous-performants)
-  if (signals.impact.low_performers) {
+  // 7. Actions depuis Impact (contenus sous-performants live)
+  if (signals.impact.low_performers && signals.impact.low_performers.length > 0) {
     for (const content of signals.impact.low_performers.slice(0, 2)) {
-      const impactEstimate = Math.round(content.impressions * 0.02);
+      const impactEstimate = Math.round((content.impressions || 50) * 0.02);
       
       actions.push({
         action_type: ACTION_TYPES.IMPROVE_CTR,
         label: ACTION_LABELS.improve_ctr,
-        target: content.keyword,
+        target: content.keyword || content.title,
         description: `Améliorer CTR de "${content.title}"`,
         impact_estimated: impactEstimate,
         impact_label: `+${impactEstimate} clics/mois`,
@@ -351,9 +444,6 @@ function generateActions(signals) {
       });
     }
   }
-
-  // 6. Actions depuis Conversions - désactivé temporairement (pas de données CTA)
-  // Les données conversions seront enrichies dans une prochaine version
 
   // Évaluer et trier les actions par priorité
   const evaluatedActions = actions.map(action => {

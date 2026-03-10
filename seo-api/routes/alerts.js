@@ -33,10 +33,11 @@ router.get('/alerts/priority', async (req, res) => {
   }
 });
 
-// GET /api/alerts
+// GET /api/alerts - Retourne les alertes automatiques générées en temps réel
 router.get('/alerts', async (req, res) => {
   try {
-    const alerts = await getAllAlerts();
+    // Générer les alertes automatiques (pas stockées en base)
+    const alerts = await generatePriorityAlerts();
     res.json({ status: 'ok', data: alerts });
   } catch (err) {
     res.status(500).json({ status: 'error', message: err.message });
