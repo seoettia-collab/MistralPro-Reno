@@ -129,6 +129,10 @@ app.use('/api', auditIARoutes);
 const dalleRoutes = require('./routes/dalle');
 app.use('/api', dalleRoutes);
 
+// Routes Optimize (Page Optimization)
+const optimizeRoutes = require('./routes/optimize');
+app.use('/api', optimizeRoutes);
+
 // Import error handlers
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 

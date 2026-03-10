@@ -2329,16 +2329,14 @@ function getActionButton(action) {
 async function executeAction(actionType, target, sourceId) {
   switch (actionType) {
     case 'create_content':
-      // Rediriger vers Plan Contenu avec le mot-clé
-      alert(`🚀 Création de contenu pour "${target}"\n\nRedirection vers le Plan Contenu...`);
-      // Activer l'onglet Plan Contenu
-      document.querySelector('[data-tab="contentplan"]').click();
+      // Ouvrir Studio SEO avec le mot-clé pré-rempli
+      openStudioWithKeyword(target);
       break;
       
     case 'optimize_page':
     case 'improve_ctr':
-      alert(`🔧 Optimisation de "${target}"\n\nConsultez l'onglet Pages SEO pour plus de détails.`);
-      document.querySelector('[data-tab="pages"]').click();
+      // Lancer le workflow d'optimisation
+      openOptimizePanel(target, actionType);
       break;
       
     case 'fix_technical':
@@ -2354,6 +2352,305 @@ async function executeAction(actionType, target, sourceId) {
     default:
       alert(`Action "${actionType}" pour "${target}"`);
   }
+}
+
+/**
+ * Ouvre le Studio SEO avec un mot-clé pré-rempli
+ */
+function openStudioWithKeyword(keyword) {
+  // Activer l'onglet Studio SEO
+  const studioBtn = document.querySelector('[data-tab="studio"]');
+  if (studioBtn) {
+    studioBtn.click();
+    
+    // Attendre que l'onglet soit chargé puis pré-remplir
+    setTimeout(() => {
+      const keywordInput = document.getElementById('studio-keyword');
+      if (keywordInput) {
+        keywordInput.value = keyword;
+        keywordInput.focus();
+      }
+    }, 300);
+  }
+}
+
+/**
+ * Ouvre le panneau d'optimisation pour une page
+ */
+async function openOptimizePanel(target, actionType) {
+  // Créer ou récupérer le panneau d'optimisation
+  let panel = document.getElementById('optimize-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'optimize-panel';
+    panel.className = 'optimize-panel';
+    document.body.appendChild(panel);
+  }
+  
+  // Afficher le panneau avec loading
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="optimize-panel-content">
+      <div class="optimize-header">
+        <h3>🔧 Optimisation en cours</h3>
+        <button class="btn-close" onclick="closeOptimizePanel()">✕</button>
+      </div>
+      <div class="optimize-body">
+        <div class="optimize-loading">
+          <div class="studio-loading-spinner"></div>
+          <p>Analyse de "${escapeHtml(target)}"...</p>
+          <p class="loading-detail">Claude IA examine la page et prépare les optimisations</p>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  try {
+    // Appeler l'API d'analyse
+    const response = await fetchAPI('/api/optimize/analyze', {
+      method: 'POST',
+      body: JSON.stringify({
+        keyword: target,
+        actionType: actionType
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.status !== 'ok') {
+      throw new Error(result.message || 'Erreur d\'analyse');
+    }
+    
+    // Afficher les résultats
+    renderOptimizeResults(panel, result.data, result.simulated);
+    
+  } catch (error) {
+    console.error('Erreur optimisation:', error);
+    panel.querySelector('.optimize-body').innerHTML = `
+      <div class="optimize-error">
+        <p>❌ Erreur lors de l'analyse</p>
+        <p class="error-detail">${escapeHtml(error.message)}</p>
+        <button class="btn-primary" onclick="closeOptimizePanel()">Fermer</button>
+      </div>
+    `;
+  }
+}
+
+/**
+ * Affiche les résultats d'optimisation
+ */
+function renderOptimizeResults(panel, data, simulated) {
+  const { diagnosis, optimizations, expectedImpact, priority, pageUrl, keyword } = data;
+  
+  const priorityClass = priority === 'HIGH' ? 'priority-high' : priority === 'MEDIUM' ? 'priority-medium' : 'priority-low';
+  const priorityLabel = priority === 'HIGH' ? '🔴 Haute' : priority === 'MEDIUM' ? '🟡 Moyenne' : '🟢 Basse';
+  
+  panel.innerHTML = `
+    <div class="optimize-panel-content">
+      <div class="optimize-header">
+        <h3>🔧 Optimisations proposées</h3>
+        <button class="btn-close" onclick="closeOptimizePanel()">✕</button>
+      </div>
+      
+      <div class="optimize-body">
+        ${simulated ? '<div class="simulated-badge">Mode simulation</div>' : ''}
+        
+        <!-- Diagnostic -->
+        <div class="optimize-section optimize-diagnosis">
+          <h4>📊 Diagnostic</h4>
+          <div class="diagnosis-card">
+            <div class="diagnosis-issue">
+              <span class="label">Problème :</span>
+              <span class="value">${escapeHtml(diagnosis.mainIssue)}</span>
+            </div>
+            <div class="diagnosis-current">
+              <span class="label">État actuel :</span>
+              <span class="value">${escapeHtml(diagnosis.currentState)}</span>
+            </div>
+            <div class="diagnosis-target">
+              <span class="label">Objectif :</span>
+              <span class="value">${escapeHtml(diagnosis.targetState)}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Impact attendu -->
+        <div class="optimize-section optimize-impact">
+          <h4>📈 Impact attendu</h4>
+          <div class="impact-grid">
+            <div class="impact-card">
+              <span class="impact-value">${escapeHtml(expectedImpact.ctrImprovement)}</span>
+              <span class="impact-label">CTR</span>
+            </div>
+            <div class="impact-card">
+              <span class="impact-value">${escapeHtml(expectedImpact.positionImprovement)}</span>
+              <span class="impact-label">Position</span>
+            </div>
+            <div class="impact-card">
+              <span class="impact-value">${escapeHtml(expectedImpact.estimatedClicks)}</span>
+              <span class="impact-label">Clics/mois</span>
+            </div>
+            <div class="impact-card ${priorityClass}">
+              <span class="impact-value">${priorityLabel}</span>
+              <span class="impact-label">Priorité</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Optimisations -->
+        <div class="optimize-section optimize-changes">
+          <h4>✏️ Modifications proposées</h4>
+          <div class="changes-list">
+            ${optimizations.map((opt, index) => `
+              <div class="change-card" data-index="${index}">
+                <div class="change-header">
+                  <span class="change-type">${getOptTypeIcon(opt.type)} ${getOptTypeLabel(opt.type)}</span>
+                  <label class="change-toggle">
+                    <input type="checkbox" checked data-opt-index="${index}" />
+                    <span>Appliquer</span>
+                  </label>
+                </div>
+                ${opt.current ? `
+                  <div class="change-current">
+                    <span class="label">Actuel :</span>
+                    <span class="value">${escapeHtml(opt.current)}</span>
+                  </div>
+                ` : ''}
+                <div class="change-proposed">
+                  <span class="label">${opt.action ? 'Action :' : 'Proposé :'}</span>
+                  <span class="value">${escapeHtml(opt.proposed || opt.description)}</span>
+                </div>
+                <div class="change-reason">
+                  <span class="label">Raison :</span>
+                  <span class="value">${escapeHtml(opt.reason)}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="optimize-actions">
+          <button class="btn-large btn-primary" onclick="applyOptimizations('${escapeHtml(pageUrl || '')}', '${escapeHtml(keyword || '')}')">
+            ✅ Appliquer les optimisations
+          </button>
+          <button class="btn-large btn-secondary" onclick="closeOptimizePanel()">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Stocker les données pour l'application
+  panel.dataset.optimizations = JSON.stringify(data);
+}
+
+/**
+ * Applique les optimisations sélectionnées
+ */
+async function applyOptimizations(pageUrl, keyword) {
+  const panel = document.getElementById('optimize-panel');
+  if (!panel) return;
+  
+  const data = JSON.parse(panel.dataset.optimizations || '{}');
+  const checkboxes = panel.querySelectorAll('input[data-opt-index]:checked');
+  
+  // Filtrer les optimisations sélectionnées
+  const selectedOptimizations = [];
+  checkboxes.forEach(cb => {
+    const index = parseInt(cb.dataset.optIndex);
+    if (data.optimizations && data.optimizations[index]) {
+      selectedOptimizations.push(data.optimizations[index]);
+    }
+  });
+  
+  if (selectedOptimizations.length === 0) {
+    alert('⚠️ Aucune optimisation sélectionnée');
+    return;
+  }
+  
+  // Afficher loading
+  panel.querySelector('.optimize-body').innerHTML = `
+    <div class="optimize-loading">
+      <div class="studio-loading-spinner"></div>
+      <p>Application des optimisations...</p>
+    </div>
+  `;
+  
+  try {
+    const response = await fetchAPI('/api/optimize/apply', {
+      method: 'POST',
+      body: JSON.stringify({
+        pageUrl: pageUrl || data.pageUrl,
+        keyword: keyword,
+        optimizations: selectedOptimizations
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.status !== 'ok') {
+      throw new Error(result.message || 'Erreur d\'application');
+    }
+    
+    // Succès
+    panel.querySelector('.optimize-body').innerHTML = `
+      <div class="optimize-success">
+        <div class="success-icon">✅</div>
+        <h4>Optimisations enregistrées</h4>
+        <p>${selectedOptimizations.length} modification(s) prête(s) à être publiée(s)</p>
+        <p class="next-step">💡 La publication réelle nécessite l'endpoint GitHub (à venir)</p>
+        <button class="btn-large btn-primary" onclick="closeOptimizePanel()">Fermer</button>
+      </div>
+    `;
+    
+  } catch (error) {
+    panel.querySelector('.optimize-body').innerHTML = `
+      <div class="optimize-error">
+        <p>❌ Erreur lors de l'application</p>
+        <p class="error-detail">${escapeHtml(error.message)}</p>
+        <button class="btn-primary" onclick="closeOptimizePanel()">Fermer</button>
+      </div>
+    `;
+  }
+}
+
+/**
+ * Ferme le panneau d'optimisation
+ */
+function closeOptimizePanel() {
+  const panel = document.getElementById('optimize-panel');
+  if (panel) {
+    panel.style.display = 'none';
+  }
+}
+
+/**
+ * Helpers pour les types d'optimisation
+ */
+function getOptTypeIcon(type) {
+  const icons = {
+    'title': '📑',
+    'metaDescription': '📝',
+    'h1': '🔤',
+    'content': '📄',
+    'image': '🖼️',
+    'schema': '🏷️'
+  };
+  return icons[type] || '📌';
+}
+
+function getOptTypeLabel(type) {
+  const labels = {
+    'title': 'Title',
+    'metaDescription': 'Meta Description',
+    'h1': 'Titre H1',
+    'content': 'Contenu',
+    'image': 'Image',
+    'schema': 'Schema.org'
+  };
+  return labels[type] || type;
 }
 
 /**
@@ -5344,6 +5641,10 @@ window.executeAction = executeAction;
 window.checkAndMarkLive = checkAndMarkLive;
 window.publishContent = publishContent;
 window.verifyAndMarkLive = verifyAndMarkLive;
+window.openOptimizePanel = openOptimizePanel;
+window.closeOptimizePanel = closeOptimizePanel;
+window.applyOptimizations = applyOptimizations;
+window.openStudioWithKeyword = openStudioWithKeyword;
 
 /**
  * Publier un contenu : EXÉCUTION AUTOMATIQUE COMPLÈTE

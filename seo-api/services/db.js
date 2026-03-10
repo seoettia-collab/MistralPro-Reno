@@ -182,6 +182,15 @@ const initSchema = async () => {
       target TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+    
+    CREATE TABLE IF NOT EXISTS optimization_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      page_url TEXT NOT NULL,
+      optimizations TEXT,
+      status TEXT DEFAULT 'pending',
+      applied_at DATETIME,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `;
   
   // Exécuter chaque statement séparément
