@@ -929,6 +929,92 @@ function generateSimulatedAudit(data) {
 }
 
 /**
+ * Copie le rapport d'audit dans le presse-papiers
+ */
+function copyAuditReport() {
+  if (!lastAuditIA) {
+    showNotification('Aucun audit à copier', 'warning');
+    return;
+  }
+  
+  const audit = lastAuditIA;
+  const date = new Date().toLocaleString('fr-FR');
+  
+  // Construire le rapport texte
+  let report = `RAPPORT AUDIT SEO — Mistral Pro Reno\n`;
+  report += `Généré le ${date}\n`;
+  report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  
+  // Résumé
+  report += `📋 RÉSUMÉ\n`;
+  report += `${audit.summary || 'Audit généré avec succès.'}\n\n`;
+  
+  // Forces
+  const strengths = audit.strengths || [];
+  if (strengths.length > 0) {
+    report += `💪 FORCES SEO\n`;
+    strengths.forEach(s => report += `  ✅ ${s}\n`);
+    report += `\n`;
+  }
+  
+  // Faiblesses
+  const weaknesses = audit.weaknesses || [];
+  if (weaknesses.length > 0) {
+    report += `⚠️ FAIBLESSES SEO\n`;
+    weaknesses.forEach(w => report += `  ⚠️ ${w}\n`);
+    report += `\n`;
+  }
+  
+  // Concurrence
+  const competition = audit.competition;
+  if (competition) {
+    report += `🏆 ANALYSE CONCURRENTIELLE\n`;
+    if (competition.analysis) {
+      report += `${competition.analysis}\n\n`;
+    }
+    if (competition.competitors && competition.competitors.length > 0) {
+      competition.competitors.forEach(comp => {
+        const threat = comp.threat_level === 'HIGH' ? '🔴' : comp.threat_level === 'MEDIUM' ? '🟠' : '🟢';
+        report += `  ${threat} ${comp.domain} (${comp.threat_level})\n`;
+        if (comp.positioning) report += `     ${comp.positioning}\n`;
+      });
+      report += `\n`;
+    }
+    if (competition.opportunities && competition.opportunities.length > 0) {
+      report += `💡 Opportunités:\n`;
+      competition.opportunities.forEach(opp => report += `  → ${opp}\n`);
+      report += `\n`;
+    }
+  }
+  
+  // Décisions
+  const decisions = audit.decisions || audit.actions || [];
+  if (decisions.length > 0) {
+    report += `⚡ DÉCISIONS IA\n`;
+    decisions.forEach((d, i) => {
+      const type = d.type || 'action';
+      const title = d.title_suggested || d.title || d.keyword || d.target || 'Décision';
+      const impact = d.impact_score || d.impactScore || 50;
+      report += `  ${i+1}. [${type.toUpperCase()}] ${title} (Impact: ${impact}/100)\n`;
+      if (d.reason) report += `     Raison: ${d.reason}\n`;
+      if (d.competitor) report += `     vs ${d.competitor}\n`;
+    });
+    report += `\n`;
+  }
+  
+  report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  report += `Généré par SEO Dashboard V2.14 — Mistral Pro Reno\n`;
+  
+  // Copier dans le presse-papiers
+  navigator.clipboard.writeText(report).then(() => {
+    showNotification('📋 Rapport copié !', 'success');
+  }).catch(err => {
+    console.error('Erreur copie:', err);
+    showNotification('Erreur lors de la copie', 'error');
+  });
+}
+
+/**
  * Lance l'Audit IA complet
  */
 async function launchFullAuditIA() {
@@ -1027,6 +1113,7 @@ function renderAuditIAResult(audit) {
         <p class="summary-text">${escapeHtml(summary)}</p>
         <div class="audit-meta">
           <span>🕐 Généré le ${new Date().toLocaleString('fr-FR')}</span>
+          <button class="btn-small btn-secondary" onclick="copyAuditReport()">📋 Copier rapport</button>
           <button class="btn-small btn-secondary" onclick="launchFullAuditIA()">🔄 Relancer</button>
         </div>
       </div>
