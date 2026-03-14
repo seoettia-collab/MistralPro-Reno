@@ -1,8 +1,8 @@
 !function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="07 55 18 89 37",s="contact@mistralpro-reno.fr";let i=null;
 
-// TOUS LES SELECTS PAR CATÉGORIE - V6
+// TOUS LES SELECTS PAR CATÉGORIE - V7
 const allSelects={
-plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre","select-pack-sdb","select-carrelage-sdb","select-options-sdb","select-depose-mural","select-depose-sol"],
+plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre","select-pack-sdb","select-depose-mural","select-depose-sol"],
 electricite:["select-tableau","select-points-lum","select-prises","select-inter","select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv","select-clim","select-vmc-simple","select-vmc-double","select-aerateur"],
 peinture:["select-peinture-murs","select-peinture-plaf","select-parquet","select-carrelage-sol","select-lino","select-faience","select-credence","select-depose","select-ragreage","select-chape","select-ravalement","select-facade"],
 "gros-oeuvre":["select-mur-porteur","select-cloisons","select-dalle","select-demo","select-iso-murs","select-iso-combles","select-ite","select-faux-plafond","select-doublage","select-extension","select-terrassement","select-fondations"],
