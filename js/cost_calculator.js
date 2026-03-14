@@ -496,11 +496,12 @@ y.text(t.qty+" "+t.unit,145,baseY);
 y.text(u(t.price*1.2),160,baseY);
 y.text(u(ttc),180,baseY);
 n++}),z++}),k+=10;
-// Ligne après toutes les désignations
-y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,k,195,k);
-k+=5,k>250&&(y.addPage(),k=30);
+k>250&&(y.addPage(),k=30);
 // Calcul TVA et TTC
 const $=.2*E,N=E+$;
+// Ligne avant totaux (intégrée au bloc)
+y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,k,195,k);
+k+=5;
 // Tableau totaux élégant
 const totalsX=125;
 y.setDrawColor(200,200,200),y.setLineWidth(0.3);
