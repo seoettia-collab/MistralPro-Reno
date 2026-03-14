@@ -801,15 +801,27 @@ async function loadMyArticles() {
   container.innerHTML = '<p class="articles-loading">⏳ Chargement des articles...</p>';
   
   try {
-    const response = await fetchAPI('/api/blog/articles');
-    const result = await response.json();
+    // Essayer d'abord l'API Vercel
+    let articles = [];
     
-    if (result.status !== 'ok') {
-      throw new Error(result.message || 'Erreur API');
+    try {
+      const response = await fetchAPI('/api/blog/articles');
+      const result = await response.json();
+      
+      if (result.status === 'ok' && result.articles) {
+        articles = result.articles;
+      }
+    } catch (apiError) {
+      console.warn('[Mes Articles] API non disponible, fallback blog.html');
     }
     
-    myArticlesCache = result.articles;
-    renderMyArticles(result.articles);
+    // Fallback: parser blog.html si l'API ne fonctionne pas
+    if (articles.length === 0) {
+      articles = await parseArticlesFromBlogHtml();
+    }
+    
+    myArticlesCache = articles;
+    renderMyArticles(articles);
     
   } catch (error) {
     console.error('[Mes Articles] Erreur:', error);
@@ -819,6 +831,55 @@ async function loadMyArticles() {
         <button class="btn-small btn-secondary" onclick="loadMyArticles()">Réessayer</button>
       </div>
     `;
+  }
+}
+
+/**
+ * Parse les articles depuis blog.html (fallback)
+ */
+async function parseArticlesFromBlogHtml() {
+  try {
+    const response = await fetch('/blog.html');
+    const html = await response.text();
+    
+    // Parser les cartes d'articles
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const cards = doc.querySelectorAll('.blog-card');
+    
+    const articles = [];
+    const seenSlugs = new Set();
+    
+    cards.forEach(card => {
+      const link = card.querySelector('h2 a');
+      if (!link) return;
+      
+      const href = link.getAttribute('href');
+      if (!href || !href.includes('blog/')) return;
+      
+      const slug = href.replace('blog/', '').replace('.html', '');
+      
+      // Éviter les doublons
+      if (seenSlugs.has(slug)) return;
+      seenSlugs.add(slug);
+      
+      const img = card.querySelector('.blog-card-img img');
+      const title = link.textContent.trim();
+      
+      articles.push({
+        slug: slug,
+        title: title,
+        url: `https://www.mistralpro-reno.fr/${href}`,
+        imageUrl: img ? img.getAttribute('src') : null
+      });
+    });
+    
+    console.log('[Mes Articles] Parsé depuis blog.html:', articles.length, 'articles');
+    return articles;
+    
+  } catch (error) {
+    console.error('[Mes Articles] Erreur parsing blog.html:', error);
+    return [];
   }
 }
 
@@ -851,7 +912,7 @@ function renderMyArticles(articles) {
             }
           </div>
           <div class="article-card-body">
-            <h5 class="article-card-title">${formatSlugToTitle(article.slug)}</h5>
+            <h5 class="article-card-title">${article.title || formatSlugToTitle(article.slug)}</h5>
             <div class="article-card-actions">
               <a href="${article.url}" target="_blank" class="btn-small btn-primary" title="Voir l'article">
                 👁️ Voir
