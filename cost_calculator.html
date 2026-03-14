@@ -454,18 +454,23 @@
                         <div class="san-selects-row">
                             <div class="san-select-group">
                                 <label>Chauffe-eau</label>
-                                <select id="select-cumulus" class="san-select" data-label="Chauffe-eau pose raccordement DTU 60.1">
+                                <select id="select-cumulus" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="950">200L électrique 950 €</option>
-                                    <option value="1200">300L électrique 1 200 €</option>
-                                    <option value="2800">Thermodynamique 2 800 €</option>
+                                    <option value="450" data-label="Fourniture et pose de chauffe-eau électrique instantané 4.4kW, débit 2.5L/min, compact sous évier, raccordement hydraulique et électrique. DTU 60.1">Instantané 4.4kW 450 €</option>
+                                    <option value="550" data-label="Fourniture et pose de chauffe-eau électrique 50L vertical mural, cuve émaillée, anode magnésium, thermostat, groupe sécurité, raccordement hydraulique et électrique. DTU 60.1">50L électrique 550 €</option>
+                                    <option value="650" data-label="Fourniture et pose de chauffe-eau électrique 80L vertical mural, cuve émaillée, anode magnésium, thermostat, groupe sécurité, raccordement hydraulique et électrique. DTU 60.1">80L électrique 650 €</option>
+                                    <option value="750" data-label="Fourniture et pose de chauffe-eau électrique 100L vertical mural, cuve émaillée, anode magnésium, thermostat, groupe sécurité, raccordement hydraulique et électrique. DTU 60.1">100L électrique 750 €</option>
+                                    <option value="850" data-label="Fourniture et pose de chauffe-eau électrique 150L vertical mural, cuve émaillée, anode magnésium, thermostat, groupe sécurité, raccordement hydraulique cuivre et électrique. DTU 60.1">150L électrique 850 €</option>
+                                    <option value="950" data-label="Fourniture et pose de chauffe-eau électrique 200L vertical mural, cuve émaillée, anode magnésium, thermostat, groupe sécurité, raccordement hydraulique cuivre et électrique. DTU 60.1">200L électrique 950 €</option>
+                                    <option value="1200" data-label="Fourniture et pose de chauffe-eau électrique 300L vertical stable, cuve émaillée renforcée, anode magnésium, thermostat, groupe sécurité, raccordement hydraulique cuivre et électrique. DTU 60.1">300L électrique 1 200 €</option>
+                                    <option value="2800" data-label="Fourniture et pose de chauffe-eau thermodynamique 270L, pompe à chaleur intégrée COP 3.5, cuve inox, régulation digitale, groupe sécurité, raccordement hydraulique et électrique. DTU 60.1">Thermodynamique 270L 2 800 €</option>
                                 </select>
                             </div>
                             <div class="san-select-group">
                                 <label>Adoucisseur</label>
-                                <select id="select-adoucisseur" class="san-select" data-label="Adoucisseur eau bypass mise en service DTU 60.1">
+                                <select id="select-adoucisseur" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="1400">Adoucisseur 1 400 €</option>
+                                    <option value="1400" data-label="Fourniture et pose d'adoucisseur d'eau 20L résine, vanne volumétrique, bypass intégré, raccordement cuivre, mise en service et réglage dureté. DTU 60.1">Adoucisseur 1 400 €</option>
                                 </select>
                             </div>
                         </div>
@@ -1191,8 +1196,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=7.0" defer></script>
-    <!-- CCTP v3 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=7.1" defer></script>
+    <!-- CCTP v4 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
