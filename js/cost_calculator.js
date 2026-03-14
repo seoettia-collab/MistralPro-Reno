@@ -32,12 +32,25 @@ const badge=t(`#count-${cat}`);badge.text(count);count>0?badge.addClass("has-val
 // Mise à jour panneau prévisualisation
 updatePreview()}
 
+function getCatName(c){return{plomberie:"Plomberie & Sanitaires",electricite:"Électricité",peinture:"Peinture & Revêtements","gros-oeuvre":"Gros Œuvre",menuiserie:"Menuiserie"}[c]||c||"Prestations"}
+
 function updatePreview(){
 const previewList=t("#preview-list");
 const previewCount=t("#preview-count");
 let html="";
 let totalItems=0;
 const categories={};
+
+// Collecter checkboxes EN PREMIER
+t('input[type="checkbox"]:checked').each(function(){
+const price=parseFloat(t(this).data("price"))||0;
+if(price>0){
+const label=t(this).data("label")||t(this).closest("label").find("strong").text();
+const panelCat=t(this).closest(".category-panel").data("category");
+const catName=getCatName(panelCat);
+if(!categories[catName])categories[catName]=[];
+categories[catName].push({label:label,price:price});
+totalItems++}});
 
 // Collecter tous les selects sélectionnés
 Object.keys(allSelects).forEach(function(cat){
@@ -47,19 +60,10 @@ const prix=parseFloat(sel.val())||0;
 if(prix>0){
 const selectedOption=sel.find("option:selected");
 const label=selectedOption.data("label")||selectedOption.text().split("€")[0].trim();
-const catName=d(cat);
+const catName=getCatName(cat);
 if(!categories[catName])categories[catName]=[];
 categories[catName].push({label:label,price:prix});
 totalItems++}})});
-
-// Collecter checkboxes
-t('input[type="checkbox"]:checked').each(function(){
-const price=parseFloat(t(this).data("price"))||0;
-const label=t(this).data("label")||t(this).closest("label").find("strong").text();
-const cat=d(t(this).closest(".category-panel").data("category")||"Prestations");
-if(!categories[cat])categories[cat]=[];
-categories[cat].push({label:label,price:price});
-totalItems++});
 
 // Générer HTML
 if(totalItems===0){
