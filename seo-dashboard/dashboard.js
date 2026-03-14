@@ -4200,7 +4200,7 @@ async function loadContents() {
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'idea')" title="Retour idée">↩️</button>`;
       } else if (c.status === 'ready' || c.status === 'validated') {
         // Prêt → peut publier (génère HTML) ou retour brouillon
-        actionsHtml += `<button class="btn-small btn-primary" onclick="publishContent(${c.id})">🚀 Publier</button>`;
+        actionsHtml += `<button class="btn-small btn-primary" onclick="publishContentById(${c.id})">🚀 Publier</button>`;
         actionsHtml += `<button class="btn-small btn-secondary" onclick="updateContentStatus(${c.id}, 'draft')" title="Retour brouillon">↩️</button>`;
       } else if (c.status === 'deploying') {
         // En cours de déploiement
@@ -6896,10 +6896,16 @@ window.applyOptimizations = applyOptimizations;
 window.openStudioWithKeyword = openStudioWithKeyword;
 
 /**
- * Publier un contenu : EXÉCUTION AUTOMATIQUE COMPLÈTE
+ * Publier un contenu par ID : EXÉCUTION AUTOMATIQUE COMPLÈTE (Module Content)
  * Génère HTML → Push Git → Attend déploiement → Vérifie URL → Marque LIVE
  */
-async function publishContent(contentId) {
+async function publishContentById(contentId) {
+  if (!contentId) {
+    console.error('[Publish] contentId manquant');
+    alert('❌ Erreur : ID du contenu manquant');
+    return;
+  }
+  
   try {
     // Afficher message de démarrage
     showPublishProgress(contentId, 'Démarrage de la publication...');
@@ -6926,7 +6932,7 @@ async function publishContent(contentId) {
   } catch (err) {
     closePublishProgress();
     alert(`❌ Erreur : ${err.message}`);
-    console.error('publishContent error:', err);
+    console.error('publishContentById error:', err);
   }
 }
 
