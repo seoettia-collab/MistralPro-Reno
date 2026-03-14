@@ -1773,7 +1773,7 @@ function capitalizeFirst(str) {
 
 // ══════════════════════════════════════════════════════════════════════════════
 /**
- * Affiche le résultat de la génération
+ * Affiche le résultat de la génération - V2.15 Studio SEO Finalisé
  */
 function renderStudioResult(content) {
   const resultSection = document.getElementById('studio-result');
@@ -1781,84 +1781,143 @@ function renderStudioResult(content) {
   // Extraire le contenu article du HTML (sans doctype/head/body)
   const articleContent = extractArticleContent(content.htmlContent);
   
+  // Statut du contenu
+  const statusClass = content.simulated ? 'status-simulated' : 'status-ready';
+  const statusText = content.simulated ? '⚠️ Simulation' : '✅ Prêt à publier';
+  
   resultSection.innerHTML = `
-    <div class="studio-result">
-      <div class="result-header">
-        <h3>✅ Contenu généré avec succès</h3>
-        <div class="result-meta">
-          <span>📄 ${content.type === 'blog' ? 'Article blog' : content.type === 'service' ? 'Page service' : 'Landing page'}</span>
-          <span>📝 ~${content.wordCount} mots</span>
-          <span>📊 ${content.sections || 0} sections</span>
-          ${content.faq ? `<span>❓ ${content.faq} FAQ</span>` : ''}
-          <span>🕐 ${new Date(content.generatedAt).toLocaleTimeString('fr-FR')}</span>
-          ${content.simulated ? '<span class="simulated-tag">⚠️ Simulation</span>' : '<span class="real-tag">✨ Claude API</span>'}
+    <div class="studio-result-v2">
+      
+      <!-- HEADER AVEC STATUT -->
+      <div class="studio-result-header">
+        <div class="result-title-row">
+          <h3>Contenu généré</h3>
+          <span class="content-status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="result-quick-stats">
+          <span class="stat-item">📄 ${content.type === 'blog' ? 'Article' : content.type === 'service' ? 'Service' : 'Landing'}</span>
+          <span class="stat-item">📝 ${content.wordCount} mots</span>
+          <span class="stat-item">📊 ${content.sections || 0} sections</span>
+          ${content.faq ? `<span class="stat-item">❓ ${content.faq} FAQ</span>` : ''}
         </div>
       </div>
       
-      <!-- Aperçu SEO Google -->
-      <div class="result-preview">
-        <div class="preview-header">
-          <h4>🔍 Aperçu Google</h4>
+      <!-- GRILLE PRINCIPALE -->
+      <div class="studio-main-grid">
+        
+        <!-- COLONNE GAUCHE : MÉTADONNÉES SEO -->
+        <div class="studio-seo-column">
+          
+          <!-- Infos de base -->
+          <div class="seo-info-card">
+            <h4>📋 Informations</h4>
+            <div class="seo-field">
+              <label>Slug URL</label>
+              <div class="seo-value slug-value">/blog/${content.slug}.html</div>
+            </div>
+            <div class="seo-field">
+              <label>Titre (title)</label>
+              <div class="seo-value title-value">${escapeHtml(content.title)}</div>
+              <span class="char-count ${content.title.length > 65 ? 'over' : ''}">${content.title.length}/65</span>
+            </div>
+            <div class="seo-field">
+              <label>H1</label>
+              <div class="seo-value h1-value">${escapeHtml(content.h1)}</div>
+            </div>
+            <div class="seo-field">
+              <label>Meta description</label>
+              <div class="seo-value meta-value">${escapeHtml(content.metaDescription)}</div>
+              <span class="char-count ${content.metaDescription.length > 160 ? 'over' : ''}">${content.metaDescription.length}/160</span>
+            </div>
+          </div>
+          
+          <!-- Aperçu Google -->
+          <div class="seo-info-card google-preview-card">
+            <h4>🔍 Aperçu Google</h4>
+            <div class="google-serp-preview">
+              <div class="serp-url">mistralpro-reno.fr › blog › ${content.slug}</div>
+              <div class="serp-title">${escapeHtml(content.title)}</div>
+              <div class="serp-description">${escapeHtml(content.metaDescription)}</div>
+            </div>
+          </div>
+          
+          <!-- Upload Image -->
+          <div class="seo-info-card image-upload-card">
+            <h4>🖼️ Image article <span class="optional-tag">Optionnel</span></h4>
+            <div id="image-upload-container" class="image-upload-container">
+              <div class="upload-dropzone" id="upload-dropzone">
+                <input type="file" id="image-file-input" accept="image/*" onchange="handleImageUpload(event)" hidden />
+                <div class="dropzone-content">
+                  <span class="upload-icon">📤</span>
+                  <p class="upload-text">Glissez ou</p>
+                  <button class="btn-small btn-primary" onclick="document.getElementById('image-file-input').click()">
+                    Parcourir
+                  </button>
+                  <p class="upload-hint">JPG, PNG, WebP • Max 5 Mo</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
-        <div class="seo-preview-card">
-          <div class="seo-preview-url">mistralpro-reno.fr/blog/${content.slug}.html</div>
-          <div class="seo-preview-title">${escapeHtml(content.title)}</div>
-          <div class="seo-preview-meta">${escapeHtml(content.metaDescription)}</div>
-        </div>
-      </div>
-      
-      <!-- SECTION UPLOAD IMAGE -->
-      <div class="result-image-upload">
-        <div class="upload-header">
-          <h4>🖼️ Image de l'article</h4>
-          <span class="upload-optional">Optionnel</span>
-        </div>
-        <div id="image-upload-container" class="image-upload-container">
-          <div class="upload-dropzone" id="upload-dropzone">
-            <input type="file" id="image-file-input" accept="image/*" onchange="handleImageUpload(event)" hidden />
-            <div class="dropzone-content">
-              <span class="upload-icon">📤</span>
-              <p class="upload-text">Glissez une image ici ou</p>
-              <button class="btn-primary btn-upload" onclick="document.getElementById('image-file-input').click()">
-                Choisir un fichier
-              </button>
-              <p class="upload-formats">JPG, PNG, WebP (max 5 Mo)</p>
+        
+        <!-- COLONNE DROITE : APERÇU ARTICLE -->
+        <div class="studio-preview-column">
+          <div class="preview-card">
+            <div class="preview-card-header">
+              <h4>📄 Aperçu article</h4>
+              <div class="preview-actions">
+                <button class="btn-icon" onclick="copyStudioContent()" title="Copier HTML">📋</button>
+                <button class="btn-icon" onclick="regenerateContent()" title="Régénérer">🔄</button>
+              </div>
+            </div>
+            <div class="article-preview-scroll" id="article-preview-scroll">
+              <article class="article-preview-content" id="article-preview-content">
+                ${articleContent}
+              </article>
             </div>
           </div>
         </div>
+        
       </div>
       
-      <!-- APERÇU ARTICLE COMPLET -->
-      <div class="result-article-preview">
-        <div class="article-preview-header">
-          <h4>📄 Aperçu de l'article</h4>
-          <div class="content-actions">
-            <button class="btn-small btn-secondary" onclick="copyStudioContent()">📋 Copier HTML</button>
-            <button class="btn-small btn-secondary" onclick="regenerateContent()">🔄 Régénérer</button>
-          </div>
-        </div>
-        <div class="article-preview-container">
-          <div class="article-preview-scroll">
-            <article class="article-preview-content" id="article-preview-content">
-              ${articleContent}
-            </article>
-          </div>
-        </div>
-      </div>
-      
-      <div class="result-actions">
+      <!-- ACTIONS PUBLICATION -->
+      <div class="studio-publish-actions">
         <button class="btn-large btn-primary" onclick="showPublishForm()">
           🚀 Publier maintenant
         </button>
         <button class="btn-large btn-secondary" onclick="downloadHTML()">
           💾 Télécharger HTML
         </button>
+        <button class="btn-large btn-ghost" onclick="resetStudio()">
+          ↩️ Nouveau contenu
+        </button>
       </div>
+      
     </div>
   `;
   
   // Initialiser le drag & drop
   initImageDropzone();
+}
+
+/**
+ * Réinitialise le Studio SEO
+ */
+function resetStudio() {
+  studioGeneratedContent = null;
+  uploadedImageData = null;
+  uploadedImageFile = null;
+  
+  document.getElementById('studio-result').style.display = 'none';
+  document.getElementById('studio-publish').style.display = 'none';
+  document.getElementById('studio-params').style.display = 'block';
+  
+  // Vider le formulaire
+  document.getElementById('studioKeyword').value = '';
+  document.getElementById('studioContext').value = '';
+  
+  showNotification('Studio réinitialisé', 'info');
 }
 
 /**
