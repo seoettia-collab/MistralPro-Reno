@@ -183,7 +183,51 @@ for(const[cat,ids]of Object.entries(sanCategories)){let hasSelection=false;for(c
 let doucheHasSelection=false;["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche"].forEach(function(id){if(parseFloat(t("#"+id).val())>0)doucheHasSelection=true});
 const doucheBtn=t('.sub-tab[data-subsub="san-douche"]');doucheHasSelection?doucheBtn.addClass("has-selection"):doucheBtn.removeClass("has-selection");
 let baignoireHasSelection=false;["select-baignoire","select-robinet-baignoire"].forEach(function(id){if(parseFloat(t("#"+id).val())>0)baignoireHasSelection=true});
-const baignoireBtn=t('.sub-tab[data-subsub="san-baignoire"]');baignoireHasSelection?baignoireBtn.addClass("has-selection"):baignoireBtn.removeClass("has-selection")}
+const baignoireBtn=t('.sub-tab[data-subsub="san-baignoire"]');baignoireHasSelection?baignoireBtn.addClass("has-selection"):baignoireBtn.removeClass("has-selection");
+// Dépose
+let deposeHasSelection=t('.depose-item:checked').length>0||parseFloat(t('#select-depose-mural').val())>0||parseFloat(t('#select-depose-sol').val())>0;
+const deposeBtn=t('.sub-tab[data-subsub="san-depose"]');deposeHasSelection?deposeBtn.addClass("has-selection"):deposeBtn.removeClass("has-selection");
+}
+
+function updateAllTabs(){
+updateSanTabs();
+// Mapping sub-tab -> selects
+const tabSelects={
+"sanitaires":["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire"],
+"equipements":["select-cumulus","select-adoucisseur"],
+"tuyauterie":["select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre"],
+"pack-sdb":["select-pack-sdb"],
+"diagnostic":["select-diagnostic"],
+"elec-base":["select-tableau","select-points-lum","select-prises","select-inter"],
+"chauffage":["select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv"],
+"clim":["select-clim"],
+"vmc":["select-vmc-simple","select-vmc-double","select-aerateur"],
+"peinture-int":["select-peinture-murs","select-peinture-plaf"],
+"sols":["select-parquet","select-carrelage-sol","select-lino"],
+"murs-rev":["select-faience","select-credence"],
+"preparation":["select-depose","select-ragreage","select-chape"],
+"ext":["select-ravalement","select-facade"],
+"maconnerie":["select-mur-porteur","select-cloisons","select-dalle","select-demo"],
+"isolation":["select-iso-murs","select-iso-combles","select-ite"],
+"platrerie":["select-faux-plafond","select-doublage"],
+"construction":["select-extension","select-terrassement","select-fondations"],
+"menu-int":["select-portes-int","select-plinthes"],
+"menu-ext":["select-fenetres","select-porte-entree","select-volets"],
+"toiture":["select-toiture","select-velux","select-zinguerie"],
+"agencement":["select-cuisine","select-placards","select-rangements"]
+};
+// Checkboxes par tab
+const tabCheckboxes={
+"sanitaires":["wc-suspendu","wc-poser","lavabo-simple","lavabo-double","robinet-lavabo-std","robinet-lavabo-conf","robinet-lavabo-prem"]
+};
+for(const[tab,selects]of Object.entries(tabSelects)){
+let hasSelection=false;
+selects.forEach(function(id){if(parseFloat(t("#"+id).val())>0)hasSelection=true});
+if(tabCheckboxes[tab]){tabCheckboxes[tab].forEach(function(id){if(t("#"+id).is(":checked"))hasSelection=true})}
+const btn=t(`.sub-tab[data-sub="${tab}"]`);
+hasSelection?btn.addClass("has-selection"):btn.removeClass("has-selection");
+}
+}
 
 t(document).ready(function(){
 !function(){const t=new Image;t.crossOrigin="anonymous",t.onload=function(){try{const e=document.createElement("canvas");e.width=t.width,e.height=t.height,e.getContext("2d").drawImage(t,0,0),i=e.toDataURL("image/png"),console.log("Logo chargé avec succès")}catch(t){console.warn("Erreur conversion logo:",t)}},t.onerror=function(){console.warn("Logo non trouvé, utilisation du logo par défaut")},t.src="images/logo.png"}(),
@@ -193,6 +237,6 @@ t(".sub-tab").on("click",function(){const e=t(this).data("sub");const ss=t(this)
 t('input[type="range"]').on("input",function(){const e=t(this).attr("id");t("#"+e+"-number").val(t(this).val()),r()}),
 t(".qty-input").on("input",function(){const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number",""),n=t("#"+o);if(n.length){let e=parseInt(t(this).val())||0;const a=parseInt(n.attr("max"))||9999;e=Math.min(Math.max(0,e),a),t(this).val(e),n.val(e)}r()}),
 t(".qty-input").on("blur",function(){if(""===t(this).val()){t(this).val(0);const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number","");t("#"+o).val(0),r()}}),
-t('input[type="checkbox"], select').on("change",function(){r();updateSanTabs()}),
+t('input[type="checkbox"], select').on("change",function(){r();updateAllTabs()}),
 t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r())}),
 console.log("Attachement événement printQuote"),t("#printQuote").on("click",c),r(),console.log("Simulateur Mistral Pro Reno V5 ready")})}(jQuery);
