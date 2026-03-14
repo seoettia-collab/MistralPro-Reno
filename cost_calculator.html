@@ -708,7 +708,7 @@
                     <div class="sub-tabs">
                         <button class="sub-tab blink-tab active" data-sub="peinture-int">Peinture</button>
                         <button class="sub-tab blink-tab" data-sub="sols">Sols</button>
-                        <button class="sub-tab blink-tab" data-sub="murs-rev">Murs</button>
+                        <button class="sub-tab blink-tab" data-sub="murs-rev">Revêtement mur</button>
                         <button class="sub-tab blink-tab" data-sub="preparation">Préparation</button>
                         <button class="sub-tab blink-tab" data-sub="ext">Extérieur</button>
                     </div>
@@ -808,26 +808,35 @@
                     <div class="sub-content" data-sub="murs-rev">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Faïence</label>
-                                <select id="select-faience" class="san-select">
+                                <label>🔲 Faïence - Gamme (pose 45€ incluse)</label>
+                                <select id="select-faience-gamme" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="250" data-label="Fourniture et pose de faïence murale 20x20cm blanc brillant, pose droite collée sur support préparé, joints 2mm blanc, nettoyage fin de chantier. Surface 10m². DTU 52.2">10 m² Std - 250 €</option>
-                                    <option value="500" data-label="Fourniture et pose de faïence murale 20x20cm blanc brillant, pose droite collée sur support préparé, joints 2mm blanc, nettoyage fin de chantier. Surface 20m². DTU 52.2">20 m² Std - 500 €</option>
-                                    <option value="800" data-label="Fourniture et pose de faïence murale 30x60cm effet pierre ou métro, pose décalée 1/2 collée, joints fins 1.5mm couleur au choix, profilés d'angle inox, nettoyage fin de chantier. Surface 20m². DTU 52.2">20 m² Confort - 800 €</option>
-                                    <option value="1600" data-label="Fourniture et pose de faïence grand format 60x120cm rectifiée effet marbre ou béton, pose collée double encollage, joints ultra-fins 1mm époxy assorti, profilés de finition inox brossé, nettoyage fin de chantier. Surface 20m². DTU 52.2">20 m² Premium - 1 600 €</option>
+                                    <option value="70" data-label="Fourniture et pose de faïence murale 20x20cm blanc brillant, pose droite collée sur support préparé, joints 2mm blanc, nettoyage fin de chantier. DTU 52.2">Standard (70€/m²)</option>
+                                    <option value="85" data-label="Fourniture et pose de faïence murale 30x60cm effet pierre ou métro, pose décalée 1/2 collée, joints fins 1.5mm couleur au choix, profilés d'angle inox, nettoyage fin de chantier. DTU 52.2">Confort (85€/m²)</option>
+                                    <option value="125" data-label="Fourniture et pose de faïence grand format 60x120cm rectifiée effet marbre ou béton, pose collée double encollage, joints ultra-fins 1mm époxy assorti, profilés de finition inox brossé, nettoyage fin de chantier. DTU 52.2">Premium (125€/m²)</option>
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>Crédence</label>
-                                <select id="select-credence" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="125" data-label="Fourniture et pose de crédence cuisine carrelage mural 10x10cm ou métro, pose collée, joints époxy blanc, profilé de finition alu. Surface 5m². DTU 52.2">5 m² Std - 125 €</option>
-                                    <option value="250" data-label="Fourniture et pose de crédence cuisine carrelage mural 10x10cm ou métro, pose collée, joints époxy blanc, profilé de finition alu. Surface 10m². DTU 52.2">10 m² Std - 250 €</option>
-                                    <option value="400" data-label="Fourniture et pose de crédence cuisine verre trempé sécurit 6mm laqué RAL au choix, fixation par entretoises inox, découpes prises et interrupteurs, joints silicone transparent. Surface 10m²">10 m² Confort - 400 €</option>
-                                    <option value="800" data-label="Fourniture et pose de crédence cuisine inox brossé 304 épaisseur 1.5mm sur mesure, fixation par collage et visserie inox cachée, découpes prises et interrupteurs, finition périphérique silicone alimentaire. Surface 10m²">10 m² Premium - 800 €</option>
-                                </select>
+                                <label>📐 Superficie (m²)</label>
+                                <input type="number" id="input-faience-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
                             </div>
                         </div>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>🍳 Crédence - Gamme (pose 45€ incluse)</label>
+                                <select id="select-credence-gamme" class="san-select">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="70" data-label="Fourniture et pose de crédence cuisine carrelage mural 10x10cm ou métro, pose collée, joints époxy blanc, profilé de finition alu. DTU 52.2">Carrelage (70€/m²)</option>
+                                    <option value="85" data-label="Fourniture et pose de crédence cuisine verre trempé sécurit 6mm laqué RAL au choix, fixation par entretoises inox, découpes prises et interrupteurs, joints silicone transparent.">Verre (85€/m²)</option>
+                                    <option value="125" data-label="Fourniture et pose de crédence cuisine inox brossé 304 épaisseur 1.5mm sur mesure, fixation par collage et visserie inox cachée, découpes prises et interrupteurs, finition périphérique silicone alimentaire.">Inox (125€/m²)</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>📐 Superficie (m²)</label>
+                                <input type="number" id="input-credence-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
+                            </div>
+                        </div>
+                        <p id="murs-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="preparation">
@@ -1258,8 +1267,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=8.7" defer></script>
-    <!-- CCTP v20 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=8.8" defer></script>
+    <!-- CCTP v21 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
