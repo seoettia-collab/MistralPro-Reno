@@ -1587,9 +1587,21 @@ function loadSavedContent() {
   try {
     const saved = localStorage.getItem('mpr_studioContent');
     if (saved) {
-      studioGeneratedContent = JSON.parse(saved);
-      console.log('[Studio SEO] Contenu chargé depuis localStorage');
-      return true;
+      const parsed = JSON.parse(saved);
+      
+      // Vérifier que le contenu a les propriétés essentielles
+      if (parsed && parsed.slug && parsed.htmlContent) {
+        studioGeneratedContent = parsed;
+        console.log('[Studio SEO] Contenu chargé depuis localStorage:', {
+          slug: parsed.slug,
+          title: parsed.title,
+          hasHTML: !!parsed.htmlContent
+        });
+        return true;
+      } else {
+        console.warn('[Studio SEO] Contenu localStorage invalide (slug ou htmlContent manquant)');
+        localStorage.removeItem('mpr_studioContent');
+      }
     }
   } catch (e) {
     console.warn('[Studio SEO] Erreur chargement localStorage:', e);
@@ -2389,19 +2401,32 @@ function modifyArticle() {
 
 /**
  * Lance la publication depuis le bloc décision
+ * Publie DIRECTEMENT sans formulaire intermédiaire
  */
 function publishArticleFromDecision() {
-  if (stateArticle.status !== 'validated') {
-    showNotification('⚠️ Validez d\'abord le contenu.', 'warning');
+  // Permettre la publication même sans validation (simplifié)
+  if (!studioGeneratedContent) {
+    showNotification('❌ Aucun contenu à publier', 'error');
     return;
   }
   
-  // Construire le payload
-  const payload = buildPublishPayload();
-  console.log('[Publication] Payload:', payload);
+  if (!studioGeneratedContent.slug) {
+    showNotification('❌ Slug manquant - Régénérez le contenu', 'error');
+    return;
+  }
   
-  // Lancer la publication via le flux existant
-  showPublishForm();
+  // Valider automatiquement si pas encore fait
+  if (stateArticle.status === 'draft') {
+    stateArticle.status = 'validated';
+    stateArticle.validatedAt = new Date().toISOString();
+    updateStatusUI();
+  }
+  
+  // Afficher la section publication et lancer directement
+  document.getElementById('studio-publish').style.display = 'block';
+  
+  // Publier directement
+  publishContent();
 }
 
 /**
@@ -3098,7 +3123,24 @@ function cancelPublish() {
  * Publie le contenu via GitHub API (avec fallback simulation)
  */
 async function publishContent() {
-  if (!studioGeneratedContent) return;
+  if (!studioGeneratedContent) {
+    showNotification('❌ Aucun contenu à publier', 'error');
+    return;
+  }
+  
+  // Vérifier que le slug existe
+  if (!studioGeneratedContent.slug) {
+    console.error('[Publication] Slug manquant dans studioGeneratedContent:', studioGeneratedContent);
+    showNotification('❌ Slug manquant - Régénérez le contenu', 'error');
+    return;
+  }
+  
+  console.log('[Publication] Payload:', {
+    slug: studioGeneratedContent.slug,
+    title: studioGeneratedContent.title,
+    hasContent: !!studioGeneratedContent.htmlContent,
+    imagesCount: uploadedImages.length
+  });
   
   const publishSection = document.getElementById('studio-publish');
   const slug = studioGeneratedContent.slug;
