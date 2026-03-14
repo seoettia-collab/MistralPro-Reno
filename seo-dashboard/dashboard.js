@@ -35,6 +35,37 @@ window.onerror = function(msg, url, lineNo, columnNo, error) {
   return false;
 };
 
+/**
+ * Affiche une notification toast
+ */
+function showNotification(message, type = 'info') {
+  // Supprimer les notifications existantes
+  const existing = document.querySelector('.toast-notification');
+  if (existing) existing.remove();
+  
+  // Créer la notification
+  const toast = document.createElement('div');
+  toast.className = `toast-notification toast-${type}`;
+  toast.innerHTML = `
+    <span class="toast-message">${message}</span>
+    <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+  `;
+  
+  document.body.appendChild(toast);
+  
+  // Animation d'entrée
+  setTimeout(() => toast.classList.add('show'), 10);
+  
+  // Auto-fermeture après 4 secondes
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Exposer globalement
+window.showNotification = showNotification;
+
 document.addEventListener('DOMContentLoaded', () => {
   // Sélectionner tous les boutons d'onglets (principaux + sous-modules)
   const mainTabButtons = document.querySelectorAll('.tab-btn');
