@@ -860,24 +860,17 @@
                     <div class="sub-content" data-sub="ext">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Ravalement façade</label>
-                                <select id="select-ravalement" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="8000" data-label="Ravalement complet façade maison comprenant : montage échafaudage conforme, nettoyage haute pression, traitement anti-mousse, rebouchage fissures au mortier, application fixateur, 2 couches peinture pliolite ou siloxane teinte au choix. Surface 80m². DTU 42.1">Maison 80 m² - 8 000 €</option>
-                                    <option value="12000" data-label="Ravalement complet façade maison comprenant : montage échafaudage conforme, nettoyage haute pression, traitement anti-mousse, rebouchage fissures au mortier, application fixateur, 2 couches peinture pliolite ou siloxane teinte au choix. Surface 120m². DTU 42.1">Maison 120 m² - 12 000 €</option>
-                                    <option value="18000" data-label="Ravalement complet façade maison comprenant : montage échafaudage conforme, nettoyage haute pression, traitement anti-mousse, rebouchage fissures au mortier, application fixateur, 2 couches peinture pliolite ou siloxane teinte au choix. Surface 180m². DTU 42.1">Maison 180 m² - 18 000 €</option>
-                                </select>
+                                <label>🏠 Ravalement façade COMPLET (95€/m²)</label>
+                                <span style="font-size:11px;color:#666;">Échafaudage, nettoyage HP, traitement, rebouchage, fixateur, 2 couches peinture</span>
+                                <input type="number" id="input-ravalement-m2" class="qty-input" placeholder="m²" min="1" max="1000" style="width:100px;margin-top:5px;" data-price="95" data-label="Ravalement complet façade comprenant : montage échafaudage conforme, nettoyage haute pression, traitement anti-mousse, rebouchage fissures au mortier, application fixateur, 2 couches peinture pliolite ou siloxane teinte au choix. Tout inclus. DTU 42.1">
                             </div>
                             <div class="san-select-group">
-                                <label>Peinture façade (35€/m²)</label>
-                                <select id="select-facade" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="1750" data-label="Fourniture et application de peinture façade siloxane microporeuse hydrofuge, 2 couches croisées au rouleau ou airless sur support sain, teinte RAL au choix. Surface 50m². DTU 59.1">50 m² - 1 750 €</option>
-                                    <option value="3500" data-label="Fourniture et application de peinture façade siloxane microporeuse hydrofuge, 2 couches croisées au rouleau ou airless sur support sain, teinte RAL au choix. Surface 100m². DTU 59.1">100 m² - 3 500 €</option>
-                                    <option value="7000" data-label="Fourniture et application de peinture façade siloxane microporeuse hydrofuge, 2 couches croisées au rouleau ou airless sur support sain, teinte RAL au choix. Surface 200m². DTU 59.1">200 m² - 7 000 €</option>
-                                </select>
+                                <label>🎨 Peinture façade (35€/m²)</label>
+                                <span style="font-size:11px;color:#666;">Sur support sain, 2 couches siloxane hydrofuge</span>
+                                <input type="number" id="input-facade-m2" class="qty-input" placeholder="m²" min="1" max="1000" style="width:100px;margin-top:5px;" data-price="35" data-label="Fourniture et application de peinture façade siloxane microporeuse hydrofuge, 2 couches croisées au rouleau ou airless sur support sain, teinte RAL au choix. DTU 59.1">
                             </div>
                         </div>
+                        <p id="ext-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="section-reset">
@@ -1253,8 +1246,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=9.0" defer></script>
-    <!-- CCTP v23 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=9.1" defer></script>
+    <!-- CCTP v24 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
