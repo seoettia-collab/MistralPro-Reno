@@ -141,8 +141,9 @@ const gammeVal=parseFloat(t("#"+p.gamme).val())||0;
 const m2=parseFloat(t("#"+p.input).val())||0;
 if(gammeVal>0&&m2>0){
 const total=gammeVal*m2;
+const gammeName=t("#"+p.gamme).find("option:selected").text().split("(")[0].trim();
 const gammeLabel=t("#"+p.gamme).find("option:selected").data("label")||"Peinture "+p.type;
-const fullLabel=gammeLabel+" - Surface "+m2+"m²";
+const fullLabel=gammeLabel+" - Gamme "+gammeName+" ("+gammeVal+"€/m²) - Surface "+m2+"m²";
 if(!categories["Peinture & Revêtements"])categories["Peinture & Revêtements"]=[];
 categories["Peinture & Revêtements"].push({label:fullLabel,qty:m2,unit:"m²",pu:gammeVal,total:total});
 totalItems++;
@@ -175,8 +176,9 @@ const gammeVal=parseFloat(t("#"+p.gamme).val())||0;
 const m2=parseFloat(t("#"+p.input).val())||0;
 if(gammeVal>0&&m2>0){
 const total=gammeVal*m2;
+const gammeName=t("#"+p.gamme).find("option:selected").text().split("(")[0].trim();
 const gammeLabel=t("#"+p.gamme).find("option:selected").data("label")||p.type;
-const fullLabel=gammeLabel+" - Surface "+m2+"m²";
+const fullLabel=gammeLabel+" - Gamme "+gammeName+" ("+gammeVal+"€/m²) - Surface "+m2+"m²";
 if(!categories["Peinture & Revêtements"])categories["Peinture & Revêtements"]=[];
 categories["Peinture & Revêtements"].push({label:fullLabel,qty:m2,unit:"m²",pu:gammeVal,total:total});
 totalItems++;
@@ -190,6 +192,7 @@ Object.keys(allSelects).forEach(function(cat){
 allSelects[cat].forEach(function(id){
 if(id.startsWith("select-depose-"))return;
 if(id.startsWith("select-peinture-murs-")||id.startsWith("select-peinture-plaf-"))return;
+if(id.startsWith("select-parquet-")||id.startsWith("select-carrelage-")||id.startsWith("select-lino-"))return;
 const sel=t("#"+id);
 const prix=parseFloat(sel.val())||0;
 if(prix>0){
