@@ -52,6 +52,7 @@ const previewList=t("#preview-list");
 const previewCount=t("#preview-count");
 let html="";
 let totalItems=0;
+let totalHT=0;
 const categories={};
 
 // Collecter dépose (checkboxes + selects carrelage) en une seule ligne
@@ -64,26 +65,24 @@ const solVal=parseFloat(deposeSelectSol.val())||0;
 if(deposeItems.length>0||muralVal>0||solVal>0){
 const deposeLabels=[];
 let deposeTotal=0;
-// Checkboxes dépose
 deposeItems.each(function(){
 deposeLabels.push(t(this).data("label"));
 deposeTotal+=parseFloat(t(this).data("price"))||0;
 });
-// Select dépose mural
 if(muralVal>0){
 deposeLabels.push(deposeSelectMural.find("option:selected").data("label").replace(" évacuation déchetterie comprise",""));
 deposeTotal+=muralVal;
 }
-// Select dépose sol
 if(solVal>0){
 deposeLabels.push(deposeSelectSol.find("option:selected").data("label").replace(" évacuation déchetterie comprise",""));
 deposeTotal+=solVal;
 }
-deposeTotal+=80; // Forfait évacuation
+deposeTotal+=80;
 const deposeLabel="Dépose "+deposeLabels.join(", ")+" évacuation déchetterie comprise";
 if(!categories["Plomberie & Sanitaires"])categories["Plomberie & Sanitaires"]=[];
-categories["Plomberie & Sanitaires"].push({label:deposeLabel,price:deposeTotal});
+categories["Plomberie & Sanitaires"].push({label:deposeLabel,qty:1,price:deposeTotal});
 totalItems++;
+totalHT+=deposeTotal;
 }
 
 // Collecter checkboxes standard (hors dépose)
@@ -94,13 +93,14 @@ const label=t(this).data("label")||t(this).closest("label").find("strong").text(
 const panelCat=t(this).closest(".category-panel").data("category");
 const catName=getCatName(panelCat);
 if(!categories[catName])categories[catName]=[];
-categories[catName].push({label:label,price:price});
-totalItems++}});
+categories[catName].push({label:label,qty:1,price:price});
+totalItems++;
+totalHT+=price;}});
 
 // Collecter tous les selects sélectionnés (hors dépose)
 Object.keys(allSelects).forEach(function(cat){
 allSelects[cat].forEach(function(id){
-if(id.startsWith("select-depose-"))return; // Skip dépose selects
+if(id.startsWith("select-depose-"))return;
 const sel=t("#"+id);
 const prix=parseFloat(sel.val())||0;
 if(prix>0){
@@ -108,19 +108,29 @@ const selectedOption=sel.find("option:selected");
 const label=selectedOption.data("label")||selectedOption.text().split("€")[0].trim();
 const catName=getCatName(cat);
 if(!categories[catName])categories[catName]=[];
-categories[catName].push({label:label,price:prix});
-totalItems++}})});
+categories[catName].push({label:label,qty:1,price:prix});
+totalItems++;
+totalHT+=prix;}})});
 
 // Générer HTML
 if(totalItems===0){
 html='<p class="preview-empty">Sélectionnez des prestations pour voir le récapitulatif</p>'}
-else{Object.keys(categories).forEach(function(cat){
+else{
+html='<div class="preview-table-header"><span>Désignation</span><span>Qté</span><span>HT</span></div>';
+Object.keys(categories).forEach(function(cat){
 html+='<div class="preview-cat-title">'+cat+'</div>';
 categories[cat].forEach(function(item){
-html+='<div class="preview-item"><span class="preview-item-label">'+item.label+'</span><span class="preview-item-price">'+formatPrice(item.price)+'</span></div>'})})
+html+='<div class="preview-item"><span class="preview-item-label">'+item.label+'</span><span class="preview-item-qty">'+item.qty+'</span><span class="preview-item-price">'+formatPrice(item.price)+'</span></div>'})})
 }
 previewList.html(html);
-previewCount.text(totalItems+" prestation(s)")}
+previewCount.text(totalItems+" prestation(s)");
+// Totaux HT/TTC
+const tva=totalHT*0.2;
+const ttc=totalHT+tva;
+t("#preview-ht").text(formatPrice(totalHT));
+t("#preview-tva").text(formatPrice(tva));
+t("#preview-ttc").text(formatPrice(ttc));
+}
 
 function formatPrice(p){return Math.round(p).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" €"}
 
