@@ -2583,93 +2583,54 @@ async function showPublishForm() {
 }
 
 /**
- * Affiche le formulaire de publication avec aperçu final
+ * Affiche le formulaire de publication simplifié
  */
 function renderPublishForm() {
   const publishSection = document.getElementById('studio-publish');
   const content = studioGeneratedContent;
   
-  // Construire l'aperçu de l'article final
-  const imageHtml = content.hasImage && content.imageUrl 
-    ? `<img src="${content.imageUrl}" alt="${escapeHtml(content.h1)}" class="preview-article-image" />`
-    : `<div class="preview-no-image">📝 Article sans image</div>`;
-  
   publishSection.innerHTML = `
-    <div class="publish-form">
-      <h3>🚀 Aperçu final et publication</h3>
+    <div class="publish-form-compact">
+      <h3>🚀 Confirmation de publication</h3>
       
-      <!-- APERÇU ARTICLE FINAL -->
-      <div class="final-article-preview">
-        <div class="preview-header-bar">
-          <span class="preview-badge">📄 Aperçu article final</span>
-          <span class="preview-url">mistralpro-reno.fr/blog/${content.slug}.html</span>
+      <!-- Récap compact -->
+      <div class="publish-recap">
+        <div class="recap-item">
+          <span class="recap-label">Article</span>
+          <span class="recap-value">${escapeHtml(content.h1)}</span>
         </div>
-        
-        <div class="preview-article-container">
-          <!-- Image en haut -->
-          <div class="preview-article-hero">
-            ${imageHtml}
-          </div>
-          
-          <!-- Contenu -->
-          <div class="preview-article-content">
-            <h1 class="preview-article-title">${escapeHtml(content.h1)}</h1>
-            <div class="preview-article-meta">
-              <span>📅 ${new Date().toLocaleDateString('fr-FR')}</span>
-              <span>📝 ~${content.wordCount} mots</span>
-              <span>🏷️ ${escapeHtml(content.keyword)}</span>
-            </div>
-            <div class="preview-article-body">
-              ${formatPreviewContent(content.htmlContent)}
-            </div>
-          </div>
+        <div class="recap-item">
+          <span class="recap-label">URL</span>
+          <span class="recap-value">/blog/${content.slug}.html</span>
+        </div>
+        <div class="recap-item">
+          <span class="recap-label">Image</span>
+          <span class="recap-value">${content.hasImage ? '✅ Incluse' : '❌ Non'}</span>
+        </div>
+        <div class="recap-item">
+          <span class="recap-label">Mots</span>
+          <span class="recap-value">${content.wordCount}</span>
         </div>
       </div>
       
-      <!-- SEO Preview -->
-      <div class="publish-seo-preview">
-        <div class="preview-header-bar">
-          <span class="preview-badge">🔍 Aperçu Google</span>
-        </div>
-        <div class="seo-preview-card compact">
-          <div class="seo-preview-url">mistralpro-reno.fr › blog › ${content.slug}</div>
-          <div class="seo-preview-title">${escapeHtml(content.title)}</div>
-          <div class="seo-preview-meta">${escapeHtml(content.metaDescription)}</div>
-        </div>
+      <!-- Étapes -->
+      <div class="publish-steps-mini">
+        <span>📄 HTML</span>
+        <span>→</span>
+        <span>📤 GitHub</span>
+        <span>→</span>
+        <span>🌐 OVH</span>
+        <span>→</span>
+        <span>✅ Live</span>
+        <span>→</span>
+        <span>📝 Blog.html</span>
       </div>
       
-      <!-- Détails publication -->
-      <div class="publish-details">
-        <div class="detail-row">
-          <span class="detail-label">Fichier :</span>
-          <span class="detail-value">/blog/${content.slug}.html</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">URL finale :</span>
-          <span class="detail-value">https://www.mistralpro-reno.fr/blog/${content.slug}.html</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Image :</span>
-          <span class="detail-value">${content.hasImage ? '✅ Incluse' : '❌ Non incluse'}</span>
-        </div>
-      </div>
-      
-      <div class="url-status url-available">
-        ✅ URL disponible
-      </div>
-      
-      <div class="publish-steps-preview">
-        <div class="step-item">1. Génération fichier HTML</div>
-        <div class="step-item">2. Push GitHub (main)</div>
-        <div class="step-item">3. Déploiement OVH (~45s)</div>
-        <div class="step-item">4. Vérification URL live</div>
-      </div>
-      
-      <div class="publish-actions">
-        <button class="btn-large btn-primary" onclick="publishContent()">
-          ✅ Confirmer la publication
+      <div class="publish-buttons">
+        <button class="btn-publish-confirm" onclick="publishContent()">
+          ✅ Publier maintenant
         </button>
-        <button class="btn-large btn-secondary" onclick="cancelPublish()">
+        <button class="btn-cancel" onclick="cancelPublish()">
           Annuler
         </button>
       </div>

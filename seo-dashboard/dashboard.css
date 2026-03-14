@@ -4473,7 +4473,107 @@ select:focus {
   flex-wrap: wrap;
 }
 
-/* Publish Form */
+/* Publish Form Compact */
+.publish-form-compact {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 2px solid #10b981;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+
+.publish-form-compact h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.publish-recap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  background: var(--bg-dark);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.recap-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.recap-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.recap-value {
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.publish-steps-mini {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.publish-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn-publish-confirm {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-publish-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: var(--bg-dark);
+}
+
+@media (max-width: 600px) {
+  .publish-recap {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Publish Form Legacy (garder pour compatibilité) */
 .publish-form {
   background: var(--bg-card);
   border-radius: 12px;
