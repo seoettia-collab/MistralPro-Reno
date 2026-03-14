@@ -2641,8 +2641,9 @@ function processUploadedImage(file) {
 
 /**
  * Redimensionne une image avec Canvas (crop intelligent au centre)
+ * Compression agressive pour éviter erreur 413
  */
-function resizeImage(img, targetWidth, targetHeight, quality = 0.85) {
+function resizeImage(img, targetWidth, targetHeight, quality = 0.75) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   
@@ -2672,8 +2673,20 @@ function resizeImage(img, targetWidth, targetHeight, quality = 0.85) {
     0, 0, targetWidth, targetHeight // Destination
   );
   
-  // Exporter en WebP
-  return canvas.toDataURL('image/webp', quality);
+  // Exporter en WebP avec compression
+  let dataUrl = canvas.toDataURL('image/webp', quality);
+  
+  // Si encore trop grand (> 500Ko en base64 ≈ 375Ko réel), réduire la qualité
+  const maxBase64Size = 500 * 1024; // 500 Ko
+  let currentQuality = quality;
+  
+  while (dataUrl.length > maxBase64Size && currentQuality > 0.4) {
+    currentQuality -= 0.1;
+    dataUrl = canvas.toDataURL('image/webp', currentQuality);
+    console.log(`[Image] Recompression à ${Math.round(currentQuality * 100)}% → ${Math.round(dataUrl.length / 1024)}Ko`);
+  }
+  
+  return dataUrl;
 }
 
 /**
