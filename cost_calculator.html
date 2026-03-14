@@ -469,108 +469,85 @@
                     </div>
                     
                     <div class="sub-content active" data-sub="elec-base">
-                        <div class="select-box">
-                            <label for="tableau-electrique">Tableau électrique</label>
-                            <select id="tableau-electrique" data-label="Tableau electrique">
-                                <option value="0">-- Sélectionner --</option>
-                                <option value="800" data-label="Mise en conformite tableau">Standard (800 €)</option>
-                                <option value="1500" data-label="Remplacement tableau complet">Renforcé (1 500 €)</option>
-                                <option value="2500" data-label="Tableau connecte domotique">Premium connecté (2 500 €)</option>
-                            </select>
-                        </div>
-                        <div class="sliders-list" style="margin-top:15px;">
-                            <div class="slider-row">
-                                <label>Points lumineux <span class="unit-price">80 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="points-lumineux" min="0" max="30" value="0" data-price="80" data-label="Creation point lumineux">
-                                    <input type="number" id="points-lumineux-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="points-lumineux-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Tableau électrique</label>
+                                <select id="select-tableau" class="san-select" data-label="Tableau électrique mise en conformité">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="800">Standard 800 €</option>
+                                    <option value="1500">Renforcé 1 500 €</option>
+                                    <option value="2500">Connecté 2 500 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Prises électriques <span class="unit-price">60 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="prises" min="0" max="30" value="0" data-price="60" data-label="Creation prise 2P+T">
-                                    <input type="number" id="prises-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="prises-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Points lumineux (80€/u)</label>
+                                <select id="select-points-lum" class="san-select" data-label="Création point lumineux">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="400">5 pts - 400 €</option>
+                                    <option value="800">10 pts - 800 €</option>
+                                    <option value="1600">20 pts - 1 600 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Interrupteurs <span class="unit-price">50 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="interrupteurs" min="0" max="30" value="0" data-price="50" data-label="Interrupteur va-et-vient">
-                                    <input type="number" id="interrupteurs-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="interrupteurs-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Prises (60€/u)</label>
+                                <select id="select-prises" class="san-select" data-label="Création prise 2P+T">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="300">5 prises - 300 €</option>
+                                    <option value="600">10 prises - 600 €</option>
+                                    <option value="1200">20 prises - 1 200 €</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>Interrupteurs (50€/u)</label>
+                                <select id="select-inter" class="san-select" data-label="Interrupteur va-et-vient">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="250">5 inter - 250 €</option>
+                                    <option value="500">10 inter - 500 €</option>
+                                    <option value="1000">20 inter - 1 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="chauffage">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Radiateurs inertie <span class="unit-price">300 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="radiateurs" min="0" max="15" value="0" data-price="300" data-label="Radiateur electrique inertie">
-                                    <input type="number" id="radiateurs-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="radiateurs-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Radiateurs inertie (300€/u)</label>
+                                <select id="select-radiateurs" class="san-select" data-label="Radiateur électrique inertie">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="900">3 radiateurs - 900 €</option>
+                                    <option value="1500">5 radiateurs - 1 500 €</option>
+                                    <option value="2400">8 radiateurs - 2 400 €</option>
+                                    <option value="3000">10 radiateurs - 3 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="clim">
-                        <div class="options-grid">
-                            <label class="option-card">
-                                <input type="checkbox" id="clim-mono" data-price="2500" data-label="Climatisation mono-split reversible">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Clim Mono-split</strong>
-                                    <small>Réversible + unité ext.</small>
-                                </div>
-                                <span class="price">2 500 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="clim-multi" data-price="6000" data-label="Climatisation multi-split 3 unites">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Clim Multi-split</strong>
-                                    <small>3 unités intérieures</small>
-                                </div>
-                                <span class="price">6 000 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="gainable" data-price="12000" data-label="Climatisation gainable reseau gaines">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Clim Gainable</strong>
-                                    <small>Réseau de gaines complet</small>
-                                </div>
-                                <span class="price">12 000 €</span>
-                            </label>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Climatisation</label>
+                                <select id="select-clim" class="san-select" data-label="Climatisation réversible">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="2500">Mono-split 2 500 €</option>
+                                    <option value="6000">Multi-split 3 unités 6 000 €</option>
+                                    <option value="12000">Gainable complet 12 000 €</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="vmc">
-                        <div class="options-grid">
-                            <label class="option-card">
-                                <input type="checkbox" id="vmc-simple" data-price="800" data-label="VMC simple flux hygroreglable">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>VMC Simple flux</strong>
-                                    <small>Hygroréglable</small>
-                                </div>
-                                <span class="price">800 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="vmc-double" data-price="3500" data-label="VMC double flux echangeur thermique">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>VMC Double flux</strong>
-                                    <small>Échangeur thermique</small>
-                                </div>
-                                <span class="price">3 500 €</span>
-                            </label>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>VMC</label>
+                                <select id="select-vmc" class="san-select" data-label="VMC ventilation">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="800">Simple flux 800 €</option>
+                                    <option value="3500">Double flux 3 500 €</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -586,158 +563,140 @@
                     </div>
                     
                     <div class="sub-content active" data-sub="peinture-int">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Peinture murs (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="murs-peinture" min="0" max="300" value="0" data-label="Peinture murale">
-                                    <input type="number" id="murs-peinture-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="type-peinture-murs" class="gamme-select">
-                                    <option value="20">Standard 20€</option>
-                                    <option value="30">Lavable 30€</option>
-                                    <option value="45">Premium 45€</option>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Peinture murs</label>
+                                <select id="select-peinture-murs" class="san-select" data-label="Peinture murale">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1000">50 m² Std - 1 000 €</option>
+                                    <option value="2000">100 m² Std - 2 000 €</option>
+                                    <option value="3000">100 m² Lavable - 3 000 €</option>
+                                    <option value="4500">100 m² Premium - 4 500 €</option>
                                 </select>
-                                <span class="row-total" id="murs-peinture-total">0 €</span>
                             </div>
-                            <div class="slider-row">
-                                <label>Peinture plafonds (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="plafonds-peinture" min="0" max="200" value="0" data-label="Peinture plafond">
-                                    <input type="number" id="plafonds-peinture-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="type-peinture-plafonds" class="gamme-select">
-                                    <option value="22">Standard 22€</option>
-                                    <option value="32">Confort 32€</option>
-                                    <option value="48">Premium 48€</option>
+                            <div class="san-select-group">
+                                <label>Peinture plafonds</label>
+                                <select id="select-peinture-plaf" class="san-select" data-label="Peinture plafond">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="660">30 m² Std - 660 €</option>
+                                    <option value="1100">50 m² Std - 1 100 €</option>
+                                    <option value="2200">100 m² Std - 2 200 €</option>
+                                    <option value="4800">100 m² Premium - 4 800 €</option>
                                 </select>
-                                <span class="row-total" id="plafonds-peinture-total">0 €</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="sols">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Parquet massif (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="parquet-massif" min="0" max="200" value="0" data-label="Parquet massif chene">
-                                    <input type="number" id="parquet-massif-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="gamme-parquet-massif" class="gamme-select">
-                                    <option value="25">Std 25€</option>
-                                    <option value="40">Confort 40€</option>
-                                    <option value="80">Premium 80€</option>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Parquet</label>
+                                <select id="select-parquet" class="san-select" data-label="Parquet massif chêne">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="500">20 m² Std - 500 €</option>
+                                    <option value="1000">40 m² Std - 1 000 €</option>
+                                    <option value="1600">40 m² Confort - 1 600 €</option>
+                                    <option value="3200">40 m² Premium - 3 200 €</option>
                                 </select>
-                                <span class="row-total" id="parquet-massif-total">0 €</span>
                             </div>
-                            <div class="slider-row">
-                                <label>Carrelage sol (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="carrelage-sol" min="0" max="200" value="0" data-label="Carrelage gres cerame">
-                                    <input type="number" id="carrelage-sol-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="gamme-carrelage-sol" class="gamme-select">
-                                    <option value="25">Std 25€</option>
-                                    <option value="40">Confort 40€</option>
-                                    <option value="80">Premium 80€</option>
+                            <div class="san-select-group">
+                                <label>Carrelage sol</label>
+                                <select id="select-carrelage-sol" class="san-select" data-label="Carrelage grès cérame">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="500">20 m² Std - 500 €</option>
+                                    <option value="1000">40 m² Std - 1 000 €</option>
+                                    <option value="1600">40 m² Confort - 1 600 €</option>
+                                    <option value="3200">40 m² Premium - 3 200 €</option>
                                 </select>
-                                <span class="row-total" id="carrelage-sol-total">0 €</span>
                             </div>
-                            <div class="slider-row">
-                                <label>Lino / PVC (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="lino-sol" min="0" max="200" value="0" data-label="Revetement lino PVC">
-                                    <input type="number" id="lino-sol-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="gamme-lino-sol" class="gamme-select">
-                                    <option value="25">Std 25€</option>
-                                    <option value="40">Confort 40€</option>
-                                    <option value="80">Premium 80€</option>
+                            <div class="san-select-group">
+                                <label>Lino / PVC</label>
+                                <select id="select-lino" class="san-select" data-label="Revêtement lino PVC">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="500">20 m² Std - 500 €</option>
+                                    <option value="1000">40 m² Std - 1 000 €</option>
+                                    <option value="1600">40 m² Confort - 1 600 €</option>
                                 </select>
-                                <span class="row-total" id="lino-sol-total">0 €</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="murs-rev">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Faïence (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="faience-mur" min="0" max="100" value="0" data-label="Faience murale">
-                                    <input type="number" id="faience-mur-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="gamme-faience-mur" class="gamme-select">
-                                    <option value="25">Std 25€</option>
-                                    <option value="40">Confort 40€</option>
-                                    <option value="80">Premium 80€</option>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Faïence</label>
+                                <select id="select-faience" class="san-select" data-label="Faïence murale">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="250">10 m² Std - 250 €</option>
+                                    <option value="500">20 m² Std - 500 €</option>
+                                    <option value="800">20 m² Confort - 800 €</option>
+                                    <option value="1600">20 m² Premium - 1 600 €</option>
                                 </select>
-                                <span class="row-total" id="faience-mur-total">0 €</span>
                             </div>
-                            <div class="slider-row">
-                                <label>Crédence (m²)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="credence-mur" min="0" max="50" value="0" data-label="Credence cuisine">
-                                    <input type="number" id="credence-mur-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <select id="gamme-credence-mur" class="gamme-select">
-                                    <option value="25">Std 25€</option>
-                                    <option value="40">Confort 40€</option>
-                                    <option value="80">Premium 80€</option>
+                            <div class="san-select-group">
+                                <label>Crédence</label>
+                                <select id="select-credence" class="san-select" data-label="Crédence cuisine">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="125">5 m² Std - 125 €</option>
+                                    <option value="250">10 m² Std - 250 €</option>
+                                    <option value="400">10 m² Confort - 400 €</option>
+                                    <option value="800">10 m² Premium - 800 €</option>
                                 </select>
-                                <span class="row-total" id="credence-mur-total">0 €</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="preparation">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Dépose ancien sol <span class="unit-price">15 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="depose-sol" min="0" max="200" value="0" data-price="15" data-label="Depose ancien revetement">
-                                    <input type="number" id="depose-sol-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="depose-sol-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Dépose sol (15€/m²)</label>
+                                <select id="select-depose" class="san-select" data-label="Dépose ancien revêtement">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="300">20 m² - 300 €</option>
+                                    <option value="600">40 m² - 600 €</option>
+                                    <option value="1200">80 m² - 1 200 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Ragréage <span class="unit-price">45 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="reagreage" min="0" max="200" value="0" data-price="45" data-label="Ragreage autolissant">
-                                    <input type="number" id="reagreage-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="reagreage-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Ragréage (45€/m²)</label>
+                                <select id="select-ragreage" class="san-select" data-label="Ragréage autolissant">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="450">10 m² - 450 €</option>
+                                    <option value="900">20 m² - 900 €</option>
+                                    <option value="1800">40 m² - 1 800 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Chape <span class="unit-price">45 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="chape-sol" min="0" max="200" value="0" data-price="45" data-label="Chape fluide traditionnelle">
-                                    <input type="number" id="chape-sol-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="chape-sol-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Chape (45€/m²)</label>
+                                <select id="select-chape" class="san-select" data-label="Chape fluide traditionnelle">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="900">20 m² - 900 €</option>
+                                    <option value="1800">40 m² - 1 800 €</option>
+                                    <option value="3600">80 m² - 3 600 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="ext">
-                        <div class="select-box">
-                            <label for="ravalement">Ravalement façade</label>
-                            <select id="ravalement" data-label="Ravalement facade">
-                                <option value="0">-- Sélectionner --</option>
-                                <option value="8000">Maison 80 m² (8 000 €)</option>
-                                <option value="12000">Maison 120 m² (12 000 €)</option>
-                                <option value="18000">Maison 180 m² (18 000 €)</option>
-                            </select>
-                        </div>
-                        <div class="sliders-list" style="margin-top:15px;">
-                            <div class="slider-row">
-                                <label>Peinture façade <span class="unit-price">35 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="facade-peinture" min="0" max="300" value="0" data-price="35" data-label="Peinture facade">
-                                    <input type="number" id="facade-peinture-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="facade-peinture-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Ravalement façade</label>
+                                <select id="select-ravalement" class="san-select" data-label="Ravalement façade">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="8000">Maison 80 m² - 8 000 €</option>
+                                    <option value="12000">Maison 120 m² - 12 000 €</option>
+                                    <option value="18000">Maison 180 m² - 18 000 €</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>Peinture façade (35€/m²)</label>
+                                <select id="select-facade" class="san-select" data-label="Peinture façade">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1750">50 m² - 1 750 €</option>
+                                    <option value="3500">100 m² - 3 500 €</option>
+                                    <option value="7000">200 m² - 7 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -753,118 +712,129 @@
                     </div>
                     
                     <div class="sub-content active" data-sub="maconnerie">
-                        <div class="select-box">
-                            <label for="mur-porteur">Ouverture mur porteur</label>
-                            <select id="mur-porteur" data-label="Ouverture mur porteur">
-                                <option value="0">-- Sélectionner --</option>
-                                <option value="2500">Petite &lt;1.5m (2 500 €)</option>
-                                <option value="4500">Moyenne 1.5-2.5m (4 500 €)</option>
-                                <option value="7000">Grande &gt;2.5m (7 000 €)</option>
-                            </select>
-                        </div>
-                        <div class="sliders-list" style="margin-top:15px;">
-                            <div class="slider-row">
-                                <label>Cloisons <span class="unit-price">45 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="cloisons" min="0" max="100" value="0" data-price="45" data-label="Cloison placo BA13">
-                                    <input type="number" id="cloisons-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="cloisons-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Mur porteur</label>
+                                <select id="select-mur-porteur" class="san-select" data-label="Ouverture mur porteur">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="2500">Petite &lt;1.5m - 2 500 €</option>
+                                    <option value="4500">Moyenne 1.5-2.5m - 4 500 €</option>
+                                    <option value="7000">Grande &gt;2.5m - 7 000 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Dalle béton <span class="unit-price">70 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="dalle-beton" min="0" max="100" value="0" data-price="70" data-label="Dalle beton armee">
-                                    <input type="number" id="dalle-beton-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="dalle-beton-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Cloisons (45€/m²)</label>
+                                <select id="select-cloisons" class="san-select" data-label="Cloison placo BA13">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="450">10 m² - 450 €</option>
+                                    <option value="900">20 m² - 900 €</option>
+                                    <option value="1800">40 m² - 1 800 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Démolition <span class="unit-price">80 €/m³</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="demolition" min="0" max="50" value="0" data-price="80" data-label="Demolition evacuation">
-                                    <input type="number" id="demolition-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="demolition-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Dalle béton (70€/m²)</label>
+                                <select id="select-dalle" class="san-select" data-label="Dalle béton armée">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="700">10 m² - 700 €</option>
+                                    <option value="1400">20 m² - 1 400 €</option>
+                                    <option value="2800">40 m² - 2 800 €</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>Démolition (80€/m³)</label>
+                                <select id="select-demo" class="san-select" data-label="Démolition évacuation">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="400">5 m³ - 400 €</option>
+                                    <option value="800">10 m³ - 800 €</option>
+                                    <option value="1600">20 m³ - 1 600 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="isolation">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Isolation murs <span class="unit-price">45 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="isolation-murs" min="0" max="200" value="0" data-price="45" data-label="Isolation murs interieurs">
-                                    <input type="number" id="isolation-murs-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="isolation-murs-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Isolation murs (45€/m²)</label>
+                                <select id="select-iso-murs" class="san-select" data-label="Isolation murs intérieurs">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="900">20 m² - 900 €</option>
+                                    <option value="1800">40 m² - 1 800 €</option>
+                                    <option value="3600">80 m² - 3 600 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Isolation combles <span class="unit-price">35 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="isolation-combles" min="0" max="200" value="0" data-price="35" data-label="Isolation combles perdus">
-                                    <input type="number" id="isolation-combles-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="isolation-combles-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Isolation combles (35€/m²)</label>
+                                <select id="select-iso-combles" class="san-select" data-label="Isolation combles perdus">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1050">30 m² - 1 050 €</option>
+                                    <option value="1750">50 m² - 1 750 €</option>
+                                    <option value="3500">100 m² - 3 500 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>ITE extérieure <span class="unit-price">120 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="ite" min="0" max="200" value="0" data-price="120" data-label="Isolation thermique exterieur">
-                                    <input type="number" id="ite-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="ite-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>ITE extérieure (120€/m²)</label>
+                                <select id="select-ite" class="san-select" data-label="Isolation thermique extérieur">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="6000">50 m² - 6 000 €</option>
+                                    <option value="12000">100 m² - 12 000 €</option>
+                                    <option value="18000">150 m² - 18 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="platrerie">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Faux plafond <span class="unit-price">45 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="faux-plafond" min="0" max="200" value="0" data-price="45" data-label="Faux plafond placo">
-                                    <input type="number" id="faux-plafond-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="faux-plafond-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Faux plafond (45€/m²)</label>
+                                <select id="select-faux-plafond" class="san-select" data-label="Faux plafond placo">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="900">20 m² - 900 €</option>
+                                    <option value="1800">40 m² - 1 800 €</option>
+                                    <option value="3600">80 m² - 3 600 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Doublage murs <span class="unit-price">35 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="placo-murs" min="0" max="200" value="0" data-price="35" data-label="Doublage placo murs">
-                                    <input type="number" id="placo-murs-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="placo-murs-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Doublage murs (35€/m²)</label>
+                                <select id="select-doublage" class="san-select" data-label="Doublage placo murs">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="700">20 m² - 700 €</option>
+                                    <option value="1400">40 m² - 1 400 €</option>
+                                    <option value="2800">80 m² - 2 800 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="construction">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Extension <span class="unit-price">1 800 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="extension" min="0" max="100" value="0" data-price="1800" data-label="Construction extension complete">
-                                    <input type="number" id="extension-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="extension-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Extension (1800€/m²)</label>
+                                <select id="select-extension" class="san-select" data-label="Construction extension complète">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="18000">10 m² - 18 000 €</option>
+                                    <option value="36000">20 m² - 36 000 €</option>
+                                    <option value="54000">30 m² - 54 000 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Terrassement <span class="unit-price">50 €/m³</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="terrassement" min="0" max="100" value="0" data-price="50" data-label="Terrassement decaissement">
-                                    <input type="number" id="terrassement-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="terrassement-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Terrassement (50€/m³)</label>
+                                <select id="select-terrassement" class="san-select" data-label="Terrassement décaissement">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="500">10 m³ - 500 €</option>
+                                    <option value="1000">20 m³ - 1 000 €</option>
+                                    <option value="2500">50 m³ - 2 500 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Fondations <span class="unit-price">200 €/m³</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="fondations" min="0" max="50" value="0" data-price="200" data-label="Fondations beton arme">
-                                    <input type="number" id="fondations-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="fondations-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Fondations (200€/m³)</label>
+                                <select id="select-fondations" class="san-select" data-label="Fondations béton armé">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1000">5 m³ - 1 000 €</option>
+                                    <option value="2000">10 m³ - 2 000 €</option>
+                                    <option value="4000">20 m³ - 4 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -880,127 +850,123 @@
                     </div>
                     
                     <div class="sub-content active" data-sub="menu-int">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Portes intérieures <span class="unit-price">350 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="portes-int" min="0" max="15" value="0" data-price="350" data-label="Porte interieure avec huisserie">
-                                    <input type="number" id="portes-int-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="portes-int-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Portes intérieures (350€/u)</label>
+                                <select id="select-portes-int" class="san-select" data-label="Porte intérieure avec huisserie">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1050">3 portes - 1 050 €</option>
+                                    <option value="1750">5 portes - 1 750 €</option>
+                                    <option value="2800">8 portes - 2 800 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Plinthes <span class="unit-price">12 €/ml</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="plinthes" min="0" max="200" value="0" data-price="12" data-label="Plinthes bois MDF">
-                                    <input type="number" id="plinthes-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="plinthes-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Plinthes (12€/ml)</label>
+                                <select id="select-plinthes" class="san-select" data-label="Plinthes bois MDF">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="360">30 ml - 360 €</option>
+                                    <option value="600">50 ml - 600 €</option>
+                                    <option value="1200">100 ml - 1 200 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="menu-ext">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Fenêtres PVC <span class="unit-price">450 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="fenetres" min="0" max="15" value="0" data-price="450" data-label="Fenetre PVC double vitrage">
-                                    <input type="number" id="fenetres-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="fenetres-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Fenêtres PVC (450€/u)</label>
+                                <select id="select-fenetres" class="san-select" data-label="Fenêtre PVC double vitrage">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1350">3 fenêtres - 1 350 €</option>
+                                    <option value="2250">5 fenêtres - 2 250 €</option>
+                                    <option value="3600">8 fenêtres - 3 600 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Porte entrée <span class="unit-price">1 800 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="porte-entree" min="0" max="3" value="0" data-price="1800" data-label="Porte entree blindee">
-                                    <input type="number" id="porte-entree-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="porte-entree-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Porte entrée</label>
+                                <select id="select-porte-entree" class="san-select" data-label="Porte entrée blindée">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1800">Standard - 1 800 €</option>
+                                    <option value="2500">Renforcée - 2 500 €</option>
+                                    <option value="3500">Blindée - 3 500 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Volets roulants <span class="unit-price">500 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="volets" min="0" max="15" value="0" data-price="500" data-label="Volet roulant electrique">
-                                    <input type="number" id="volets-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="volets-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Volets (500€/u)</label>
+                                <select id="select-volets" class="san-select" data-label="Volet roulant électrique">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1500">3 volets - 1 500 €</option>
+                                    <option value="2500">5 volets - 2 500 €</option>
+                                    <option value="4000">8 volets - 4 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="toiture">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Toiture <span class="unit-price">120 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="toiture" min="0" max="200" value="0" data-price="120" data-label="Refection toiture complete">
-                                    <input type="number" id="toiture-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="toiture-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Toiture (120€/m²)</label>
+                                <select id="select-toiture" class="san-select" data-label="Réfection toiture complète">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="6000">50 m² - 6 000 €</option>
+                                    <option value="12000">100 m² - 12 000 €</option>
+                                    <option value="18000">150 m² - 18 000 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Velux <span class="unit-price">800 €/u</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="velux" min="0" max="10" value="0" data-price="800" data-label="Fenetre de toit Velux">
-                                    <input type="number" id="velux-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="velux-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Velux (800€/u)</label>
+                                <select id="select-velux" class="san-select" data-label="Fenêtre de toit Velux">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="800">1 velux - 800 €</option>
+                                    <option value="1600">2 velux - 1 600 €</option>
+                                    <option value="2400">3 velux - 2 400 €</option>
+                                </select>
                             </div>
-                            <div class="slider-row">
-                                <label>Zinguerie <span class="unit-price">80 €/ml</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="zinguerie" min="0" max="100" value="0" data-price="80" data-label="Zinguerie gouttieres">
-                                    <input type="number" id="zinguerie-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="zinguerie-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Zinguerie (80€/ml)</label>
+                                <select id="select-zinguerie" class="san-select" data-label="Zinguerie gouttières">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="800">10 ml - 800 €</option>
+                                    <option value="1600">20 ml - 1 600 €</option>
+                                    <option value="3200">40 ml - 3 200 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="agencement">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Cuisine équipée (ml)</label>
-                                <div class="slider-control">
-                                    <input type="range" id="cuisine" min="0" max="15" value="0" data-label="Cuisine equipee">
-                                    <input type="number" id="cuisine-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <select id="gamme-cuisine" class="gamme-select">
-                                    <option value="800">Entrée 800€</option>
-                                    <option value="1500">Moyenne 1500€</option>
-                                    <option value="3000">Haut 3000€</option>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Cuisine équipée</label>
+                                <select id="select-cuisine" class="san-select" data-label="Cuisine équipée">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="4000">5 ml Entrée - 4 000 €</option>
+                                    <option value="7500">5 ml Moyenne - 7 500 €</option>
+                                    <option value="15000">5 ml Haut - 15 000 €</option>
+                                    <option value="6400">8 ml Entrée - 6 400 €</option>
+                                    <option value="12000">8 ml Moyenne - 12 000 €</option>
+                                    <option value="24000">8 ml Haut - 24 000 €</option>
                                 </select>
-                                <span class="row-total" id="cuisine-total">0 €</span>
                             </div>
-                            <div class="slider-row">
-                                <label>Placards <span class="unit-price">500 €/ml</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="placards" min="0" max="15" value="0" data-price="500" data-label="Placard sur-mesure">
-                                    <input type="number" id="placards-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="placards-total">0 €</span>
+                            <div class="san-select-group">
+                                <label>Placards (500€/ml)</label>
+                                <select id="select-placards" class="san-select" data-label="Placard sur-mesure">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1500">3 ml - 1 500 €</option>
+                                    <option value="2500">5 ml - 2 500 €</option>
+                                    <option value="4000">8 ml - 4 000 €</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="options-grid" style="margin-top:15px;">
-                            <label class="option-card">
-                                <input type="checkbox" id="dressing" data-price="2500" data-label="Dressing sur-mesure">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Dressing</strong>
-                                    <small>Sur mesure + LED</small>
-                                </div>
-                                <span class="price">2 500 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="bibliotheque" data-price="1800" data-label="Bibliotheque sur-mesure">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Bibliothèque</strong>
-                                    <small>Sur mesure</small>
-                                </div>
-                                <span class="price">1 800 €</span>
-                            </label>
+                            <div class="san-select-group">
+                                <label>Rangements</label>
+                                <select id="select-rangements" class="san-select" data-label="Rangement sur-mesure">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="2500">Dressing - 2 500 €</option>
+                                    <option value="1800">Bibliothèque - 1 800 €</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
