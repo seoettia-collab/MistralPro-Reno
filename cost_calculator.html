@@ -359,171 +359,102 @@
 
                         <!-- SECTION BAIGNOIRE -->
                         <div class="subsub-content" data-subsub="san-baignoire">
-                            <h4 style="margin:0 0 10px;color:#1a1a1a;font-size:13px;">Type de baignoire</h4>
-                            <div class="options-grid">
-                                <label class="option-card">
-                                    <input type="checkbox" id="baignoire-std" data-price="1800" data-label="Baignoire acrylique standard tablier fourniture pose DTU 60.1">
-                                    <span class="check">✓</span>
-                                    <div class="option-info">
-                                        <strong>Baignoire Standard</strong>
-                                        <small>Acrylique, tablier inclus</small>
-                                    </div>
-                                    <span class="price">1 800 €</span>
-                                </label>
-                                <label class="option-card">
-                                    <input type="checkbox" id="baignoire-balneo" data-price="3500" data-label="Baignoire balnéo hydromassage fourniture pose DTU 60.1">
-                                    <span class="check">✓</span>
-                                    <div class="option-info">
-                                        <strong>Baignoire Balnéo</strong>
-                                        <small>Jets hydromassage</small>
-                                    </div>
-                                    <span class="price">3 500 €</span>
-                                </label>
-                            </div>
-                            <h4 style="margin:15px 0 10px;color:#1a1a1a;font-size:13px;">Robinetterie baignoire</h4>
-                            <div class="options-grid">
-                                <label class="option-card">
-                                    <input type="checkbox" id="robinet-baignoire-std" data-price="180" data-label="Robinet baignoire standard fourniture pose">
-                                    <span class="check">✓</span>
-                                    <div class="option-info">
-                                        <strong>Robinet Standard</strong>
-                                        <small>Mélangeur, chrome</small>
-                                    </div>
-                                    <span class="price">180 €</span>
-                                </label>
-                                <label class="option-card">
-                                    <input type="checkbox" id="robinet-baignoire-conf" data-price="350" data-label="Robinet baignoire confort fourniture pose">
-                                    <span class="check">✓</span>
-                                    <div class="option-info">
-                                        <strong>Robinet Confort</strong>
-                                        <small>Mitigeur thermostatique</small>
-                                    </div>
-                                    <span class="price">350 €</span>
-                                </label>
-                                <label class="option-card">
-                                    <input type="checkbox" id="robinet-baignoire-prem" data-price="600" data-label="Robinet baignoire premium cascade fourniture pose">
-                                    <span class="check">✓</span>
-                                    <div class="option-info">
-                                        <strong>Robinet Premium</strong>
-                                        <small>Cascade, design</small>
-                                    </div>
-                                    <span class="price">600 €</span>
-                                </label>
+                            <div class="san-selects-row">
+                                <div class="san-select-group">
+                                    <label>Baignoire</label>
+                                    <select id="select-baignoire" class="san-select" data-label="Baignoire fourniture pose DTU 60.1">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="1800">Standard 1 800 €</option>
+                                        <option value="3500">Balnéo 3 500 €</option>
+                                    </select>
+                                </div>
+                                <div class="san-select-group">
+                                    <label>Robinet</label>
+                                    <select id="select-robinet-baignoire" class="san-select" data-label="Robinet baignoire fourniture pose">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="180">Standard 180 €</option>
+                                        <option value="350">Confort 350 €</option>
+                                        <option value="600">Premium 600 €</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="equipements">
-                        <div class="options-grid">
-                            <label class="option-card">
-                                <input type="checkbox" id="cumulus-200" data-price="950" data-label="Chauffe-eau electrique 200L pose raccordement (DTU 60.1)">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Cumulus 200L</strong>
-                                    <small>Chauffe-eau électrique, pose, raccord.</small>
-                                </div>
-                                <span class="price">950 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="cumulus-300" data-price="1200" data-label="Chauffe-eau electrique 300L pose raccordement (DTU 60.1)">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Cumulus 300L</strong>
-                                    <small>Chauffe-eau électrique, pose, raccord.</small>
-                                </div>
-                                <span class="price">1 200 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="cumulus-thermo" data-price="2800" data-label="Chauffe-eau thermodynamique 250L (DTU 60.1 RT2012)">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Cumulus Thermodynamique</strong>
-                                    <small>250L, économie énergie, RT2012</small>
-                                </div>
-                                <span class="price">2 800 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="adoucisseur" data-price="1400" data-label="Adoucisseur eau bypass mise en service (DTU 60.1)">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Adoucisseur d'eau</strong>
-                                    <small>Bypass, mise en service incluse</small>
-                                </div>
-                                <span class="price">1 400 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="recherche-fuite" data-price="350" data-label="Recherche de fuite detection camera thermique">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Recherche de fuite</strong>
-                                    <small>Détection, caméra thermique</small>
-                                </div>
-                                <span class="price">350 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="point-eau" data-price="450" data-label="Creation point eau alimentation evacuation (DTU 60.1)">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Création point d'eau</strong>
-                                    <small>Alimentation + évacuation</small>
-                                </div>
-                                <span class="price">450 €</span>
-                            </label>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Chauffe-eau</label>
+                                <select id="select-cumulus" class="san-select" data-label="Chauffe-eau pose raccordement DTU 60.1">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="950">200L électrique 950 €</option>
+                                    <option value="1200">300L électrique 1 200 €</option>
+                                    <option value="2800">Thermodynamique 2 800 €</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>Adoucisseur</label>
+                                <select id="select-adoucisseur" class="san-select" data-label="Adoucisseur eau bypass mise en service DTU 60.1">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1400">Adoucisseur 1 400 €</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>Diagnostic</label>
+                                <select id="select-diagnostic" class="san-select" data-label="Recherche fuite detection">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="350">Recherche fuite 350 €</option>
+                                    <option value="450">Création point eau 450 €</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="tuyauterie">
-                        <div class="sliders-list">
-                            <div class="slider-row">
-                                <label>Tuyauterie PER <span class="unit-price">40 €/ml</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="tuyauterie" min="0" max="100" value="0" data-price="40" data-label="Canalisation PER multicouche (DTU 60.1)">
-                                    <input type="number" id="tuyauterie-number" min="0" max="9999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="tuyauterie-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Tuyauterie PER (40€/ml)</label>
+                                <select id="select-tuyauterie" class="san-select" data-label="Canalisation PER multicouche DTU 60.1">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="200">5 ml - 200 €</option>
+                                    <option value="400">10 ml - 400 €</option>
+                                    <option value="800">20 ml - 800 €</option>
+                                    <option value="1200">30 ml - 1 200 €</option>
+                                    <option value="2000">50 ml - 2 000 €</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-content" data-sub="pack-sdb">
-                        <div class="select-box">
-                            <label for="pack-sdb">Pack Salle de Bain Complète</label>
-                            <select id="pack-sdb" data-label="Pack salle de bain">
-                                <option value="0">-- Choisir un pack --</option>
-                                <option value="4500" data-label="Renovation SDB standard DTU 60.1">Pack Standard (4 500 €)</option>
-                                <option value="8000" data-label="Renovation SDB confort douche italienne DTU 60.1">Pack Confort (8 000 €)</option>
-                                <option value="15000" data-label="Renovation SDB premium design DTU 60.1">Pack Premium (15 000 €)</option>
-                            </select>
-                        </div>
-                        <div class="sliders-list" style="margin-top:15px;">
-                            <div class="slider-row">
-                                <label>Carrelage SDB <span class="unit-price">70 €/m²</span></label>
-                                <div class="slider-control">
-                                    <input type="range" id="carrelage-sdb" min="0" max="50" value="0" data-price="70" data-label="Carrelage salle de bain etancheite SPEC (DTU 52.2)">
-                                    <input type="number" id="carrelage-sdb-number" min="0" max="999" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="carrelage-sdb-total">0 €</span>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>Pack SDB</label>
+                                <select id="select-pack-sdb" class="san-select" data-label="Pack salle de bain rénovation DTU 60.1">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="4500">Standard 4 500 €</option>
+                                    <option value="8000">Confort 8 000 €</option>
+                                    <option value="15000">Premium 15 000 €</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="options-grid" style="margin-top:15px;">
-                            <label class="option-card">
-                                <input type="checkbox" id="meuble-sdb" data-price="1200" data-label="Meuble vasque suspendu premium plan ceramique">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Meuble vasque premium</strong>
-                                    <small>Suspendu, plan céramique</small>
-                                </div>
-                                <span class="price">1 200 €</span>
-                            </label>
-                            <label class="option-card">
-                                <input type="checkbox" id="colonne-douche" data-price="800" data-label="Colonne de douche thermostatique pomme de tete">
-                                <span class="check">✓</span>
-                                <div class="option-info">
-                                    <strong>Colonne de douche</strong>
-                                    <small>Thermostatique, pomme de tête</small>
-                                </div>
-                                <span class="price">800 €</span>
-                            </label>
+                            <div class="san-select-group">
+                                <label>Carrelage SDB (70€/m²)</label>
+                                <select id="select-carrelage-sdb" class="san-select" data-label="Carrelage salle de bain étanchéité DTU 52.2">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="350">5 m² - 350 €</option>
+                                    <option value="700">10 m² - 700 €</option>
+                                    <option value="1050">15 m² - 1 050 €</option>
+                                    <option value="1400">20 m² - 1 400 €</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>Options</label>
+                                <select id="select-options-sdb" class="san-select" data-label="Option salle de bain">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="1200">Meuble vasque 1 200 €</option>
+                                    <option value="800">Colonne douche 800 €</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
