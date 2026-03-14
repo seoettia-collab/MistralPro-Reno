@@ -28,7 +28,51 @@ panel.find('input[type="checkbox"]:checked').each(function(){count++});
 if(allSelects[cat]){allSelects[cat].forEach(function(id){if(parseFloat(t("#"+id).val())>0)count++})}
 // Anciens selects
 panel.find("select").each(function(){const id=t(this).attr("id");if(!id||id.startsWith("gamme-")||id.startsWith("type-peinture")||id.startsWith("select-"))return;if(parseFloat(t(this).val())>0)count++});
-const badge=t(`#count-${cat}`);badge.text(count);count>0?badge.addClass("has-value"):badge.removeClass("has-value")})}
+const badge=t(`#count-${cat}`);badge.text(count);count>0?badge.addClass("has-value"):badge.removeClass("has-value")});
+// Mise à jour panneau prévisualisation
+updatePreview()}
+
+function updatePreview(){
+const previewList=t("#preview-list");
+const previewCount=t("#preview-count");
+let html="";
+let totalItems=0;
+const categories={};
+
+// Collecter tous les selects sélectionnés
+Object.keys(allSelects).forEach(function(cat){
+allSelects[cat].forEach(function(id){
+const sel=t("#"+id);
+const prix=parseFloat(sel.val())||0;
+if(prix>0){
+const selectedOption=sel.find("option:selected");
+const label=selectedOption.data("label")||selectedOption.text().split("€")[0].trim();
+const catName=d(cat);
+if(!categories[catName])categories[catName]=[];
+categories[catName].push({label:label,price:prix});
+totalItems++}})});
+
+// Collecter checkboxes
+t('input[type="checkbox"]:checked').each(function(){
+const price=parseFloat(t(this).data("price"))||0;
+const label=t(this).data("label")||t(this).closest("label").find("strong").text();
+const cat=d(t(this).closest(".category-panel").data("category")||"Prestations");
+if(!categories[cat])categories[cat]=[];
+categories[cat].push({label:label,price:price});
+totalItems++});
+
+// Générer HTML
+if(totalItems===0){
+html='<p class="preview-empty">Sélectionnez des prestations pour voir le récapitulatif</p>'}
+else{Object.keys(categories).forEach(function(cat){
+html+='<div class="preview-cat-title">'+cat+'</div>';
+categories[cat].forEach(function(item){
+html+='<div class="preview-item"><span class="preview-item-label">'+item.label+'</span><span class="preview-item-price">'+formatPrice(item.price)+'</span></div>'})})
+}
+previewList.html(html);
+previewCount.text(totalItems+" prestation(s)")}
+
+function formatPrice(p){return Math.round(p).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" €"}}
 
 function l(t){return new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",minimumFractionDigits:0,maximumFractionDigits:0}).format(t)}
 
