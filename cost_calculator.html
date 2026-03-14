@@ -842,33 +842,19 @@
                     <div class="sub-content" data-sub="preparation">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Dépose sol (15€/m²)</label>
-                                <select id="select-depose" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="300" data-label="Dépose de revêtement de sol existant (carrelage, parquet, moquette, PVC), grattage colle résiduelle, nettoyage support, évacuation déchets en déchetterie agréée. Surface 20m²">20 m² - 300 €</option>
-                                    <option value="600" data-label="Dépose de revêtement de sol existant (carrelage, parquet, moquette, PVC), grattage colle résiduelle, nettoyage support, évacuation déchets en déchetterie agréée. Surface 40m²">40 m² - 600 €</option>
-                                    <option value="1200" data-label="Dépose de revêtement de sol existant (carrelage, parquet, moquette, PVC), grattage colle résiduelle, nettoyage support, évacuation déchets en déchetterie agréée. Surface 80m²">80 m² - 1 200 €</option>
-                                </select>
+                                <label>🔨 Dépose sol (15€/m²)</label>
+                                <input type="number" id="input-depose-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="15" data-label="Dépose de revêtement de sol existant (carrelage, parquet, moquette, PVC), grattage colle résiduelle, nettoyage support, évacuation déchets en déchetterie agréée.">
                             </div>
                             <div class="san-select-group">
-                                <label>Ragréage (45€/m²)</label>
-                                <select id="select-ragreage" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="450" data-label="Fourniture et application de ragréage autolissant P3 fibré épaisseur 3 à 10mm, primaire d'accrochage, temps de séchage 24h avant pose revêtement. Surface 10m². DTU 26.2">10 m² - 450 €</option>
-                                    <option value="900" data-label="Fourniture et application de ragréage autolissant P3 fibré épaisseur 3 à 10mm, primaire d'accrochage, temps de séchage 24h avant pose revêtement. Surface 20m². DTU 26.2">20 m² - 900 €</option>
-                                    <option value="1800" data-label="Fourniture et application de ragréage autolissant P3 fibré épaisseur 3 à 10mm, primaire d'accrochage, temps de séchage 24h avant pose revêtement. Surface 40m². DTU 26.2">40 m² - 1 800 €</option>
-                                </select>
+                                <label>🧹 Ragréage (45€/m²)</label>
+                                <input type="number" id="input-ragreage-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="45" data-label="Fourniture et application de ragréage autolissant P3 fibré épaisseur 3 à 10mm, primaire d'accrochage, temps de séchage 24h avant pose revêtement. DTU 26.2">
                             </div>
                             <div class="san-select-group">
-                                <label>Chape (45€/m²)</label>
-                                <select id="select-chape" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="900" data-label="Fourniture et coulage de chape fluide anhydrite épaisseur 5cm, armature treillis soudé, bandes périphériques, finition lissée prête à carreler, temps de séchage selon DTU. Surface 20m². DTU 26.2">20 m² - 900 €</option>
-                                    <option value="1800" data-label="Fourniture et coulage de chape fluide anhydrite épaisseur 5cm, armature treillis soudé, bandes périphériques, finition lissée prête à carreler, temps de séchage selon DTU. Surface 40m². DTU 26.2">40 m² - 1 800 €</option>
-                                    <option value="3600" data-label="Fourniture et coulage de chape fluide anhydrite épaisseur 5cm, armature treillis soudé, bandes périphériques, finition lissée prête à carreler, temps de séchage selon DTU. Surface 80m². DTU 26.2">80 m² - 3 600 €</option>
-                                </select>
+                                <label>🏗️ Chape (45€/m²)</label>
+                                <input type="number" id="input-chape-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="45" data-label="Fourniture et coulage de chape fluide anhydrite épaisseur 5cm, armature treillis soudé, bandes périphériques, finition lissée prête à carreler, temps de séchage selon DTU. DTU 26.2">
                             </div>
                         </div>
+                        <p id="preparation-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="ext">
@@ -1267,8 +1253,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=8.9" defer></script>
-    <!-- CCTP v22 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=9.0" defer></script>
+    <!-- CCTP v23 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>

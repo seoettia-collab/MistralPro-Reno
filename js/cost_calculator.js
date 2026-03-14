@@ -1,10 +1,10 @@
 !function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="07 55 18 89 37",s="contact@mistralpro-reno.fr";let i=null;
 
-// TOUS LES SELECTS PAR CATÉGORIE - V11
+// TOUS LES SELECTS PAR CATÉGORIE - V12
 const allSelects={
 plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre","select-pack-sdb","select-depose-mural","select-depose-sol"],
 electricite:["select-tableau","select-points-lum","select-prises","select-inter","select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv","select-clim","select-vmc-simple","select-vmc-double","select-aerateur"],
-peinture:["select-peinture-murs-gamme","select-peinture-plaf-gamme","select-parquet-gamme","select-carrelage-gamme","select-lino-gamme","select-faience-gamme","select-credence-gamme","select-depose","select-ragreage","select-chape","select-ravalement","select-facade"],
+peinture:["select-peinture-murs-gamme","select-peinture-plaf-gamme","select-parquet-gamme","select-carrelage-gamme","select-lino-gamme","select-faience-gamme","select-credence-gamme","select-ravalement","select-facade"],
 "gros-oeuvre":["select-mur-porteur","select-cloisons","select-dalle","select-demo","select-iso-murs","select-iso-combles","select-ite","select-faux-plafond","select-doublage","select-extension","select-terrassement","select-fondations"],
 menuiserie:["select-portes-int","select-plinthes","select-fenetres","select-porte-entree","select-volets","select-toiture","select-velux","select-zinguerie","select-cuisine","select-placards","select-rangements"]
 };
@@ -67,6 +67,16 @@ if(gamme>0&&m2>0){e+=gamme*m2}
 const hasVal=gamme>0&&m2>0;
 t("#"+p.gamme).css(hasVal?{"border-color":"#27ae60","background":"#e8f5e9"}:{"border-color":"#e0e0e0","background":"#fff"});
 t("#"+p.input).css(hasVal?{"border-color":"#27ae60","background":"#e8f5e9"}:{"border-color":"#e0e0e0","background":"#fff"});
+});
+// Calcul préparation (prix fixe × m²)
+const prepFields=[
+{input:"input-depose-m2",price:15},
+{input:"input-ragreage-m2",price:45},
+{input:"input-chape-m2",price:45}
+];
+prepFields.forEach(function(p){
+const m2=parseFloat(t("#"+p.input).val())||0;
+if(m2>0){e+=p.price*m2;t("#"+p.input).css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#"+p.input).css({"border-color":"#e0e0e0","background":"#fff"})}
 });
 // Tous les selects san-select (hors depose-select et peinture gamme/surface)
 sanSelects.forEach(function(id){if(id.startsWith("select-depose-"))return;if(id.startsWith("select-peinture-murs-")||id.startsWith("select-peinture-plaf-"))return;const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
@@ -226,6 +236,28 @@ mursInfo+=(mursInfo?" | ":"")+p.type+": "+m2+"m² × "+gammeVal+"€ = "+formatP
 });
 t("#murs-total-info").html(mursInfo?("💰 "+mursInfo):"");
 
+// Calcul spécial PRÉPARATION (prix fixe × m²)
+const prepCalcs=[
+{input:"input-depose-m2",price:15,type:"Dépose sol"},
+{input:"input-ragreage-m2",price:45,type:"Ragréage"},
+{input:"input-chape-m2",price:45,type:"Chape"}
+];
+let prepInfo="";
+prepCalcs.forEach(function(p){
+const m2=parseFloat(t("#"+p.input).val())||0;
+if(m2>0){
+const total=p.price*m2;
+const label=t("#"+p.input).data("label")||p.type;
+const fullLabel=label+" - "+p.price+"€/m² - Surface "+m2+"m²";
+if(!categories["Peinture & Revêtements"])categories["Peinture & Revêtements"]=[];
+categories["Peinture & Revêtements"].push({label:fullLabel,qty:m2,unit:"m²",pu:p.price,total:total});
+totalItems++;
+totalHT+=total;
+prepInfo+=(prepInfo?" | ":"")+p.type+": "+m2+"m² × "+p.price+"€ = "+formatPrice(total);
+}
+});
+t("#preparation-total-info").html(prepInfo?("💰 "+prepInfo):"");
+
 Object.keys(allSelects).forEach(function(cat){
 allSelects[cat].forEach(function(id){
 if(id.startsWith("select-depose-"))return;
@@ -335,7 +367,7 @@ const tabSelects={
 "peinture-int":["select-peinture-murs-gamme","select-peinture-plaf-gamme"],
 "sols":["select-parquet-gamme","select-carrelage-gamme","select-lino-gamme"],
 "murs-rev":["select-faience-gamme","select-credence-gamme"],
-"preparation":["select-depose","select-ragreage","select-chape"],
+"preparation":[],
 "ext":["select-ravalement","select-facade"],
 "maconnerie":["select-mur-porteur","select-cloisons","select-dalle","select-demo"],
 "isolation":["select-iso-murs","select-iso-combles","select-ite"],
@@ -378,6 +410,13 @@ const faienceM2=parseFloat(t("#input-faience-m2").val())||0;
 const credenceGamme=parseFloat(t("#select-credence-gamme").val())||0;
 const credenceM2=parseFloat(t("#input-credence-m2").val())||0;
 if((faienceGamme>0&&faienceM2>0)||(credenceGamme>0&&credenceM2>0)){hasSelection=true}
+}
+// Cas spécial préparation: m² requis
+else if(tab==="preparation"){
+const deposeM2=parseFloat(t("#input-depose-m2").val())||0;
+const ragreageM2=parseFloat(t("#input-ragreage-m2").val())||0;
+const chapeM2=parseFloat(t("#input-chape-m2").val())||0;
+if(deposeM2>0||ragreageM2>0||chapeM2>0){hasSelection=true}
 }else{
 selects.forEach(function(id){if(parseFloat(t("#"+id).val())>0)hasSelection=true});
 }
@@ -396,8 +435,8 @@ t('input[type="range"]').on("input",function(){const e=t(this).attr("id");t("#"+
 t(".qty-input").on("input",function(){const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number",""),n=t("#"+o);if(n.length){let e=parseInt(t(this).val())||0;const a=parseInt(n.attr("max"))||9999;e=Math.min(Math.max(0,e),a),t(this).val(e),n.val(e)}r()}),
 t(".qty-input").on("blur",function(){if(""===t(this).val()){t(this).val(0);const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number","");t("#"+o).val(0),r()}}),
 t('input[type="checkbox"], select').on("change",function(){r();updateAllTabs()}),
-// Peinture + Sols + Murs: recalcul sur saisie manuelle m²
-t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2, #input-parquet-m2, #input-carrelage-m2, #input-lino-m2, #input-faience-m2, #input-credence-m2").on("input",function(){r();updateAllTabs()}),
+// Peinture + Sols + Murs + Préparation: recalcul sur saisie manuelle m²
+t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2, #input-parquet-m2, #input-carrelage-m2, #input-lino-m2, #input-faience-m2, #input-credence-m2, #input-depose-m2, #input-ragreage-m2, #input-chape-m2").on("input",function(){r();updateAllTabs()}),
 t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r(),updateAllTabs())}),
 // Reset par section
 t(".btn-section-reset").on("click",function(){
