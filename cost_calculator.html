@@ -212,171 +212,161 @@
                     </div>
                     
                     <div class="sub-content active" data-sub="sanitaires">
-                        <div class="sliders-list">
-                            <!-- WC -->
-                            <div class="slider-row">
-                                <label>WC <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-wc" class="gamme-select" data-label="WC fourniture pose DTU 60.1">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="650">WC Suspendu (650 €)</option>
-                                    <option value="450">WC à poser (450 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-wc" min="0" max="10" value="0" class="qty-input">
+                        <!-- Sous-navigation Sanitaires -->
+                        <div class="sub-tabs" style="margin-bottom:15px;">
+                            <button class="sub-tab active" data-subsub="san-wc">WC</button>
+                            <button class="sub-tab" data-subsub="san-lavabo">Lavabo</button>
+                            <button class="sub-tab" data-subsub="san-douche">Douche</button>
+                            <button class="sub-tab" data-subsub="san-baignoire">Baignoire</button>
+                        </div>
+
+                        <!-- SECTION WC -->
+                        <div class="subsub-content active" data-subsub="san-wc">
+                            <div class="sliders-list">
+                                <div class="slider-row">
+                                    <label>Type de WC <span class="unit-price">Fourniture + pose</span></label>
+                                    <select id="select-wc" class="gamme-select" data-label="WC fourniture pose DTU 60.1">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="650">WC Suspendu (650 €)</option>
+                                        <option value="450">WC à poser (450 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-wc" min="0" max="10" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-wc">0 €</span>
                                 </div>
-                                <span class="row-total" id="total-wc">0 €</span>
                             </div>
-                            <!-- LAVABO -->
-                            <div class="slider-row">
-                                <label>Lavabo <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-lavabo" class="gamme-select" data-label="Lavabo meuble fourniture pose DTU 60.1">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="550">Lavabo + Meuble (550 €)</option>
-                                    <option value="950">Double vasque (950 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-lavabo" min="0" max="10" value="0" class="qty-input">
+                        </div>
+
+                        <!-- SECTION LAVABO -->
+                        <div class="subsub-content" data-subsub="san-lavabo">
+                            <div class="sliders-list">
+                                <div class="slider-row">
+                                    <label>Type de lavabo <span class="unit-price">Fourniture + pose</span></label>
+                                    <select id="select-lavabo" class="gamme-select" data-label="Lavabo meuble fourniture pose DTU 60.1">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="550">Lavabo + Meuble (550 €)</option>
+                                        <option value="950">Double vasque (950 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-lavabo" min="0" max="10" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-lavabo">0 €</span>
                                 </div>
-                                <span class="row-total" id="total-lavabo">0 €</span>
+                                <div class="slider-row">
+                                    <label>Robinet lavabo <span class="unit-price">Gamme</span></label>
+                                    <select id="select-mitigeur-lavabo" class="gamme-select" data-label="Mitigeur lavabo fourniture pose">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="120">Standard (120 €)</option>
+                                        <option value="200">Confort (200 €)</option>
+                                        <option value="350">Premium (350 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-mitigeur-lavabo" min="0" max="20" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-mitigeur-lavabo">0 €</span>
+                                </div>
                             </div>
-                            <!-- ROBINETTERIE - Mitigeur lavabo -->
-                            <div class="slider-row">
-                                <label>Mitigeur lavabo <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-mitigeur-lavabo" class="gamme-select" data-label="Mitigeur lavabo fourniture pose">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="120">Standard (120 €)</option>
-                                    <option value="200">Confort (200 €)</option>
-                                    <option value="350">Premium (350 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-mitigeur-lavabo" min="0" max="20" value="0" class="qty-input">
+                        </div>
+
+                        <!-- SECTION DOUCHE -->
+                        <div class="subsub-content" data-subsub="san-douche">
+                            <div class="sliders-list">
+                                <div class="slider-row">
+                                    <label>Receveur <span class="unit-price">Bonde + évac. inclus</span></label>
+                                    <select id="select-receveur" class="gamme-select" data-label="Receveur douche bonde evacuation DTU 60.1">
+                                        <option value="0">-- Choisir forme --</option>
+                                        <option value="450">Quart de rond - Standard (450 €)</option>
+                                        <option value="650">Quart de rond - Confort (650 €)</option>
+                                        <option value="900">Quart de rond - Premium (900 €)</option>
+                                        <option value="500">Rectangle - Standard (500 €)</option>
+                                        <option value="700">Rectangle - Confort (700 €)</option>
+                                        <option value="950">Rectangle - Premium (950 €)</option>
+                                        <option value="480">Carré - Standard (480 €)</option>
+                                        <option value="680">Carré - Confort (680 €)</option>
+                                        <option value="920">Carré - Premium (920 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-receveur" min="0" max="10" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-receveur">0 €</span>
                                 </div>
-                                <span class="row-total" id="total-mitigeur-lavabo">0 €</span>
+                                <div class="slider-row">
+                                    <label>Porte de douche <span class="unit-price">Fourniture + pose</span></label>
+                                    <select id="select-porte-douche" class="gamme-select" data-label="Porte douche verre fourniture pose">
+                                        <option value="0">-- Choisir type --</option>
+                                        <option value="350">Paroi fixe - Standard (350 €)</option>
+                                        <option value="550">Paroi fixe - Confort (550 €)</option>
+                                        <option value="800">Paroi fixe - Premium (800 €)</option>
+                                        <option value="450">Porte pivotante - Standard (450 €)</option>
+                                        <option value="650">Porte pivotante - Confort (650 €)</option>
+                                        <option value="900">Porte pivotante - Premium (900 €)</option>
+                                        <option value="500">Porte coulissante - Standard (500 €)</option>
+                                        <option value="750">Porte coulissante - Confort (750 €)</option>
+                                        <option value="1000">Porte coulissante - Premium (1 000 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-porte-douche" min="0" max="10" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-porte-douche">0 €</span>
+                                </div>
+                                <div class="slider-row">
+                                    <label>Barre de douche <span class="unit-price">Gamme</span></label>
+                                    <select id="select-barre-douche" class="gamme-select" data-label="Barre de douche colonne fourniture pose">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="180">Standard (180 €)</option>
+                                        <option value="300">Confort (300 €)</option>
+                                        <option value="500">Premium (500 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-barre-douche" min="0" max="10" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-barre-douche">0 €</span>
+                                </div>
+                                <div class="slider-row">
+                                    <label>Mitigeur douche <span class="unit-price">Gamme</span></label>
+                                    <select id="select-mitigeur-douche" class="gamme-select" data-label="Mitigeur douche fourniture pose">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="150">Standard (150 €)</option>
+                                        <option value="250">Confort (250 €)</option>
+                                        <option value="400">Premium (400 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-mitigeur-douche" min="0" max="10" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-mitigeur-douche">0 €</span>
+                                </div>
                             </div>
-                            <!-- ROBINETTERIE - Mitigeur douche -->
-                            <div class="slider-row">
-                                <label>Mitigeur douche <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-mitigeur-douche" class="gamme-select" data-label="Mitigeur douche fourniture pose">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="150">Standard (150 €)</option>
-                                    <option value="250">Confort (250 €)</option>
-                                    <option value="400">Premium (400 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-mitigeur-douche" min="0" max="20" value="0" class="qty-input">
+                        </div>
+
+                        <!-- SECTION BAIGNOIRE -->
+                        <div class="subsub-content" data-subsub="san-baignoire">
+                            <div class="sliders-list">
+                                <div class="slider-row">
+                                    <label>Type de baignoire <span class="unit-price">Fourniture + pose</span></label>
+                                    <select id="select-baignoire" class="gamme-select" data-label="Baignoire fourniture pose DTU 60.1">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="1800">Standard acrylique (1 800 €)</option>
+                                        <option value="3500">Balnéo hydromassage (3 500 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-baignoire" min="0" max="5" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-baignoire">0 €</span>
                                 </div>
-                                <span class="row-total" id="total-mitigeur-douche">0 €</span>
-                            </div>
-                            <!-- ROBINETTERIE - Barre de douche -->
-                            <div class="slider-row">
-                                <label>Barre de douche <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-barre-douche" class="gamme-select" data-label="Barre de douche colonne fourniture pose">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="180">Standard (180 €)</option>
-                                    <option value="300">Confort (300 €)</option>
-                                    <option value="500">Premium (500 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-barre-douche" min="0" max="10" value="0" class="qty-input">
+                                <div class="slider-row">
+                                    <label>Robinet baignoire <span class="unit-price">Gamme</span></label>
+                                    <select id="select-robinet-baignoire" class="gamme-select" data-label="Robinet baignoire fourniture pose">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="180">Standard (180 €)</option>
+                                        <option value="350">Confort (350 €)</option>
+                                        <option value="600">Premium (600 €)</option>
+                                    </select>
+                                    <div class="slider-control" style="flex:0;">
+                                        <input type="number" id="qty-robinet-baignoire" min="0" max="5" value="0" class="qty-input">
+                                    </div>
+                                    <span class="row-total" id="total-robinet-baignoire">0 €</span>
                                 </div>
-                                <span class="row-total" id="total-barre-douche">0 €</span>
-                            </div>
-                            <!-- RECEVEUR DOUCHE - Quart de rond -->
-                            <div class="slider-row">
-                                <label>Receveur quart de rond <span class="unit-price">Bonde + évac. inclus</span></label>
-                                <select id="select-receveur-qr" class="gamme-select" data-label="Receveur douche quart rond bonde evacuation DTU 60.1">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="450">Standard (450 €)</option>
-                                    <option value="650">Confort (650 €)</option>
-                                    <option value="900">Premium (900 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-receveur-qr" min="0" max="10" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-receveur-qr">0 €</span>
-                            </div>
-                            <!-- RECEVEUR DOUCHE - Rectangle -->
-                            <div class="slider-row">
-                                <label>Receveur rectangle <span class="unit-price">Bonde + évac. inclus</span></label>
-                                <select id="select-receveur-rect" class="gamme-select" data-label="Receveur douche rectangle bonde evacuation DTU 60.1">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="500">Standard (500 €)</option>
-                                    <option value="700">Confort (700 €)</option>
-                                    <option value="950">Premium (950 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-receveur-rect" min="0" max="10" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-receveur-rect">0 €</span>
-                            </div>
-                            <!-- RECEVEUR DOUCHE - Carré -->
-                            <div class="slider-row">
-                                <label>Receveur carré <span class="unit-price">Bonde + évac. inclus</span></label>
-                                <select id="select-receveur-carre" class="gamme-select" data-label="Receveur douche carre bonde evacuation DTU 60.1">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="480">Standard (480 €)</option>
-                                    <option value="680">Confort (680 €)</option>
-                                    <option value="920">Premium (920 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-receveur-carre" min="0" max="10" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-receveur-carre">0 €</span>
-                            </div>
-                            <!-- PORTE DOUCHE - Paroi fixe -->
-                            <div class="slider-row">
-                                <label>Paroi fixe <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-paroi-fixe" class="gamme-select" data-label="Paroi douche fixe verre fourniture pose">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="350">Standard (350 €)</option>
-                                    <option value="550">Confort (550 €)</option>
-                                    <option value="800">Premium (800 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-paroi-fixe" min="0" max="10" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-paroi-fixe">0 €</span>
-                            </div>
-                            <!-- PORTE DOUCHE - Pivotante -->
-                            <div class="slider-row">
-                                <label>Porte pivotante <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-porte-pivot" class="gamme-select" data-label="Porte douche pivotante verre fourniture pose">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="450">Standard (450 €)</option>
-                                    <option value="650">Confort (650 €)</option>
-                                    <option value="900">Premium (900 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-porte-pivot" min="0" max="10" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-porte-pivot">0 €</span>
-                            </div>
-                            <!-- PORTE DOUCHE - Coulissante -->
-                            <div class="slider-row">
-                                <label>Porte coulissante <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-porte-couliss" class="gamme-select" data-label="Porte douche coulissante verre fourniture pose">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="500">Standard (500 €)</option>
-                                    <option value="750">Confort (750 €)</option>
-                                    <option value="1000">Premium (1 000 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-porte-couliss" min="0" max="10" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-porte-couliss">0 €</span>
-                            </div>
-                            <!-- BAIGNOIRE -->
-                            <div class="slider-row">
-                                <label>Baignoire <span class="unit-price">Fourniture + pose</span></label>
-                                <select id="select-baignoire" class="gamme-select" data-label="Baignoire fourniture pose DTU 60.1">
-                                    <option value="0">-- Aucun --</option>
-                                    <option value="1800">Standard acrylique (1 800 €)</option>
-                                    <option value="3500">Balnéo hydromassage (3 500 €)</option>
-                                </select>
-                                <div class="slider-control" style="flex:0;">
-                                    <input type="number" id="qty-baignoire" min="0" max="5" value="0" class="qty-input">
-                                </div>
-                                <span class="row-total" id="total-baignoire">0 €</span>
                             </div>
                         </div>
                     </div>
