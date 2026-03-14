@@ -716,26 +716,49 @@
                     <div class="sub-content active" data-sub="peinture-int">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Peinture murs</label>
-                                <select id="select-peinture-murs" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="1000" data-label="Fourniture et application de peinture murale acrylique mat blanc ou teinte RAL au choix, 2 couches croisées sur impression, rebouchage fissures et ponçage intermédiaire. Surface 50m². DTU 59.1">50 m² Std - 1 000 €</option>
-                                    <option value="2000" data-label="Fourniture et application de peinture murale acrylique mat blanc ou teinte RAL au choix, 2 couches croisées sur impression, rebouchage fissures et ponçage intermédiaire. Surface 100m². DTU 59.1">100 m² Std - 2 000 €</option>
-                                    <option value="3000" data-label="Fourniture et application de peinture murale lessivable satinée blanc ou teinte RAL au choix, 2 couches croisées sur sous-couche fixante, rebouchage fissures, ponçage fin. Surface 100m². DTU 59.1">100 m² Lessivable - 3 000 €</option>
-                                    <option value="4500" data-label="Fourniture et application de peinture murale velours haut de gamme blanc ou teinte RAL au choix, finition tendue sans traces, 2 couches croisées sur sous-couche garnissante, enduit de lissage, ponçage fin grain 120. Surface 100m². DTU 59.1">100 m² Premium - 4 500 €</option>
+                                <label>🎨 Peinture murs - Gamme</label>
+                                <select id="select-peinture-murs-gamme" class="san-select" data-price-std="25" data-price-mid="35" data-price-prem="45">
+                                    <option value="0">-- Choisir gamme --</option>
+                                    <option value="25" data-label="Peinture murale acrylique mat blanc ou teinte RAL, 2 couches croisées sur impression, rebouchage fissures, ponçage intermédiaire. DTU 59.1">Standard (25€/m²)</option>
+                                    <option value="35" data-label="Peinture murale lessivable satinée blanc ou teinte RAL, 2 couches croisées sur sous-couche fixante, rebouchage fissures, ponçage fin. DTU 59.1">Lessivable (35€/m²)</option>
+                                    <option value="45" data-label="Peinture murale velours haut de gamme blanc ou teinte RAL, finition tendue sans traces, 2 couches sur sous-couche garnissante, enduit de lissage, ponçage grain 120. DTU 59.1">Premium (45€/m²)</option>
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>Peinture plafonds</label>
-                                <select id="select-peinture-plaf" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="660" data-label="Fourniture et application de peinture plafond acrylique mat blanc, 2 couches croisées sur impression, rebouchage fissures et ponçage intermédiaire. Surface 30m². DTU 59.1">30 m² Std - 660 €</option>
-                                    <option value="1100" data-label="Fourniture et application de peinture plafond acrylique mat blanc, 2 couches croisées sur impression, rebouchage fissures et ponçage intermédiaire. Surface 50m². DTU 59.1">50 m² Std - 1 100 €</option>
-                                    <option value="2200" data-label="Fourniture et application de peinture plafond acrylique mat blanc, 2 couches croisées sur impression, rebouchage fissures et ponçage intermédiaire. Surface 100m². DTU 59.1">100 m² Std - 2 200 €</option>
-                                    <option value="4800" data-label="Fourniture et application de peinture plafond anti-traces haut de gamme blanc mat profond, finition tendue parfaite, 2 couches croisées sur sous-couche garnissante, enduit de lissage complet, ponçage fin grain 120. Surface 100m². DTU 59.1">100 m² Premium - 4 800 €</option>
+                                <label>📐 Superficie murs</label>
+                                <select id="select-peinture-murs-surface" class="san-select">
+                                    <option value="0">-- Choisir surface --</option>
+                                    <option value="22">15 - 30 m² (moy. 22m²)</option>
+                                    <option value="40">30 - 50 m² (moy. 40m²)</option>
+                                    <option value="85">50 - 120 m² (moy. 85m²)</option>
+                                    <option value="custom">Saisie manuelle</option>
                                 </select>
+                                <input type="number" id="input-peinture-murs-m2" class="qty-input" placeholder="m²" min="1" max="500" style="display:none;margin-top:5px;">
                             </div>
                         </div>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>🎨 Peinture plafonds - Gamme</label>
+                                <select id="select-peinture-plaf-gamme" class="san-select">
+                                    <option value="0">-- Choisir gamme --</option>
+                                    <option value="22" data-label="Peinture plafond acrylique mat blanc, 2 couches croisées sur impression, rebouchage fissures, ponçage intermédiaire. DTU 59.1">Standard (22€/m²)</option>
+                                    <option value="32" data-label="Peinture plafond lessivable satinée blanc, 2 couches croisées sur sous-couche fixante, rebouchage fissures, ponçage fin. DTU 59.1">Lessivable (32€/m²)</option>
+                                    <option value="48" data-label="Peinture plafond anti-traces haut de gamme blanc mat profond, finition tendue parfaite, 2 couches sur sous-couche garnissante, enduit de lissage, ponçage grain 120. DTU 59.1">Premium (48€/m²)</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>📐 Superficie plafonds</label>
+                                <select id="select-peinture-plaf-surface" class="san-select">
+                                    <option value="0">-- Choisir surface --</option>
+                                    <option value="22">15 - 30 m² (moy. 22m²)</option>
+                                    <option value="40">30 - 50 m² (moy. 40m²)</option>
+                                    <option value="85">50 - 120 m² (moy. 85m²)</option>
+                                    <option value="custom">Saisie manuelle</option>
+                                </select>
+                                <input type="number" id="input-peinture-plaf-m2" class="qty-input" placeholder="m²" min="1" max="500" style="display:none;margin-top:5px;">
+                            </div>
+                        </div>
+                        <p id="peinture-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="sols">
@@ -1225,8 +1248,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=7.9" defer></script>
-    <!-- CCTP v12 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=8.0" defer></script>
+    <!-- CCTP v13 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
