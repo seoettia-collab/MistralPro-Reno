@@ -3595,28 +3595,13 @@ function renderPublishSuccess(finalURL, commitUrl) {
 }
 
 /**
- * Enregistre le contenu publié dans l'API
+ * Enregistre le contenu publié (fonction désactivée)
+ * Note: La publication GitHub est suffisante, pas besoin d'API secondaire
  */
 async function registerPublishedContent(slug, content) {
-  try {
-    await fetchAPI('/api/content', {
-      method: 'POST',
-      body: JSON.stringify({
-        type: content.type,
-        keyword: content.keyword,
-        title: content.title,
-        slug: slug,
-        url: `/blog/${slug}.html`,
-        status: 'published',
-        word_count: content.wordCount,
-        published_at: new Date().toISOString()
-      })
-    });
-    console.log('[Publication] Contenu enregistré dans l\'API');
-  } catch (error) {
-    console.warn('[Publication] Erreur enregistrement:', error);
-    // Non bloquant
-  }
+  // Fonction désactivée - publication GitHub gère tout
+  // L'endpoint POST /api/content n'existe pas et n'est pas nécessaire
+  console.log('[Publication] Contenu publié via GitHub:', `/blog/${slug}.html`);
 }
 
 /**
