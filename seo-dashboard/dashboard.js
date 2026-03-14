@@ -2382,7 +2382,7 @@ function handleImageUpload(event) {
 }
 
 /**
- * Traite une image uploadée
+ * Traite une image uploadée avec redimensionnement automatique
  */
 function processUploadedImage(file) {
   // Vérifier la taille (max 5 Mo)
@@ -2397,32 +2397,87 @@ function processUploadedImage(file) {
     return;
   }
   
-  // Lire l'image en base64
+  // Déterminer si c'est l'image principale
+  const isMain = uploadedImages.length === 0;
+  
+  // Dimensions cibles
+  const targetWidth = isMain ? 1200 : 800;
+  const targetHeight = isMain ? 630 : 600;
+  
+  // Lire et redimensionner l'image
   const reader = new FileReader();
   reader.onload = (e) => {
-    const imageData = {
-      id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-      filename: file.name,
-      dataUrl: e.target.result,
-      file: file,
-      isMain: uploadedImages.length === 0, // Première image = principale
-      insertedInContent: false
+    const img = new Image();
+    img.onload = () => {
+      // Redimensionner via canvas
+      const resizedDataUrl = resizeImage(img, targetWidth, targetHeight, 0.85);
+      
+      const imageData = {
+        id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        filename: file.name.replace(/\.[^/.]+$/, '.webp'), // Changer extension en .webp
+        dataUrl: resizedDataUrl,
+        originalSize: file.size,
+        isMain: isMain,
+        insertedInContent: false
+      };
+      
+      uploadedImages.push(imageData);
+      
+      // Rafraîchir l'affichage
+      renderUploadedImages();
+      
+      // Si c'est la première image, l'intégrer comme image principale
+      if (imageData.isMain) {
+        integrateMainImageToPreview();
+        integrateMainImageToHTML();
+      }
+      
+      // Calculer la réduction de taille
+      const newSize = Math.round(resizedDataUrl.length * 0.75 / 1024); // Estimation taille base64
+      const reduction = Math.round((1 - newSize * 1024 / file.size) * 100);
+      
+      showNotification(`✅ Image redimensionnée ${targetWidth}×${targetHeight} (-${reduction}%)`, 'success');
     };
-    
-    uploadedImages.push(imageData);
-    
-    // Rafraîchir l'affichage
-    renderUploadedImages();
-    
-    // Si c'est la première image, l'intégrer comme image principale
-    if (imageData.isMain) {
-      integrateMainImageToPreview();
-      integrateMainImageToHTML();
-    }
-    
-    showNotification(`✅ Image "${file.name}" ajoutée`, 'success');
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+/**
+ * Redimensionne une image avec Canvas (crop intelligent au centre)
+ */
+function resizeImage(img, targetWidth, targetHeight, quality = 0.85) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+  
+  // Calculer le ratio pour cover (remplir sans déformer)
+  const imgRatio = img.width / img.height;
+  const targetRatio = targetWidth / targetHeight;
+  
+  let sourceX = 0, sourceY = 0, sourceWidth = img.width, sourceHeight = img.height;
+  
+  if (imgRatio > targetRatio) {
+    // Image plus large que la cible → crop horizontal
+    sourceWidth = img.height * targetRatio;
+    sourceX = (img.width - sourceWidth) / 2;
+  } else {
+    // Image plus haute que la cible → crop vertical
+    sourceHeight = img.width / targetRatio;
+    sourceY = (img.height - sourceHeight) / 2;
+  }
+  
+  // Dessiner l'image redimensionnée et croppée
+  ctx.drawImage(
+    img,
+    sourceX, sourceY, sourceWidth, sourceHeight, // Source (crop)
+    0, 0, targetWidth, targetHeight // Destination
+  );
+  
+  // Exporter en WebP
+  return canvas.toDataURL('image/webp', quality);
 }
 
 /**
