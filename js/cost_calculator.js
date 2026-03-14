@@ -495,7 +495,10 @@ lines.forEach((line,idx)=>{y.text(line,27,baseY+idx*lineHeight)});
 y.text(t.qty+" "+t.unit,145,baseY);
 y.text(u(t.price*1.2),160,baseY);
 y.text(u(ttc),180,baseY);
-n++}),z++}),k+=15,k>250&&(y.addPage(),k=30);
+n++}),z++}),k+=10;
+// Ligne après toutes les désignations
+y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,k,195,k);
+k+=5,k>250&&(y.addPage(),k=30);
 // Calcul TVA et TTC
 const $=.2*E,N=E+$;
 // Tableau totaux élégant
@@ -514,7 +517,10 @@ y.text("NET À PAYER",totalsX,k),y.text(u(N),188,k,{align:"right"});
 // Acompte 40%
 const q=Math.round(.4*N),M=N-q;
 let O=k-35;O<200&&(O=k-35),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.setFontSize(9),y.text("Conditions de paiement",20,O),O+=5,y.setFont(void 0,"normal"),y.setFontSize(8),y.text("Acompte de 40 % à la signature soit "+u(q)+" TTC",20,O),O+=4,y.text("Reste à facturer : "+u(M)+" TTC",20,O),O+=4,y.text("Méthodes de paiement acceptées : Virement bancaire.",20,O);
-const L=y.internal.getNumberOfPages();for(let t=1;t<=L;t++)y.setPage(t),y.setFontSize(7),y.setTextColor(100,100,100),y.setFont(void 0,"normal"),y.text("Capital 1000 € - 85155888200029 RCS Paris - APE : 4120A",105,282,{align:"center"}),y.text("Garantie décennale - HOKEN ASSURANCE - 25 Rue Marbeuf, 75008 Paris",105,286,{align:"center"}),y.text("Page "+t+" / "+L,185,286,{align:"right"});
+const L=y.internal.getNumberOfPages();for(let t=1;t<=L;t++)y.setPage(t),
+// Ligne pied de page
+y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,278,195,278),
+y.setFontSize(7),y.setTextColor(100,100,100),y.setFont(void 0,"normal"),y.text("Capital 1000 € - 85155888200029 RCS Paris - APE : 4120A",105,282,{align:"center"}),y.text("Garantie décennale - HOKEN ASSURANCE - 25 Rue Marbeuf, 75008 Paris",105,286,{align:"center"}),y.text("Page "+t+" / "+L,185,286,{align:"right"});
 const A="Devis-"+P+"-"+c.replace(/[^a-zA-Z0-9]/g,"-").replace(/-+/g,"-").toUpperCase();y.setProperties({title:A,subject:"Devis travaux de rénovation",author:e,creator:e});
 const j=[];Object.keys(b).forEach(t=>{b[t].forEach(e=>{j.push({categorie:t,description:e.desc,quantite:e.qty,unite:e.unit,prix_unitaire:e.price,total:e.qty*e.price})})});
 async function sendWebhook(t,e,o){try{let n="",a="";e.forEach(t=>{t.categorie!==a&&(a=t.categorie,""!==n&&(n+="\n"),n+="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n",n+=`${a.toUpperCase()}\n`,n+="───────────────────────────────────────────────────────────────────────────\n",n+="DÉSIGNATION                                      QTÉ        P.U.      TOTAL\n",n+="───────────────────────────────────────────────────────────────────────────\n");const e=t.description.substring(0,45).padEnd(45),o=`${t.quantite} ${t.unite}`.padStart(8),s=`${t.prix_unitaire} €`.padStart(10),i=`${t.total} €`.padStart(10);n+=`${e} ${o} ${s} ${i}\n`}),n+="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
