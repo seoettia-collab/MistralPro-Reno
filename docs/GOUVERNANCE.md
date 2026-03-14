@@ -1,8 +1,7 @@
 # 📋 GOUVERNANCE PROJET — Site Vitrine Mistral Pro Reno
 
 **Projet :** Mistral Pro Reno  
-**Version :** 1.0  
-**Date :** 8 mars 2026  
+**Date :** 14 mars 2026  
 **Auteur :** Ricardo ETTIA (Décideur projet)
 
 ---
@@ -10,6 +9,13 @@
 ## 0. INSTRUCTIONS DÉMARRAGE CLAUDE
 
 **À exécuter au début de chaque nouvelle conversation.**
+
+1. Lire GOUVERNANCE.md (ce fichier)
+2. Consulter FICHE_TECHNIQUE.md pour retrouver les infos clés
+3. Consulter ARCHITECTURE.md pour comprendre la structure
+4. Attendre les instructions de Ricardo
+5. Faire les modifications demandées
+6. Commit + Push pour déployer
 
 ### 0.1 Clonage du repo
 
@@ -35,67 +41,24 @@ cd MistralPro-Reno
 | Repo | MistralPro-Reno |
 | Branche | main |
 | URL Production | https://www.mistralpro-reno.fr |
-| Hébergement | OVH (FTP auto-deploy via GitHub Actions) |
-| Chemin local Windows | C:\Mistral Logiciel\site-mistralpro-reno |
+| Hébergement | OVH (auto-deploy via GitHub Actions) |
 
-### 0.3 Déploiement
-
-Le déploiement est **automatique** :
-1. Push sur `main`
-2. GitHub Actions déclenche `deploy.yml`
-3. FTP Deploy vers OVH `/www/`
-
-### 0.4 Structure du site
-
-```
-/MistralPro-Reno/
-├── index.html              # Page d'accueil
-├── services.html           # Page services
-├── projets.html            # Page réalisations
-├── blog.html               # Liste des articles
-├── cost_calculator.html    # Simulateur de devis
-├── degat-des-eaux.html     # Landing page urgence
-├── mentions-legales.html   # Mentions légales
-├── merci.html              # Page de remerciement
-├── 404.html                # Page erreur
-├── sitemap.xml             # Sitemap SEO
-├── robots.txt              # Robots SEO
-│
-├── /blog/                  # Articles de blog
-│   ├── cout-renovation-appartement-paris.html
-│   ├── degat-des-eaux-5-etapes.html
-│   └── renovation-salle-de-bain-guide-prix.html
-│
-├── /css/                   # Styles (11 fichiers)
-├── /js/                    # Scripts (16 fichiers)
-├── /images/                # Images WebP optimisées
-├── /fonts/                 # Polices Raleway
-│
-├── /docs/                  # Documentation
-│   └── GOUVERNANCE.md      # Ce document
-│
-└── /.github/workflows/     # CI/CD
-    └── deploy.yml          # FTP Deploy vers OVH
-```
-
-### 0.5 Structure documentation
+### 0.3 Structure documentation
 
 ```
 /docs/
-├── GOUVERNANCE.md      # Ce document (règles + démarrage)
-├── FICHE_TECHNIQUE.md  # Référentiel rapide (pages, CSS, JS, images)
-├── ARCHITECTURE.md     # Architecture technique du système
-└── SIMULATEUR.md       # Documentation simulateur de devis (page complexe)
+├── ARCHITECTURE.md      # Architecture technique
+├── FICHE_TECHNIQUE.md   # Documentation détaillée
+├── GOUVERNANCE.md       # Ce document (règles + démarrage)
+└── SIMULATEUR.md        # Documentation simulateur de devis
 ```
 
-### 0.6 Après clonage
+### 0.4 Après clonage
 
-1. Lire `GOUVERNANCE.md` (ce fichier)
-2. Consulter `FICHE_TECHNIQUE.md` pour retrouver les infos clés
-3. Consulter `ARCHITECTURE.md` pour comprendre la structure
-4. Attendre les instructions de Ricardo
-5. Faire les modifications demandées
-6. Commit + Push pour déployer
+1. Lire ce fichier GOUVERNANCE.md
+2. Consulter FICHE_TECHNIQUE.md pour les détails techniques
+3. Consulter SIMULATEUR.md pour la page cost_calculator
+4. Attendre les instructions de Ricardo ou GPT
 
 ---
 
@@ -108,14 +71,8 @@ Toute validation, rapport, confirmation, demande technique, clôture de session 
 Chaque communication doit être adressée explicitement :
 
 ```
-À l'attention de GPT et Claude,
-```
-
-Ou ciblée si nécessaire :
-
-```
-À l'attention de GPT,
-À l'attention de Claude,
+GPT → À l'attention de Claude
+Claude → À l'attention de GPT
 ```
 
 ### 1.2 Format bloc unique
@@ -144,10 +101,10 @@ Chaque communication structurante doit inclure les sections pertinentes :
 
 | Section | Description |
 |---------|-------------|
-| Fichiers modifiés | Liste des fichiers impactés |
-| Documentation | Fichiers doc à mettre à jour |
-| Impact SEO | Conséquences sur le référencement |
-| Impact performance | Conséquences GTmetrix/PageSpeed |
+| Architecture | Impact sur l'architecture système |
+| Documentation | Fichiers à mettre à jour |
+| Logs | Format des logs ajoutés/modifiés |
+| Impact système | Conséquences sur le fonctionnement |
 | Statut | État final (Production-ready, En cours, etc.) |
 
 ---
@@ -155,36 +112,40 @@ Chaque communication structurante doit inclure les sections pertinentes :
 ## 2. EXEMPLE DE COMMUNICATION CONFORME
 
 ```
-À l'attention de GPT et Claude,
-
-RAPPORT — Correction images blog.html
+RAPPORT — Implémentation fonctionnalité X
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FICHIERS MODIFIÉS
+ARCHITECTURE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- blog.html : Images WebP ajoutées aux cartes
-- css/blog.css : Règle object-fit ajoutée
+- Route ajoutée : POST /api/xxx
+- Service modifié : xxx-service.js
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-IMPACT SEO
+DOCUMENTATION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- Alt text optimisés pour chaque image
-- Attributs width/height explicites (CLS)
+- FICHE_TECHNIQUE.md : Section ajoutée
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-IMPACT PERFORMANCE
+LOGS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- Format WebP (gain ~30% vs PNG)
-- Lazy loading activé
+- [XXX_START] début opération
+- [XXX_OK] succès
+- [XXX_ERROR] échec
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IMPACT SYSTÈME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Aucun breaking change
+- Backward compatible
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STATUT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Production-ready — Push effectué
+✅ Production-ready
 
-CLÔTURE — Correction images blog.html
+CLÔTURE — Implémentation fonctionnalité X
 
-— Claude
+— Claude / GPT
 ```
 
 ---
@@ -199,148 +160,85 @@ CLÔTURE — Correction images blog.html
 
 ---
 
-## 4. TRACKING & ANALYTICS
+## 4. DOCUMENTS DE RÉFÉRENCE
 
-| Élément | Valeur |
-|---------|--------|
-| GTM | GTM-5MZSVPL |
-| GA4 | G-S4F06V2C5C |
-| Google Ads | 792-943-0550 |
-
----
-
-## 5. EMAIL PROFESSIONNEL
-
-| Élément | Valeur |
-|---------|--------|
-| Adresse | contact@mistralpro-reno.fr |
-| Hébergement | OVH Zimbra Pro (50 Go) |
-| Webmail | https://zimbra1.mail.ovh.net |
-| POP3 | ssl0.ovh.net:995 (SSL) |
-| SMTP | ssl0.ovh.net:465 (SSL) |
+| Document | Emplacement | Description |
+|----------|-------------|-------------|
+| ARCHITECTURE.md | /docs/ | Architecture technique du système |
+| FICHE_TECHNIQUE.md | /docs/ | Documentation technique détaillée |
+| GOUVERNANCE.md | /docs/ | Règles + instructions démarrage (ce document) |
+| SIMULATEUR.md | /docs/ | Documentation simulateur de devis |
 
 ---
 
-## 6. MÉTHODE QA — CHECKLIST INTERACTIVE
+## 5. APPLICATION
 
-### 6.1 Principe
-
-À chaque phase de vérification (fin de lot, déploiement, correction), Claude utilise la **méthode QA interactive** pour valider le fonctionnement avec Ricardo.
-
-### 6.2 Format
-
-1. **Questionnaires interactifs** : Cases à cocher Oui/Non dans l'interface Claude
-2. **Test par onglet/module** : Chaque section testée séparément
-3. **Rapport synthétique** : Généré automatiquement après les tests
-
-### 6.3 Structure des questions
-
-Pour chaque test :
-- **Manipulation** : Action à effectuer
-- **Question** : Ce que Ricardo doit vérifier (Oui/Non)
-- **Utilité** : Pourquoi cette fonction existe
-
-### 6.4 Format rapport QA
-
-```
-RAPPORT QA — [Nom du module/lot]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RÉSUMÉ DES TESTS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Module 1 ............... OK
-❌ Module 2 ............... PROBLÈME
-✅ Module 3 ............... OK
-
-SCORE : X/Y modules OK (XX%)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BUGS DÉTECTÉS — PRIORITÉ HAUTE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. [Description bug]
-2. [Description bug]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-AMÉLIORATIONS — PRIORITÉ MOYENNE/BASSE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. [Description amélioration]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PROCHAINES ACTIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Corriger bugs prioritaires
-2. Améliorer UX si temps disponible
-
-— Claude
-```
-
-### 6.5 Application
-
-Cette méthode QA est **obligatoire** pour :
-- Validation de fin de lot
-- Déploiement majeur
-- Correction de bugs critiques
-- Nouvelle fonctionnalité
+Cette directive de gouvernance est **effective immédiatement** et s'applique à toutes les communications techniques structurantes du projet.
 
 ---
 
-## 7. IDENTIFICATION DES MESSAGES PAR MODULE
+## 6. IDENTIFICATION DES MESSAGES PAR MODULE
 
-### 7.1 Objectif
+### 6.1 Objectif
 
 Maintenir une synchronisation claire entre GPT et Claude et éviter toute confusion entre les directives en cours. Chaque sujet actif est identifié par un identifiant basé sur le module concerné.
 
-### 7.2 Codes modules
-
-| Module | Code |
-|--------|------|
-| Cockpit | CK |
-| Audit IA | AU |
-| Studio SEO | SS |
-| Publication | PB |
-| Image IA | IM |
-| Gouvernance | GOV |
-| Architecture | ARCH |
-| Bug/Fix | FX |
-
-### 7.3 Format identifiant
+### 6.2 Format identifiant
 
 ```
-[CODE]-[THÈME]-[NUMÉRO]
+[MODULE]-[CODE]-[NUMÉRO]
 ```
 
-**Exemples :**
-- `CK-CONC-01` : Cockpit, Concurrence, message 1
-- `AU-PROMPT-03` : Audit IA, Prompt, message 3
-- `SS-GEN-02` : Studio SEO, Génération, message 2
+Exemples :
+- `SEO-OPT-01` → SEO Optimisation, directive #01
+- `SIM-PDF-03` → Simulateur PDF, directive #03
+- `BLOG-ART-02` → Blog Articles, directive #02
 
-### 7.4 Numérotation continue
+### 6.3 Modules disponibles
 
-Tant que le sujet n'est pas terminé, le même identifiant racine est conservé :
+| Code | Module |
+|------|--------|
+| SEO | SEO / Référencement |
+| SIM | Simulateur de devis |
+| BLOG | Blog / Articles |
+| PAGE | Pages HTML |
+| CSS | Styles |
+| JS | Scripts |
+| IMG | Images |
+| GTM | Google Tag Manager |
+
+### 6.4 Suivi des directives
+
+Chaque directive GPT → Claude doit inclure son identifiant :
 
 ```
-CK-CONC-01
-CK-CONC-02
-CK-CONC-03
-CK-CONC-04
+SEO-OPT-02
+DIRECTIVE — Optimisation meta descriptions
+
+[Contenu de la directive]
+
+— GPT
 ```
 
-### 7.5 Clôture
+### 6.5 Clôture
 
 Quand le sujet est terminé :
 
 ```
-CK-CONC-FINAL
+SEO-OPT-FINAL
+CLÔTURE — Optimisation meta descriptions
+
+[Résumé]
+
+— Claude
 ```
 
-Après clôture, un nouveau sujet utilisera une nouvelle numérotation.
-
-### 7.6 Accusé de réception
+### 6.6 Accusé de réception
 
 Après chaque directive GPT, Claude répond avec le même identifiant :
 
 ```
-CK-CONC-02
+SEO-OPT-02
 ACCUSÉ DE RÉCEPTION
 
 Directive comprise.
@@ -351,12 +249,4 @@ Implémentation en cours.
 
 ---
 
-## 8. APPLICATION
-
-Cette directive de gouvernance est **effective immédiatement** et s'applique à toutes les communications techniques structurantes du projet.
-
----
-
-*Document créé le 8 mars 2026 — Gouvernance v1.1*
-*Mise à jour 9 mars 2026 — Ajout méthode QA*
-*Mise à jour 10 mars 2026 — Ajout protocole identification messages*
+*Document mis à jour le 14 mars 2026 — Gouvernance v2.0*
