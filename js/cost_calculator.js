@@ -38,6 +38,9 @@ const hasVal=gamme>0&&m2>0;
 t("#"+p.gamme).css(hasVal?{"border-color":"#27ae60","background":"#e8f5e9"}:{"border-color":"#e0e0e0","background":"#fff"});
 t("#"+p.input).css(hasVal?{"border-color":"#27ae60","background":"#e8f5e9"}:{"border-color":"#e0e0e0","background":"#fff"});
 });
+// Calcul enduit 45€/m²
+const enduitM2=parseFloat(t("#input-enduit-m2").val())||0;
+if(enduitM2>0){e+=45*enduitM2;t("#input-enduit-m2").css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#input-enduit-m2").css({"border-color":"#e0e0e0","background":"#fff"})}
 // Tous les selects san-select (hors depose-select et peinture gamme/surface)
 sanSelects.forEach(function(id){if(id.startsWith("select-depose-"))return;if(id.startsWith("select-peinture-murs-")||id.startsWith("select-peinture-plaf-"))return;const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
 // Style pour depose-select aussi
@@ -133,6 +136,17 @@ totalHT+=total;
 peintureInfo+=(peintureInfo?" | ":"")+p.type.charAt(0).toUpperCase()+p.type.slice(1)+": "+m2+"m² × "+gammeVal+"€ = "+formatPrice(total);
 }
 });
+// Enduit 45€/m²
+const enduitM2=parseFloat(t("#input-enduit-m2").val())||0;
+if(enduitM2>0){
+const enduitTotal=45*enduitM2;
+const enduitLabel=t("#input-enduit-m2").data("label")||"Enduit de lissage ou rebouchage";
+if(!categories["Peinture & Revêtements"])categories["Peinture & Revêtements"]=[];
+categories["Peinture & Revêtements"].push({label:enduitLabel+" - Surface "+enduitM2+"m²",qty:enduitM2,unit:"m²",pu:45,total:enduitTotal});
+totalItems++;
+totalHT+=enduitTotal;
+peintureInfo+=(peintureInfo?" | ":"")+"Enduit: "+enduitM2+"m² × 45€ = "+formatPrice(enduitTotal);
+}
 t("#peinture-total-info").html(peintureInfo?("💰 "+peintureInfo):"");
 
 Object.keys(allSelects).forEach(function(cat){
@@ -259,13 +273,14 @@ const tabCheckboxes={
 };
 for(const[tab,selects]of Object.entries(tabSelects)){
 let hasSelection=false;
-// Cas spécial peinture-int: gamme ET m² requis
+// Cas spécial peinture-int: gamme ET m² requis OU enduit
 if(tab==="peinture-int"){
 const mursGamme=parseFloat(t("#select-peinture-murs-gamme").val())||0;
 const mursM2=parseFloat(t("#input-peinture-murs-m2").val())||0;
 const plafGamme=parseFloat(t("#select-peinture-plaf-gamme").val())||0;
 const plafM2=parseFloat(t("#input-peinture-plaf-m2").val())||0;
-if((mursGamme>0&&mursM2>0)||(plafGamme>0&&plafM2>0)){hasSelection=true}
+const enduitM2=parseFloat(t("#input-enduit-m2").val())||0;
+if((mursGamme>0&&mursM2>0)||(plafGamme>0&&plafM2>0)||enduitM2>0){hasSelection=true}
 }else{
 selects.forEach(function(id){if(parseFloat(t("#"+id).val())>0)hasSelection=true});
 }
@@ -285,7 +300,7 @@ t(".qty-input").on("input",function(){const e=t(this).attr("id");if(e&&e.startsW
 t(".qty-input").on("blur",function(){if(""===t(this).val()){t(this).val(0);const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number","");t("#"+o).val(0),r()}}),
 t('input[type="checkbox"], select').on("change",function(){r();updateAllTabs()}),
 // Peinture: recalcul sur saisie manuelle m²
-t("#input-peinture-murs-m2, #input-peinture-plaf-m2").on("input",function(){r();updateAllTabs()}),
+t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2").on("input",function(){r();updateAllTabs()}),
 t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r(),updateAllTabs())}),
 // Reset par section
 t(".btn-section-reset").on("click",function(){
