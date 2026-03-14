@@ -179,9 +179,9 @@ t("#peinture-total-info").html(peintureInfo?("💰 "+peintureInfo):"");
 
 // Calcul spécial SOLS (gamme × surface)
 const solsCalcs=[
-{gamme:"select-parquet-gamme",input:"input-parquet-m2",type:"Parquet"},
-{gamme:"select-carrelage-gamme",input:"input-carrelage-m2",type:"Carrelage"},
-{gamme:"select-lino-gamme",input:"input-lino-m2",type:"Lino/PVC"}
+{gamme:"select-parquet-gamme",input:"input-parquet-m2",type:"Parquet",pose:45},
+{gamme:"select-carrelage-gamme",input:"input-carrelage-m2",type:"Carrelage",pose:45},
+{gamme:"select-lino-gamme",input:"input-lino-m2",type:"Lino/PVC",pose:45}
 ];
 let solsInfo="";
 solsCalcs.forEach(function(p){
@@ -189,9 +189,10 @@ const gammeVal=parseFloat(t("#"+p.gamme).val())||0;
 const m2=parseFloat(t("#"+p.input).val())||0;
 if(gammeVal>0&&m2>0){
 const total=gammeVal*m2;
+const prixMateriau=gammeVal-p.pose;
 const gammeName=t("#"+p.gamme).find("option:selected").text().split("(")[0].trim();
 const gammeLabel=t("#"+p.gamme).find("option:selected").data("label")||p.type;
-const fullLabel=gammeLabel+" - Gamme "+gammeName+" ("+gammeVal+"€/m²) - Surface "+m2+"m²";
+const fullLabel=gammeLabel+" - Gamme "+gammeName+" (Matériau "+prixMateriau+"€/m² + Pose "+p.pose+"€/m²) - Surface "+m2+"m²";
 if(!categories["Peinture & Revêtements"])categories["Peinture & Revêtements"]=[];
 categories["Peinture & Revêtements"].push({label:fullLabel,qty:m2,unit:"m²",pu:gammeVal,total:total});
 totalItems++;
@@ -203,8 +204,8 @@ t("#sols-total-info").html(solsInfo?("💰 "+solsInfo):"");
 
 // Calcul spécial MURS (gamme × surface)
 const mursCalcs=[
-{gamme:"select-faience-gamme",input:"input-faience-m2",type:"Faïence"},
-{gamme:"select-credence-gamme",input:"input-credence-m2",type:"Crédence"}
+{gamme:"select-faience-gamme",input:"input-faience-m2",type:"Faïence",pose:45},
+{gamme:"select-credence-gamme",input:"input-credence-m2",type:"Crédence",pose:45}
 ];
 let mursInfo="";
 mursCalcs.forEach(function(p){
@@ -212,9 +213,10 @@ const gammeVal=parseFloat(t("#"+p.gamme).val())||0;
 const m2=parseFloat(t("#"+p.input).val())||0;
 if(gammeVal>0&&m2>0){
 const total=gammeVal*m2;
+const prixMateriau=gammeVal-p.pose;
 const gammeName=t("#"+p.gamme).find("option:selected").text().split("(")[0].trim();
 const gammeLabel=t("#"+p.gamme).find("option:selected").data("label")||p.type;
-const fullLabel=gammeLabel+" - Gamme "+gammeName+" ("+gammeVal+"€/m²) - Surface "+m2+"m²";
+const fullLabel=gammeLabel+" - Gamme "+gammeName+" (Matériau "+prixMateriau+"€/m² + Pose "+p.pose+"€/m²) - Surface "+m2+"m²";
 if(!categories["Peinture & Revêtements"])categories["Peinture & Revêtements"]=[];
 categories["Peinture & Revêtements"].push({label:fullLabel,qty:m2,unit:"m²",pu:gammeVal,total:total});
 totalItems++;
