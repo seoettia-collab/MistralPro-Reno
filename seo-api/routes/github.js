@@ -17,7 +17,7 @@ const GITHUB_API_URL = 'https://api.github.com';
  */
 router.post('/github/publish', async (req, res) => {
   try {
-    const { path, content, message, branch = 'main' } = req.body;
+    const { path, content, message, branch = 'main', isBase64 = false } = req.body;
     
     if (!path || !content) {
       return res.status(400).json({
@@ -39,8 +39,8 @@ router.post('/github/publish', async (req, res) => {
       });
     }
     
-    // Encoder le contenu en base64
-    const contentBase64 = Buffer.from(content, 'utf-8').toString('base64');
+    // Encoder le contenu en base64 si pas déjà encodé
+    const contentBase64 = isBase64 ? content : Buffer.from(content, 'utf-8').toString('base64');
     
     // Vérifier si le fichier existe déjà (pour obtenir le SHA)
     let existingSha = null;

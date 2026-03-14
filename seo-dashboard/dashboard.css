@@ -7891,3 +7891,168 @@ select:focus {
   font-size: 0.8rem !important;
   width: 100% !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.15 — UPLOAD IMAGE MANUEL STUDIO SEO
+   ══════════════════════════════════════════════════════════════ */
+
+.result-image-upload {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.upload-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.upload-header h4 {
+  margin: 0 !important;
+  font-size: 0.95rem !important;
+  color: var(--text-primary) !important;
+}
+
+.upload-optional {
+  font-size: 0.7rem !important;
+  color: var(--text-secondary) !important;
+  background: var(--bg-darker) !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+}
+
+.image-upload-container {
+  min-height: 120px !important;
+}
+
+/* Dropzone */
+.upload-dropzone {
+  border: 2px dashed var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 1.5rem !important;
+  text-align: center !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  background: var(--bg-darker) !important;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+  border-color: #6366f1 !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+}
+
+.dropzone-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.upload-icon {
+  font-size: 2rem !important;
+}
+
+.upload-text {
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  color: var(--text-secondary) !important;
+}
+
+.btn-upload {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.85rem !important;
+}
+
+.upload-formats {
+  margin: 0 !important;
+  font-size: 0.75rem !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Image uploadée */
+.uploaded-image-preview {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  padding: 0.75rem !important;
+  background: var(--bg-darker) !important;
+  border-radius: 8px !important;
+}
+
+.uploaded-image-wrapper {
+  width: 120px !important;
+  height: 80px !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.uploaded-image-wrapper img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.uploaded-image-info {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  min-width: 0 !important;
+}
+
+.image-filename {
+  font-size: 0.85rem !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.image-status {
+  font-size: 0.75rem !important;
+  color: #10b981 !important;
+}
+
+.uploaded-image-actions {
+  display: flex !important;
+  gap: 0.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* Image dans l'aperçu article */
+.article-preview-content figure.article-image {
+  margin: 1.5rem 0 !important;
+  text-align: center !important;
+}
+
+.article-preview-content figure.article-image img {
+  max-width: 100% !important;
+  max-height: 400px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .uploaded-image-preview {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  
+  .uploaded-image-wrapper {
+    width: 100% !important;
+    height: 150px !important;
+  }
+  
+  .uploaded-image-actions {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}

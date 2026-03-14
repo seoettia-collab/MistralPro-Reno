@@ -1807,6 +1807,27 @@ function renderStudioResult(content) {
         </div>
       </div>
       
+      <!-- SECTION UPLOAD IMAGE -->
+      <div class="result-image-upload">
+        <div class="upload-header">
+          <h4>🖼️ Image de l'article</h4>
+          <span class="upload-optional">Optionnel</span>
+        </div>
+        <div id="image-upload-container" class="image-upload-container">
+          <div class="upload-dropzone" id="upload-dropzone">
+            <input type="file" id="image-file-input" accept="image/*" onchange="handleImageUpload(event)" hidden />
+            <div class="dropzone-content">
+              <span class="upload-icon">📤</span>
+              <p class="upload-text">Glissez une image ici ou</p>
+              <button class="btn-primary btn-upload" onclick="document.getElementById('image-file-input').click()">
+                Choisir un fichier
+              </button>
+              <p class="upload-formats">JPG, PNG, WebP (max 5 Mo)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- APERÇU ARTICLE COMPLET -->
       <div class="result-article-preview">
         <div class="article-preview-header">
@@ -1818,7 +1839,7 @@ function renderStudioResult(content) {
         </div>
         <div class="article-preview-container">
           <div class="article-preview-scroll">
-            <article class="article-preview-content">
+            <article class="article-preview-content" id="article-preview-content">
               ${articleContent}
             </article>
           </div>
@@ -1835,6 +1856,9 @@ function renderStudioResult(content) {
       </div>
     </div>
   `;
+  
+  // Initialiser le drag & drop
+  initImageDropzone();
 }
 
 /**
@@ -1855,6 +1879,216 @@ function extractArticleContent(htmlContent) {
   
   // Fallback: retourner le HTML tel quel
   return htmlContent;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// V2.15 — Upload image manuel
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Cache pour l'image uploadée
+let uploadedImageData = null;
+let uploadedImageFile = null;
+
+/**
+ * Initialise la zone de drag & drop
+ */
+function initImageDropzone() {
+  const dropzone = document.getElementById('upload-dropzone');
+  if (!dropzone) return;
+  
+  // Événements drag & drop
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+  });
+  
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+  });
+  
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+      processUploadedImage(files[0]);
+    }
+  });
+}
+
+/**
+ * Gère l'upload via input file
+ */
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    processUploadedImage(file);
+  }
+}
+
+/**
+ * Traite l'image uploadée
+ */
+function processUploadedImage(file) {
+  // Vérifier la taille (max 5 Mo)
+  if (file.size > 5 * 1024 * 1024) {
+    showNotification('Image trop lourde (max 5 Mo)', 'error');
+    return;
+  }
+  
+  uploadedImageFile = file;
+  
+  // Lire l'image en base64
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedImageData = e.target.result;
+    
+    // Afficher la prévisualisation
+    displayUploadedImage(file.name, e.target.result);
+    
+    // Intégrer dans l'aperçu article
+    integrateUploadedImageToPreview();
+    
+    // Intégrer dans le HTML final
+    integrateUploadedImageToHTML();
+    
+    showNotification('✅ Image ajoutée', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+/**
+ * Affiche l'image uploadée dans la zone d'upload
+ */
+function displayUploadedImage(filename, dataUrl) {
+  const container = document.getElementById('image-upload-container');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="uploaded-image-preview">
+      <div class="uploaded-image-wrapper">
+        <img src="${dataUrl}" alt="Image uploadée" />
+      </div>
+      <div class="uploaded-image-info">
+        <span class="image-filename">${escapeHtml(filename)}</span>
+        <span class="image-status">✅ Image prête</span>
+      </div>
+      <div class="uploaded-image-actions">
+        <button class="btn-small btn-secondary" onclick="replaceUploadedImage()">🔄 Remplacer</button>
+        <button class="btn-small btn-secondary" onclick="removeUploadedImage()">❌ Supprimer</button>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Intègre l'image dans l'aperçu article
+ */
+function integrateUploadedImageToPreview() {
+  if (!uploadedImageData || !studioGeneratedContent) return;
+  
+  const previewContent = document.getElementById('article-preview-content');
+  if (!previewContent) return;
+  
+  // Vérifier si une image existe déjà
+  const existingFigure = previewContent.querySelector('figure.article-image');
+  if (existingFigure) {
+    existingFigure.querySelector('img').src = uploadedImageData;
+  } else {
+    // Créer la figure et l'insérer après le header
+    const header = previewContent.querySelector('.article-header');
+    if (header) {
+      const figure = document.createElement('figure');
+      figure.className = 'article-image';
+      figure.innerHTML = `<img src="${uploadedImageData}" alt="${studioGeneratedContent.h1}" loading="lazy" />`;
+      header.after(figure);
+    }
+  }
+}
+
+/**
+ * Intègre l'image dans le HTML final pour publication
+ */
+function integrateUploadedImageToHTML() {
+  if (!studioGeneratedContent) return;
+  
+  const imagePath = `/images/blog/${studioGeneratedContent.slug}.webp`;
+  
+  // Construire le HTML de l'image
+  const imageHTML = `
+        <figure class="article-image">
+          <img src="${imagePath}" alt="${escapeHtml(studioGeneratedContent.h1)}" loading="lazy" />
+        </figure>
+`;
+  
+  // Vérifier si l'image n'est pas déjà dans le HTML
+  if (!studioGeneratedContent.htmlContent.includes('figure class="article-image"')) {
+    // Insérer après le header article
+    studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+      '</header>',
+      '</header>\n      ' + imageHTML
+    );
+  }
+  
+  // Marquer comme ayant une image
+  studioGeneratedContent.hasImage = true;
+  studioGeneratedContent.uploadedImage = true;
+}
+
+/**
+ * Remplace l'image uploadée
+ */
+function replaceUploadedImage() {
+  // Réinitialiser et réafficher le dropzone
+  const container = document.getElementById('image-upload-container');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="upload-dropzone" id="upload-dropzone">
+      <input type="file" id="image-file-input" accept="image/*" onchange="handleImageUpload(event)" hidden />
+      <div class="dropzone-content">
+        <span class="upload-icon">📤</span>
+        <p class="upload-text">Glissez une image ici ou</p>
+        <button class="btn-primary btn-upload" onclick="document.getElementById('image-file-input').click()">
+          Choisir un fichier
+        </button>
+        <p class="upload-formats">JPG, PNG, WebP (max 5 Mo)</p>
+      </div>
+    </div>
+  `;
+  
+  initImageDropzone();
+}
+
+/**
+ * Supprime l'image uploadée
+ */
+function removeUploadedImage() {
+  uploadedImageData = null;
+  uploadedImageFile = null;
+  
+  // Retirer de l'aperçu
+  const previewContent = document.getElementById('article-preview-content');
+  if (previewContent) {
+    const figure = previewContent.querySelector('figure.article-image');
+    if (figure) figure.remove();
+  }
+  
+  // Retirer du HTML
+  if (studioGeneratedContent) {
+    studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
+      /<figure class="article-image">[\s\S]*?<\/figure>\s*/g,
+      ''
+    );
+    studioGeneratedContent.hasImage = false;
+    studioGeneratedContent.uploadedImage = false;
+  }
+  
+  // Réafficher le dropzone
+  replaceUploadedImage();
+  
+  showNotification('Image supprimée', 'info');
 }
 
 /**
@@ -2122,13 +2356,17 @@ async function publishContent() {
   const filePath = `blog/${slug}.html`;
   const finalURL = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
   
+  // Déterminer si on a une image à uploader
+  const hasImageToUpload = uploadedImageData && studioGeneratedContent.uploadedImage;
+  
   // Afficher le loader
   publishSection.innerHTML = `
     <div class="publish-loading">
       <div class="studio-loading-spinner"></div>
       <h3>🚀 Publication en cours...</h3>
       <div class="publish-steps-progress">
-        <div class="step-progress active" id="step1">1. Génération fichier HTML</div>
+        ${hasImageToUpload ? '<div class="step-progress active" id="step0">0. Upload image</div>' : ''}
+        <div class="step-progress ${hasImageToUpload ? '' : 'active'}" id="step1">1. Génération fichier HTML</div>
         <div class="step-progress" id="step2">2. Push GitHub</div>
         <div class="step-progress" id="step3">3. Déploiement OVH</div>
         <div class="step-progress" id="step4">4. Vérification URL</div>
@@ -2137,6 +2375,21 @@ async function publishContent() {
   `;
   
   try {
+    // Étape 0: Uploader l'image si présente
+    if (hasImageToUpload) {
+      console.log('[Publication] Upload image...');
+      const imageResult = await uploadImageToGitHub(slug);
+      
+      if (imageResult.success) {
+        console.log('[Publication] ✅ Image uploadée:', imageResult.path);
+      } else {
+        console.warn('[Publication] ⚠️ Échec upload image:', imageResult.error);
+      }
+      
+      updatePublishStep('step0', 'done');
+      updatePublishStep('step1', 'active');
+    }
+    
     // Étape 1: Préparer le contenu
     updatePublishStep('step1', 'done');
     updatePublishStep('step2', 'active');
@@ -2168,6 +2421,10 @@ async function publishContent() {
     // Enregistrer dans le contenu (pour tracking)
     await registerPublishedContent(slug, studioGeneratedContent);
     
+    // Reset l'image uploadée
+    uploadedImageData = null;
+    uploadedImageFile = null;
+    
   } catch (error) {
     console.error('[Publication] Erreur:', error);
     publishSection.innerHTML = `
@@ -2182,6 +2439,48 @@ async function publishContent() {
         <p class="error-note">Vous pouvez télécharger le HTML et le publier manuellement.</p>
       </div>
     `;
+  }
+}
+
+/**
+ * Upload l'image dans GitHub
+ */
+async function uploadImageToGitHub(slug) {
+  try {
+    if (!uploadedImageData) {
+      return { success: false, error: 'Pas d\'image à uploader' };
+    }
+    
+    // Extraire le base64 sans le préfixe data:image/...
+    const base64Data = uploadedImageData.split(',')[1];
+    const imagePath = `images/blog/${slug}.webp`;
+    
+    // Utiliser l'endpoint GitHub publish existant
+    const response = await fetchAPI('/api/github/publish', {
+      method: 'POST',
+      body: JSON.stringify({
+        path: imagePath,
+        content: base64Data,
+        message: `feat(blog): Ajout image ${slug}.webp via Studio SEO`,
+        isBase64: true
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return { success: false, error: errorData.message || 'Erreur upload' };
+    }
+    
+    const result = await response.json();
+    return {
+      success: true,
+      path: imagePath,
+      commitSha: result.data?.commitSha
+    };
+    
+  } catch (error) {
+    console.error('[Upload Image] Erreur:', error);
+    return { success: false, error: error.message };
   }
 }
 
