@@ -1469,6 +1469,50 @@ function displayStudioRecommendations() {
 }
 
 /**
+ * Réinitialise les recommandations et relance l'audit
+ */
+async function resetRecommendations() {
+  // Confirmation
+  if (!confirm('Voulez-vous vider les recommandations actuelles et relancer l\'Audit IA ?')) {
+    return;
+  }
+  
+  // Vider les recommandations
+  lastAuditIA = null;
+  
+  // Cacher la section recommandations
+  const container = document.getElementById('studio-recommendations');
+  if (container) {
+    container.style.display = 'none';
+  }
+  
+  // Vider la liste
+  const listContainer = document.getElementById('recommendations-list');
+  if (listContainer) {
+    listContainer.innerHTML = '';
+  }
+  
+  showNotification('🔄 Recommandations vidées. Relancement de l\'Audit IA...', 'info');
+  
+  // Passer à l'onglet Audit IA
+  document.querySelector('[data-tab="audit"]')?.click();
+  
+  // Attendre un peu puis lancer l'audit
+  setTimeout(() => {
+    if (typeof launchAuditIA === 'function') {
+      launchAuditIA();
+    } else if (typeof startAuditIA === 'function') {
+      startAuditIA();
+    } else {
+      showNotification('⚠️ Cliquez sur "Lancer Audit IA" manuellement', 'warning');
+    }
+  }, 500);
+}
+
+// Exposer la fonction globalement
+window.resetRecommendations = resetRecommendations;
+
+/**
  * Génère un article depuis une recommandation IA
  */
 function generateFromRecommendation(keyword, title) {

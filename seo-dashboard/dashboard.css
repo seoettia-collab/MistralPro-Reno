@@ -7785,6 +7785,36 @@ select:focus {
   margin-bottom: 1.5rem !important;
 }
 
+.recommendations-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 1rem !important;
+  gap: 1rem !important;
+}
+
+.recommendations-header > div {
+  flex: 1 !important;
+}
+
+.btn-reset-reco {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+
+.btn-reset-reco:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+}
+
 .studio-recommendations h3 {
   margin: 0 0 0.5rem 0 !important;
   font-size: 1.1rem !important;

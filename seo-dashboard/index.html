@@ -125,8 +125,15 @@
       
       <!-- Recommandations IA depuis Audit -->
       <div id="studio-recommendations" class="studio-recommendations" style="display: none;">
-        <h3>⚡ Recommandations IA</h3>
-        <p class="recommendations-intro">Contenus suggérés par l'Audit IA. Cliquez pour générer automatiquement.</p>
+        <div class="recommendations-header">
+          <div>
+            <h3>⚡ Recommandations IA</h3>
+            <p class="recommendations-intro">Contenus suggérés par l'Audit IA. Cliquez pour générer automatiquement.</p>
+          </div>
+          <button class="btn-reset-reco" onclick="resetRecommendations()" title="Vider les recommandations et relancer l'audit">
+            🔄 Réinitialiser
+          </button>
+        </div>
         <div id="recommendations-list" class="recommendations-list">
           <!-- Rempli dynamiquement -->
         </div>
