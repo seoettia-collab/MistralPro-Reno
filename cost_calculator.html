@@ -725,15 +725,8 @@
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>📐 Superficie murs</label>
-                                <select id="select-peinture-murs-surface" class="san-select">
-                                    <option value="0">-- Choisir surface --</option>
-                                    <option value="22">15 - 30 m² (moy. 22m²)</option>
-                                    <option value="40">30 - 50 m² (moy. 40m²)</option>
-                                    <option value="85">50 - 120 m² (moy. 85m²)</option>
-                                    <option value="custom">Saisie manuelle</option>
-                                </select>
-                                <input type="number" id="input-peinture-murs-m2" class="qty-input" placeholder="m²" min="1" max="500" style="display:none;margin-top:5px;">
+                                <label>📐 Superficie murs (m²)</label>
+                                <input type="number" id="input-peinture-murs-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
                             </div>
                         </div>
                         <div class="san-selects-row">
@@ -747,15 +740,8 @@
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>📐 Superficie plafonds</label>
-                                <select id="select-peinture-plaf-surface" class="san-select">
-                                    <option value="0">-- Choisir surface --</option>
-                                    <option value="22">15 - 30 m² (moy. 22m²)</option>
-                                    <option value="40">30 - 50 m² (moy. 40m²)</option>
-                                    <option value="85">50 - 120 m² (moy. 85m²)</option>
-                                    <option value="custom">Saisie manuelle</option>
-                                </select>
-                                <input type="number" id="input-peinture-plaf-m2" class="qty-input" placeholder="m²" min="1" max="500" style="display:none;margin-top:5px;">
+                                <label>📐 Superficie plafonds (m²)</label>
+                                <input type="number" id="input-peinture-plaf-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
                             </div>
                         </div>
                         <p id="peinture-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
@@ -1248,8 +1234,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=8.1" defer></script>
-    <!-- CCTP v14 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=8.2" defer></script>
+    <!-- CCTP v15 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
