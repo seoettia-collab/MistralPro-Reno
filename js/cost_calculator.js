@@ -501,7 +501,7 @@ k>250&&(y.addPage(),k=30);
 const $=.2*E,N=E+$;
 // Ligne avant totaux (intégrée au bloc)
 y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,k,195,k);
-k+=12;
+k+=17;
 // Tableau totaux élégant
 const totalsX=125;
 y.setDrawColor(200,200,200),y.setLineWidth(0.3);
