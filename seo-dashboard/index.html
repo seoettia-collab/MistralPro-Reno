@@ -145,50 +145,46 @@
           <h3>📝 Paramètres de génération</h3>
           
           <div class="studio-form">
+            <!-- 4 champs sur 1 ligne -->
             <div class="form-row">
               <div class="form-group">
                 <label for="studioKeyword">Mot-clé principal *</label>
                 <input type="text" id="studioKeyword" placeholder="Ex: prix renovation cuisine paris" />
               </div>
               <div class="form-group">
-                <label for="studioType">Type de contenu</label>
+                <label for="studioType">Type</label>
                 <select id="studioType">
                   <option value="blog">Article de blog</option>
                   <option value="service">Page service</option>
                   <option value="landing">Landing page</option>
                 </select>
               </div>
-            </div>
-            
-            <div class="form-row">
               <div class="form-group">
                 <label for="studioTone">Ton</label>
                 <select id="studioTone">
                   <option value="professionnel">Professionnel</option>
-                  <option value="expert">Expert technique</option>
-                  <option value="accessible">Accessible / Grand public</option>
-                  <option value="commercial">Commercial / Persuasif</option>
+                  <option value="expert">Expert</option>
+                  <option value="accessible">Accessible</option>
+                  <option value="commercial">Commercial</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="studioLength">Longueur</label>
                 <select id="studioLength">
-                  <option value="short">Court (~500 mots)</option>
-                  <option value="medium" selected>Moyen (~800 mots)</option>
-                  <option value="long">Long (~1200 mots)</option>
+                  <option value="short">~500 mots</option>
+                  <option value="medium" selected>~800 mots</option>
+                  <option value="long">~1200 mots</option>
                 </select>
               </div>
             </div>
             
-            <div class="form-row">
-              <div class="form-group full-width">
-                <label for="studioContext">Contexte additionnel (optionnel)</label>
-                <textarea id="studioContext" rows="2" placeholder="Ex: Focus sur Paris 17ème, mentionner les dégâts des eaux..."></textarea>
+            <!-- Contexte + Bouton sur la même ligne -->
+            <div class="form-row-inline">
+              <div class="form-group" style="flex: 1;">
+                <label for="studioContext">Contexte (optionnel)</label>
+                <input type="text" id="studioContext" placeholder="Ex: Focus sur Paris 17ème, mentionner les dégâts des eaux..." />
               </div>
-            </div>
-            
-            <div class="form-actions">
-              <button class="btn-large btn-primary" onclick="generateSEOContent()">
+              <button class="btn-generate-inline" onclick="generateSEOContent()">
                 ✨ Générer le contenu
               </button>
             </div>
