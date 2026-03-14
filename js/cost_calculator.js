@@ -13,14 +13,22 @@ menuiserie:["select-portes-int","select-plinthes","select-fenetres","select-port
 const sanSelects=Object.values(allSelects).flat();
 
 function r(){let e=0;
-// Checkboxes
-t('input[type="checkbox"]:checked').each(function(){e+=parseFloat(t(this).data("price"))||0});
+// Checkboxes standard (hors dépose)
+t('input[type="checkbox"]:checked').not('.depose-item').each(function(){e+=parseFloat(t(this).data("price"))||0});
+// Dépose : 45€/item + forfait 80€ évacuation si au moins 1 item
+const deposeItems=t('.depose-item:checked');
+if(deposeItems.length>0){
+deposeItems.each(function(){e+=parseFloat(t(this).data("price"))||0});
+e+=80; // Forfait évacuation
+}
 // Tous les selects san-select
 sanSelects.forEach(function(id){const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
 // Anciens selects non-san (compatibilité)
 t("select").each(function(){const o=t(this).attr("id");if(!o||o.startsWith("gamme-")||o.startsWith("type-peinture")||o.startsWith("select-"))return;e+=parseFloat(t(this).val())||0});
 const vat=.2*e,total=e+vat;
 t("#subtotal").text(l(e)),t("#vat").text(l(vat)),t("#total").text(l(total));
+// Mobile totals
+t("#mobile-subtotal").text(l(e));t("#mobile-vat").text(l(vat));t("#mobile-total").text(l(total));
 // Compteurs par catégorie
 ["plomberie","electricite","peinture","gros-oeuvre","menuiserie"].forEach(cat=>{let count=0;const panel=t(`.category-panel[data-category="${cat}"]`);
 panel.find('input[type="checkbox"]:checked').each(function(){count++});
@@ -41,8 +49,24 @@ let html="";
 let totalItems=0;
 const categories={};
 
-// Collecter checkboxes EN PREMIER
-t('input[type="checkbox"]:checked').each(function(){
+// Collecter dépose en premier (une seule ligne)
+const deposeItems=t('.depose-item:checked');
+if(deposeItems.length>0){
+const deposeLabels=[];
+let deposeTotal=0;
+deposeItems.each(function(){
+deposeLabels.push(t(this).data("label"));
+deposeTotal+=parseFloat(t(this).data("price"))||0;
+});
+deposeTotal+=80; // Forfait évacuation
+const deposeLabel="Dépose "+deposeLabels.join(", ")+" évacuation déchetterie comprise";
+if(!categories["Plomberie & Sanitaires"])categories["Plomberie & Sanitaires"]=[];
+categories["Plomberie & Sanitaires"].push({label:deposeLabel,price:deposeTotal});
+totalItems++;
+}
+
+// Collecter checkboxes standard (hors dépose)
+t('input[type="checkbox"]:checked').not('.depose-item').each(function(){
 const price=parseFloat(t(this).data("price"))||0;
 if(price>0){
 const label=t(this).data("label")||t(this).closest("label").find("strong").text();
