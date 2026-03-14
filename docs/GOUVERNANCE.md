@@ -66,7 +66,18 @@ cd MistralPro-Reno
 
 Toute validation, rapport, confirmation, demande technique, clôture de session ou décision structurelle devra obligatoirement respecter les règles suivantes :
 
-### 1.1 Adressage explicite
+### 1.1 Communication avec Ricardo
+
+**Règle absolue :** Les communications vers Ricardo doivent être **courtes et résumées**.
+
+- ❌ Pas d'explications techniques longues
+- ❌ Pas de détails de code
+- ✅ Résumés clairs et concis
+- ✅ Statuts simples (OK / Problème / En cours)
+
+Les discussions techniques détaillées se font **uniquement entre GPT et Claude**.
+
+### 1.2 Adressage explicite
 
 Chaque communication doit être adressée explicitement :
 
