@@ -2596,17 +2596,19 @@ function processUploadedImage(file) {
   // Déterminer si c'est l'image principale
   const isMain = uploadedImages.length === 0;
   
-  // Dimensions cibles
-  const targetWidth = isMain ? 1200 : 800;
-  const targetHeight = isMain ? 630 : 600;
+  // Dimensions cibles réduites pour éviter 413
+  // Principale: 1000x525 (au lieu de 1200x630)
+  // Secondaires: 700x500 (au lieu de 800x600)
+  const targetWidth = isMain ? 1000 : 700;
+  const targetHeight = isMain ? 525 : 500;
   
   // Lire et redimensionner l'image
   const reader = new FileReader();
   reader.onload = (e) => {
     const img = new Image();
     img.onload = () => {
-      // Redimensionner via canvas
-      const resizedDataUrl = resizeImage(img, targetWidth, targetHeight, 0.85);
+      // Redimensionner via canvas avec qualité réduite (0.70)
+      const resizedDataUrl = resizeImage(img, targetWidth, targetHeight, 0.70);
       
       const imageData = {
         id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -2641,18 +2643,29 @@ function processUploadedImage(file) {
 
 /**
  * Redimensionne une image avec Canvas (crop intelligent au centre)
- * Compression agressive pour éviter erreur 413
+ * Compression très agressive pour éviter erreur 413 Vercel
+ * Seuil max: 300Ko base64 (~225Ko réel)
  */
-function resizeImage(img, targetWidth, targetHeight, quality = 0.75) {
+function resizeImage(img, targetWidth, targetHeight, quality = 0.70) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   
-  canvas.width = targetWidth;
-  canvas.height = targetHeight;
+  // Réduire les dimensions si image principale trop grande
+  let finalWidth = targetWidth;
+  let finalHeight = targetHeight;
+  
+  // Limite max pour éviter 413: 1000x525 pour principale, 700x500 pour secondaires
+  if (targetWidth > 1000) {
+    finalWidth = 1000;
+    finalHeight = Math.round(targetHeight * (1000 / targetWidth));
+  }
+  
+  canvas.width = finalWidth;
+  canvas.height = finalHeight;
   
   // Calculer le ratio pour cover (remplir sans déformer)
   const imgRatio = img.width / img.height;
-  const targetRatio = targetWidth / targetHeight;
+  const targetRatio = finalWidth / finalHeight;
   
   let sourceX = 0, sourceY = 0, sourceWidth = img.width, sourceHeight = img.height;
   
@@ -2670,22 +2683,34 @@ function resizeImage(img, targetWidth, targetHeight, quality = 0.75) {
   ctx.drawImage(
     img,
     sourceX, sourceY, sourceWidth, sourceHeight, // Source (crop)
-    0, 0, targetWidth, targetHeight // Destination
+    0, 0, finalWidth, finalHeight // Destination
   );
   
-  // Exporter en WebP avec compression
+  // Exporter en WebP avec compression agressive
   let dataUrl = canvas.toDataURL('image/webp', quality);
   
-  // Si encore trop grand (> 500Ko en base64 ≈ 375Ko réel), réduire la qualité
-  const maxBase64Size = 500 * 1024; // 500 Ko
+  // Seuil strict: 300Ko base64 max pour éviter 413
+  const maxBase64Size = 300 * 1024;
   let currentQuality = quality;
   
-  while (dataUrl.length > maxBase64Size && currentQuality > 0.4) {
+  // Boucle de compression jusqu'à passer sous le seuil
+  while (dataUrl.length > maxBase64Size && currentQuality > 0.3) {
     currentQuality -= 0.1;
     dataUrl = canvas.toDataURL('image/webp', currentQuality);
-    console.log(`[Image] Recompression à ${Math.round(currentQuality * 100)}% → ${Math.round(dataUrl.length / 1024)}Ko`);
+    console.log(`[Image] Compression: ${Math.round(currentQuality * 100)}% → ${Math.round(dataUrl.length / 1024)}Ko`);
   }
   
+  // Si toujours trop grand, réduire encore les dimensions
+  if (dataUrl.length > maxBase64Size && finalWidth > 600) {
+    console.log('[Image] Taille encore trop grande, réduction dimensions...');
+    canvas.width = Math.round(finalWidth * 0.7);
+    canvas.height = Math.round(finalHeight * 0.7);
+    ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
+    dataUrl = canvas.toDataURL('image/webp', 0.6);
+    console.log(`[Image] Dimensions réduites: ${canvas.width}x${canvas.height} → ${Math.round(dataUrl.length / 1024)}Ko`);
+  }
+  
+  console.log(`[Image] Taille finale: ${Math.round(dataUrl.length / 1024)}Ko (max: 300Ko)`);
   return dataUrl;
 }
 
@@ -4154,9 +4179,12 @@ async function loadOpportunities() {
  */
 function escapeHtml(text) {
   if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /**
