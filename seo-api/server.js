@@ -141,6 +141,55 @@ app.use('/api', githubRoutes);
 const contentGenRoutes = require('./routes/contentGen');
 app.use('/api', contentGenRoutes);
 
+// Route RESET DATABASE (remise à zéro)
+app.post('/api/reset-database', async (req, res) => {
+  try {
+    console.log('[RESET] Début remise à zéro base de données...');
+    
+    // Tables à vider (garder la structure, supprimer les données)
+    const tablesToClear = [
+      'opportunities',
+      'contents',
+      'briefs',
+      'alerts',
+      'history',
+      'queries',
+      'gsc_pages',
+      'page_queries',
+      'query_daily',
+      'audits',
+      'optimization_history'
+    ];
+    
+    for (const table of tablesToClear) {
+      try {
+        await db.execute(`DELETE FROM ${table}`);
+        console.log(`[RESET] Table ${table} vidée`);
+      } catch (e) {
+        console.warn(`[RESET] Table ${table} n'existe pas ou erreur:`, e.message);
+      }
+    }
+    
+    // Garder le site principal
+    await db.execute("DELETE FROM sites WHERE domain != 'mistralpro-reno.fr'");
+    
+    // Réinitialiser les pages mais garder les vraies
+    await db.execute("DELETE FROM pages WHERE url LIKE '%test%'");
+    
+    console.log('[RESET] Base de données remise à zéro');
+    
+    res.json({
+      status: 'ok',
+      message: 'Base de données remise à zéro',
+      tablesCleared: tablesToClear
+    });
+    
+  } catch (err) {
+    console.error('[RESET] Erreur:', err.message);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 // Import error handlers
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
