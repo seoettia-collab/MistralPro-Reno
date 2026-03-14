@@ -38,6 +38,11 @@
     {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.mistralpro-reno.fr/"},{"@type":"ListItem","position":2,"name":"Simulateur Devis","item":"https://www.mistralpro-reno.fr/cost_calculator.html"}]}
     </script>
 
+    <!-- FAQPage Schema -->
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quel est le prix moyen d'une rénovation complète à Paris ?","acceptedAnswer":{"@type":"Answer","text":"Le prix d'une rénovation complète à Paris varie de 800 à 1500 €/m² selon l'ampleur des travaux. Notre simulateur vous permet d'obtenir une estimation personnalisée gratuite en quelques clics."}},{"@type":"Question","name":"Comment fonctionne le simulateur de devis Mistral Pro Reno ?","acceptedAnswer":{"@type":"Answer","text":"Notre simulateur vous permet de sélectionner vos travaux par catégorie (plomberie, électricité, peinture, gros œuvre, menuiserie), d'ajuster les quantités, et d'obtenir instantanément une estimation HT et TTC. Vous pouvez télécharger votre devis en PDF."}},{"@type":"Question","name":"Le devis du simulateur est-il gratuit et sans engagement ?","acceptedAnswer":{"@type":"Answer","text":"Oui, notre simulateur de devis est 100% gratuit et sans engagement. L'estimation générée vous donne un ordre de prix indicatif pour planifier votre budget de rénovation."}},{"@type":"Question","name":"Quels types de travaux puis-je estimer avec ce simulateur ?","acceptedAnswer":{"@type":"Answer","text":"Le simulateur couvre tous les corps de métier : plomberie et salle de bain, électricité et chauffage, peinture et revêtements de sol, gros œuvre et isolation, menuiserie intérieure et extérieure."}},{"@type":"Question","name":"Mistral Pro Reno intervient-il dans toute l'Île-de-France ?","acceptedAnswer":{"@type":"Answer","text":"Oui, Mistral Pro Reno intervient à Paris et dans toute l'Île-de-France (75, 77, 78, 91, 92, 93, 94, 95) pour vos travaux de rénovation."}}]}
+    </script>
+
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -146,10 +151,10 @@
                         <strong id="total">0 €</strong>
                     </div>
                     <div class="total-actions">
-                        <button type="button" class="btn-download" id="printQuote">📄 Télécharger</button>
-                        <button type="button" class="btn-reset" id="resetBtn">🔄 Réinitialiser</button>
+                        <button type="button" class="btn-download" id="printQuote" aria-label="Télécharger le devis en PDF">📄 Télécharger</button>
+                        <button type="button" class="btn-reset" id="resetBtn" aria-label="Réinitialiser le simulateur">🔄 Réinitialiser</button>
                     </div>
-                    <div class="form-message" id="formMessage">⚠️ Veuillez compléter votre formulaire</div>
+                    <div class="form-message" id="formMessage" role="alert" aria-live="assertive">⚠️ Veuillez compléter votre formulaire</div>
                 </div>
             </aside>
 
@@ -163,31 +168,31 @@
                 </div>
                 
                 <!-- NIVEAU 1 : 5 Catégories principales -->
-                <nav class="main-categories">
-                    <button class="main-cat active" data-category="plomberie">
-                        <span class="cat-icon">🚿</span>
+                <nav class="main-categories" aria-label="Catégories de travaux">
+                    <button class="main-cat active" data-category="plomberie" aria-label="Sélectionner Plomberie et Salle de bain" aria-pressed="true">
+                        <span class="cat-icon" aria-hidden="true">🚿</span>
                         <span class="cat-name">Plomberie & SDB</span>
-                        <span class="cat-count" id="count-plomberie">0</span>
+                        <span class="cat-count" id="count-plomberie" aria-live="polite">0</span>
                     </button>
-                    <button class="main-cat" data-category="electricite">
-                        <span class="cat-icon">⚡</span>
+                    <button class="main-cat" data-category="electricite" aria-label="Sélectionner Électricité" aria-pressed="false">
+                        <span class="cat-icon" aria-hidden="true">⚡</span>
                         <span class="cat-name">Électricité</span>
-                        <span class="cat-count" id="count-electricite">0</span>
+                        <span class="cat-count" id="count-electricite" aria-live="polite">0</span>
                     </button>
-                    <button class="main-cat" data-category="peinture">
-                        <span class="cat-icon">🎨</span>
+                    <button class="main-cat" data-category="peinture" aria-label="Sélectionner Peinture et Sols" aria-pressed="false">
+                        <span class="cat-icon" aria-hidden="true">🎨</span>
                         <span class="cat-name">Peinture & Sols</span>
-                        <span class="cat-count" id="count-peinture">0</span>
+                        <span class="cat-count" id="count-peinture" aria-live="polite">0</span>
                     </button>
-                    <button class="main-cat" data-category="gros-oeuvre">
-                        <span class="cat-icon">🧱</span>
+                    <button class="main-cat" data-category="gros-oeuvre" aria-label="Sélectionner Gros Œuvre" aria-pressed="false">
+                        <span class="cat-icon" aria-hidden="true">🧱</span>
                         <span class="cat-name">Gros Œuvre</span>
-                        <span class="cat-count" id="count-gros-oeuvre">0</span>
+                        <span class="cat-count" id="count-gros-oeuvre" aria-live="polite">0</span>
                     </button>
-                    <button class="main-cat" data-category="menuiserie">
-                        <span class="cat-icon">🏠</span>
+                    <button class="main-cat" data-category="menuiserie" aria-label="Sélectionner Menuiserie" aria-pressed="false">
+                        <span class="cat-icon" aria-hidden="true">🏠</span>
                         <span class="cat-name">Menuiserie</span>
-                        <span class="cat-count" id="count-menuiserie">0</span>
+                        <span class="cat-count" id="count-menuiserie" aria-live="polite">0</span>
                     </button>
                 </nav>
 
@@ -891,25 +896,101 @@
                         </div>
                     </div>
                     <div class="total-actions">
-                        <button type="button" class="btn-download" id="mobilePrintQuote">📄 Télécharger</button>
-                        <button type="button" class="btn-reset" id="mobileResetBtn">🔄 Réinitialiser</button>
+                        <button type="button" class="btn-download" id="mobilePrintQuote" aria-label="Télécharger le devis en PDF">📄 Télécharger</button>
+                        <button type="button" class="btn-reset" id="mobileResetBtn" aria-label="Réinitialiser le simulateur">🔄 Réinitialiser</button>
                     </div>
-                    <div class="form-message" id="mobileFormMessage">⚠️ Veuillez compléter votre formulaire</div>
+                    <div class="form-message" id="mobileFormMessage" role="alert" aria-live="assertive">⚠️ Veuillez compléter votre formulaire</div>
                 </div>
 
             </section>
         </div>
+
+        <!-- Section SEO textuelle -->
+        <section class="seo-content" style="max-width:1200px; margin:40px auto; padding:20px 30px; background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+            <h2 style="font-size:1.5rem; color:#1a1a1a; margin-bottom:15px;">Simulateur de devis travaux gratuit – Estimez votre rénovation à Paris</h2>
+            <p style="color:#444; line-height:1.7; margin-bottom:15px;">
+                Notre <strong>simulateur de devis en ligne</strong> vous permet d'estimer gratuitement le coût de vos travaux de rénovation à Paris et en Île-de-France. Que vous envisagiez une <strong>rénovation de salle de bain</strong>, une mise aux normes électriques, des travaux de peinture ou une rénovation complète, obtenez une estimation personnalisée en quelques clics.
+            </p>
+            <p style="color:#444; line-height:1.7; margin-bottom:15px;">
+                <strong>Mistral Pro Reno</strong>, entreprise de rénovation basée à Paris 17ème, accompagne les particuliers et professionnels dans tous leurs projets : plomberie, électricité, peinture et revêtements, gros œuvre, menuiserie intérieure et extérieure. Nos artisans certifiés RGE interviennent dans tout le 75 et les départements limitrophes (92, 93, 94, 77, 78, 91, 95).
+            </p>
+            <h3 style="font-size:1.2rem; color:#1a1a1a; margin:20px 0 10px;">Comment utiliser notre simulateur de devis ?</h3>
+            <ol style="color:#444; line-height:1.8; padding-left:20px; margin-bottom:15px;">
+                <li>Sélectionnez vos travaux parmi les 5 catégories : Plomberie & SDB, Électricité, Peinture & Sols, Gros Œuvre, Menuiserie</li>
+                <li>Ajustez les quantités selon vos besoins (m², nombre d'unités, mètres linéaires)</li>
+                <li>Renseignez vos coordonnées pour recevoir votre devis détaillé</li>
+                <li>Téléchargez votre estimation PDF gratuite</li>
+            </ol>
+            <p style="color:#444; line-height:1.7;">
+                Cette estimation est <strong>gratuite et sans engagement</strong>. Pour un devis définitif, notre équipe se déplace gratuitement pour évaluer précisément votre projet. Contactez-nous au <a href="tel:0755188937" style="color:#f4c430; font-weight:600;">07 55 18 89 37</a> ou via notre formulaire de contact.
+            </p>
+        </section>
+
     </main>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="js/main.js?v=2.0"></script>
-    <script src="js/cost_calculator.js?v=2.0"></script>
+    <!-- jsPDF chargé en lazy load au premier clic sur Télécharger -->
+    <script>
+    window.jsPDFLoaded = false;
+    window.loadJsPDF = function() {
+        return new Promise(function(resolve, reject) {
+            if (window.jsPDFLoaded) { resolve(); return; }
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js';
+            script.onload = function() { window.jsPDFLoaded = true; resolve(); };
+            script.onerror = function() { reject(new Error('Erreur chargement jsPDF')); };
+            document.head.appendChild(script);
+        });
+    };
+    </script>
+    <script src="js/main.js?v=2.0" defer></script>
+    <script src="js/cost_calculator.js?v=2.1" defer></script>
     
-    <!-- Synchronisation des boutons mobile -->
+    <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Intercepter le clic sur Télécharger pour charger jsPDF en lazy
+        var printBtn = document.getElementById('printQuote');
+        if (printBtn && !window.jsPDFLoaded) {
+            var originalHandler = null;
+            
+            // Attendre que cost_calculator.js attache son handler
+            setTimeout(function() {
+                // Sauvegarder le handler original (jQuery)
+                var $btn = jQuery('#printQuote');
+                var events = jQuery._data(printBtn, 'events');
+                if (events && events.click && events.click.length > 0) {
+                    originalHandler = events.click[0].handler;
+                    $btn.off('click'); // Retirer le handler original
+                    
+                    // Nouveau handler avec lazy load
+                    $btn.on('click', function(e) {
+                        e.preventDefault();
+                        if (window.jsPDFLoaded) {
+                            originalHandler.call(this, e);
+                        } else {
+                            var btn = this;
+                            btn.textContent = '⏳ Chargement...';
+                            btn.disabled = true;
+                            window.loadJsPDF().then(function() {
+                                btn.textContent = '📄 Télécharger';
+                                btn.disabled = false;
+                                originalHandler.call(btn, e);
+                            }).catch(function(err) {
+                                btn.textContent = '❌ Erreur';
+                                console.error(err);
+                                setTimeout(function() {
+                                    btn.textContent = '📄 Télécharger';
+                                    btn.disabled = false;
+                                }, 2000);
+                            });
+                        }
+                    });
+                }
+            }, 500); // Attendre que cost_calculator.js soit prêt
+        }
+        
         // Synchroniser les totaux
         function syncMobileTotals() {
             var subtotal = document.getElementById('subtotal');
