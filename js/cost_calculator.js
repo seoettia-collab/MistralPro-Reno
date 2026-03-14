@@ -1,12 +1,12 @@
 !function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="07 55 18 89 37",s="contact@mistralpro-reno.fr";let i=null;
 
-// TOUS LES SELECTS PAR CATÉGORIE - V16
+// TOUS LES SELECTS PAR CATÉGORIE - V17
 const allSelects={
 plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre","select-pack-sdb","select-depose-mural","select-depose-sol"],
 electricite:["select-tableau","select-points-lum","select-prises","select-inter","select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv","select-clim","select-vmc-simple","select-vmc-double","select-aerateur"],
 peinture:["select-peinture-murs-gamme","select-peinture-plaf-gamme","select-parquet-gamme","select-carrelage-gamme","select-lino-gamme","select-faience-gamme","select-credence-gamme"],
 "gros-oeuvre":["select-mur-porteur"],
-menuiserie:["select-portes-int-gamme","select-plinthes-gamme","select-porte-entree","select-volets","select-toiture","select-velux","select-zinguerie","select-cuisine","select-placards","select-rangements"]
+menuiserie:["select-portes-int-gamme","select-plinthes-gamme","select-porte-entree","select-volets","select-charpente","select-couverture","select-velux","select-zinguerie","select-cuisine","select-placards","select-rangements"]
 };
 
 // Liste plate pour compatibilité
@@ -520,7 +520,7 @@ const tabSelects={
 "construction":[],
 "menu-int":["select-portes-int-gamme","select-plinthes-gamme"],
 "menu-ext":["select-porte-entree","select-volets"],
-"toiture":["select-toiture","select-velux","select-zinguerie"],
+"toiture":["select-charpente","select-couverture","select-velux","select-zinguerie"],
 "agencement":["select-cuisine","select-placards","select-rangements"]
 };
 // Checkboxes par tab
