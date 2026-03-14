@@ -473,7 +473,10 @@ let E=0,z=1;Object.keys(b).forEach(t=>{const e=b[t];let o=0;e.forEach(t=>o+=t.qt
 const lotY=k-4;
 y.setFillColor(74,144,226);y.rect(15,lotY,180,3,"F");
 y.setFillColor(149,189,241);y.rect(15,lotY+3,180,3,"F");
-y.setFontSize(8),y.setFont(void 0,"bold"),y.setTextColor(255,255,255),y.text(z+"",17,k),y.text(t.toUpperCase(),27,k);const lotTTC=o*1.2;y.text(u(lotTTC),180,k);y.setTextColor(0,0,0);let n=1;e.forEach(t=>{
+y.setFontSize(8),y.setFont(void 0,"bold"),y.setTextColor(255,255,255),y.text(z+"",17,k),y.text(t.toUpperCase(),27,k);const lotTTC=o*1.2;y.text(u(lotTTC),180,k);y.setTextColor(0,0,0);
+// Espace après la bande LOT
+k+=2;
+let n=1;e.forEach(t=>{
 // Calcul hauteur nécessaire pour la désignation
 const desc=t.desc;
 const maxWidth=115;
