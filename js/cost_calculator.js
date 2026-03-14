@@ -238,5 +238,22 @@ t('input[type="range"]').on("input",function(){const e=t(this).attr("id");t("#"+
 t(".qty-input").on("input",function(){const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number",""),n=t("#"+o);if(n.length){let e=parseInt(t(this).val())||0;const a=parseInt(n.attr("max"))||9999;e=Math.min(Math.max(0,e),a),t(this).val(e),n.val(e)}r()}),
 t(".qty-input").on("blur",function(){if(""===t(this).val()){t(this).val(0);const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number","");t("#"+o).val(0),r()}}),
 t('input[type="checkbox"], select').on("change",function(){r();updateAllTabs()}),
-t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r())}),
+t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r(),updateAllTabs())}),
+// Reset par section
+t(".btn-section-reset").on("click",function(){
+const cat=t(this).data("category");
+const panel=t(`.category-panel[data-category="${cat}"]`);
+// Reset selects
+panel.find("select").prop("selectedIndex",0);
+// Reset checkboxes
+panel.find('input[type="checkbox"]').prop("checked",!1);
+// Reset sliders
+panel.find('input[type="range"]').val(0);
+// Reset qty inputs
+panel.find(".qty-input").val(0);
+// Recalculer
+r();
+updateAllTabs();
+console.log("Section "+cat+" réinitialisée");
+}),
 console.log("Attachement événement printQuote"),t("#printQuote").on("click",c),r(),console.log("Simulateur Mistral Pro Reno V5 ready")})}(jQuery);
