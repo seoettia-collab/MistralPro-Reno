@@ -307,12 +307,12 @@ t("#ext-total-info").html(extInfo?("💰 "+extInfo):"");
 
 // Calcul spécial GROS ŒUVRE (prix fixe × m² ou m³)
 const goCalcs=[
-{input:"input-cloisons-m2",price:45,type:"Cloisons",unit:"m²",cat:"maconnerie"},
 {input:"input-dalle-m2",price:70,type:"Dalle béton",unit:"m²",cat:"maconnerie"},
 {input:"input-demo-m3",price:80,type:"Démolition",unit:"m³",cat:"maconnerie"},
 {input:"input-iso-murs-m2",price:45,type:"Isolation murs",unit:"m²",cat:"isolation"},
 {input:"input-iso-combles-m2",price:35,type:"Isolation combles",unit:"m²",cat:"isolation"},
 {input:"input-ite-m2",price:120,type:"ITE",unit:"m²",cat:"isolation"},
+{input:"input-cloisons-m2",price:45,type:"Cloisons",unit:"m²",cat:"platrerie"},
 {input:"input-faux-plafond-m2",price:45,type:"Faux plafond",unit:"m²",cat:"platrerie"},
 {input:"input-doublage-m2",price:35,type:"Doublage",unit:"m²",cat:"platrerie"},
 {input:"input-terrassement-m3",price:50,type:"Terrassement",unit:"m³",cat:"construction"},
@@ -510,10 +510,9 @@ if(ravalementM2>0||facadeM2>0){hasSelection=true}
 // Cas spécial maconnerie: select OU inputs
 else if(tab==="maconnerie"){
 const murPorteur=parseFloat(t("#select-mur-porteur").val())||0;
-const cloisons=parseFloat(t("#input-cloisons-m2").val())||0;
 const dalle=parseFloat(t("#input-dalle-m2").val())||0;
 const demo=parseFloat(t("#input-demo-m3").val())||0;
-if(murPorteur>0||cloisons>0||dalle>0||demo>0){hasSelection=true}
+if(murPorteur>0||dalle>0||demo>0){hasSelection=true}
 }
 // Cas spécial isolation: inputs
 else if(tab==="isolation"){
@@ -524,9 +523,10 @@ if(isoMurs>0||isoCombles>0||ite>0){hasSelection=true}
 }
 // Cas spécial platrerie: inputs
 else if(tab==="platrerie"){
+const cloisons=parseFloat(t("#input-cloisons-m2").val())||0;
 const fauxPlafond=parseFloat(t("#input-faux-plafond-m2").val())||0;
 const doublage=parseFloat(t("#input-doublage-m2").val())||0;
-if(fauxPlafond>0||doublage>0){hasSelection=true}
+if(cloisons>0||fauxPlafond>0||doublage>0){hasSelection=true}
 }
 // Cas spécial construction: select OU inputs
 else if(tab==="construction"){
