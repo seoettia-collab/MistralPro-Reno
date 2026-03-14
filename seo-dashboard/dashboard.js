@@ -1502,9 +1502,6 @@ async function generateSEOContent() {
     // Afficher le résultat
     renderStudioResult(content);
     
-    // Auto-génération de l'image (non-bloquante)
-    autoGenerateImage(content.keyword, content.type);
-    
   } catch (error) {
     console.error('[Studio SEO] Erreur:', error);
     resultSection.innerHTML = `
@@ -1775,21 +1772,11 @@ function capitalizeFirst(str) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// V2.5 — Génération image DALL-E (optionnel)
-// ══════════════════════════════════════════════════════════════════════════════
-
-// Cache pour l'image générée
-let studioGeneratedImage = null;
-let imageGenerationInProgress = false;
-
 /**
  * Affiche le résultat de la génération
  */
 function renderStudioResult(content) {
   const resultSection = document.getElementById('studio-result');
-  
-  // Reset image
-  studioGeneratedImage = null;
   
   // Extraire le contenu article du HTML (sans doctype/head/body)
   const articleContent = extractArticleContent(content.htmlContent);
@@ -1817,24 +1804,6 @@ function renderStudioResult(content) {
           <div class="seo-preview-url">mistralpro-reno.fr/blog/${content.slug}.html</div>
           <div class="seo-preview-title">${escapeHtml(content.title)}</div>
           <div class="seo-preview-meta">${escapeHtml(content.metaDescription)}</div>
-        </div>
-      </div>
-      
-      <!-- Section Image IA -->
-      <div class="result-image-section">
-        <div class="image-header">
-          <h4>🖼️ Image article</h4>
-          <span class="image-badge">DALL-E</span>
-        </div>
-        <div id="image-container" class="image-container">
-          <div class="image-placeholder">
-            <span class="placeholder-icon">🖼️</span>
-            <p>Générez une image pour illustrer votre article</p>
-            <button class="btn-primary" onclick="generateArticleImage()">
-              ✨ Générer une image
-            </button>
-            <p class="image-note">⚡ La publication n'est pas bloquée par l'image</p>
-          </div>
         </div>
       </div>
       
@@ -1886,376 +1855,6 @@ function extractArticleContent(htmlContent) {
   
   // Fallback: retourner le HTML tel quel
   return htmlContent;
-}
-
-/**
- * Auto-génère une image après la création du contenu (non-bloquant)
- */
-async function autoGenerateImage(keyword, contentType) {
-  // Délai court pour laisser le DOM se mettre à jour
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  const container = document.getElementById('image-container');
-  if (!container) return;
-  
-  // Afficher le loader auto-génération
-  container.innerHTML = `
-    <div class="image-loading auto-generate">
-      <div class="studio-loading-spinner small"></div>
-      <p>🎨 Génération automatique de l'image...</p>
-      <p class="loading-note">DALL-E crée une illustration adaptée à votre contenu</p>
-    </div>
-  `;
-  
-  imageGenerationInProgress = true;
-  
-  try {
-    // Générer le prompt optimisé
-    const prompt = generateImagePrompt(keyword, contentType);
-    
-    // Appel API DALL-E
-    const imageResult = await callDALLEForImage(prompt, keyword);
-    
-    // Stocker l'image
-    studioGeneratedImage = imageResult;
-    
-    // Afficher le résultat avec auto-intégration
-    renderImageResultAutoIntegrated(imageResult);
-    
-  } catch (error) {
-    console.error('[Auto Image] Erreur:', error);
-    container.innerHTML = `
-      <div class="image-error">
-        <span class="error-icon">⚠️</span>
-        <p>Génération auto échouée</p>
-        <button class="btn-small btn-primary" onclick="generateArticleImage()">🔄 Réessayer</button>
-        <button class="btn-small btn-secondary" onclick="skipImage()">Continuer sans image</button>
-      </div>
-    `;
-  } finally {
-    imageGenerationInProgress = false;
-  }
-}
-
-/**
- * Affiche l'image auto-générée et l'intègre automatiquement
- */
-function renderImageResultAutoIntegrated(imageResult) {
-  const container = document.getElementById('image-container');
-  
-  // Auto-intégrer l'image dans le contenu
-  if (studioGeneratedContent && imageResult.url) {
-    integrateImageToContent(imageResult);
-  }
-  
-  container.innerHTML = `
-    <div class="image-result auto-integrated">
-      <div class="image-preview">
-        <img src="${imageResult.url}" alt="Image générée pour l'article" />
-      </div>
-      <div class="image-status">
-        <span class="status-badge success">✅ Image intégrée automatiquement</span>
-      </div>
-      <div class="image-actions">
-        <button class="btn-small btn-secondary" onclick="generateArticleImage()">🔄 Régénérer</button>
-        <button class="btn-small btn-secondary" onclick="removeImage()">❌ Retirer</button>
-      </div>
-      ${imageResult.simulated ? `
-        <p class="image-simulated-note">⚠️ Mode simulation - Image placeholder</p>
-      ` : `
-        <p class="image-real-note">✨ Image DALL-E réelle</p>
-      `}
-    </div>
-  `;
-}
-
-/**
- * Intègre l'image dans le contenu HTML
- */
-function integrateImageToContent(imageResult) {
-  if (!studioGeneratedContent) return;
-  
-  // Construire le HTML de l'image
-  const imageHTML = `
-        <figure class="article-image">
-          <img src="/images/blog/${studioGeneratedContent.slug}.webp" alt="${studioGeneratedContent.h1}" loading="lazy" />
-        </figure>
-`;
-  
-  // Vérifier si l'image n'est pas déjà intégrée
-  if (!studioGeneratedContent.htmlContent.includes('article-image')) {
-    // Insérer après l'intro
-    studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-      '<p class="article-intro">',
-      imageHTML + '\n        <p class="article-intro">'
-    );
-  }
-  
-  // Marquer comme ayant une image
-  studioGeneratedContent.hasImage = true;
-  studioGeneratedContent.imageUrl = imageResult.url;
-  studioGeneratedContent.imageSimulated = imageResult.simulated;
-  
-  // Mettre à jour l'aperçu
-  const previewBody = document.querySelector('.preview-body');
-  if (previewBody) {
-    previewBody.innerHTML = formatPreviewContent(studioGeneratedContent.htmlContent);
-  }
-}
-
-/**
- * Génère une image pour l'article via DALL-E
- */
-async function generateArticleImage() {
-  if (imageGenerationInProgress || !studioGeneratedContent) return;
-  
-  imageGenerationInProgress = true;
-  const container = document.getElementById('image-container');
-  
-  // Afficher le loader
-  container.innerHTML = `
-    <div class="image-loading">
-      <div class="studio-loading-spinner small"></div>
-      <p>Génération de l'image en cours...</p>
-      <p class="loading-note">DALL-E crée une image unique pour votre article</p>
-    </div>
-  `;
-  
-  try {
-    // Générer le prompt pour DALL-E
-    const prompt = generateImagePrompt(studioGeneratedContent.keyword, studioGeneratedContent.type);
-    
-    // Appel API (simulation ou réel)
-    const imageResult = await callDALLEForImage(prompt);
-    
-    // Stocker l'image
-    studioGeneratedImage = imageResult;
-    
-    // Afficher le résultat
-    renderImageResult(imageResult);
-    
-  } catch (error) {
-    console.error('[Image IA] Erreur:', error);
-    container.innerHTML = `
-      <div class="image-error">
-        <span class="error-icon">⚠️</span>
-        <p>Erreur lors de la génération</p>
-        <button class="btn-small btn-primary" onclick="generateArticleImage()">🔄 Réessayer</button>
-        <button class="btn-small btn-secondary" onclick="skipImage()">Continuer sans image</button>
-      </div>
-    `;
-  } finally {
-    imageGenerationInProgress = false;
-  }
-}
-
-/**
- * Génère le prompt DALL-E basé sur le contenu
- */
-function generateImagePrompt(keyword, contentType) {
-  // Thèmes visuels pour rénovation
-  const themes = {
-    'cuisine': 'modern kitchen renovation, bright natural light, marble countertops, professional photography',
-    'salle de bain': 'luxury bathroom renovation, elegant tiles, modern fixtures, soft lighting',
-    'appartement': 'Parisian apartment renovation, hardwood floors, high ceilings, contemporary design',
-    'maison': 'house renovation, before and after, modern architecture, professional real estate photo',
-    'peinture': 'fresh paint job, color samples, professional painters at work, clean lines',
-    'plomberie': 'modern plumbing fixtures, bathroom renovation, clean installation',
-    'électricité': 'modern electrical installation, smart home, professional work',
-    'default': 'home renovation project, professional construction, modern interior design, Paris apartment'
-  };
-  
-  // Trouver le thème correspondant
-  let theme = themes.default;
-  const keywordLower = keyword.toLowerCase();
-  for (const [key, value] of Object.entries(themes)) {
-    if (keywordLower.includes(key)) {
-      theme = value;
-      break;
-    }
-  }
-  
-  return `Professional photograph of ${theme}, high quality, 16:9 aspect ratio, photorealistic, no text or watermarks`;
-}
-
-/**
- * Appelle DALL-E pour générer l'image (simulation ou API)
- */
-async function callDALLEForImage(prompt, keyword = '') {
-  try {
-    // Appel API backend pour DALL-E
-    const response = await fetchAPI('/api/dalle/generate', {
-      method: 'POST',
-      body: JSON.stringify({ prompt, keyword, size: '1792x1024' })
-    });
-    
-    if (!response.ok) {
-      // Fallback: image placeholder si API non disponible
-      console.warn('[Image IA] Endpoint DALL-E non disponible, utilisation placeholder');
-      await simulateDelay(1500);
-      return {
-        url: generatePlaceholderUrl(keyword || prompt),
-        prompt: prompt,
-        simulated: true,
-        generatedAt: new Date().toISOString()
-      };
-    }
-    
-    const result = await response.json();
-    return {
-      url: result.data?.url,
-      prompt: prompt,
-      simulated: result.data?.simulated || false,
-      generatedAt: new Date().toISOString()
-    };
-    
-  } catch (error) {
-    console.error('[DALL-E] Erreur:', error);
-    // Fallback placeholder
-    return {
-      url: generatePlaceholderUrl(keyword || prompt),
-      prompt: prompt,
-      simulated: true,
-      generatedAt: new Date().toISOString()
-    };
-  }
-}
-
-/**
- * Génère une URL placeholder locale
- */
-function generatePlaceholderUrl(keyword) {
-  const keywordLower = (keyword || '').toLowerCase();
-  let bgColor = '1a1a2e';
-  let text = 'Renovation';
-  
-  if (keywordLower.includes('cuisine')) {
-    bgColor = '2d5016';
-    text = 'Cuisine';
-  } else if (keywordLower.includes('salle') || keywordLower.includes('bain')) {
-    bgColor = '164e63';
-    text = 'Salle+Bain';
-  } else if (keywordLower.includes('appartement')) {
-    bgColor = '7c3aed';
-    text = 'Appartement';
-  } else if (keywordLower.includes('peinture')) {
-    bgColor = 'dc2626';
-    text = 'Peinture';
-  }
-  
-  return `https://placehold.co/1792x1024/${bgColor}/ffffff?text=${text}`;
-}
-
-/**
- * Affiche le résultat de l'image générée
- */
-function renderImageResult(imageResult) {
-  const container = document.getElementById('image-container');
-  
-  container.innerHTML = `
-    <div class="image-result">
-      <div class="image-preview">
-        <img src="${imageResult.url}" alt="Image générée pour l'article" />
-      </div>
-      <div class="image-actions">
-        <button class="btn-small btn-primary" onclick="useGeneratedImage()">✅ Utiliser cette image</button>
-        <button class="btn-small btn-secondary" onclick="generateArticleImage()">🔄 Régénérer</button>
-        <button class="btn-small btn-secondary" onclick="skipImage()">❌ Ne pas utiliser</button>
-      </div>
-      ${imageResult.simulated ? `
-        <p class="image-simulated-note">⚠️ Mode simulation - Image placeholder</p>
-      ` : ''}
-    </div>
-  `;
-}
-
-/**
- * Utilise l'image générée dans l'article
- */
-function useGeneratedImage() {
-  if (!studioGeneratedImage || !studioGeneratedContent) return;
-  
-  // Ajouter l'image au contenu HTML
-  const imageHTML = `
-        <figure class="article-image">
-          <img src="/images/blog/${studioGeneratedContent.slug}.webp" alt="${studioGeneratedContent.h1}" loading="lazy" />
-        </figure>
-`;
-  
-  // Insérer après l'intro
-  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-    '<p class="article-intro">',
-    imageHTML + '\n        <p class="article-intro">'
-  );
-  
-  // Mettre à jour l'aperçu
-  const previewBody = document.querySelector('.preview-body');
-  if (previewBody) {
-    previewBody.innerHTML = formatPreviewContent(studioGeneratedContent.htmlContent);
-  }
-  
-  // Marquer l'image comme utilisée
-  const container = document.getElementById('image-container');
-  container.innerHTML = `
-    <div class="image-used">
-      <div class="image-thumb">
-        <img src="${studioGeneratedImage.url}" alt="Image sélectionnée" />
-      </div>
-      <div class="image-info">
-        <span class="image-status">✅ Image ajoutée à l'article</span>
-        <span class="image-path">/images/blog/${studioGeneratedContent.slug}.webp</span>
-      </div>
-      <button class="btn-small btn-secondary" onclick="removeImage()">❌ Retirer</button>
-    </div>
-  `;
-  
-  // Stocker l'info pour la publication
-  studioGeneratedContent.hasImage = true;
-  studioGeneratedContent.imageUrl = studioGeneratedImage.url;
-}
-
-/**
- * Ignore l'image et continue
- */
-function skipImage() {
-  studioGeneratedImage = null;
-  const container = document.getElementById('image-container');
-  container.innerHTML = `
-    <div class="image-skipped">
-      <span>📝 Publication sans image</span>
-      <button class="btn-small btn-secondary" onclick="generateArticleImage()">Ajouter une image</button>
-    </div>
-  `;
-}
-
-/**
- * Retire l'image de l'article
- */
-function removeImage() {
-  if (!studioGeneratedContent) return;
-  
-  // Retirer l'image du HTML
-  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-    /<figure class="article-image">[\s\S]*?<\/figure>\s*/,
-    ''
-  );
-  
-  studioGeneratedContent.hasImage = false;
-  studioGeneratedContent.imageUrl = null;
-  studioGeneratedImage = null;
-  
-  // Reset l'interface
-  const container = document.getElementById('image-container');
-  container.innerHTML = `
-    <div class="image-placeholder">
-      <span class="placeholder-icon">🖼️</span>
-      <p>Générez une image pour illustrer votre article</p>
-      <button class="btn-primary" onclick="generateArticleImage()">
-        ✨ Générer une image
-      </button>
-      <p class="image-note">⚡ La publication du texte n'est pas bloquée par l'image</p>
-    </div>
-  `;
 }
 
 /**
@@ -2523,22 +2122,13 @@ async function publishContent() {
   const filePath = `blog/${slug}.html`;
   const finalURL = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
   
-  // Déterminer si on a une image à persister
-  // L'image DALL-E réelle a une URL qui contient 'oaidalleapiprodscus' ou 'openai'
-  const hasImageToPersist = studioGeneratedContent.hasImage && 
-                            studioGeneratedContent.imageUrl && 
-                            !studioGeneratedContent.imageSimulated &&
-                            (studioGeneratedContent.imageUrl.includes('oaidalleapiprodscus') ||
-                             studioGeneratedContent.imageUrl.includes('openai'));
-  
-  // Afficher le loader avec étapes adaptées
+  // Afficher le loader
   publishSection.innerHTML = `
     <div class="publish-loading">
       <div class="studio-loading-spinner"></div>
       <h3>🚀 Publication en cours...</h3>
       <div class="publish-steps-progress">
-        ${hasImageToPersist ? '<div class="step-progress active" id="step0">0. Persistance image</div>' : ''}
-        <div class="step-progress ${hasImageToPersist ? '' : 'active'}" id="step1">1. Génération fichier HTML</div>
+        <div class="step-progress active" id="step1">1. Génération fichier HTML</div>
         <div class="step-progress" id="step2">2. Push GitHub</div>
         <div class="step-progress" id="step3">3. Déploiement OVH</div>
         <div class="step-progress" id="step4">4. Vérification URL</div>
@@ -2547,34 +2137,6 @@ async function publishContent() {
   `;
   
   try {
-    // Étape 0: Persister l'image DALL-E si présente
-    if (hasImageToPersist) {
-      console.log('[Publication] Persistance image DALL-E...');
-      console.log('[Publication] URL source:', studioGeneratedContent.imageUrl);
-      
-      const persistResult = await persistDALLEImage(studioGeneratedContent.imageUrl, slug);
-      
-      if (persistResult.success) {
-        // L'image est persistée - le HTML utilise déjà le bon chemin local
-        // car integrateImageToContent() a mis /images/blog/{slug}.webp
-        studioGeneratedContent.persistedImagePath = persistResult.localPath;
-        studioGeneratedContent.imagePersisted = true;
-        console.log('[Publication] ✅ Image persistée:', persistResult.localPath);
-      } else {
-        // Échec de persistance - on doit mettre l'URL DALL-E temporaire dans le HTML
-        // car le chemin local ne fonctionnera pas
-        console.warn('[Publication] ⚠️ Échec persistance, fallback URL temporaire');
-        const localImagePath = `/images/blog/${slug}.webp`;
-        studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-          localImagePath,
-          studioGeneratedContent.imageUrl
-        );
-        studioGeneratedContent.imagePersisted = false;
-      }
-      
-      updatePublishStep('step0', 'done');
-    }
-    
     // Étape 1: Préparer le contenu
     updatePublishStep('step1', 'done');
     updatePublishStep('step2', 'active');
@@ -2620,42 +2182,6 @@ async function publishContent() {
         <p class="error-note">Vous pouvez télécharger le HTML et le publier manuellement.</p>
       </div>
     `;
-  }
-}
-
-/**
- * Persiste une image DALL-E dans le repo GitHub
- */
-async function persistDALLEImage(imageUrl, slug) {
-  try {
-    const response = await fetchAPI('/api/dalle/persist', {
-      method: 'POST',
-      body: JSON.stringify({
-        imageUrl: imageUrl,
-        slug: slug
-      })
-    });
-    
-    if (!response.ok) {
-      console.warn('[Persist Image] Endpoint non disponible, mode fallback');
-      return { success: false, localPath: `/images/blog/${slug}.webp` };
-    }
-    
-    const result = await response.json();
-    
-    if (result.status === 'ok' && result.data) {
-      return {
-        success: !result.data.simulated,
-        localPath: result.data.localPath,
-        githubUrl: result.data.githubUrl
-      };
-    }
-    
-    return { success: false, localPath: `/images/blog/${slug}.webp` };
-    
-  } catch (error) {
-    console.error('[Persist Image] Erreur:', error);
-    return { success: false, localPath: `/images/blog/${slug}.webp` };
   }
 }
 
