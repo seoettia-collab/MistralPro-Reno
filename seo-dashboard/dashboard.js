@@ -299,6 +299,9 @@ async function loadCockpit() {
     
     // Render
     renderCockpitV2(cockpitCache);
+    
+    // Charger les articles publiés
+    loadMyArticles();
 
   } catch (err) {
     container.innerHTML = `<p class="error">Erreur de chargement</p><p class="error-detail">${escapeHtml(err.message)}</p>`;
@@ -599,7 +602,20 @@ function renderCockpitV2(data) {
           </div>
         </div>
 
-        <!-- SECTION 8 : Bouton Audit IA -->
+        <!-- SECTION 8 : Mes Articles -->
+        <div class="cockpit-section cockpit-my-articles">
+          <div class="section-header">
+            <h4>📝 Mes Articles</h4>
+            <button class="btn-small btn-secondary" onclick="loadMyArticles()">
+              🔄 Actualiser
+            </button>
+          </div>
+          <div id="my-articles-container" class="my-articles-container">
+            <p class="articles-placeholder">Chargement...</p>
+          </div>
+        </div>
+
+        <!-- SECTION 9 : Bouton Audit IA -->
         <div class="cockpit-section cockpit-cta">
           <div class="cta-box">
             <div class="cta-info">
@@ -767,6 +783,136 @@ function launchAuditIAWithScan() {
  */
 function launchAuditIA() {
   alert('🚀 Audit IA\n\nCette fonctionnalité sera disponible dans la version V2.2.\n\nElle analysera toutes les données du Cockpit avec Claude pour produire un audit final exploitable.');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// V2.19 — Mes Articles (liste des articles publiés)
+// ══════════════════════════════════════════════════════════════════════════════
+
+let myArticlesCache = null;
+
+/**
+ * Charge et affiche les articles publiés
+ */
+async function loadMyArticles() {
+  const container = document.getElementById('my-articles-container');
+  if (!container) return;
+  
+  container.innerHTML = '<p class="articles-loading">⏳ Chargement des articles...</p>';
+  
+  try {
+    const response = await fetchAPI('/api/blog/articles');
+    const result = await response.json();
+    
+    if (result.status !== 'ok') {
+      throw new Error(result.message || 'Erreur API');
+    }
+    
+    myArticlesCache = result.articles;
+    renderMyArticles(result.articles);
+    
+  } catch (error) {
+    console.error('[Mes Articles] Erreur:', error);
+    container.innerHTML = `
+      <div class="articles-error">
+        <p>❌ Erreur: ${error.message}</p>
+        <button class="btn-small btn-secondary" onclick="loadMyArticles()">Réessayer</button>
+      </div>
+    `;
+  }
+}
+
+/**
+ * Affiche la liste des articles
+ */
+function renderMyArticles(articles) {
+  const container = document.getElementById('my-articles-container');
+  if (!container) return;
+  
+  if (!articles || articles.length === 0) {
+    container.innerHTML = `
+      <div class="articles-empty">
+        <p>📭 Aucun article publié</p>
+        <p class="articles-hint">Utilisez le Studio SEO pour créer votre premier article</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="articles-count">${articles.length} article${articles.length > 1 ? 's' : ''} publié${articles.length > 1 ? 's' : ''}</div>
+    <div class="articles-grid">
+      ${articles.map(article => `
+        <div class="article-card" data-slug="${article.slug}">
+          <div class="article-card-image">
+            ${article.imageUrl 
+              ? `<img src="${article.imageUrl}" alt="${article.slug}" loading="lazy" onerror="this.src='/images/placeholder.webp'">`
+              : `<div class="article-no-image">📄</div>`
+            }
+          </div>
+          <div class="article-card-body">
+            <h5 class="article-card-title">${formatSlugToTitle(article.slug)}</h5>
+            <div class="article-card-actions">
+              <a href="${article.url}" target="_blank" class="btn-small btn-primary" title="Voir l'article">
+                👁️ Voir
+              </a>
+              <button class="btn-small btn-danger" onclick="confirmDeleteArticle('${article.slug}')" title="Supprimer">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/**
+ * Convertit un slug en titre lisible
+ */
+function formatSlugToTitle(slug) {
+  return slug
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase())
+    .substring(0, 50) + (slug.length > 50 ? '...' : '');
+}
+
+/**
+ * Confirme la suppression d'un article
+ */
+function confirmDeleteArticle(slug) {
+  if (!confirm(`Supprimer l'article "${formatSlugToTitle(slug)}" ?\n\nCette action est irréversible.`)) {
+    return;
+  }
+  deleteArticle(slug);
+}
+
+/**
+ * Supprime un article
+ */
+async function deleteArticle(slug) {
+  showNotification('🗑️ Suppression en cours...', 'info');
+  
+  try {
+    const response = await fetchAPI(`/api/blog/articles/${slug}`, {
+      method: 'DELETE'
+    });
+    
+    const result = await response.json();
+    
+    if (result.status !== 'ok') {
+      throw new Error(result.message || 'Erreur suppression');
+    }
+    
+    showNotification(`✅ Article "${formatSlugToTitle(slug)}" supprimé`, 'success');
+    
+    // Rafraîchir la liste
+    loadMyArticles();
+    
+  } catch (error) {
+    console.error('[Supprimer Article] Erreur:', error);
+    showNotification(`❌ Erreur: ${error.message}`, 'error');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

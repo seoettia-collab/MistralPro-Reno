@@ -9174,3 +9174,140 @@ select:focus {
   }
 }
 
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   V2.19 — Mes Articles (Section Cockpit)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.cockpit-my-articles {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.my-articles-container {
+  margin-top: 1rem;
+}
+
+.articles-loading,
+.articles-placeholder {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+}
+
+.articles-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.articles-empty p:first-child {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.articles-hint {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.articles-error {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--error);
+}
+
+.articles-count {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.article-card {
+  background: var(--bg-dark);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.article-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.article-card-image {
+  height: 100px;
+  background: #2a2a3e;
+  overflow: hidden;
+}
+
+.article-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--text-secondary);
+}
+
+.article-card-body {
+  padding: 0.75rem;
+}
+
+.article-card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--text-primary);
+}
+
+.article-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.article-card-actions .btn-small {
+  flex: 1;
+  text-align: center;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.btn-danger {
+  background: var(--error);
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+@media (max-width: 768px) {
+  .articles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

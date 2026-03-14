@@ -129,6 +129,10 @@ app.use('/api', auditIARoutes);
 const dalleRoutes = require('./routes/dalle');
 app.use('/api', dalleRoutes);
 
+// Routes Blog Articles (liste, suppression)
+const blogArticlesRoutes = require('./routes/blogArticles');
+app.use('/api', blogArticlesRoutes);
+
 // Routes Optimize (Page Optimization)
 const optimizeRoutes = require('./routes/optimize');
 app.use('/api', optimizeRoutes);

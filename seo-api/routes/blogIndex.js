@@ -58,6 +58,19 @@ router.post('/blog/add-article', async (req, res) => {
     const currentContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
     const fileSha = fileData.sha;
     
+    // VÉRIFICATION DOUBLON : Si l'article existe déjà, ne pas l'ajouter
+    if (currentContent.includes(`blog/${slug}.html`)) {
+      console.log(`[BlogIndex] Article "${slug}" existe déjà dans blog.html, skip`);
+      return res.json({
+        status: 'ok',
+        data: {
+          slug: slug,
+          skipped: true,
+          message: 'Article déjà présent dans blog.html'
+        }
+      });
+    }
+    
     // 2. Générer la carte HTML du nouvel article
     const today = new Date();
     const dateStr = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
