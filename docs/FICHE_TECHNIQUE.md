@@ -23,7 +23,7 @@
 | `services.html` | Liste des services | 32K |
 | `projets.html` | Réalisations / Portfolio | 27K |
 | `blog.html` | Liste des articles | 18K |
-| `cost_calculator.html` | Simulateur de devis (v7.7) | ~70K |
+| `cost_calculator.html` | Simulateur de devis (v10.8) | ~70K |
 | `degat-des-eaux.html` | Landing page urgence | 34K |
 | `mentions-legales.html` | Mentions légales | 14K |
 | `merci.html` | Page de remerciement | 5.5K |
@@ -70,7 +70,7 @@
 | Fichier | Rôle | Taille |
 |---------|------|--------|
 | `main.js` | Script principal du site | 5K |
-| `cost_calculator.js` | Simulateur de devis v7.7 (voir `/docs/SIMULATEUR.md`) | ~20K |
+| `cost_calculator.js` | Simulateur de devis v10.8 (voir `/docs/SIMULATEUR.md`) | ~25K |
 
 ### Dashboard Google Ads (intégré)
 
@@ -256,7 +256,7 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 - [ ] `salle_de_bain.webp` : 1.9M — trop lourd, à compresser
 - [ ] `image-3.png` : 0 bytes — fichier vide à supprimer
 - [ ] CSS blog : ajouter `.blog-card-img img { object-fit: cover }`
-- [ ] PDF Simulateur : désignations CCTP à intégrer complètement
+- [x] PDF Simulateur : désignations CCTP intégrées ✅ (v10.8)
 
 ### Checklist blog en cours
 - [x] Point 1 : Images WebP sur cartes blog
@@ -271,23 +271,29 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 
 ## 🆕 NOUVELLES FONCTIONNALITÉS (Mars 2026)
 
-### Simulateur de Devis v7.7
+### Simulateur de Devis v10.8 / CCTP v41
 
 | Fonctionnalité | Description |
 |----------------|-------------|
 | **Panneau récapitulatif CCTP** | Tableau professionnel avec LOT, numérotation (1.1, 1.2...), sous-totaux |
 | **Désignations CCTP + DTU** | Descriptions techniques complètes (matériaux, dimensions, normes) |
 | **Clignotement onglets** | Animation jaune sur onglets non utilisés, arrêt automatique après sélection |
-| **Structure Plomberie étendue** | WC, Lavabo, Douche, Baignoire, Dépose, Équipements, Tuyauterie, Pack SDB, Diagnostic |
-| **Électricité CCTP** | Installation, Chauffage, Climatisation, VMC avec normes NF C15-100 et DTU |
+| **PDF optimisé** | Désignations multi-lignes, bande LOT bleu pâle, tableau totaux élégant |
+| **Acompte 40%** | Conditions de paiement avec 40% à la signature |
+| **Pied de page complet** | Capital, RCS, Tél, Email, URL, Garantie décennale |
+| **Gamme + Superficie** | Peinture, Sols, Murs, Préparation, Extérieur, Gros Œuvre avec saisie m²/ml/m³ |
+| **Menuiserie complète** | Intérieure (portes, plinthes), Extérieure (fenêtres, volets), Toiture, Agencement |
 
 ### Commits récents
 
 | Code | Description |
 |------|-------------|
-| SIM-CCTP-01 à 08 | Migration désignations CCTP Plomberie + Électricité |
-| SIM-UX-05 | Clignotement tous les onglets non utilisés |
-| SIM-PREVIEW-04 | Format CCTP professionnel tableau récapitulatif |
+| SIM-PDF-01 à 09 | PDF optimisé (désignations, couleurs, totaux, footer) |
+| SIM-CLEAN-01 | Nettoyage code JS (suppression fonctions parasites) |
+| SIM-AGEN-01 | Agencement CCTP (cuisine, placards, rangements) |
+| SIM-TOIT-01 | Toiture (charpente, couverture, velux, zinguerie) |
+| SIM-MENU-01 | Menuiserie intérieure/extérieure |
+| SIM-GO-01 à 03 | Gros Œuvre (maçonnerie, isolation, plâtrerie, construction) |
 
 ---
 

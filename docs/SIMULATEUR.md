@@ -2,7 +2,7 @@
 
 > **Page :** `cost_calculator.html`  
 > **URL :** https://www.mistralpro-reno.fr/cost_calculator.html  
-> **Version JS :** 7.7
+> **Version JS :** 10.8 / CCTP v41
 
 ---
 
@@ -12,7 +12,7 @@
 |---------|--------|
 | Page HTML | `cost_calculator.html` (~70K) |
 | CSS | `css/cost_calculator.css` (~15K) |
-| JS | `js/cost_calculator.js` (~20K) |
+| JS | `js/cost_calculator.js` (~25K) |
 | Dépendances | jQuery 3.6.0, jsPDF 2.5.1 |
 
 ---
@@ -57,7 +57,7 @@
 
 ---
 
-## 🆕 NOUVELLES FONCTIONNALITÉS (v7.7)
+## 🆕 NOUVELLES FONCTIONNALITÉS (v10.8)
 
 ### Panneau Récapitulatif CCTP
 - Format tableau professionnel : N° | Désignation | Qté | Unité | P.U. HT | Total HT
@@ -76,6 +76,20 @@ Toutes les prestations incluent maintenant des désignations techniques complèt
 - Tous les sub-tabs clignotent en jaune tant qu'ils sont vides
 - Animation `.blink-tab` arrêtée via `.has-selection` quand une prestation est sélectionnée
 - Fonction `updateAllTabs()` gère tous les onglets
+
+### PDF Optimisé (v10.8)
+- Désignations multi-lignes complètes (plus de troncature)
+- Bande LOT bleu pâle uniforme
+- Tableau totaux élégant avec lignes fines
+- Acompte 40% à la signature
+- Pied de page 3 lignes (capital, contact, garantie)
+- 3 lignes horizontales (en-tête, après désignations, pied de page)
+
+### Gamme + Superficie manuelle
+- Peinture : gamme (Rafraîchissement/Standard/Général) × m²
+- Sols : gamme (Entrée/Confort/Premium) × m²
+- Revêtements murs : gamme × m²
+- Préparation, Extérieur, Gros Œuvre : saisie m²/ml/m³
 
 ---
 
@@ -150,7 +164,7 @@ Fourniture et pose de [PRODUIT] [DIMENSIONS] [MATIÈRE] [CARACTÉRISTIQUES] [ACC
 
 ---
 
-## 🔧 STRUCTURE JS (v7.7)
+## 🔧 STRUCTURE JS (v10.8)
 
 ### allSelects (mapping catégorie → IDs)
 
@@ -168,9 +182,18 @@ const allSelects = {
     "select-rad-500", "select-rad-1500", "select-rad-2000", "select-seche-serv",
     "select-clim", "select-vmc-simple", "select-vmc-double", "select-aerateur"
   ],
-  peinture: [...],
-  "gros-oeuvre": [...],
-  menuiserie: [...]
+  peinture: [
+    "select-peinture-murs-gamme", "select-peinture-plaf-gamme",
+    "select-parquet-gamme", "select-carrelage-gamme", "select-lino-gamme",
+    "select-faience-gamme", "select-credence-gamme"
+  ],
+  "gros-oeuvre": ["select-mur-porteur"],
+  menuiserie: [
+    "select-portes-int-gamme", "select-plinthes-gamme",
+    "select-porte-entree", "select-volets",
+    "select-charpente", "select-couverture", "select-velux", "select-zinguerie",
+    "select-cuisine", "select-placards", "select-rangements"
+  ]
 };
 ```
 
@@ -184,18 +207,20 @@ const allSelects = {
 | `c()` | Génération et téléchargement PDF |
 | `formatPrice()` | Formatage prix avec espaces (1 000 €) |
 | `getCatName()` | Conversion clé → nom catégorie |
+| `u()` | Formatage prix PDF |
+| `m()` | Dessin logo fallback PDF |
 
 ---
 
-## 📄 GÉNÉRATION PDF
+## 📄 GÉNÉRATION PDF (v10.8)
 
-### Colonnes (v7.7)
+### Colonnes
 
-| N° | DÉSIGNATION | QTÉ | P.U. TTC | TOTAL TTC |
-|----|-------------|-----|----------|-----------|
+| N° | DÉSIGNATION | QTÉ | P.U. TTC | TTC |
+|----|-------------|-----|----------|-----|
 
-- **Colonne TVA supprimée** (TVA 20% fixe affichée en bas)
-- **Désignation élargie** (75 caractères max)
+- **Désignations multi-lignes** (plus de troncature, texte complet)
+- **Bande LOT bleu pâle** (209,225,247) avec texte bleu foncé
 - **Prix en TTC** (plus clair pour le client)
 
 ### Structure du PDF
@@ -204,18 +229,33 @@ const allSelects = {
 ┌─────────────────────────────────────────────────────────┐
 │  [LOGO]                              Devis              │
 │  Mistral Pro Reno                    N° DEV-YYYYMMDD-XXXX│
-├─────────────────────────────────────────────────────────┤
+├────────────────── LIGNE HORIZONTALE ────────────────────┤
 │  N° │ DÉSIGNATION                    │ QTÉ │ P.U. │ TTC │
 ├─────────────────────────────────────────────────────────┤
-│  1  │ PLOMBERIE & SANITAIRES         │     │      │ XXX€│
+│  1  │ PLOMBERIE & SANITAIRES (bleu pâle)     │ XXX€│
 │  1.1│ Fourniture et pose de WC...    │ 1 u │ 780€ │ 780€│
-├─────────────────────────────────────────────────────────┤
-│                              Total HT    │   XXXX €    │
-│                              TVA 20%     │   XXXX €    │
-│                              Total TTC   │   XXXX €    │
-│                              NET À PAYER │   XXXX €    │
+│     │ (texte complet multi-lignes)   │     │      │     │
+├────────────────── LIGNE HORIZONTALE ────────────────────┤
+│  Conditions de paiement      │  Total net HT │  XXXX € │
+│  Acompte 40% soit XXX € TTC  │  TVA 20,00 %  │  XXXX € │
+│  Reste à facturer : XXX € TTC│  Total TTC    │  XXXX € │
+│                              │  NET À PAYER  │  XXXX € │
+├────────────────── LIGNE HORIZONTALE ────────────────────┤
+│  capital 1000€ - RCS Paris - APE 4120A                  │
+│  Tél - Email - URL                                      │
+│  Garantie décennale HOKEN - Couverture France           │
 └─────────────────────────────────────────────────────────┘
 ```
+
+### Éléments PDF
+
+| Élément | Détail |
+|---------|--------|
+| **3 lignes horizontales** | En-tête, après désignations, pied de page |
+| **Bande LOT** | Bleu pâle uniforme (209,225,247) |
+| **Acompte** | 40% à la signature |
+| **Footer 3 lignes** | Capital/RCS, Contact, Garantie |
+| **Saut de page auto** | Bloc totaux reste groupé |
 
 ---
 
@@ -258,4 +298,4 @@ POST https://mistralpro-reno-backend.onrender.com/api/send-devis
 
 ---
 
-*Dernière mise à jour : 14 mars 2026*
+*Dernière mise à jour : 14 mars 2026 — v10.8 / CCTP v41*
