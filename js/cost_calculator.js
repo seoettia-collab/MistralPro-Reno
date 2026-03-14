@@ -467,13 +467,13 @@ const w=S.toLocaleDateString("fr-FR"),P="DEV-"+C.getFullYear()+String(C.getMonth
 let k=15;if(i)try{y.addImage(i,"PNG",15,k,40,40)}catch(t){m(y,k)}else m(y,k);
 y.setFontSize(28),y.setTextColor(74,144,226),y.setFont(void 0,"bold"),y.text("Devis",175,20),y.setFontSize(9),y.setTextColor(80,80,80),y.setFont(void 0,"normal"),y.text("N° "+P,150,28),y.text("En date du : "+T,150,32),y.text("Valable jusqu'au : "+w,150,36),y.text("Votre contact : Mistral",150,40),y.text("Tél : "+a,150,44),y.text("Email : "+s,150,48),k=60,y.setDrawColor(74,144,226),y.setLineWidth(.5),y.line(15,k,195,k),k=68,y.setFontSize(12),y.setTextColor(74,144,226),y.setFont(void 0,"bold"),y.text("Mistral Pro Reno",15,k),k+=5,y.setFontSize(9),y.setTextColor(0,0,0),y.setFont(void 0,"normal"),y.text(o,15,k),k+=4,y.text(n,15,k),k+=4,y.text("TVA N° FR74851558882",15,k),k+=4,y.setTextColor(74,144,226),y.setFont(void 0,"bold"),y.text("Tél : "+a,15,k),k+=4,y.setTextColor(0,0,0),y.setFont(void 0,"normal"),y.text("Email : "+s,15,k);
 let D=68;y.setFontSize(11),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.text(c,110,D),D+=5,y.setFontSize(9),y.setFont(void 0,"normal"),f&&(y.text(f,110,D),D+=4);
-const R=[v,x].filter(Boolean).join(" ");y.text(R,110,D),D+=4,y.text("France",110,D),D+=4,y.text(h,110,D),D+=4,g&&y.text(g,110,D),k=95,y.setFontSize(11),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.text("Devis Estimatif - Travaux de Rénovation",15,k),k+=8,y.setFillColor(74,144,226),y.rect(15,k-4,180,7,"F"),y.setTextColor(255,255,255),y.setFontSize(8),y.setFont(void 0,"bold"),y.text("N°",17,k),y.text("DÉSIGNATION",27,k),y.text("QTÉ",145,k),y.text("P.U. TTC",160,k),y.text("TOTAL TTC",175,k),k+=5,y.setTextColor(0,0,0);
+const R=[v,x].filter(Boolean).join(" ");y.text(R,110,D),D+=4,y.text("France",110,D),D+=4,y.text(h,110,D),D+=4,g&&y.text(g,110,D),k=95,y.setFontSize(11),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.text("Devis Estimatif - Travaux de Rénovation",15,k),k+=8,y.setFillColor(74,144,226),y.rect(15,k-4,180,7,"F"),y.setTextColor(255,255,255),y.setFontSize(8),y.setFont(void 0,"bold"),y.text("N°",17,k),y.text("DÉSIGNATION",27,k),y.text("QTÉ",145,k),y.text("P.U. TTC",160,k),y.text("TTC",178,k),k+=5,y.setTextColor(0,0,0);
 let E=0,z=1;Object.keys(b).forEach(t=>{const e=b[t];let o=0;e.forEach(t=>o+=t.qty*t.price),k>250&&(y.addPage(),k=20),k+=6;
 // Lot header - dégradé bleu (haut bleu foncé, bas bleu clair 25%)
 const lotY=k-4;
 y.setFillColor(74,144,226);y.rect(15,lotY,180,3,"F");
 y.setFillColor(149,189,241);y.rect(15,lotY+3,180,3,"F");
-y.setFont(void 0,"bold"),y.setFontSize(9),y.setTextColor(255,255,255),y.text(z+"",17,k),y.text(t.toUpperCase(),27,k);const lotTTC=o*1.2;y.text(u(lotTTC),180,k);y.setTextColor(0,0,0);let n=1;e.forEach(t=>{
+y.setFontSize(8),y.setFont(void 0,"bold"),y.setTextColor(255,255,255),y.text(z+"",17,k),y.text(t.toUpperCase(),27,k);const lotTTC=o*1.2;y.text(u(lotTTC),180,k);y.setTextColor(0,0,0);let n=1;e.forEach(t=>{
 // Calcul hauteur nécessaire pour la désignation
 const desc=t.desc;
 const maxWidth=115;
@@ -486,7 +486,7 @@ k+=blockHeight;
 const baseY=k-blockHeight+lineHeight;
 const ttc=(t.qty*t.price)*1.2;
 E+=t.qty*t.price;
-y.setFont(void 0,"normal"),y.setFontSize(7);
+y.setFontSize(8),y.setFont(void 0,"normal");
 y.text(z+"."+n,17,baseY);
 // Désignation multi-lignes
 lines.forEach((line,idx)=>{y.text(line,27,baseY+idx*lineHeight)});
