@@ -2343,9 +2343,15 @@ function validateArticle() {
   stateArticle.status = 'validated';
   stateArticle.validatedAt = new Date().toISOString();
   
-  // Mettre à jour l'image si uploadée
-  if (uploadedImageData) {
+  // Mettre à jour l'image si uploadée (multi-images)
+  const mainImage = uploadedImages.find(img => img.isMain);
+  if (mainImage) {
     stateArticle.imageURL = `/images/blog/${stateArticle.slug}.webp`;
+  }
+  
+  // Sauvegarder le contenu validé
+  if (studioGeneratedContent) {
+    saveContent(studioGeneratedContent);
   }
   
   // Mettre à jour l'UI
