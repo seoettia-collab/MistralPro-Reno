@@ -54,6 +54,7 @@ let html="";
 let totalItems=0;
 let totalHT=0;
 const categories={};
+const lotNames={"Plomberie & Sanitaires":"LOT 1 - PLOMBERIE & SANITAIRES","Électricité":"LOT 2 - ÉLECTRICITÉ","Peinture & Revêtements":"LOT 3 - PEINTURE & REVÊTEMENTS","Gros Œuvre":"LOT 4 - GROS ŒUVRE","Menuiserie":"LOT 5 - MENUISERIE"};
 
 // Collecter dépose (checkboxes + selects carrelage) en une seule ligne
 const deposeItems=t('.depose-item:checked');
@@ -78,9 +79,9 @@ deposeLabels.push(deposeSelectSol.find("option:selected").data("label").replace(
 deposeTotal+=solVal;
 }
 deposeTotal+=80;
-const deposeLabel="Dépose "+deposeLabels.join(", ")+" évacuation déchetterie comprise";
+const deposeLabel="Dépose "+deposeLabels.join(", ")+", y compris déconnexion, protection des ouvrages existants, tri sélectif et évacuation en déchetterie agréée";
 if(!categories["Plomberie & Sanitaires"])categories["Plomberie & Sanitaires"]=[];
-categories["Plomberie & Sanitaires"].push({label:deposeLabel,qty:1,price:deposeTotal});
+categories["Plomberie & Sanitaires"].push({label:deposeLabel,qty:1,unit:"ens",pu:deposeTotal,total:deposeTotal});
 totalItems++;
 totalHT+=deposeTotal;
 }
@@ -93,7 +94,7 @@ const label=t(this).data("label")||t(this).closest("label").find("strong").text(
 const panelCat=t(this).closest(".category-panel").data("category");
 const catName=getCatName(panelCat);
 if(!categories[catName])categories[catName]=[];
-categories[catName].push({label:label,qty:1,price:price});
+categories[catName].push({label:label,qty:1,unit:"u",pu:price,total:price});
 totalItems++;
 totalHT+=price;}});
 
@@ -108,19 +109,25 @@ const selectedOption=sel.find("option:selected");
 const label=selectedOption.data("label")||selectedOption.text().split("€")[0].trim();
 const catName=getCatName(cat);
 if(!categories[catName])categories[catName]=[];
-categories[catName].push({label:label,qty:1,price:prix});
+categories[catName].push({label:label,qty:1,unit:"u",pu:prix,total:prix});
 totalItems++;
 totalHT+=prix;}})});
 
-// Générer HTML
+// Générer HTML format CCTP
 if(totalItems===0){
 html='<p class="preview-empty">Sélectionnez des prestations pour voir le récapitulatif</p>'}
 else{
-html='<div class="preview-table-header"><span>Désignation</span><span>Qté</span><span>HT</span></div>';
+html='<div class="preview-table-header"><span>N°</span><span>Désignation</span><span>Qté</span><span>Unité</span><span>P.U. HT</span><span>Total HT</span></div>';
+let lotNum=0;
 Object.keys(categories).forEach(function(cat){
-html+='<div class="preview-cat-title">'+cat+'</div>';
+lotNum++;
+let lotTotal=0;
+categories[cat].forEach(function(item){lotTotal+=item.total});
+html+='<div class="preview-lot"><span class="preview-lot-title">'+(lotNames[cat]||cat)+'</span><span class="preview-lot-subtotal">'+formatPrice(lotTotal)+'</span></div>';
+let itemNum=0;
 categories[cat].forEach(function(item){
-html+='<div class="preview-item"><span class="preview-item-label">'+item.label+'</span><span class="preview-item-qty">'+item.qty+'</span><span class="preview-item-price">'+formatPrice(item.price)+'</span></div>'})})
+itemNum++;
+html+='<div class="preview-item"><span class="preview-item-num">'+lotNum+'.'+itemNum+'</span><span class="preview-item-label">'+item.label+'</span><span class="preview-item-qty">'+item.qty+'</span><span class="preview-item-unit">'+item.unit+'</span><span class="preview-item-pu">'+formatPrice(item.pu)+'</span><span class="preview-item-total">'+formatPrice(item.total)+'</span></div>'})})
 }
 previewList.html(html);
 previewCount.text(totalItems+" prestation(s)");
