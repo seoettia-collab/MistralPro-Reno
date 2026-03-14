@@ -991,56 +991,62 @@
                     <div class="sub-content active" data-sub="menu-int">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Portes intérieures (350€/u)</label>
-                                <select id="select-portes-int" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="1050" data-label="Porte intérieure postformée + huisserie bois x3">3 portes - 1 050 €</option>
-                                    <option value="1750" data-label="Porte intérieure postformée + huisserie bois x5">5 portes - 1 750 €</option>
-                                    <option value="2800" data-label="Porte intérieure postformée + huisserie bois x8">8 portes - 2 800 €</option>
+                                <label>🚪 Portes intérieures (pose 80€/u incluse)</label>
+                                <select id="select-portes-int-gamme" class="san-select">
+                                    <option value="0">-- Gamme --</option>
+                                    <option value="190" data-label="Fourniture et pose de porte intérieure standard postformée, huisserie bois, quincaillerie, finition prête à peindre. Gamme Standard (110€ + pose 80€)">Standard (190€/u)</option>
+                                    <option value="330" data-label="Fourniture et pose de porte intérieure pleine âme alvéolaire, huisserie bois, quincaillerie, finition prête à peindre. Gamme Pleine (250€ + pose 80€)">Pleine (330€/u)</option>
+                                    <option value="430" data-label="Fourniture et pose de porte intérieure supérieure âme pleine, huisserie bois massif, quincaillerie renforcée, finition prête à peindre. Gamme Supérieur (350€ + pose 80€)">Supérieur (430€/u)</option>
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>Plinthes (12€/ml)</label>
-                                <select id="select-plinthes" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="360" data-label="Plinthes MDF 10cm pose collée 30ml">30 ml - 360 €</option>
-                                    <option value="600" data-label="Plinthes MDF 10cm pose collée 50ml">50 ml - 600 €</option>
-                                    <option value="1200" data-label="Plinthes MDF 10cm pose collée 100ml">100 ml - 1 200 €</option>
-                                </select>
+                                <label>📦 Quantité</label>
+                                <input type="number" id="input-portes-int-qty" class="qty-input" placeholder="u" min="1" max="20" style="width:80px;">
                             </div>
                         </div>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>📏 Plinthes</label>
+                                <select id="select-plinthes-gamme" class="san-select">
+                                    <option value="0">-- Gamme --</option>
+                                    <option value="12" data-label="Fourniture et pose de plinthes MDF 10cm, pose collée, finition blanche. Gamme Standard">Standard (12€/ml)</option>
+                                    <option value="18" data-label="Fourniture et pose de plinthes bois massif 10cm, pose clouée, finition vernie ou peinte. Gamme Supérieur">Supérieur (18€/ml)</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>📐 Mètres linéaires</label>
+                                <input type="number" id="input-plinthes-ml" class="qty-input" placeholder="ml" min="1" max="500" style="width:80px;">
+                            </div>
+                        </div>
+                        <p id="menu-int-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="menu-ext">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Fenêtres PVC (450€/u)</label>
-                                <select id="select-fenetres" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="1350" data-label="Fenêtre PVC double vitrage 4/16/4 pose comprise x3">3 fenêtres - 1 350 €</option>
-                                    <option value="2250" data-label="Fenêtre PVC double vitrage 4/16/4 pose comprise x5">5 fenêtres - 2 250 €</option>
-                                    <option value="3600" data-label="Fenêtre PVC double vitrage 4/16/4 pose comprise x8">8 fenêtres - 3 600 €</option>
-                                </select>
+                                <label>🪟 Fenêtre PVC (700€ + pose 450€ = 1150€/u)</label>
+                                <input type="number" id="input-fenetres-qty" class="qty-input" placeholder="u" min="1" max="20" style="width:80px;" data-price="1150" data-label="Fourniture et pose de fenêtre PVC double vitrage 4/16/4 argon, isolation thermique renforcée, quincaillerie oscillo-battante, coloris au choix. Fourniture 700€ + Pose 450€">
                             </div>
                             <div class="san-select-group">
-                                <label>Porte entrée</label>
+                                <label>🚪 Porte entrée</label>
                                 <select id="select-porte-entree" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="1800" data-label="Porte entrée aluminium vitrage décoratif">Standard - 1 800 €</option>
-                                    <option value="2500" data-label="Porte entrée acier renforcée 3 points">Renforcée - 2 500 €</option>
-                                    <option value="3500" data-label="Porte entrée blindée A2P certification">Blindée - 3 500 €</option>
+                                    <option value="1800" data-label="Fourniture et pose de porte d'entrée aluminium, vitrage décoratif sécurit, serrure 3 points, seuil alu, joint d'étanchéité.">Standard - 1 800 €</option>
+                                    <option value="2500" data-label="Fourniture et pose de porte d'entrée acier renforcée, serrure 3 points A2P, isolation thermique, seuil alu, joint d'étanchéité.">Renforcée - 2 500 €</option>
+                                    <option value="3500" data-label="Fourniture et pose de porte d'entrée blindée certification A2P BP1, bloc-porte complet, serrure haute sécurité 5 points.">Blindée - 3 500 €</option>
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>Volets (500€/u)</label>
+                                <label>🪟 Volets roulants (500€/u)</label>
                                 <select id="select-volets" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="1500" data-label="Volet roulant électrique alu pose comprise x3">3 volets - 1 500 €</option>
-                                    <option value="2500" data-label="Volet roulant électrique alu pose comprise x5">5 volets - 2 500 €</option>
-                                    <option value="4000" data-label="Volet roulant électrique alu pose comprise x8">8 volets - 4 000 €</option>
+                                    <option value="1500" data-label="Fourniture et pose de volets roulants électriques aluminium, coffre intégré, télécommande, pose comprise. 3 unités">3 volets - 1 500 €</option>
+                                    <option value="2500" data-label="Fourniture et pose de volets roulants électriques aluminium, coffre intégré, télécommande, pose comprise. 5 unités">5 volets - 2 500 €</option>
+                                    <option value="4000" data-label="Fourniture et pose de volets roulants électriques aluminium, coffre intégré, télécommande, pose comprise. 8 unités">8 volets - 4 000 €</option>
                                 </select>
                             </div>
                         </div>
+                        <p id="menu-ext-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="toiture">
@@ -1205,8 +1211,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=9.5" defer></script>
-    <!-- CCTP v28 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=9.6" defer></script>
+    <!-- CCTP v29 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>

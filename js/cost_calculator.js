@@ -1,12 +1,12 @@
 !function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="07 55 18 89 37",s="contact@mistralpro-reno.fr";let i=null;
 
-// TOUS LES SELECTS PAR CATÉGORIE - V15
+// TOUS LES SELECTS PAR CATÉGORIE - V16
 const allSelects={
 plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre","select-pack-sdb","select-depose-mural","select-depose-sol"],
 electricite:["select-tableau","select-points-lum","select-prises","select-inter","select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv","select-clim","select-vmc-simple","select-vmc-double","select-aerateur"],
 peinture:["select-peinture-murs-gamme","select-peinture-plaf-gamme","select-parquet-gamme","select-carrelage-gamme","select-lino-gamme","select-faience-gamme","select-credence-gamme"],
 "gros-oeuvre":["select-mur-porteur"],
-menuiserie:["select-portes-int","select-plinthes","select-fenetres","select-porte-entree","select-volets","select-toiture","select-velux","select-zinguerie","select-cuisine","select-placards","select-rangements"]
+menuiserie:["select-portes-int-gamme","select-plinthes-gamme","select-porte-entree","select-volets","select-toiture","select-velux","select-zinguerie","select-cuisine","select-placards","select-rangements"]
 };
 
 // Liste plate pour compatibilité
@@ -107,6 +107,16 @@ goFields.forEach(function(p){
 const val=parseFloat(t("#"+p.input).val())||0;
 if(val>0){e+=p.price*val;t("#"+p.input).css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#"+p.input).css({"border-color":"#e0e0e0","background":"#fff"})}
 });
+// Calcul menuiserie intérieure (gamme × quantité)
+const portesGamme=parseFloat(t("#select-portes-int-gamme").val())||0;
+const portesQty=parseFloat(t("#input-portes-int-qty").val())||0;
+if(portesGamme>0&&portesQty>0){e+=portesGamme*portesQty;t("#select-portes-int-gamme").css({"border-color":"#27ae60","background":"#e8f5e9"});t("#input-portes-int-qty").css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#select-portes-int-gamme").css({"border-color":"#e0e0e0","background":"#fff"});t("#input-portes-int-qty").css({"border-color":"#e0e0e0","background":"#fff"})}
+const plinthesGamme=parseFloat(t("#select-plinthes-gamme").val())||0;
+const plinthesMl=parseFloat(t("#input-plinthes-ml").val())||0;
+if(plinthesGamme>0&&plinthesMl>0){e+=plinthesGamme*plinthesMl;t("#select-plinthes-gamme").css({"border-color":"#27ae60","background":"#e8f5e9"});t("#input-plinthes-ml").css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#select-plinthes-gamme").css({"border-color":"#e0e0e0","background":"#fff"});t("#input-plinthes-ml").css({"border-color":"#e0e0e0","background":"#fff"})}
+// Calcul menuiserie extérieure (fenêtres)
+const fenetresQty=parseFloat(t("#input-fenetres-qty").val())||0;
+if(fenetresQty>0){e+=1150*fenetresQty;t("#input-fenetres-qty").css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#input-fenetres-qty").css({"border-color":"#e0e0e0","background":"#fff"})}
 // Tous les selects san-select (hors depose-select et peinture gamme/surface)
 sanSelects.forEach(function(id){if(id.startsWith("select-depose-"))return;if(id.startsWith("select-peinture-murs-")||id.startsWith("select-peinture-plaf-"))return;const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
 // Style pour depose-select aussi
@@ -347,12 +357,58 @@ t("#isolation-total-info").html(isolationInfo?("💰 "+isolationInfo):"");
 t("#platrerie-total-info").html(platrerieInfo?("💰 "+platrerieInfo):"");
 t("#construction-total-info").html(constructionInfo?("💰 "+constructionInfo):"");
 
+// Calcul spécial MENUISERIE INTÉRIEURE
+let menuIntInfo="";
+const portesIntGamme=parseFloat(t("#select-portes-int-gamme").val())||0;
+const portesIntQty=parseFloat(t("#input-portes-int-qty").val())||0;
+if(portesIntGamme>0&&portesIntQty>0){
+const total=portesIntGamme*portesIntQty;
+const gammeLabel=t("#select-portes-int-gamme").find("option:selected").data("label")||"Porte intérieure";
+const gammeName=t("#select-portes-int-gamme").find("option:selected").text().split("(")[0].trim();
+const fullLabel=gammeLabel+" - "+portesIntQty+" unités";
+if(!categories["Menuiserie"])categories["Menuiserie"]=[];
+categories["Menuiserie"].push({label:fullLabel,qty:portesIntQty,unit:"u",pu:portesIntGamme,total:total});
+totalItems++;
+totalHT+=total;
+menuIntInfo+="Portes "+gammeName+": "+portesIntQty+"u × "+portesIntGamme+"€ = "+formatPrice(total);
+}
+const plinthesGamme=parseFloat(t("#select-plinthes-gamme").val())||0;
+const plinthesMl=parseFloat(t("#input-plinthes-ml").val())||0;
+if(plinthesGamme>0&&plinthesMl>0){
+const total=plinthesGamme*plinthesMl;
+const gammeLabel=t("#select-plinthes-gamme").find("option:selected").data("label")||"Plinthes";
+const gammeName=t("#select-plinthes-gamme").find("option:selected").text().split("(")[0].trim();
+const fullLabel=gammeLabel+" - "+plinthesMl+"ml";
+if(!categories["Menuiserie"])categories["Menuiserie"]=[];
+categories["Menuiserie"].push({label:fullLabel,qty:plinthesMl,unit:"ml",pu:plinthesGamme,total:total});
+totalItems++;
+totalHT+=total;
+menuIntInfo+=(menuIntInfo?" | ":"")+"Plinthes "+gammeName+": "+plinthesMl+"ml × "+plinthesGamme+"€ = "+formatPrice(total);
+}
+t("#menu-int-total-info").html(menuIntInfo?("💰 "+menuIntInfo):"");
+
+// Calcul spécial MENUISERIE EXTÉRIEURE (fenêtres)
+let menuExtInfo="";
+const fenetresQty=parseFloat(t("#input-fenetres-qty").val())||0;
+if(fenetresQty>0){
+const total=1150*fenetresQty;
+const label=t("#input-fenetres-qty").data("label")||"Fenêtre PVC";
+const fullLabel=label+" - "+fenetresQty+" unités";
+if(!categories["Menuiserie"])categories["Menuiserie"]=[];
+categories["Menuiserie"].push({label:fullLabel,qty:fenetresQty,unit:"u",pu:1150,total:total});
+totalItems++;
+totalHT+=total;
+menuExtInfo+="Fenêtres: "+fenetresQty+"u × 1150€ = "+formatPrice(total);
+}
+t("#menu-ext-total-info").html(menuExtInfo?("💰 "+menuExtInfo):"");
+
 Object.keys(allSelects).forEach(function(cat){
 allSelects[cat].forEach(function(id){
 if(id.startsWith("select-depose-"))return;
 if(id.startsWith("select-peinture-murs-")||id.startsWith("select-peinture-plaf-"))return;
 if(id.startsWith("select-parquet-")||id.startsWith("select-carrelage-")||id.startsWith("select-lino-"))return;
 if(id.startsWith("select-faience-")||id.startsWith("select-credence-"))return;
+if(id.startsWith("select-portes-int-")||id.startsWith("select-plinthes-"))return;
 const sel=t("#"+id);
 const prix=parseFloat(sel.val())||0;
 if(prix>0){
@@ -462,8 +518,8 @@ const tabSelects={
 "isolation":[],
 "platrerie":[],
 "construction":[],
-"menu-int":["select-portes-int","select-plinthes"],
-"menu-ext":["select-fenetres","select-porte-entree","select-volets"],
+"menu-int":["select-portes-int-gamme","select-plinthes-gamme"],
+"menu-ext":["select-porte-entree","select-volets"],
 "toiture":["select-toiture","select-velux","select-zinguerie"],
 "agencement":["select-cuisine","select-placards","select-rangements"]
 };
@@ -542,6 +598,21 @@ const cloture=parseFloat(t("#input-cloture-ml").val())||0;
 const terrassement=parseFloat(t("#input-terrassement-m3").val())||0;
 const fondations=parseFloat(t("#input-fondations-m3").val())||0;
 if(extension>0||construction>0||cloture>0||terrassement>0||fondations>0){hasSelection=true}
+}
+// Cas spécial menu-int: gamme ET quantité
+else if(tab==="menu-int"){
+const portesGamme=parseFloat(t("#select-portes-int-gamme").val())||0;
+const portesQty=parseFloat(t("#input-portes-int-qty").val())||0;
+const plinthesGamme=parseFloat(t("#select-plinthes-gamme").val())||0;
+const plinthesMl=parseFloat(t("#input-plinthes-ml").val())||0;
+if((portesGamme>0&&portesQty>0)||(plinthesGamme>0&&plinthesMl>0)){hasSelection=true}
+}
+// Cas spécial menu-ext: fenêtres OU selects
+else if(tab==="menu-ext"){
+const fenetresQty=parseFloat(t("#input-fenetres-qty").val())||0;
+const porteEntree=parseFloat(t("#select-porte-entree").val())||0;
+const volets=parseFloat(t("#select-volets").val())||0;
+if(fenetresQty>0||porteEntree>0||volets>0){hasSelection=true}
 }else{
 selects.forEach(function(id){if(parseFloat(t("#"+id).val())>0)hasSelection=true});
 }
@@ -560,8 +631,8 @@ t('input[type="range"]').on("input",function(){const e=t(this).attr("id");t("#"+
 t(".qty-input").on("input",function(){const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number",""),n=t("#"+o);if(n.length){let e=parseInt(t(this).val())||0;const a=parseInt(n.attr("max"))||9999;e=Math.min(Math.max(0,e),a),t(this).val(e),n.val(e)}r()}),
 t(".qty-input").on("blur",function(){if(""===t(this).val()){t(this).val(0);const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number","");t("#"+o).val(0),r()}}),
 t('input[type="checkbox"], select').on("change",function(){r();updateAllTabs()}),
-// Peinture + Sols + Murs + Préparation + Extérieur + Gros Œuvre: recalcul sur saisie manuelle
-t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2, #input-parquet-m2, #input-carrelage-m2, #input-lino-m2, #input-faience-m2, #input-credence-m2, #input-depose-m2, #input-ragreage-m2, #input-chape-m2, #input-ravalement-m2, #input-facade-m2, #input-cloisons-m2, #input-dalle-m2, #input-demo-m3, #input-iso-murs-m2, #input-iso-combles-m2, #input-ite-m2, #input-faux-plafond-m2, #input-doublage-m2, #input-extension-m2, #input-construction-m2, #input-cloture-ml, #input-terrassement-m3, #input-fondations-m3").on("input",function(){r();updateAllTabs()}),
+// Peinture + Sols + Murs + Préparation + Extérieur + Gros Œuvre + Menuiserie: recalcul sur saisie manuelle
+t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2, #input-parquet-m2, #input-carrelage-m2, #input-lino-m2, #input-faience-m2, #input-credence-m2, #input-depose-m2, #input-ragreage-m2, #input-chape-m2, #input-ravalement-m2, #input-facade-m2, #input-cloisons-m2, #input-dalle-m2, #input-demo-m3, #input-iso-murs-m2, #input-iso-combles-m2, #input-ite-m2, #input-faux-plafond-m2, #input-doublage-m2, #input-extension-m2, #input-construction-m2, #input-cloture-ml, #input-terrassement-m3, #input-fondations-m3, #input-portes-int-qty, #input-plinthes-ml, #input-fenetres-qty").on("input",function(){r();updateAllTabs()}),
 t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r(),updateAllTabs())}),
 // Reset par section
 t(".btn-section-reset").on("click",function(){
