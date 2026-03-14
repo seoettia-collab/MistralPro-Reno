@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('[Nav] Onglet Audit IA activé');
     } else if (targetTab === 'studio-seo') {
       console.log('[Nav] Onglet Studio SEO activé');
+      displayStudioRecommendations();
     } else if (targetTab === 'searchconsole') {
       loadQueries();
       initHistorySection();
@@ -1350,7 +1351,100 @@ function goToStudioSEO(keyword, actionId) {
       keywordInput.value = keyword;
       console.log('[Studio SEO] Mot-clé pré-rempli:', keyword);
     }
+    
+    // Afficher les recommandations IA si disponibles
+    displayStudioRecommendations();
   }, 100);
+}
+
+/**
+ * Affiche les recommandations IA dans le Studio SEO
+ */
+function displayStudioRecommendations() {
+  const container = document.getElementById('studio-recommendations');
+  const listContainer = document.getElementById('recommendations-list');
+  
+  if (!container || !listContainer) return;
+  
+  // Récupérer les décisions create_content du dernier audit
+  if (!lastAuditIA) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  const decisions = lastAuditIA.decisions || lastAuditIA.actions || [];
+  const createContentDecisions = decisions.filter(d => d.type === 'create_content');
+  
+  if (createContentDecisions.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  // Afficher la section
+  container.style.display = 'block';
+  
+  // Générer les cartes de recommandations
+  listContainer.innerHTML = createContentDecisions.map((decision, idx) => {
+    const title = decision.title_suggested || decision.keyword || 'Contenu recommandé';
+    const keyword = decision.keyword || decision.target || '';
+    const impact = decision.impact_score || decision.impactScore || 50;
+    const reason = decision.reason || '';
+    const competitor = decision.competitor || '';
+    const impactColor = impact >= 70 ? '#10b981' : impact >= 40 ? '#f59e0b' : '#9ca3af';
+    
+    return `
+      <div class="recommendation-card" data-keyword="${escapeHtml(keyword)}">
+        <div class="recommendation-header">
+          <div class="recommendation-impact" style="background: ${impactColor}20; color: ${impactColor};">
+            ${impact}
+          </div>
+          <div class="recommendation-info">
+            <h4 class="recommendation-title">${escapeHtml(title)}</h4>
+            <p class="recommendation-keyword">🔑 ${escapeHtml(keyword)}</p>
+          </div>
+        </div>
+        ${reason ? `<p class="recommendation-reason">${escapeHtml(reason)}</p>` : ''}
+        ${competitor ? `<span class="recommendation-competitor">⚔️ vs ${escapeHtml(competitor)}</span>` : ''}
+        <button class="btn-primary btn-generate-reco" onclick="generateFromRecommendation('${escapeHtml(keyword)}', '${escapeHtml(title)}')">
+          ✨ Générer cet article
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+/**
+ * Génère un article depuis une recommandation IA
+ */
+function generateFromRecommendation(keyword, title) {
+  // Pré-remplir le formulaire
+  const keywordInput = document.getElementById('studioKeyword');
+  const contextInput = document.getElementById('studioContext');
+  
+  if (keywordInput) {
+    keywordInput.value = keyword;
+  }
+  
+  if (contextInput && title) {
+    contextInput.value = `Titre suggéré: ${title}`;
+  }
+  
+  // Sélectionner "long" pour les articles recommandés (plus de contenu = mieux SEO)
+  const lengthSelect = document.getElementById('studioLength');
+  if (lengthSelect) {
+    lengthSelect.value = 'long';
+  }
+  
+  // Scroll vers le formulaire
+  document.getElementById('studio-params').scrollIntoView({ behavior: 'smooth' });
+  
+  // Notification
+  showNotification(`📝 "${keyword}" prêt à générer`, 'success');
+  
+  // Auto-lancer la génération après un court délai
+  setTimeout(() => {
+    generateSEOContent();
+  }, 500);
 }
 
 /**
