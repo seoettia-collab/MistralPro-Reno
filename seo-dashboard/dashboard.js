@@ -105,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Charger Cockpit au démarrage
   loadCockpit();
   
+  // Charger les recommandations sauvegardées
+  loadSavedRecommendations();
+  
   // Fermer le sous-menu si clic en dehors
   document.addEventListener('click', (e) => {
     const submenu = document.querySelector('.nav-submenu');
@@ -598,10 +601,45 @@ const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 // Note: La clé API sera fournie via variable d'environnement backend en production
 
 /**
- * Cache pour le dernier audit IA
+ * Cache pour le dernier audit IA — avec persistance localStorage
  */
 let lastAuditIA = null;
 let auditIAInProgress = false;
+
+// Charger les recommandations sauvegardées au démarrage
+function loadSavedRecommendations() {
+  try {
+    const saved = localStorage.getItem('mpr_lastAuditIA');
+    if (saved) {
+      lastAuditIA = JSON.parse(saved);
+      console.log('[Audit IA] Recommandations chargées depuis localStorage');
+      return true;
+    }
+  } catch (e) {
+    console.warn('[Audit IA] Erreur chargement localStorage:', e);
+  }
+  return false;
+}
+
+// Sauvegarder les recommandations
+function saveRecommendations(auditData) {
+  try {
+    localStorage.setItem('mpr_lastAuditIA', JSON.stringify(auditData));
+    console.log('[Audit IA] Recommandations sauvegardées dans localStorage');
+  } catch (e) {
+    console.warn('[Audit IA] Erreur sauvegarde localStorage:', e);
+  }
+}
+
+// Effacer les recommandations
+function clearSavedRecommendations() {
+  try {
+    localStorage.removeItem('mpr_lastAuditIA');
+    console.log('[Audit IA] Recommandations effacées de localStorage');
+  } catch (e) {
+    console.warn('[Audit IA] Erreur suppression localStorage:', e);
+  }
+}
 
 /**
  * Prépare les données du cockpit pour l'analyse Claude
@@ -1072,6 +1110,7 @@ async function launchFullAuditIA() {
     
     // Étape 3: Afficher le résultat
     lastAuditIA = auditResult;
+    saveRecommendations(auditResult); // Sauvegarder dans localStorage
     renderAuditIAResult(auditResult);
     
   } catch (error) {
@@ -1477,8 +1516,9 @@ async function resetRecommendations() {
     return;
   }
   
-  // Vider les recommandations
+  // Vider les recommandations (mémoire + localStorage)
   lastAuditIA = null;
+  clearSavedRecommendations();
   
   // Cacher la section recommandations
   const container = document.getElementById('studio-recommendations');
@@ -1499,10 +1539,8 @@ async function resetRecommendations() {
   
   // Attendre un peu puis lancer l'audit
   setTimeout(() => {
-    if (typeof launchAuditIA === 'function') {
-      launchAuditIA();
-    } else if (typeof startAuditIA === 'function') {
-      startAuditIA();
+    if (typeof launchFullAuditIA === 'function') {
+      launchFullAuditIA();
     } else {
       showNotification('⚠️ Cliquez sur "Lancer Audit IA" manuellement', 'warning');
     }
