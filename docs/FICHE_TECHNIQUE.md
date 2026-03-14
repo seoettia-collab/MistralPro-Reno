@@ -23,7 +23,7 @@
 | `services.html` | Liste des services | 32K |
 | `projets.html` | Réalisations / Portfolio | 27K |
 | `blog.html` | Liste des articles | 18K |
-| `cost_calculator.html` | Simulateur de devis | 63K |
+| `cost_calculator.html` | Simulateur de devis (v7.7) | ~70K |
 | `degat-des-eaux.html` | Landing page urgence | 34K |
 | `mentions-legales.html` | Mentions légales | 14K |
 | `merci.html` | Page de remerciement | 5.5K |
@@ -52,7 +52,7 @@
 | Fichier | Rôle | Taille |
 |---------|------|--------|
 | `style.css` | Styles principaux du site | 20K |
-| `cost_calculator.css` | Simulateur de devis | 13K |
+| `cost_calculator.css` | Simulateur de devis (CCTP + animations) | ~15K |
 | `blog.css` | Styles page blog | 5.5K |
 | `modals.css` | Fenêtres modales | 4K |
 | `lecture.css` | Vue lecture | 3K |
@@ -70,7 +70,7 @@
 | Fichier | Rôle | Taille |
 |---------|------|--------|
 | `main.js` | Script principal du site | 5K |
-| `cost_calculator.js` | Simulateur de devis (voir `/docs/SIMULATEUR.md`) | 15K |
+| `cost_calculator.js` | Simulateur de devis v7.7 (voir `/docs/SIMULATEUR.md`) | ~20K |
 
 ### Dashboard Google Ads (intégré)
 
@@ -250,12 +250,13 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 ## ⚠️ POINTS D'ATTENTION
 
 ### Documentation spécifique
-- **Simulateur de devis** : Voir `/docs/SIMULATEUR.md` pour la documentation complète
+- **Simulateur de devis** : Voir `/docs/SIMULATEUR.md` pour la documentation complète (v7.7)
 
 ### À corriger
 - [ ] `salle_de_bain.webp` : 1.9M — trop lourd, à compresser
 - [ ] `image-3.png` : 0 bytes — fichier vide à supprimer
 - [ ] CSS blog : ajouter `.blog-card-img img { object-fit: cover }`
+- [ ] PDF Simulateur : désignations CCTP à intégrer complètement
 
 ### Checklist blog en cours
 - [x] Point 1 : Images WebP sur cartes blog
@@ -265,6 +266,28 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 - [ ] Point 5 : Section CTA
 - [ ] Point 6 : SEO intro
 - [ ] Point 7 : Pagination
+
+---
+
+## 🆕 NOUVELLES FONCTIONNALITÉS (Mars 2026)
+
+### Simulateur de Devis v7.7
+
+| Fonctionnalité | Description |
+|----------------|-------------|
+| **Panneau récapitulatif CCTP** | Tableau professionnel avec LOT, numérotation (1.1, 1.2...), sous-totaux |
+| **Désignations CCTP + DTU** | Descriptions techniques complètes (matériaux, dimensions, normes) |
+| **Clignotement onglets** | Animation jaune sur onglets non utilisés, arrêt automatique après sélection |
+| **Structure Plomberie étendue** | WC, Lavabo, Douche, Baignoire, Dépose, Équipements, Tuyauterie, Pack SDB, Diagnostic |
+| **Électricité CCTP** | Installation, Chauffage, Climatisation, VMC avec normes NF C15-100 et DTU |
+
+### Commits récents
+
+| Code | Description |
+|------|-------------|
+| SIM-CCTP-01 à 08 | Migration désignations CCTP Plomberie + Électricité |
+| SIM-UX-05 | Clignotement tous les onglets non utilisés |
+| SIM-PREVIEW-04 | Format CCTP professionnel tableau récapitulatif |
 
 ---
 
@@ -310,4 +333,4 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 
 ---
 
-*Dernière mise à jour : 8 mars 2026*
+*Dernière mise à jour : 14 mars 2026*

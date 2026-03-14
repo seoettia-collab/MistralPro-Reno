@@ -1,7 +1,8 @@
 # 📋 FICHE TECHNIQUE — Simulateur de Devis
 
 > **Page :** `cost_calculator.html`  
-> **URL :** https://www.mistralpro-reno.fr/cost_calculator.html
+> **URL :** https://www.mistralpro-reno.fr/cost_calculator.html  
+> **Version JS :** 7.7
 
 ---
 
@@ -9,9 +10,9 @@
 
 | Élément | Valeur |
 |---------|--------|
-| Page HTML | `cost_calculator.html` (63K) |
-| CSS | `css/cost_calculator.css` (13K) |
-| JS | `js/cost_calculator.js` (15K) |
+| Page HTML | `cost_calculator.html` (~70K) |
+| CSS | `css/cost_calculator.css` (~15K) |
+| JS | `js/cost_calculator.js` (~20K) |
 | Dépendances | jQuery 3.6.0, jsPDF 2.5.1 |
 
 ---
@@ -33,21 +34,21 @@
 │  │  │           │  │    │  └─────────────────────────────┘   │ │
 │  │  │ - Nom*    │  │    │                                     │ │
 │  │  │ - Tél*    │  │    │  ┌─────────────────────────────┐   │ │
-│  │  │ - Email*  │  │    │  │ Sous-onglets par catégorie  │   │ │
+│  │  │ - Email*  │  │    │  │ Sous-onglets (clignotants)  │   │ │
 │  │  │ - Adresse │  │    │  └─────────────────────────────┘   │ │
 │  │  │ - CP*     │  │    │                                     │ │
 │  │  │ - Ville   │  │    │  ┌─────────────────────────────┐   │ │
-│  │  └───────────┘  │    │  │ Options (checkbox/slider)   │   │ │
+│  │  └───────────┘  │    │  │ Options (select/checkbox)   │   │ │
 │  │                 │    │  └─────────────────────────────┘   │ │
 │  │  ┌───────────┐  │    │                                     │ │
 │  │  │ TOTAL BOX │  │    └─────────────────────────────────────┘ │
 │  │  │           │  │                                            │
 │  │  │ HT:   €   │  │    ┌─────────────────────────────────────┐ │
-│  │  │ TVA:  €   │  │    │ MOBILE TOTAL BOX (visible mobile)   │ │
-│  │  │ TTC:  €   │  │    └─────────────────────────────────────┘ │
-│  │  │           │  │                                            │
-│  │  │ [Téléch.] │  │                                            │
-│  │  │ [Reset]   │  │                                            │
+│  │  │ TVA:  €   │  │    │ PANNEAU RÉCAPITULATIF CCTP          │ │
+│  │  │ TTC:  €   │  │    │ N° | Désignation | Qté | P.U. | TTC │ │
+│  │  │           │  │    │ LOT 1 - PLOMBERIE          1 500 €  │ │
+│  │  │ [Téléch.] │  │    │ 1.1 WC suspendu...    1 u  650 € ...│ │
+│  │  │ [Reset]   │  │    └─────────────────────────────────────┘ │
 │  │  └───────────┘  │                                            │
 │  └─────────────────┘                                            │
 │                                                                  │
@@ -56,114 +57,146 @@
 
 ---
 
+## 🆕 NOUVELLES FONCTIONNALITÉS (v7.7)
+
+### Panneau Récapitulatif CCTP
+- Format tableau professionnel : N° | Désignation | Qté | Unité | P.U. HT | Total HT
+- Numérotation par LOT (1.1, 1.2, 2.1...)
+- Sous-total par catégorie
+- Footer avec Total HT | TVA 20% | Total TTC
+
+### Désignations CCTP + DTU
+Toutes les prestations incluent maintenant des désignations techniques complètes :
+- Matériaux et dimensions
+- Caractéristiques techniques
+- Accessoires et raccordements inclus
+- Référence DTU applicable
+
+### Clignotement des onglets
+- Tous les sub-tabs clignotent en jaune tant qu'ils sont vides
+- Animation `.blink-tab` arrêtée via `.has-selection` quand une prestation est sélectionnée
+- Fonction `updateAllTabs()` gère tous les onglets
+
+---
+
 ## 📂 CATÉGORIES & PRESTATIONS
 
 ### 1. 🚿 Plomberie & SDB
 
-| Sous-onglet | Type d'input | Prestations |
-|-------------|--------------|-------------|
-| Sanitaires | Checkbox | WC suspendu (400€), Lavabo (350€), Douche italienne (1200€), Baignoire (1500€) |
-| Équipements | Checkbox | Ballon 200L (800€), Adoucisseur (1200€) |
-| Robinetterie | Slider | Robinets (150€/u), Tuyauterie (35€/ml) |
-| Pack SDB | Select + Slider | Packs (4500-15000€), Carrelage SDB (55€/m²) |
+| Sous-onglet | Contenu |
+|-------------|---------|
+| **Sanitaires** | WC (suspendu/à poser), Lavabo (simple/double + robinets), Douche (receveur/porte/colonne/mitigeur), Baignoire, Dépose |
+| **Équipements** | Chauffe-eau (instantané à thermodynamique 270L), Adoucisseur |
+| **Tuyauterie** | PVC Ø32-100, Multicouche Ø16-20, Cuivre Ø10-18 |
+| **Pack SDB** | Standard 4500€ / Confort 8000€ / Premium 15000€ (tout compris) |
+| **Diagnostic** | Recherche fuite, Création point d'eau |
 
 ### 2. ⚡ Électricité
 
-| Sous-onglet | Type d'input | Prestations |
-|-------------|--------------|-------------|
-| Points lumineux | Slider | Points lumineux (80€/u) |
-| Prises | Slider | Prises (60€/u), Interrupteurs (50€/u) |
-| Chauffage | Slider | Radiateurs (300€/u) |
+| Sous-onglet | Contenu |
+|-------------|---------|
+| **Installation** | Tableau (T1 à T5+), Points lumineux, Prises 2P+T, Interrupteurs |
+| **Chauffage** | Radiateurs inertie 500W/1500W/2000W, Sèche-serviettes |
+| **Climatisation** | Mono-split, Multi-split 3 unités, Gainable |
+| **VMC** | Simple flux (auto/hygro B/silence), Double flux (standard/HR/thermo), Aérateurs |
 
 ### 3. 🎨 Peinture & Sols
 
-| Sous-onglet | Type d'input | Prestations |
-|-------------|--------------|-------------|
-| Murs | Slider + Select gamme | Peinture murs (prix selon gamme) |
-| Plafonds | Slider + Select gamme | Peinture plafonds (prix selon gamme) |
-| Parquet | Slider + Select gamme | Parquet massif (prix selon gamme) |
-| Carrelage | Slider + Select gamme | Carrelage sol (prix selon gamme) |
-| Autres sols | Slider | Lino, Faïence, Crédence |
+| Sous-onglet | Contenu |
+|-------------|---------|
+| **Peinture** | Murs, Plafonds (surfaces 30-100m²) |
+| **Sols** | Parquet, Carrelage, Lino/PVC |
+| **Murs** | Faïence, Crédence |
+| **Préparation** | Dépose, Ragréage, Chape |
+| **Extérieur** | Ravalement, Façade |
 
 ### 4. 🧱 Gros Œuvre
 
-| Sous-onglet | Type d'input | Prestations |
-|-------------|--------------|-------------|
-| Démolition | Slider | Démolition (80€/m³) |
-| Maçonnerie | Slider | Cloisons (45€/m²), Dalle béton (70€/m²) |
-| Isolation | Slider | Murs (45€/m²), Combles (35€/m²), ITE (120€/m²) |
-| Plâtrerie | Slider | Faux-plafond (45€/m²), Placo murs (35€/m²) |
-| Extension | Slider | Extension (1800€/m²), Terrassement (50€/m³), Fondations (200€/ml) |
+| Sous-onglet | Contenu |
+|-------------|---------|
+| **Maçonnerie** | Mur porteur, Cloisons, Dalle, Démolition |
+| **Isolation** | Murs, Combles, ITE |
+| **Plâtrerie** | Faux-plafond, Doublage |
+| **Construction** | Extension, Terrassement, Fondations |
 
 ### 5. 🏠 Menuiserie
 
-| Sous-onglet | Type d'input | Prestations |
-|-------------|--------------|-------------|
-| Portes int. | Slider | Portes (350€/u), Plinthes (12€/ml) |
-| Fenêtres | Slider | Fenêtres (450€/u), Porte entrée (1800€/u), Volets (500€/u) |
-| Toiture | Slider | Toiture (120€/m²), Velux (800€/u), Zinguerie (80€/ml) |
-| Rangements | Checkbox | Placards (500€/ml), Dressing (2500€), Bibliothèque (1800€) |
+| Sous-onglet | Contenu |
+|-------------|---------|
+| **Intérieure** | Portes, Plinthes |
+| **Extérieure** | Fenêtres, Porte entrée, Volets |
+| **Toiture** | Couverture, Velux, Zinguerie |
+| **Agencement** | Cuisine, Placards, Rangements |
 
 ---
 
-## 🔄 FLUX DE DONNÉES
+## 📋 FORMAT DÉSIGNATIONS CCTP
 
+### Structure
 ```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Sélection   │────▶│  Calcul JS   │────▶│  Affichage   │
-│  prestations │     │  temps réel  │     │  totaux      │
-└──────────────┘     └──────────────┘     └──────────────┘
-                                                 │
-                                                 ▼
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Webhook     │◀────│  Génération  │◀────│  Clic        │
-│  n8n         │     │  PDF jsPDF   │     │  Télécharger │
-└──────────────┘     └──────────────┘     └──────────────┘
+Fourniture et pose de [PRODUIT] [DIMENSIONS] [MATIÈRE] [CARACTÉRISTIQUES] [ACCESSOIRES INCLUS]. [RACCORDEMENTS]. [DTU]
 ```
+
+### Exemples
+
+**WC Suspendu (650€) :**
+> "Fourniture et pose de WC suspendu céramique blanc brillant, cuvette sans bride rimless, bâti-support autoportant acier galvanisé, réservoir encastré double chasse 3/6L, plaque de commande chromée, abattant frein de chute déclipsable. Raccordement PVC Ø100. Pose selon DTU 60.1"
+
+**Tableau T3 (1200€) :**
+> "Fourniture et pose de tableau électrique pré-équipé logement T3, coffret 3 rangées, disjoncteur abonné, 2 interrupteurs différentiels 40A type A et AC, disjoncteurs divisionnaires, parafoudre, borniers, repérage circuits, mise en conformité NF C15-100"
+
+**Pack SDB Standard (4500€) :**
+> "Pack rénovation salle de bain complet STANDARD comprenant : dépose et évacuation anciens sanitaires (WC, lavabo, douche ou baignoire) et carrelage sol/mur avec transport déchetterie agréée. Fourniture et pose carrelage grès cérame 20x20 antidérapant sol et faïence murale blanc brillant (base 20€/m² fourni). WC à poser céramique blanc sortie horizontale avec réservoir et abattant. Lavabo vasque céramique sur meuble sous-vasque mélaminé 60cm 2 tiroirs..."
 
 ---
 
-## 📊 CALCULS
+## 🔧 STRUCTURE JS (v7.7)
 
-### Formules
+### allSelects (mapping catégorie → IDs)
 
 ```javascript
-// Sous-total HT
-subtotal = Σ (checkbox.price) + Σ (slider.value × slider.price)
-
-// TVA
-vat = subtotal × 0.20
-
-// Total TTC
-total = subtotal + vat
-
-// Acompte (30%)
-acompte = total × 0.30
-
-// Solde
-solde = total - acompte
+const allSelects = {
+  plomberie: [
+    "select-receveur", "select-porte-douche", "select-barre-douche", 
+    "select-mitigeur-douche", "select-baignoire", "select-robinet-baignoire",
+    "select-cumulus", "select-adoucisseur", "select-diagnostic",
+    "select-tuyauterie-pvc", "select-tuyauterie-multi", "select-tuyauterie-cuivre",
+    "select-pack-sdb", "select-depose-mural", "select-depose-sol"
+  ],
+  electricite: [
+    "select-tableau", "select-points-lum", "select-prises", "select-inter",
+    "select-rad-500", "select-rad-1500", "select-rad-2000", "select-seche-serv",
+    "select-clim", "select-vmc-simple", "select-vmc-double", "select-aerateur"
+  ],
+  peinture: [...],
+  "gros-oeuvre": [...],
+  menuiserie: [...]
+};
 ```
 
-### Prix unitaires (référence rapide)
+### Fonctions principales
 
-| Prestation | Prix | Unité |
-|------------|------|-------|
-| WC suspendu | 400 € | u |
-| Douche italienne | 1 200 € | u |
-| Robinets | 150 € | u |
-| Tuyauterie | 35 € | ml |
-| Points lumineux | 80 € | u |
-| Prises | 60 € | u |
-| Carrelage SDB | 55 € | m² |
-| Cloisons | 45 € | m² |
-| Isolation murs | 45 € | m² |
-| Extension | 1 800 € | m² |
-| Portes int. | 350 € | u |
-| Fenêtres | 450 € | u |
+| Fonction | Rôle |
+|----------|------|
+| `r()` | Recalcul total temps réel |
+| `updatePreview()` | Génère le panneau récapitulatif CCTP |
+| `updateAllTabs()` | Gère le clignotement de tous les onglets |
+| `c()` | Génération et téléchargement PDF |
+| `formatPrice()` | Formatage prix avec espaces (1 000 €) |
+| `getCatName()` | Conversion clé → nom catégorie |
 
 ---
 
 ## 📄 GÉNÉRATION PDF
+
+### Colonnes (v7.7)
+
+| N° | DÉSIGNATION | QTÉ | P.U. TTC | TOTAL TTC |
+|----|-------------|-----|----------|-----------|
+
+- **Colonne TVA supprimée** (TVA 20% fixe affichée en bas)
+- **Désignation élargie** (75 caractères max)
+- **Prix en TTC** (plus clair pour le client)
 
 ### Structure du PDF
 
@@ -171,42 +204,34 @@ solde = total - acompte
 ┌─────────────────────────────────────────────────────────┐
 │  [LOGO]                              Devis              │
 │  Mistral Pro Reno                    N° DEV-YYYYMMDD-XXXX│
-│                                      Date: XX/XX/XXXX   │
-│                                      Valable jusqu'au   │
 ├─────────────────────────────────────────────────────────┤
-│  ÉMETTEUR              │  DESTINATAIRE                  │
-│  Mistral Pro Reno      │  [Nom client]                  │
-│  9 rue Anatole de la   │  [Adresse]                     │
-│  Forge, 75017 Paris    │  [CP Ville]                    │
-│  TVA: FR74851558882    │  [Téléphone]                   │
-│  Tél: 07 55 18 89 37   │  [Email]                       │
+│  N° │ DÉSIGNATION                    │ QTÉ │ P.U. │ TTC │
 ├─────────────────────────────────────────────────────────┤
-│  N° │ DÉSIGNATION          │ QTÉ │ P.U. │ TVA │ TOTAL  │
-├─────────────────────────────────────────────────────────┤
-│  1  │ PLOMBERIE            │     │      │     │        │
-│  1.1│ WC Suspendu          │ 1 u │ 400€ │ 20% │ 400€   │
-│  ...│ ...                  │     │      │     │        │
+│  1  │ PLOMBERIE & SANITAIRES         │     │      │ XXX€│
+│  1.1│ Fourniture et pose de WC...    │ 1 u │ 780€ │ 780€│
 ├─────────────────────────────────────────────────────────┤
 │                              Total HT    │   XXXX €    │
 │                              TVA 20%     │   XXXX €    │
 │                              Total TTC   │   XXXX €    │
-│                              ─────────────────────────  │
 │                              NET À PAYER │   XXXX €    │
-├─────────────────────────────────────────────────────────┤
-│  Conditions de paiement                                 │
-│  Acompte 30% à la signature: XXXX € TTC                │
-│  Solde à la fin des travaux: XXXX € TTC                │
-├─────────────────────────────────────────────────────────┤
-│  Capital 1000€ - RCS Paris - APE: 4120A                │
-│  Garantie décennale HOKEN ASSURANCE                    │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Numérotation devis
+---
 
-```
-Format: DEV-YYYYMMDD-XXXX
-Exemple: DEV-20260308-4521
+## 🔔 ANIMATIONS CSS
+
+### Clignotement onglets
+
+```css
+@keyframes tab-blink {
+  0%, 100% { background: var(--yellow); transform: scale(1); }
+  50% { background: #ffeb3b; transform: scale(1.05); box-shadow: 0 0 15px rgba(244,196,48,.8); }
+}
+
+.sub-tab.blink-tab { animation: tab-blink 1.5s ease-in-out infinite; }
+.sub-tab.blink-tab.active,
+.sub-tab.blink-tab.has-selection { animation: none; }
 ```
 
 ---
@@ -219,119 +244,18 @@ Exemple: DEV-20260308-4521
 POST https://mistralpro-reno-backend.onrender.com/api/send-devis
 ```
 
-### Backend
-
-| Élément | Valeur |
-|---------|--------|
-| Repo | `seoettia-collab/mistralpro-reno-backend` |
-| Hébergement | Render.com (Free tier) |
-| Fonction | Envoi email via SMTP OVH |
-| Email destination | `contact@mistralpro-reno.fr` |
-
-### Payload JSON
-
-```json
-{
-  "nom": "Jean Dupont",
-  "telephone": "06 12 34 56 78",
-  "email": "jean@exemple.fr",
-  "adresse": "12 rue Example",
-  "code_postal": "75017",
-  "ville": "Paris",
-  "numero_devis": "DEV-20260308-4521",
-  "date_devis": "08/03/2026",
-  "total_ht": 5000,
-  "tva": 1000,
-  "total_ttc": 6000,
-  "prestations_texte": "[détail formaté]",
-  "form_name": "simulateur-devis",
-  "form_location": "cost_calculator",
-  "submitted_at": "2026-03-08T12:00:00.000Z",
-  "page_url": "https://www.mistralpro-reno.fr/cost_calculator.html"
-}
-```
-
-### Flux d'envoi
-
-```
-Client → Simulateur → fetch() POST → Backend Render → SMTP OVH → contact@mistralpro-reno.fr
-```
+### Payload inclut désormais les désignations CCTP complètes
 
 ---
 
 ## 📱 RESPONSIVE
 
-### Breakpoints
-
 | Largeur | Comportement |
 |---------|--------------|
 | > 1024px | 2 colonnes (sidebar 420px + prestations) |
 | 768-1024px | 2 colonnes (sidebar 260px + prestations) |
-| < 768px | 1 colonne, prestations en premier, formulaire en bas, total mobile visible |
-
-### Éléments mobile
-
-- `.mobile-total-box` : Box totaux visible uniquement sur mobile
-- `.mobile-menu-btn` : Bouton hamburger navigation
-- Synchronisation automatique des totaux desktop ↔ mobile
+| < 768px | 1 colonne, prestations en premier, formulaire en bas |
 
 ---
 
-## ⚠️ POINTS D'ATTENTION
-
-### Maintenance
-
-| Élément | Attention |
-|---------|-----------|
-| JS minifié | Pas de version source disponible — difficile à modifier |
-| Prix hardcodés | Dans le HTML (`data-price`) ET dans le JS (objet `o`) |
-| Webhook URL | Hardcodée dans le JS |
-| Logo | Chargé depuis `images/logo.png` |
-
-### Pour modifier un prix
-
-1. Modifier `data-price` dans `cost_calculator.html`
-2. Modifier l'objet des prix dans `js/cost_calculator.js` (ligne minifiée)
-3. Tester le calcul complet
-
-### Pour ajouter une prestation
-
-1. Ajouter le HTML dans la catégorie appropriée
-2. Si slider : ajouter le prix dans l'objet JS
-3. Tester la génération PDF
-
----
-
-## 🔧 DÉPENDANCES EXTERNES
-
-| Librairie | Version | CDN | Usage |
-|-----------|---------|-----|-------|
-| jQuery | 3.6.0 | code.jquery.com | DOM, événements |
-| jsPDF | 2.5.1 | unpkg.com | Génération PDF |
-
-### Scripts chargés
-
-```html
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="js/main.js?v=2.0"></script>
-<script src="js/cost_calculator.js?v=2.0"></script>
-```
-
----
-
-## 📋 CHECKLIST MODIFICATION
-
-Avant toute modification du simulateur :
-
-- [ ] Sauvegarder `cost_calculator.html`
-- [ ] Sauvegarder `js/cost_calculator.js`
-- [ ] Sauvegarder `css/cost_calculator.css`
-- [ ] Tester sur desktop ET mobile
-- [ ] Tester génération PDF
-- [ ] Vérifier envoi webhook (logs n8n)
-- [ ] Vérifier calculs (HT, TVA, TTC)
-
----
-
-*Dernière mise à jour : 8 mars 2026*
+*Dernière mise à jour : 14 mars 2026*
