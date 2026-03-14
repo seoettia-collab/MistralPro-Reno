@@ -209,6 +209,7 @@
                         <button class="sub-tab" data-sub="equipements">Équipements</button>
                         <button class="sub-tab" data-sub="tuyauterie">Tuyauterie</button>
                         <button class="sub-tab" data-sub="pack-sdb">Pack SDB</button>
+                        <button class="sub-tab" data-sub="diagnostic">Diagnostic</button>
                     </div>
                     
                     <div class="sub-content active" data-sub="sanitaires">
@@ -467,12 +468,17 @@
                                     <option value="1400">Adoucisseur 1 400 €</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-content" data-sub="diagnostic">
+                        <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Diagnostic</label>
-                                <select id="select-diagnostic" class="san-select" data-label="Recherche fuite detection">
+                                <label>Type d'intervention</label>
+                                <select id="select-diagnostic" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="350">Recherche fuite 350 €</option>
-                                    <option value="450">Création point eau 450 €</option>
+                                    <option value="350" data-label="Diagnostic recherche de fuite par détection acoustique et thermographie, rapport d'intervention détaillé avec localisation précise">Recherche fuite 350 €</option>
+                                    <option value="450" data-label="Création point d'eau comprenant alimentation eau chaude/froide PER, évacuation PVC Ø40, raccordements et essais étanchéité. DTU 60.1">Création point eau 450 €</option>
                                 </select>
                             </div>
                         </div>
@@ -1185,8 +1191,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=6.9" defer></script>
-    <!-- CCTP v2 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=7.0" defer></script>
+    <!-- CCTP v3 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
