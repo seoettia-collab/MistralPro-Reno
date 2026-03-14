@@ -8988,3 +8988,189 @@ select:focus {
   font-style: italic;
 }
 
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   V2.18 — Site Scan SEO
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.cockpit-site-scan {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.cockpit-site-scan .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cockpit-site-scan .section-header h4 {
+  margin: 0;
+}
+
+.site-scan-results {
+  min-height: 100px;
+}
+
+.scan-placeholder {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.scan-loading {
+  text-align: center;
+  padding: 2rem;
+}
+
+.scan-loading .spinner {
+  margin: 0 auto 1rem;
+}
+
+.scan-error {
+  text-align: center;
+  padding: 1rem;
+  color: #ef4444;
+}
+
+.scan-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.scan-stat {
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--bg-dark);
+  border-radius: 8px;
+}
+
+.scan-stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.scan-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.scan-stat-critical .scan-stat-value {
+  color: #ef4444;
+}
+
+.scan-stat-warning .scan-stat-value {
+  color: #f59e0b;
+}
+
+.scan-pages-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.scan-page-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-bottom: 0.25rem;
+  background: var(--bg-dark);
+}
+
+.scan-page-item:hover {
+  background: var(--bg-card);
+}
+
+.scan-page-score {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.scan-page-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.scan-page-name {
+  display: block;
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scan-page-url {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.scan-page-issues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  max-width: 200px;
+}
+
+.issue-tag {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.issue-tag.issue-critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.issue-tag.issue-warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.issue-tag.issue-info {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.issue-tag.issue-ok {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.scan-actions {
+  text-align: center;
+  padding-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .scan-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .scan-page-issues {
+    display: none;
+  }
+}
+

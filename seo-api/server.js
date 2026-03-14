@@ -145,6 +145,10 @@ app.use('/api', contentGenRoutes);
 const blogIndexRoutes = require('./routes/blogIndex');
 app.use('/api', blogIndexRoutes);
 
+// Routes Site Scan (Scan SEO complet du site)
+const siteScanRoutes = require('./routes/siteScan');
+app.use('/api/site-scan', siteScanRoutes);
+
 // Route RESET DATABASE (remise à zéro)
 app.post('/api/reset-database', async (req, res) => {
   try {

@@ -586,12 +586,25 @@ function renderCockpitV2(data) {
           </div>
         </div>
 
-        <!-- SECTION 7 : Bouton Audit IA -->
+        <!-- SECTION 7 : Scan SEO Site -->
+        <div class="cockpit-section cockpit-site-scan">
+          <div class="section-header">
+            <h4>🔍 Scan SEO du Site</h4>
+            <button class="btn-small btn-secondary" onclick="runSiteScan()">
+              🔄 Scanner
+            </button>
+          </div>
+          <div id="site-scan-results" class="site-scan-results">
+            <p class="scan-placeholder">Cliquez sur "Scanner" pour analyser toutes les pages du site</p>
+          </div>
+        </div>
+
+        <!-- SECTION 8 : Bouton Audit IA -->
         <div class="cockpit-section cockpit-cta">
           <div class="cta-box">
             <div class="cta-info">
               <h4>🤖 Audit IA complet</h4>
-              <p>Analyse approfondie avec Claude pour obtenir des recommandations personnalisées et actionnables.</p>
+              <p>Analyse approfondie avec Claude basée sur le scan du site pour obtenir des recommandations personnalisées.</p>
             </div>
             <button class="btn-large btn-primary" onclick="goToAuditIA()">
               <span>🚀 Lancer Audit IA</span>
@@ -624,6 +637,129 @@ function toggleAccordion(btn) {
     content.classList.add('open');
     icon.textContent = '▲';
   }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// V2.18 — Scan SEO Site complet
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Cache pour les résultats du scan
+let siteScanResults = null;
+
+/**
+ * Lance le scan SEO de toutes les pages du site
+ */
+async function runSiteScan() {
+  const container = document.getElementById('site-scan-results');
+  
+  container.innerHTML = `
+    <div class="scan-loading">
+      <div class="spinner"></div>
+      <p>Scan en cours... Analyse de toutes les pages</p>
+    </div>
+  `;
+  
+  try {
+    const response = await fetchAPI('/api/site-scan');
+    const result = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.error || 'Erreur lors du scan');
+    }
+    
+    siteScanResults = result.data;
+    renderSiteScanResults(result.data);
+    
+    showNotification(`✅ Scan terminé : ${result.data.pages.length} pages analysées`, 'success');
+    
+  } catch (error) {
+    console.error('[Site Scan] Erreur:', error);
+    container.innerHTML = `
+      <div class="scan-error">
+        <span>❌ Erreur : ${escapeHtml(error.message)}</span>
+        <button class="btn-small btn-secondary" onclick="runSiteScan()">Réessayer</button>
+      </div>
+    `;
+  }
+}
+
+/**
+ * Affiche les résultats du scan SEO
+ */
+function renderSiteScanResults(data) {
+  const container = document.getElementById('site-scan-results');
+  const { pages, summary } = data;
+  
+  // Trier par score (plus bas en premier = plus urgent)
+  const sortedPages = [...pages].sort((a, b) => (a.score || 0) - (b.score || 0));
+  
+  // Couleur du score moyen
+  const avgScoreColor = summary.avgScore >= 70 ? '#10b981' : summary.avgScore >= 40 ? '#f59e0b' : '#ef4444';
+  
+  container.innerHTML = `
+    <div class="scan-summary">
+      <div class="scan-stat">
+        <span class="scan-stat-value" style="color: ${avgScoreColor}">${summary.avgScore}</span>
+        <span class="scan-stat-label">Score moyen</span>
+      </div>
+      <div class="scan-stat">
+        <span class="scan-stat-value">${summary.totalPages}</span>
+        <span class="scan-stat-label">Pages</span>
+      </div>
+      <div class="scan-stat scan-stat-critical">
+        <span class="scan-stat-value">${summary.criticalIssues}</span>
+        <span class="scan-stat-label">Critiques</span>
+      </div>
+      <div class="scan-stat scan-stat-warning">
+        <span class="scan-stat-value">${summary.warningIssues}</span>
+        <span class="scan-stat-label">Warnings</span>
+      </div>
+    </div>
+    
+    <div class="scan-pages-list">
+      ${sortedPages.map(page => {
+        const scoreColor = page.score >= 70 ? '#10b981' : page.score >= 40 ? '#f59e0b' : '#ef4444';
+        const issuesHtml = (page.issues || []).slice(0, 3).map(issue => `
+          <span class="issue-tag issue-${issue.type}">${issue.message}</span>
+        `).join('');
+        
+        return `
+        <div class="scan-page-item">
+          <div class="scan-page-score" style="background: ${scoreColor}">${page.score || 0}</div>
+          <div class="scan-page-info">
+            <span class="scan-page-name">${escapeHtml(page.name)}</span>
+            <span class="scan-page-url">${escapeHtml(page.url.replace('https://www.mistralpro-reno.fr', ''))}</span>
+          </div>
+          <div class="scan-page-issues">
+            ${issuesHtml || '<span class="issue-tag issue-ok">✅ OK</span>'}
+          </div>
+        </div>
+        `;
+      }).join('')}
+    </div>
+    
+    <div class="scan-actions">
+      <button class="btn-primary" onclick="launchAuditIAWithScan()">
+        🤖 Analyser avec Audit IA
+      </button>
+    </div>
+  `;
+}
+
+/**
+ * Lance l'Audit IA avec les données du scan
+ */
+function launchAuditIAWithScan() {
+  if (!siteScanResults) {
+    showNotification('Lancez d\'abord un scan du site', 'warning');
+    return;
+  }
+  
+  // Stocker les données du scan pour l'Audit IA
+  localStorage.setItem('mpr_siteScanData', JSON.stringify(siteScanResults));
+  
+  // Naviguer vers Audit IA et lancer l'analyse
+  goToAuditIA();
 }
 
 /**
@@ -692,6 +828,17 @@ function prepareCockpitDataForAudit() {
   
   const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = cockpitCache;
   
+  // Récupérer les données du scan si disponibles
+  let siteScanData = null;
+  try {
+    const savedScan = localStorage.getItem('mpr_siteScanData');
+    if (savedScan) {
+      siteScanData = JSON.parse(savedScan);
+    }
+  } catch (e) {
+    console.warn('[Audit IA] Pas de données de scan disponibles');
+  }
+  
   // Résumé structuré pour Claude
   return {
     score_global: scoreData.score || 0,
@@ -736,6 +883,24 @@ function prepareCockpitDataForAudit() {
         ].filter(Boolean)
       }))
     },
+    
+    // NOUVEAU : Données du scan SEO du site
+    scan_site: siteScanData ? {
+      score_moyen: siteScanData.summary.avgScore,
+      pages_scannees: siteScanData.summary.totalPages,
+      issues_critiques: siteScanData.summary.criticalIssues,
+      issues_warning: siteScanData.summary.warningIssues,
+      pages: siteScanData.pages.map(p => ({
+        nom: p.name,
+        url: p.url,
+        score: p.score,
+        title: p.title ? { value: p.title.value, status: p.title.status, length: p.title.length } : null,
+        meta: p.metaDescription ? { value: p.metaDescription.value, status: p.metaDescription.status } : null,
+        h1: p.h1 ? { count: p.h1.count, status: p.h1.status, values: p.h1.values } : null,
+        images: p.images || null,
+        issues: p.issues || []
+      }))
+    } : null,
     
     conversions: conversions,
     
