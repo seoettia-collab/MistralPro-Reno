@@ -8437,3 +8437,186 @@ select:focus {
     max-height: 400px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   V2.16 — BLOC DÉCISION & BADGES STATUT
+   ══════════════════════════════════════════════════════════════ */
+
+/* Badges statut header */
+.status-badges {
+  display: flex !important;
+  gap: 0.5rem !important;
+  align-items: center !important;
+}
+
+.article-status-badge {
+  padding: 0.35rem 0.75rem !important;
+  border-radius: 20px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+}
+
+.article-status-badge.status-draft {
+  background: rgba(156, 163, 175, 0.2) !important;
+  color: #9ca3af !important;
+  border: 1px solid rgba(156, 163, 175, 0.3) !important;
+}
+
+.article-status-badge.status-validated {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.article-status-badge.status-published {
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: #6366f1 !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+}
+
+.source-badge {
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-size: 0.7rem !important;
+}
+
+.source-badge.simulated {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #f59e0b !important;
+}
+
+.source-badge.api {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+}
+
+/* Bloc Décision */
+.studio-decision-block {
+  background: var(--bg-card) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 1rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.studio-decision-block h4 {
+  margin: 0 0 0.75rem 0 !important;
+  font-size: 0.95rem !important;
+  color: var(--text-primary) !important;
+}
+
+.decision-actions {
+  display: flex !important;
+  gap: 0.75rem !important;
+  flex-wrap: wrap !important;
+}
+
+.btn-decision {
+  flex: 1 !important;
+  min-width: 160px !important;
+  padding: 0.85rem 1.25rem !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border: 2px solid transparent !important;
+}
+
+.btn-decision:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Bouton Valider */
+.btn-validate {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-validate:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.2) !important;
+  border-color: #10b981 !important;
+}
+
+.btn-validate.active {
+  background: #10b981 !important;
+  color: white !important;
+  border-color: #10b981 !important;
+}
+
+/* Bouton Modifier */
+.btn-modify {
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: #f59e0b !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+.btn-modify:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: #f59e0b !important;
+}
+
+/* Bouton Publier */
+.btn-publish {
+  background: rgba(99, 102, 241, 0.1) !important;
+  color: #6366f1 !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-publish:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.2) !important;
+  border-color: #6366f1 !important;
+}
+
+.btn-publish.ready {
+  background: #6366f1 !important;
+  color: white !important;
+  border-color: #6366f1 !important;
+  animation: pulse-ready 2s infinite !important;
+}
+
+.btn-publish.ready:hover {
+  background: #4f46e5 !important;
+}
+
+@keyframes pulse-ready {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+}
+
+.decision-hint {
+  margin: 0.75rem 0 0 0 !important;
+  font-size: 0.8rem !important;
+  color: var(--text-secondary) !important;
+  text-align: center !important;
+}
+
+/* Actions secondaires */
+.studio-secondary-actions {
+  display: flex !important;
+  gap: 0.5rem !important;
+  justify-content: center !important;
+  padding-top: 0.75rem !important;
+  border-top: 1px solid var(--border-color) !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .decision-actions {
+    flex-direction: column !important;
+  }
+  
+  .btn-decision {
+    min-width: 100% !important;
+  }
+  
+  .status-badges {
+    flex-wrap: wrap !important;
+  }
+}

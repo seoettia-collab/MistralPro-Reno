@@ -1337,6 +1337,61 @@ function executeAuditAction(actionType, target, actionId) {
 let studioGeneratedContent = null;
 let studioInProgress = false;
 
+// ══════════════════════════════════════════════════════════════════════════════
+// V2.16 — État article pour pipeline décision/publication
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Objet état article - stocke toutes les infos pour le pipeline
+ * Statuts possibles : draft | validated | published
+ */
+let stateArticle = {
+  title: null,
+  slug: null,
+  metaTitle: null,
+  metaDescription: null,
+  h1: null,
+  contentHTML: null,
+  imageURL: null,
+  status: 'draft',
+  generatedAt: null,
+  validatedAt: null,
+  publishedAt: null
+};
+
+/**
+ * Réinitialise l'état article
+ */
+function resetStateArticle() {
+  stateArticle = {
+    title: null,
+    slug: null,
+    metaTitle: null,
+    metaDescription: null,
+    h1: null,
+    contentHTML: null,
+    imageURL: null,
+    status: 'draft',
+    generatedAt: null,
+    validatedAt: null,
+    publishedAt: null
+  };
+}
+
+/**
+ * Met à jour l'état article depuis le contenu généré
+ */
+function updateStateArticleFromContent(content) {
+  stateArticle.title = content.title;
+  stateArticle.slug = content.slug;
+  stateArticle.metaTitle = content.title;
+  stateArticle.metaDescription = content.metaDescription;
+  stateArticle.h1 = content.h1;
+  stateArticle.contentHTML = content.htmlContent;
+  stateArticle.status = 'draft';
+  stateArticle.generatedAt = content.generatedAt || new Date().toISOString();
+}
+
 /**
  * Navigation vers Studio SEO IA avec mot-clé pré-rempli
  */
@@ -1773,17 +1828,19 @@ function capitalizeFirst(str) {
 
 // ══════════════════════════════════════════════════════════════════════════════
 /**
- * Affiche le résultat de la génération - V2.15 Studio SEO Finalisé
+ * Affiche le résultat de la génération - V2.16 avec pipeline décision
  */
 function renderStudioResult(content) {
   const resultSection = document.getElementById('studio-result');
   
+  // Mettre à jour l'état article
+  updateStateArticleFromContent(content);
+  
   // Extraire le contenu article du HTML (sans doctype/head/body)
   const articleContent = extractArticleContent(content.htmlContent);
   
-  // Statut du contenu
-  const statusClass = content.simulated ? 'status-simulated' : 'status-ready';
-  const statusText = content.simulated ? '⚠️ Simulation' : '✅ Prêt à publier';
+  // Déterminer le statut à afficher
+  const statusInfo = getStatusDisplay(stateArticle.status, content.simulated);
   
   resultSection.innerHTML = `
     <div class="studio-result-v2">
@@ -1792,7 +1849,12 @@ function renderStudioResult(content) {
       <div class="studio-result-header">
         <div class="result-title-row">
           <h3>Contenu généré</h3>
-          <span class="content-status ${statusClass}">${statusText}</span>
+          <div class="status-badges">
+            <span class="article-status-badge ${statusInfo.class}" id="article-status-badge">
+              ${statusInfo.icon} ${statusInfo.text}
+            </span>
+            ${content.simulated ? '<span class="source-badge simulated">⚠️ Simulation</span>' : '<span class="source-badge api">✨ Claude API</span>'}
+          </div>
         </div>
         <div class="result-quick-stats">
           <span class="stat-item">📄 ${content.type === 'blog' ? 'Article' : content.type === 'service' ? 'Service' : 'Landing'}</span>
@@ -1881,15 +1943,37 @@ function renderStudioResult(content) {
         
       </div>
       
-      <!-- ACTIONS PUBLICATION -->
-      <div class="studio-publish-actions">
-        <button class="btn-large btn-primary" onclick="showPublishForm()">
-          🚀 Publier maintenant
-        </button>
-        <button class="btn-large btn-secondary" onclick="downloadHTML()">
+      <!-- BLOC DÉCISION -->
+      <div class="studio-decision-block">
+        <h4>🎯 Décision</h4>
+        <div class="decision-actions">
+          <button class="btn-decision btn-validate ${stateArticle.status === 'validated' ? 'active' : ''}" 
+                  onclick="validateArticle()" 
+                  ${stateArticle.status === 'published' ? 'disabled' : ''}>
+            ✅ Valider contenu
+          </button>
+          <button class="btn-decision btn-modify" 
+                  onclick="modifyArticle()"
+                  ${stateArticle.status === 'published' ? 'disabled' : ''}>
+            ✏️ Modifier contenu
+          </button>
+          <button class="btn-decision btn-publish ${stateArticle.status === 'validated' ? 'ready' : ''}" 
+                  onclick="publishArticleFromDecision()"
+                  ${stateArticle.status !== 'validated' ? 'disabled' : ''}>
+            🚀 Publier article
+          </button>
+        </div>
+        <p class="decision-hint" id="decision-hint">
+          ${getDecisionHint(stateArticle.status)}
+        </p>
+      </div>
+      
+      <!-- ACTIONS SECONDAIRES -->
+      <div class="studio-secondary-actions">
+        <button class="btn-small btn-secondary" onclick="downloadHTML()">
           💾 Télécharger HTML
         </button>
-        <button class="btn-large btn-ghost" onclick="resetStudio()">
+        <button class="btn-small btn-ghost" onclick="resetStudio()">
           ↩️ Nouveau contenu
         </button>
       </div>
@@ -1902,12 +1986,160 @@ function renderStudioResult(content) {
 }
 
 /**
+ * Retourne l'affichage du statut
+ */
+function getStatusDisplay(status, simulated) {
+  const statuses = {
+    'draft': { class: 'status-draft', icon: '📝', text: 'Brouillon' },
+    'validated': { class: 'status-validated', icon: '✅', text: 'Validé' },
+    'published': { class: 'status-published', icon: '🚀', text: 'Publié' }
+  };
+  return statuses[status] || statuses.draft;
+}
+
+/**
+ * Retourne le message d'aide selon le statut
+ */
+function getDecisionHint(status) {
+  const hints = {
+    'draft': 'Vérifiez le contenu puis validez pour activer la publication.',
+    'validated': 'Contenu validé ! Vous pouvez maintenant publier l\'article.',
+    'published': 'Article publié avec succès.'
+  };
+  return hints[status] || hints.draft;
+}
+
+/**
+ * Valide le contenu de l'article
+ */
+function validateArticle() {
+  if (stateArticle.status === 'published') return;
+  
+  // Mettre à jour l'état
+  stateArticle.status = 'validated';
+  stateArticle.validatedAt = new Date().toISOString();
+  
+  // Mettre à jour l'image si uploadée
+  if (uploadedImageData) {
+    stateArticle.imageURL = `/images/blog/${stateArticle.slug}.webp`;
+  }
+  
+  // Mettre à jour l'UI
+  updateStatusUI();
+  
+  showNotification('✅ Contenu validé ! Prêt pour publication.', 'success');
+}
+
+/**
+ * Retourne au formulaire pour modifier le contenu
+ */
+function modifyArticle() {
+  if (stateArticle.status === 'published') return;
+  
+  // Garder les valeurs actuelles pour pré-remplir
+  const keyword = studioGeneratedContent?.keyword || '';
+  const context = studioGeneratedContent?.context || '';
+  
+  // Réinitialiser le statut
+  stateArticle.status = 'draft';
+  
+  // Afficher le formulaire
+  document.getElementById('studio-result').style.display = 'none';
+  document.getElementById('studio-publish').style.display = 'none';
+  document.getElementById('studio-params').style.display = 'block';
+  
+  // Pré-remplir
+  const keywordInput = document.getElementById('studioKeyword');
+  const contextInput = document.getElementById('studioContext');
+  if (keywordInput) keywordInput.value = keyword;
+  if (contextInput) contextInput.value = context;
+  
+  showNotification('✏️ Modifiez le contenu et régénérez.', 'info');
+}
+
+/**
+ * Lance la publication depuis le bloc décision
+ */
+function publishArticleFromDecision() {
+  if (stateArticle.status !== 'validated') {
+    showNotification('⚠️ Validez d\'abord le contenu.', 'warning');
+    return;
+  }
+  
+  // Construire le payload
+  const payload = buildPublishPayload();
+  console.log('[Publication] Payload:', payload);
+  
+  // Lancer la publication via le flux existant
+  showPublishForm();
+}
+
+/**
+ * Construit le payload de publication
+ */
+function buildPublishPayload() {
+  return {
+    title: stateArticle.title,
+    slug: stateArticle.slug,
+    metaTitle: stateArticle.metaTitle,
+    metaDescription: stateArticle.metaDescription,
+    h1: stateArticle.h1,
+    contentHTML: stateArticle.contentHTML,
+    imageURL: stateArticle.imageURL,
+    source: 'seo-dashboard',
+    status: 'ready_to_publish',
+    generatedAt: stateArticle.generatedAt,
+    validatedAt: stateArticle.validatedAt
+  };
+}
+
+/**
+ * Met à jour l'interface selon le statut
+ */
+function updateStatusUI() {
+  const statusInfo = getStatusDisplay(stateArticle.status, false);
+  
+  // Badge statut
+  const badge = document.getElementById('article-status-badge');
+  if (badge) {
+    badge.className = `article-status-badge ${statusInfo.class}`;
+    badge.innerHTML = `${statusInfo.icon} ${statusInfo.text}`;
+  }
+  
+  // Hint
+  const hint = document.getElementById('decision-hint');
+  if (hint) {
+    hint.textContent = getDecisionHint(stateArticle.status);
+  }
+  
+  // Boutons
+  const btnValidate = document.querySelector('.btn-validate');
+  const btnModify = document.querySelector('.btn-modify');
+  const btnPublish = document.querySelector('.btn-publish');
+  
+  if (btnValidate) {
+    btnValidate.classList.toggle('active', stateArticle.status === 'validated');
+    btnValidate.disabled = stateArticle.status === 'published';
+  }
+  
+  if (btnModify) {
+    btnModify.disabled = stateArticle.status === 'published';
+  }
+  
+  if (btnPublish) {
+    btnPublish.classList.toggle('ready', stateArticle.status === 'validated');
+    btnPublish.disabled = stateArticle.status !== 'validated';
+  }
+}
+
+/**
  * Réinitialise le Studio SEO
  */
 function resetStudio() {
   studioGeneratedContent = null;
   uploadedImageData = null;
   uploadedImageFile = null;
+  resetStateArticle();
   
   document.getElementById('studio-result').style.display = 'none';
   document.getElementById('studio-publish').style.display = 'none';
@@ -2654,6 +2886,10 @@ function simulateDelay(ms) {
 function renderPublishSuccess(finalURL, commitUrl) {
   const publishSection = document.getElementById('studio-publish');
   const isSimulated = !commitUrl;
+  
+  // Mettre à jour l'état article
+  stateArticle.status = 'published';
+  stateArticle.publishedAt = new Date().toISOString();
   
   publishSection.innerHTML = `
     <div class="publish-success">
