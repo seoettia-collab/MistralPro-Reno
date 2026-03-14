@@ -2661,6 +2661,7 @@ async function publishContent() {
         <div class="step-progress" id="step2">2. Push GitHub</div>
         <div class="step-progress" id="step3">3. Déploiement OVH</div>
         <div class="step-progress" id="step4">4. Vérification URL</div>
+        <div class="step-progress" id="step5">5. Ajout au blog</div>
       </div>
     </div>
   `;
@@ -2705,6 +2706,12 @@ async function publishContent() {
     const urlAccessible = await verifyURLDeployed(finalURL, 5, 3000);
     
     updatePublishStep('step4', 'done');
+    updatePublishStep('step5', 'active');
+    
+    // Étape 5: Ajouter l'article à blog.html
+    await addArticleToBlogIndex(studioGeneratedContent);
+    
+    updatePublishStep('step5', 'done');
     
     // Succès
     renderPublishSuccess(finalURL, pushResult.commitUrl);
@@ -2731,6 +2738,67 @@ async function publishContent() {
       </div>
     `;
   }
+}
+
+/**
+ * Ajoute l'article à blog.html
+ */
+async function addArticleToBlogIndex(content) {
+  try {
+    const response = await fetchAPI('/api/blog/add-article', {
+      method: 'POST',
+      body: JSON.stringify({
+        slug: content.slug,
+        title: content.h1 || content.title,
+        description: content.metaDescription,
+        category: detectCategory(content.keyword),
+        imageUrl: content.hasImage ? `images/blog/${content.slug}.webp` : 'images/renovation_general_(9).webp',
+        readTime: estimateReadTime(content.wordCount)
+      })
+    });
+    
+    if (!response.ok) {
+      console.warn('[BlogIndex] Échec mise à jour blog.html');
+      return false;
+    }
+    
+    const result = await response.json();
+    console.log('[BlogIndex] ✅ Article ajouté à blog.html');
+    return true;
+    
+  } catch (error) {
+    console.error('[BlogIndex] Erreur:', error);
+    return false;
+  }
+}
+
+/**
+ * Détecte la catégorie selon le mot-clé
+ */
+function detectCategory(keyword) {
+  if (!keyword) return 'Rénovation';
+  const kw = keyword.toLowerCase();
+  
+  if (kw.includes('cuisine')) return 'Cuisine';
+  if (kw.includes('salle de bain') || kw.includes('sdb')) return 'Salle de bain';
+  if (kw.includes('appartement')) return 'Appartement';
+  if (kw.includes('maison')) return 'Maison';
+  if (kw.includes('dégât') || kw.includes('degat') || kw.includes('eau')) return 'Urgences';
+  if (kw.includes('prix') || kw.includes('coût') || kw.includes('cout') || kw.includes('tarif')) return 'Prix';
+  if (kw.includes('peinture')) return 'Peinture';
+  if (kw.includes('électricité') || kw.includes('electricite')) return 'Électricité';
+  if (kw.includes('plomberie')) return 'Plomberie';
+  if (kw.includes('isolation') || kw.includes('énergétique') || kw.includes('energetique')) return 'Énergie';
+  
+  return 'Rénovation';
+}
+
+/**
+ * Estime le temps de lecture
+ */
+function estimateReadTime(wordCount) {
+  const minutes = Math.ceil((wordCount || 1000) / 200);
+  return `${minutes} min`;
 }
 
 /**

@@ -141,6 +141,10 @@ app.use('/api', githubRoutes);
 const contentGenRoutes = require('./routes/contentGen');
 app.use('/api', contentGenRoutes);
 
+// Routes Blog Index (Mise à jour blog.html)
+const blogIndexRoutes = require('./routes/blogIndex');
+app.use('/api', blogIndexRoutes);
+
 // Route RESET DATABASE (remise à zéro)
 app.post('/api/reset-database', async (req, res) => {
   try {
