@@ -3204,11 +3204,32 @@ async function publishContent() {
     updatePublishStep('step1', 'done');
     updatePublishStep('step2', 'active');
     
+    // Vérifier que le contenu HTML existe
+    if (!studioGeneratedContent.htmlContent || studioGeneratedContent.htmlContent.length < 100) {
+      throw new Error('Contenu HTML manquant ou trop court');
+    }
+    
+    console.log('[Publication] Contenu HTML:', {
+      slug: slug,
+      filePath: filePath,
+      htmlLength: studioGeneratedContent.htmlContent.length,
+      preview: studioGeneratedContent.htmlContent.substring(0, 200)
+    });
+    
     // Étape 2: Push GitHub via API backend
     const pushResult = await pushToGitHub(filePath, studioGeneratedContent.htmlContent);
     
+    console.log('[Publication] Résultat push:', pushResult);
+    
     if (!pushResult.success) {
       throw new Error(pushResult.error || 'Erreur lors du push GitHub');
+    }
+    
+    if (pushResult.simulated) {
+      console.warn('[Publication] ⚠️ Mode simulation - fichier NON créé sur GitHub');
+      showNotification('⚠️ Publication en mode simulation', 'warning');
+    } else {
+      console.log('[Publication] ✅ Fichier créé sur GitHub:', pushResult.commitUrl);
     }
     
     updatePublishStep('step2', 'done');
@@ -3328,12 +3349,15 @@ async function uploadImageToGitHub(slug, dataUrl = null, suffix = '') {
     const imageData = dataUrl || (uploadedImages.find(img => img.isMain)?.dataUrl);
     
     if (!imageData) {
+      console.warn('[Upload Image] Pas d\'image à uploader');
       return { success: false, error: 'Pas d\'image à uploader' };
     }
     
     // Extraire le base64 sans le préfixe data:image/...
     const base64Data = imageData.split(',')[1];
     const imagePath = `images/blog/${slug}${suffix}.webp`;
+    
+    console.log('[Upload Image] Envoi:', imagePath, '- Taille base64:', Math.round(base64Data.length / 1024), 'Ko');
     
     // Utiliser l'endpoint GitHub publish existant
     const response = await fetchAPI('/api/github/publish', {
@@ -3346,20 +3370,32 @@ async function uploadImageToGitHub(slug, dataUrl = null, suffix = '') {
       })
     });
     
+    const result = await response.json();
+    console.log('[Upload Image] Réponse:', result);
+    
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return { success: false, error: errorData.message || 'Erreur upload' };
+      console.error('[Upload Image] Erreur HTTP:', response.status, result);
+      return { success: false, error: result.message || `Erreur HTTP ${response.status}` };
     }
     
-    const result = await response.json();
+    if (result.status === 'error') {
+      return { success: false, error: result.message };
+    }
+    
+    if (result.data?.simulated) {
+      console.warn('[Upload Image] Mode simulation - image non uploadée');
+      return { success: false, error: 'GITHUB_TOKEN non configuré' };
+    }
+    
+    console.log('[Upload Image] ✅ Image uploadée:', imagePath);
     return {
       success: true,
       path: imagePath,
-      commitSha: result.data?.commitSha
+      commitSha: result.data?.commit?.sha
     };
     
   } catch (error) {
-    console.error('[Upload Image] Erreur:', error);
+    console.error('[Upload Image] ❌ Erreur:', error.message);
     return { success: false, error: error.message };
   }
 }
@@ -3377,8 +3413,11 @@ function updatePublishStep(stepId, state) {
 
 /**
  * Push le fichier vers GitHub via API backend
+ * SANS fallback simulation - erreurs propagées pour affichage
  */
 async function pushToGitHub(filePath, content) {
+  console.log('[GitHub] Push fichier:', filePath, '- Taille:', content.length, 'caractères');
+  
   try {
     // Appel API backend pour créer/mettre à jour le fichier
     const response = await fetchAPI('/api/github/publish', {
@@ -3391,33 +3430,41 @@ async function pushToGitHub(filePath, content) {
       })
     });
     
+    // Parser la réponse
+    const result = await response.json();
+    console.log('[GitHub] Réponse API:', result);
+    
+    // Vérifier le statut HTTP
     if (!response.ok) {
-      // Fallback: mode simulation si l'endpoint n'existe pas
-      console.warn('[Publication] Endpoint GitHub non disponible, mode simulation');
-      await simulateDelay(2000);
-      return { 
-        success: true, 
-        simulated: true,
-        commitUrl: null 
-      };
+      console.error('[GitHub] Erreur HTTP:', response.status, result);
+      throw new Error(result.message || `Erreur GitHub API: ${response.status}`);
     }
     
-    const result = await response.json();
+    // Vérifier le statut de la réponse
+    if (result.status === 'error') {
+      throw new Error(result.message || 'Erreur inconnue GitHub API');
+    }
+    
+    // Vérifier si simulation (token non configuré)
+    if (result.data?.simulated) {
+      console.warn('[GitHub] ⚠️ Mode simulation - GITHUB_TOKEN non configuré sur Vercel');
+      throw new Error('Publication impossible: GITHUB_TOKEN non configuré sur le serveur');
+    }
+    
+    console.log('[GitHub] ✅ Fichier publié:', result.data?.content?.path);
+    console.log('[GitHub] ✅ Commit:', result.data?.commit?.sha);
+    
     return {
       success: true,
       simulated: false,
-      commitUrl: result.data?.commit?.html_url || null
+      commitUrl: result.data?.commit?.html_url || null,
+      filePath: result.data?.content?.path || filePath
     };
     
   } catch (error) {
-    console.error('[GitHub] Erreur push:', error);
-    // Fallback simulation
-    await simulateDelay(2000);
-    return { 
-      success: true, 
-      simulated: true,
-      commitUrl: null 
-    };
+    console.error('[GitHub] ❌ Erreur push:', error.message);
+    // Propager l'erreur - PAS de fallback simulation
+    throw error;
   }
 }
 
