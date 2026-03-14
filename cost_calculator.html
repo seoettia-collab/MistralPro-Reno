@@ -949,16 +949,19 @@
                     <div class="sub-content" data-sub="construction">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Extension (1800€/m²)</label>
-                                <select id="select-extension" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="18000" data-label="Extension maison ossature gros œuvre 10m²">10 m² - 18 000 €</option>
-                                    <option value="36000" data-label="Extension maison ossature gros œuvre 20m²">20 m² - 36 000 €</option>
-                                    <option value="54000" data-label="Extension maison ossature gros œuvre 30m²">30 m² - 54 000 €</option>
-                                </select>
+                                <label>🏠 Extension maison (1800€/m²)</label>
+                                <input type="number" id="input-extension-m2" class="qty-input" placeholder="m²" min="1" max="200" style="width:100px;" data-price="1800" data-label="Extension maison comprenant : fondations, élévation murs, charpente, couverture, menuiseries extérieures, isolation, électricité, plomberie. Hors second œuvre.">
+                            </div>
+                            <div class="san-select-group">
+                                <label>🏡 Construction maison (1500€/m²)</label>
+                                <input type="number" id="input-construction-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="1500" data-label="Construction maison individuelle comprenant : terrassement, fondations, élévation murs, charpente, couverture, menuiseries extérieures, isolation, électricité, plomberie. Hors finitions et aménagements.">
                             </div>
                         </div>
                         <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>🧱 Mur de clôture (180€/ml)</label>
+                                <input type="number" id="input-cloture-ml" class="qty-input" placeholder="ml" min="1" max="500" style="width:100px;" data-price="180" data-label="Construction de mur de clôture en parpaings crépis, hauteur 1.80m, fondations béton, chaperon, portillon inclus selon devis.">
+                            </div>
                             <div class="san-select-group">
                                 <label>🚜 Terrassement (50€/m³)</label>
                                 <input type="number" id="input-terrassement-m3" class="qty-input" placeholder="m³" min="1" max="500" style="width:100px;" data-price="50" data-label="Terrassement, décaissement, nivellement du terrain, évacuation des terres en décharge agréée.">
@@ -1202,8 +1205,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=9.4" defer></script>
-    <!-- CCTP v27 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=9.5" defer></script>
+    <!-- CCTP v28 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
