@@ -42,10 +42,16 @@ router.post('/content/generate', async (req, res) => {
       long: { min: 1000, max: 1400 }
     };
     const target = wordTargets[length] || wordTargets.medium;
+    const currentYear = new Date().getFullYear();
     
     // Construire le prompt système
     const systemPrompt = `Tu es un rédacteur SEO expert spécialisé dans le secteur de la rénovation et du BTP en France.
 Tu rédiges des articles pour Mistral Pro Reno, une entreprise de rénovation basée à Paris (17ème) intervenant en Île-de-France.
+
+CONTEXTE IMPORTANT :
+- Nous sommes en ${currentYear}
+- Tous les titres et références d'année doivent mentionner "${currentYear}" (jamais 2024 ou autre)
+- Les prix mentionnés doivent être actuels (${currentYear})
 
 RÈGLES DE RÉDACTION :
 - Ton ${tone === 'professional' ? 'professionnel et expert' : tone === 'friendly' ? 'chaleureux et accessible' : 'informatif et pédagogique'}

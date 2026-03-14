@@ -122,14 +122,22 @@ router.post('/audit-ia/analyze', async (req, res) => {
     }
     
     // Construire le prompt pour Claude
+    const currentYear = new Date().getFullYear();
     const systemPrompt = `Tu es un expert SEO senior spécialisé dans les sites de rénovation et BTP en France.
 Tu analyses les données d'un dashboard SEO et tu produis des DÉCISIONS EXÉCUTABLES.
+
+CONTEXTE IMPORTANT :
+- Nous sommes en ${currentYear}
+- Le site cible les clients à PARIS et en ÎLE-DE-FRANCE
+- Tous les titres d'articles doivent mentionner "${currentYear}" (jamais 2024 ou autre)
+- L'entreprise s'appelle "Mistral Pro Reno"
 
 RÈGLES IMPORTANTES :
 - Réponds UNIQUEMENT en JSON valide, sans markdown ni texte avant/après
 - Chaque décision doit être directement exécutable par un système automatisé
 - Priorise par impact potentiel et faisabilité
 - Adapte au secteur rénovation Paris
+- Les titres doivent inclure "${currentYear}" et "Paris" quand pertinent
 
 FORMAT DE RÉPONSE OBLIGATOIRE (JSON) :
 {
@@ -183,7 +191,9 @@ TYPES DE DÉCISIONS :
 
 Maximum 5 décisions, triées par impact_score décroissant.`;
 
-    const userPrompt = `Analyse ces données SEO du site mistralpro-reno.fr (entreprise de rénovation à Paris) et produis des DÉCISIONS EXÉCUTABLES :
+    const userPrompt = `Analyse ces données SEO du site mistralpro-reno.fr (entreprise de rénovation à Paris et Île-de-France) et produis des DÉCISIONS EXÉCUTABLES.
+
+RAPPEL : Nous sommes en ${currentYear}. Tous les titres d'articles doivent mentionner "${currentYear}" (pas 2024 ni autre année).
 
 DONNÉES COCKPIT :
 ${JSON.stringify(cockpitData, null, 2)}
