@@ -890,97 +890,62 @@
                     <div class="sub-content active" data-sub="maconnerie">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Mur porteur</label>
+                                <label>🧱 Ouverture mur porteur</label>
                                 <select id="select-mur-porteur" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="2500" data-label="Ouverture mur porteur IPN étude structure &lt;1.5m">Petite &lt;1.5m - 2 500 €</option>
-                                    <option value="4500" data-label="Ouverture mur porteur IPN étude structure 1.5-2.5m">Moyenne 1.5-2.5m - 4 500 €</option>
-                                    <option value="7000" data-label="Ouverture mur porteur IPN étude structure &gt;2.5m">Grande &gt;2.5m - 7 000 €</option>
-                                </select>
-                            </div>
-                            <div class="san-select-group">
-                                <label>Cloisons (45€/m²)</label>
-                                <select id="select-cloisons" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="450" data-label="Cloison placo BA13 ossature métallique 10m²">10 m² - 450 €</option>
-                                    <option value="900" data-label="Cloison placo BA13 ossature métallique 20m²">20 m² - 900 €</option>
-                                    <option value="1800" data-label="Cloison placo BA13 ossature métallique 40m²">40 m² - 1 800 €</option>
-                                </select>
-                            </div>
-                            <div class="san-select-group">
-                                <label>Dalle béton (70€/m²)</label>
-                                <select id="select-dalle" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="700" data-label="Dalle béton armé ferraillage 10cm 10m²">10 m² - 700 €</option>
-                                    <option value="1400" data-label="Dalle béton armé ferraillage 10cm 20m²">20 m² - 1 400 €</option>
-                                    <option value="2800" data-label="Dalle béton armé ferraillage 10cm 40m²">40 m² - 2 800 €</option>
-                                </select>
-                            </div>
-                            <div class="san-select-group">
-                                <label>Démolition (80€/m³)</label>
-                                <select id="select-demo" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="400" data-label="Démolition cloisons évacuation gravats 5m³">5 m³ - 400 €</option>
-                                    <option value="800" data-label="Démolition cloisons évacuation gravats 10m³">10 m³ - 800 €</option>
-                                    <option value="1600" data-label="Démolition cloisons évacuation gravats 20m³">20 m³ - 1 600 €</option>
+                                    <option value="2500" data-label="Ouverture mur porteur comprenant : étude structure, étaiement provisoire, découpe soignée, pose IPN ou poutre béton armé selon calcul, reprise maçonnerie, finitions. Largeur inférieure à 1.5m.">Petite &lt;1.5m - 2 500 €</option>
+                                    <option value="4500" data-label="Ouverture mur porteur comprenant : étude structure, étaiement provisoire, découpe soignée, pose IPN ou poutre béton armé selon calcul, reprise maçonnerie, finitions. Largeur 1.5 à 2.5m.">Moyenne 1.5-2.5m - 4 500 €</option>
+                                    <option value="7000" data-label="Ouverture mur porteur comprenant : étude structure, étaiement provisoire, découpe soignée, pose IPN ou poutre béton armé selon calcul, reprise maçonnerie, finitions. Largeur supérieure à 2.5m.">Grande &gt;2.5m - 7 000 €</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>🧱 Cloisons placo (45€/m²)</label>
+                                <input type="number" id="input-cloisons-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="45" data-label="Fourniture et pose de cloison placo BA13 sur ossature métallique, bandes et joints, prêt à peindre. DTU 25.41">
+                            </div>
+                            <div class="san-select-group">
+                                <label>🏗️ Dalle béton (70€/m²)</label>
+                                <input type="number" id="input-dalle-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="70" data-label="Fourniture et coulage de dalle béton armé épaisseur 10cm, treillis soudé ST25, joints de fractionnement, finition lissée. DTU 13.3">
+                            </div>
+                            <div class="san-select-group">
+                                <label>💥 Démolition (80€/m³)</label>
+                                <input type="number" id="input-demo-m3" class="qty-input" placeholder="m³" min="1" max="200" style="width:100px;" data-price="80" data-label="Démolition de cloisons, murs non porteurs, revêtements, y compris tri sélectif et évacuation des gravats en déchetterie agréée.">
+                            </div>
+                        </div>
+                        <p id="maconnerie-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="isolation">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Isolation murs (45€/m²)</label>
-                                <select id="select-iso-murs" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="900" data-label="Isolation murs laine minérale 100mm + placo 20m²">20 m² - 900 €</option>
-                                    <option value="1800" data-label="Isolation murs laine minérale 100mm + placo 40m²">40 m² - 1 800 €</option>
-                                    <option value="3600" data-label="Isolation murs laine minérale 100mm + placo 80m²">80 m² - 3 600 €</option>
-                                </select>
+                                <label>🧊 Isolation murs intérieur (45€/m²)</label>
+                                <input type="number" id="input-iso-murs-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="45" data-label="Fourniture et pose d'isolation murs par l'intérieur, laine minérale 100mm R=2.5, pare-vapeur, doublage placo BA13, bandes et joints. DTU 45.10">
                             </div>
                             <div class="san-select-group">
-                                <label>Isolation combles (35€/m²)</label>
-                                <select id="select-iso-combles" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="1050" data-label="Isolation combles perdus soufflage 30cm 30m²">30 m² - 1 050 €</option>
-                                    <option value="1750" data-label="Isolation combles perdus soufflage 30cm 50m²">50 m² - 1 750 €</option>
-                                    <option value="3500" data-label="Isolation combles perdus soufflage 30cm 100m²">100 m² - 3 500 €</option>
-                                </select>
+                                <label>🧊 Isolation combles (35€/m²)</label>
+                                <input type="number" id="input-iso-combles-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="35" data-label="Fourniture et pose d'isolation combles perdus par soufflage laine minérale 30cm R=7, repérage piges, trappe isolée. DTU 45.11">
                             </div>
                             <div class="san-select-group">
-                                <label>ITE extérieure (120€/m²)</label>
-                                <select id="select-ite" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="6000" data-label="ITE polystyrène 140mm enduit finition 50m²">50 m² - 6 000 €</option>
-                                    <option value="12000" data-label="ITE polystyrène 140mm enduit finition 100m²">100 m² - 12 000 €</option>
-                                    <option value="18000" data-label="ITE polystyrène 140mm enduit finition 150m²">150 m² - 18 000 €</option>
-                                </select>
+                                <label>🧊 ITE extérieure (120€/m²)</label>
+                                <input type="number" id="input-ite-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="120" data-label="Fourniture et pose d'isolation thermique par l'extérieur, polystyrène expansé 140mm R=4, sous-enduit armé fibre de verre, enduit de finition gratté ou taloché, teinte au choix. DTU 45.4">
                             </div>
                         </div>
+                        <p id="isolation-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="platrerie">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Faux plafond (45€/m²)</label>
-                                <select id="select-faux-plafond" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="900" data-label="Faux plafond placo BA13 sur ossature suspendue 20m²">20 m² - 900 €</option>
-                                    <option value="1800" data-label="Faux plafond placo BA13 sur ossature suspendue 40m²">40 m² - 1 800 €</option>
-                                    <option value="3600" data-label="Faux plafond placo BA13 sur ossature suspendue 80m²">80 m² - 3 600 €</option>
-                                </select>
+                                <label>📐 Faux plafond (45€/m²)</label>
+                                <input type="number" id="input-faux-plafond-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="45" data-label="Fourniture et pose de faux plafond placo BA13 sur ossature métallique suspendue, bandes et joints, prêt à peindre. DTU 25.41">
                             </div>
                             <div class="san-select-group">
-                                <label>Doublage murs (35€/m²)</label>
-                                <select id="select-doublage" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="700" data-label="Doublage murs placo collé ou vissé 20m²">20 m² - 700 €</option>
-                                    <option value="1400" data-label="Doublage murs placo collé ou vissé 40m²">40 m² - 1 400 €</option>
-                                    <option value="2800" data-label="Doublage murs placo collé ou vissé 80m²">80 m² - 2 800 €</option>
-                                </select>
+                                <label>📐 Doublage murs (35€/m²)</label>
+                                <input type="number" id="input-doublage-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;" data-price="35" data-label="Fourniture et pose de doublage murs placo BA13 collé ou vissé sur ossature, bandes et joints, prêt à peindre. DTU 25.41">
                             </div>
                         </div>
+                        <p id="platrerie-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="construction">
@@ -994,25 +959,18 @@
                                     <option value="54000" data-label="Extension maison ossature gros œuvre 30m²">30 m² - 54 000 €</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Terrassement (50€/m³)</label>
-                                <select id="select-terrassement" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="500" data-label="Terrassement décaissement évacuation 10m³">10 m³ - 500 €</option>
-                                    <option value="1000" data-label="Terrassement décaissement évacuation 20m³">20 m³ - 1 000 €</option>
-                                    <option value="2500" data-label="Terrassement décaissement évacuation 50m³">50 m³ - 2 500 €</option>
-                                </select>
+                                <label>🚜 Terrassement (50€/m³)</label>
+                                <input type="number" id="input-terrassement-m3" class="qty-input" placeholder="m³" min="1" max="500" style="width:100px;" data-price="50" data-label="Terrassement, décaissement, nivellement du terrain, évacuation des terres en décharge agréée.">
                             </div>
                             <div class="san-select-group">
-                                <label>Fondations (200€/m³)</label>
-                                <select id="select-fondations" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="1000" data-label="Fondations semelles béton armé 5m³">5 m³ - 1 000 €</option>
-                                    <option value="2000" data-label="Fondations semelles béton armé 10m³">10 m³ - 2 000 €</option>
-                                    <option value="4000" data-label="Fondations semelles béton armé 20m³">20 m³ - 4 000 €</option>
-                                </select>
+                                <label>🏗️ Fondations (200€/m³)</label>
+                                <input type="number" id="input-fondations-m3" class="qty-input" placeholder="m³" min="1" max="200" style="width:100px;" data-price="200" data-label="Fourniture et coulage de fondations béton armé, semelles filantes, armatures selon étude, béton C25/30.">
                             </div>
                         </div>
+                        <p id="construction-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="section-reset">
@@ -1246,8 +1204,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=9.1" defer></script>
-    <!-- CCTP v24 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=9.2" defer></script>
+    <!-- CCTP v25 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>

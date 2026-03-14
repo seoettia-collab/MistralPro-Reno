@@ -1,11 +1,11 @@
 !function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="07 55 18 89 37",s="contact@mistralpro-reno.fr";let i=null;
 
-// TOUS LES SELECTS PAR CATÉGORIE - V13
+// TOUS LES SELECTS PAR CATÉGORIE - V14
 const allSelects={
 plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie-pvc","select-tuyauterie-multi","select-tuyauterie-cuivre","select-pack-sdb","select-depose-mural","select-depose-sol"],
 electricite:["select-tableau","select-points-lum","select-prises","select-inter","select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv","select-clim","select-vmc-simple","select-vmc-double","select-aerateur"],
 peinture:["select-peinture-murs-gamme","select-peinture-plaf-gamme","select-parquet-gamme","select-carrelage-gamme","select-lino-gamme","select-faience-gamme","select-credence-gamme"],
-"gros-oeuvre":["select-mur-porteur","select-cloisons","select-dalle","select-demo","select-iso-murs","select-iso-combles","select-ite","select-faux-plafond","select-doublage","select-extension","select-terrassement","select-fondations"],
+"gros-oeuvre":["select-mur-porteur","select-extension"],
 menuiserie:["select-portes-int","select-plinthes","select-fenetres","select-porte-entree","select-volets","select-toiture","select-velux","select-zinguerie","select-cuisine","select-placards","select-rangements"]
 };
 
@@ -86,6 +86,23 @@ const extFields=[
 extFields.forEach(function(p){
 const m2=parseFloat(t("#"+p.input).val())||0;
 if(m2>0){e+=p.price*m2;t("#"+p.input).css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#"+p.input).css({"border-color":"#e0e0e0","background":"#fff"})}
+});
+// Calcul gros-oeuvre (prix fixe × m² ou m³)
+const goFields=[
+{input:"input-cloisons-m2",price:45},
+{input:"input-dalle-m2",price:70},
+{input:"input-demo-m3",price:80},
+{input:"input-iso-murs-m2",price:45},
+{input:"input-iso-combles-m2",price:35},
+{input:"input-ite-m2",price:120},
+{input:"input-faux-plafond-m2",price:45},
+{input:"input-doublage-m2",price:35},
+{input:"input-terrassement-m3",price:50},
+{input:"input-fondations-m3",price:200}
+];
+goFields.forEach(function(p){
+const val=parseFloat(t("#"+p.input).val())||0;
+if(val>0){e+=p.price*val;t("#"+p.input).css({"border-color":"#27ae60","background":"#e8f5e9"})}else{t("#"+p.input).css({"border-color":"#e0e0e0","background":"#fff"})}
 });
 // Tous les selects san-select (hors depose-select et peinture gamme/surface)
 sanSelects.forEach(function(id){if(id.startsWith("select-depose-"))return;if(id.startsWith("select-peinture-murs-")||id.startsWith("select-peinture-plaf-"))return;const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
@@ -288,6 +305,42 @@ extInfo+=(extInfo?" | ":"")+p.type+": "+m2+"m² × "+p.price+"€ = "+formatPric
 });
 t("#ext-total-info").html(extInfo?("💰 "+extInfo):"");
 
+// Calcul spécial GROS ŒUVRE (prix fixe × m² ou m³)
+const goCalcs=[
+{input:"input-cloisons-m2",price:45,type:"Cloisons",unit:"m²",cat:"maconnerie"},
+{input:"input-dalle-m2",price:70,type:"Dalle béton",unit:"m²",cat:"maconnerie"},
+{input:"input-demo-m3",price:80,type:"Démolition",unit:"m³",cat:"maconnerie"},
+{input:"input-iso-murs-m2",price:45,type:"Isolation murs",unit:"m²",cat:"isolation"},
+{input:"input-iso-combles-m2",price:35,type:"Isolation combles",unit:"m²",cat:"isolation"},
+{input:"input-ite-m2",price:120,type:"ITE",unit:"m²",cat:"isolation"},
+{input:"input-faux-plafond-m2",price:45,type:"Faux plafond",unit:"m²",cat:"platrerie"},
+{input:"input-doublage-m2",price:35,type:"Doublage",unit:"m²",cat:"platrerie"},
+{input:"input-terrassement-m3",price:50,type:"Terrassement",unit:"m³",cat:"construction"},
+{input:"input-fondations-m3",price:200,type:"Fondations",unit:"m³",cat:"construction"}
+];
+let maconnerieInfo="",isolationInfo="",platrerieInfo="",constructionInfo="";
+goCalcs.forEach(function(p){
+const val=parseFloat(t("#"+p.input).val())||0;
+if(val>0){
+const total=p.price*val;
+const label=t("#"+p.input).data("label")||p.type;
+const fullLabel=label+" - "+p.price+"€/"+p.unit+" - "+val+p.unit;
+if(!categories["Gros Œuvre"])categories["Gros Œuvre"]=[];
+categories["Gros Œuvre"].push({label:fullLabel,qty:val,unit:p.unit,pu:p.price,total:total});
+totalItems++;
+totalHT+=total;
+const info=p.type+": "+val+p.unit+" × "+p.price+"€ = "+formatPrice(total);
+if(p.cat==="maconnerie")maconnerieInfo+=(maconnerieInfo?" | ":"")+info;
+if(p.cat==="isolation")isolationInfo+=(isolationInfo?" | ":"")+info;
+if(p.cat==="platrerie")platrerieInfo+=(platrerieInfo?" | ":"")+info;
+if(p.cat==="construction")constructionInfo+=(constructionInfo?" | ":"")+info;
+}
+});
+t("#maconnerie-total-info").html(maconnerieInfo?("💰 "+maconnerieInfo):"");
+t("#isolation-total-info").html(isolationInfo?("💰 "+isolationInfo):"");
+t("#platrerie-total-info").html(platrerieInfo?("💰 "+platrerieInfo):"");
+t("#construction-total-info").html(constructionInfo?("💰 "+constructionInfo):"");
+
 Object.keys(allSelects).forEach(function(cat){
 allSelects[cat].forEach(function(id){
 if(id.startsWith("select-depose-"))return;
@@ -399,10 +452,10 @@ const tabSelects={
 "murs-rev":["select-faience-gamme","select-credence-gamme"],
 "preparation":[],
 "ext":[],
-"maconnerie":["select-mur-porteur","select-cloisons","select-dalle","select-demo"],
-"isolation":["select-iso-murs","select-iso-combles","select-ite"],
-"platrerie":["select-faux-plafond","select-doublage"],
-"construction":["select-extension","select-terrassement","select-fondations"],
+"maconnerie":["select-mur-porteur"],
+"isolation":[],
+"platrerie":[],
+"construction":["select-extension"],
 "menu-int":["select-portes-int","select-plinthes"],
 "menu-ext":["select-fenetres","select-porte-entree","select-volets"],
 "toiture":["select-toiture","select-velux","select-zinguerie"],
@@ -453,6 +506,34 @@ else if(tab==="ext"){
 const ravalementM2=parseFloat(t("#input-ravalement-m2").val())||0;
 const facadeM2=parseFloat(t("#input-facade-m2").val())||0;
 if(ravalementM2>0||facadeM2>0){hasSelection=true}
+}
+// Cas spécial maconnerie: select OU inputs
+else if(tab==="maconnerie"){
+const murPorteur=parseFloat(t("#select-mur-porteur").val())||0;
+const cloisons=parseFloat(t("#input-cloisons-m2").val())||0;
+const dalle=parseFloat(t("#input-dalle-m2").val())||0;
+const demo=parseFloat(t("#input-demo-m3").val())||0;
+if(murPorteur>0||cloisons>0||dalle>0||demo>0){hasSelection=true}
+}
+// Cas spécial isolation: inputs
+else if(tab==="isolation"){
+const isoMurs=parseFloat(t("#input-iso-murs-m2").val())||0;
+const isoCombles=parseFloat(t("#input-iso-combles-m2").val())||0;
+const ite=parseFloat(t("#input-ite-m2").val())||0;
+if(isoMurs>0||isoCombles>0||ite>0){hasSelection=true}
+}
+// Cas spécial platrerie: inputs
+else if(tab==="platrerie"){
+const fauxPlafond=parseFloat(t("#input-faux-plafond-m2").val())||0;
+const doublage=parseFloat(t("#input-doublage-m2").val())||0;
+if(fauxPlafond>0||doublage>0){hasSelection=true}
+}
+// Cas spécial construction: select OU inputs
+else if(tab==="construction"){
+const extension=parseFloat(t("#select-extension").val())||0;
+const terrassement=parseFloat(t("#input-terrassement-m3").val())||0;
+const fondations=parseFloat(t("#input-fondations-m3").val())||0;
+if(extension>0||terrassement>0||fondations>0){hasSelection=true}
 }else{
 selects.forEach(function(id){if(parseFloat(t("#"+id).val())>0)hasSelection=true});
 }
@@ -471,8 +552,8 @@ t('input[type="range"]').on("input",function(){const e=t(this).attr("id");t("#"+
 t(".qty-input").on("input",function(){const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number",""),n=t("#"+o);if(n.length){let e=parseInt(t(this).val())||0;const a=parseInt(n.attr("max"))||9999;e=Math.min(Math.max(0,e),a),t(this).val(e),n.val(e)}r()}),
 t(".qty-input").on("blur",function(){if(""===t(this).val()){t(this).val(0);const e=t(this).attr("id");if(e&&e.startsWith("qty-")){r();return}const o=e.replace("-number","");t("#"+o).val(0),r()}}),
 t('input[type="checkbox"], select').on("change",function(){r();updateAllTabs()}),
-// Peinture + Sols + Murs + Préparation + Extérieur: recalcul sur saisie manuelle m²
-t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2, #input-parquet-m2, #input-carrelage-m2, #input-lino-m2, #input-faience-m2, #input-credence-m2, #input-depose-m2, #input-ragreage-m2, #input-chape-m2, #input-ravalement-m2, #input-facade-m2").on("input",function(){r();updateAllTabs()}),
+// Peinture + Sols + Murs + Préparation + Extérieur + Gros Œuvre: recalcul sur saisie manuelle
+t("#input-peinture-murs-m2, #input-peinture-plaf-m2, #input-enduit-m2, #input-parquet-m2, #input-carrelage-m2, #input-lino-m2, #input-faience-m2, #input-credence-m2, #input-depose-m2, #input-ragreage-m2, #input-chape-m2, #input-ravalement-m2, #input-facade-m2, #input-cloisons-m2, #input-dalle-m2, #input-demo-m3, #input-iso-murs-m2, #input-iso-combles-m2, #input-ite-m2, #input-faux-plafond-m2, #input-doublage-m2, #input-terrassement-m3, #input-fondations-m3").on("input",function(){r();updateAllTabs()}),
 t("#resetBtn").on("click",function(){confirm("Réinitialiser tous les champs ?")&&(t('input[type="checkbox"]').prop("checked",!1),t('input[type="range"]').val(0),t(".qty-input").val(0),t("select").prop("selectedIndex",0),t("#clientForm")[0].reset(),t(".slider-row").css("background",""),r(),updateAllTabs())}),
 // Reset par section
 t(".btn-section-reset").on("click",function(){
