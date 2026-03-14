@@ -223,7 +223,7 @@
 
                         <!-- SECTION DÉPOSE -->
                         <div class="subsub-content" data-subsub="san-depose">
-                            <p style="text-align:center;font-size:12px;color:#666;margin-bottom:10px;">Sélectionnez les éléments à déposer (45€/unité) — Évacuation déchetterie 80€ incluse automatiquement</p>
+                            <p style="text-align:center;font-size:12px;color:#666;margin-bottom:10px;">Sélectionnez les éléments à déposer — Évacuation déchetterie 80€ incluse automatiquement</p>
                             <div class="options-grid" style="justify-content:center;">
                                 <label class="option-card" style="flex:0 1 auto;min-width:120px;">
                                     <input type="checkbox" class="depose-item" data-price="45" data-label="WC">
@@ -256,23 +256,35 @@
                                     <span class="price">45 €</span>
                                 </label>
                                 <label class="option-card" style="flex:0 1 auto;min-width:120px;">
-                                    <input type="checkbox" class="depose-item" data-price="45" data-label="Carrelage mural">
-                                    <span class="check">✓</span>
-                                    <div class="option-info"><strong>Carrelage mural</strong></div>
-                                    <span class="price">45 €</span>
-                                </label>
-                                <label class="option-card" style="flex:0 1 auto;min-width:120px;">
-                                    <input type="checkbox" class="depose-item" data-price="45" data-label="Carrelage sol">
-                                    <span class="check">✓</span>
-                                    <div class="option-info"><strong>Carrelage sol</strong></div>
-                                    <span class="price">45 €</span>
-                                </label>
-                                <label class="option-card" style="flex:0 1 auto;min-width:120px;">
                                     <input type="checkbox" class="depose-item" data-price="45" data-label="Robinetterie">
                                     <span class="check">✓</span>
                                     <div class="option-info"><strong>Robinetterie</strong></div>
                                     <span class="price">45 €</span>
                                 </label>
+                            </div>
+                            <div class="san-selects-row" style="margin-top:15px;">
+                                <div class="san-select-group">
+                                    <label>Dépose carrelage mural (70€/m²)</label>
+                                    <select id="select-depose-mural" class="san-select depose-select">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="210" data-label="Dépose carrelage mural 3m² évacuation déchetterie comprise">3 m² - 210 €</option>
+                                        <option value="350" data-label="Dépose carrelage mural 5m² évacuation déchetterie comprise">5 m² - 350 €</option>
+                                        <option value="700" data-label="Dépose carrelage mural 10m² évacuation déchetterie comprise">10 m² - 700 €</option>
+                                        <option value="1050" data-label="Dépose carrelage mural 15m² évacuation déchetterie comprise">15 m² - 1 050 €</option>
+                                        <option value="1400" data-label="Dépose carrelage mural 20m² évacuation déchetterie comprise">20 m² - 1 400 €</option>
+                                    </select>
+                                </div>
+                                <div class="san-select-group">
+                                    <label>Dépose carrelage sol (70€/m²)</label>
+                                    <select id="select-depose-sol" class="san-select depose-select">
+                                        <option value="0">-- Choisir --</option>
+                                        <option value="210" data-label="Dépose carrelage sol 3m² évacuation déchetterie comprise">3 m² - 210 €</option>
+                                        <option value="350" data-label="Dépose carrelage sol 5m² évacuation déchetterie comprise">5 m² - 350 €</option>
+                                        <option value="700" data-label="Dépose carrelage sol 10m² évacuation déchetterie comprise">10 m² - 700 €</option>
+                                        <option value="1050" data-label="Dépose carrelage sol 15m² évacuation déchetterie comprise">15 m² - 1 050 €</option>
+                                        <option value="1400" data-label="Dépose carrelage sol 20m² évacuation déchetterie comprise">20 m² - 1 400 €</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -1159,7 +1171,7 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=6.2" defer></script>
+    <script src="js/cost_calculator.js?v=6.3" defer></script>
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>

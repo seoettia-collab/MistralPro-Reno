@@ -2,7 +2,7 @@
 
 // TOUS LES SELECTS PAR CATÉGORIE - V5
 const allSelects={
-plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie","select-pack-sdb","select-carrelage-sdb","select-options-sdb"],
+plomberie:["select-receveur","select-porte-douche","select-barre-douche","select-mitigeur-douche","select-baignoire","select-robinet-baignoire","select-cumulus","select-adoucisseur","select-diagnostic","select-tuyauterie","select-pack-sdb","select-carrelage-sdb","select-options-sdb","select-depose-mural","select-depose-sol"],
 electricite:["select-tableau","select-points-lum","select-prises","select-inter","select-rad-500","select-rad-1500","select-rad-2000","select-seche-serv","select-clim","select-vmc-simple","select-vmc-double","select-aerateur"],
 peinture:["select-peinture-murs","select-peinture-plaf","select-parquet","select-carrelage-sol","select-lino","select-faience","select-credence","select-depose","select-ragreage","select-chape","select-ravalement","select-facade"],
 "gros-oeuvre":["select-mur-porteur","select-cloisons","select-dalle","select-demo","select-iso-murs","select-iso-combles","select-ite","select-faux-plafond","select-doublage","select-extension","select-terrassement","select-fondations"],
@@ -15,14 +15,19 @@ const sanSelects=Object.values(allSelects).flat();
 function r(){let e=0;
 // Checkboxes standard (hors dépose)
 t('input[type="checkbox"]:checked').not('.depose-item').each(function(){e+=parseFloat(t(this).data("price"))||0});
-// Dépose : 45€/item + forfait 80€ évacuation si au moins 1 item
+// Dépose checkboxes : 45€/item
 const deposeItems=t('.depose-item:checked');
-if(deposeItems.length>0){
 deposeItems.each(function(){e+=parseFloat(t(this).data("price"))||0});
-e+=80; // Forfait évacuation
-}
-// Tous les selects san-select
-sanSelects.forEach(function(id){const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
+// Dépose selects carrelage
+const deposeSelects=t('.depose-select');
+let hasDeposeSelect=false;
+deposeSelects.each(function(){const prix=parseFloat(t(this).val())||0;if(prix>0){e+=prix;hasDeposeSelect=true;}});
+// Forfait évacuation 80€ si au moins 1 item dépose (checkbox ou select)
+if(deposeItems.length>0||hasDeposeSelect){e+=80;}
+// Tous les selects san-select (hors depose-select)
+sanSelects.forEach(function(id){if(id.startsWith("select-depose-"))return;const prix=parseFloat(t("#"+id).val())||0;e+=prix;const sel=t("#"+id);prix>0?sel.css({"border-color":"#27ae60","background":"#e8f5e9"}):sel.css({"border-color":"#e0e0e0","background":"#fff"})});
+// Style pour depose-select aussi
+t('.depose-select').each(function(){const prix=parseFloat(t(this).val())||0;prix>0?t(this).css({"border-color":"#27ae60","background":"#e8f5e9"}):t(this).css({"border-color":"#e0e0e0","background":"#fff"})});
 // Anciens selects non-san (compatibilité)
 t("select").each(function(){const o=t(this).attr("id");if(!o||o.startsWith("gamme-")||o.startsWith("type-peinture")||o.startsWith("select-"))return;e+=parseFloat(t(this).val())||0});
 const vat=.2*e,total=e+vat;
@@ -49,15 +54,31 @@ let html="";
 let totalItems=0;
 const categories={};
 
-// Collecter dépose en premier (une seule ligne)
+// Collecter dépose (checkboxes + selects carrelage) en une seule ligne
 const deposeItems=t('.depose-item:checked');
-if(deposeItems.length>0){
+const deposeSelectMural=t('#select-depose-mural');
+const deposeSelectSol=t('#select-depose-sol');
+const muralVal=parseFloat(deposeSelectMural.val())||0;
+const solVal=parseFloat(deposeSelectSol.val())||0;
+
+if(deposeItems.length>0||muralVal>0||solVal>0){
 const deposeLabels=[];
 let deposeTotal=0;
+// Checkboxes dépose
 deposeItems.each(function(){
 deposeLabels.push(t(this).data("label"));
 deposeTotal+=parseFloat(t(this).data("price"))||0;
 });
+// Select dépose mural
+if(muralVal>0){
+deposeLabels.push(deposeSelectMural.find("option:selected").data("label").replace(" évacuation déchetterie comprise",""));
+deposeTotal+=muralVal;
+}
+// Select dépose sol
+if(solVal>0){
+deposeLabels.push(deposeSelectSol.find("option:selected").data("label").replace(" évacuation déchetterie comprise",""));
+deposeTotal+=solVal;
+}
 deposeTotal+=80; // Forfait évacuation
 const deposeLabel="Dépose "+deposeLabels.join(", ")+" évacuation déchetterie comprise";
 if(!categories["Plomberie & Sanitaires"])categories["Plomberie & Sanitaires"]=[];
@@ -76,9 +97,10 @@ if(!categories[catName])categories[catName]=[];
 categories[catName].push({label:label,price:price});
 totalItems++}});
 
-// Collecter tous les selects sélectionnés
+// Collecter tous les selects sélectionnés (hors dépose)
 Object.keys(allSelects).forEach(function(cat){
 allSelects[cat].forEach(function(id){
+if(id.startsWith("select-depose-"))return; // Skip dépose selects
 const sel=t("#"+id);
 const prix=parseFloat(sel.val())||0;
 if(prix>0){
