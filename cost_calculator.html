@@ -760,35 +760,49 @@
                     <div class="sub-content" data-sub="sols">
                         <div class="san-selects-row">
                             <div class="san-select-group">
-                                <label>Parquet</label>
-                                <select id="select-parquet" class="san-select">
+                                <label>🪵 Parquet - Gamme</label>
+                                <select id="select-parquet-gamme" class="san-select">
                                     <option value="0">-- Choisir --</option>
-                                    <option value="500" data-label="Fourniture et pose de parquet stratifié classe 23/32 épaisseur 8mm décor chêne naturel, pose flottante clipsable sur sous-couche acoustique 2mm, plinthes assorties. Surface 20m². DTU 51.11">20 m² Std - 500 €</option>
-                                    <option value="1000" data-label="Fourniture et pose de parquet stratifié classe 23/32 épaisseur 8mm décor chêne naturel, pose flottante clipsable sur sous-couche acoustique 2mm, plinthes assorties. Surface 40m². DTU 51.11">40 m² Std - 1 000 €</option>
-                                    <option value="1600" data-label="Fourniture et pose de parquet contrecollé chêne véritable épaisseur 14mm (couche d'usure 3mm), pose collée en plein sur ragréage, finition huilée ou vernie, plinthes chêne massif. Surface 40m². DTU 51.2">40 m² Confort - 1 600 €</option>
-                                    <option value="3200" data-label="Fourniture et pose de parquet massif chêne premier choix épaisseur 22mm largeur 140mm, pose clouée sur lambourdes, ponçage 3 grains, vitrification polyuréthane mat soyeux 2 couches, plinthes chêne massif. Surface 40m². DTU 51.1">40 m² Premium - 3 200 €</option>
+                                    <option value="25" data-label="Fourniture et pose de parquet stratifié classe 23/32 épaisseur 8mm décor chêne, pose flottante clipsable sur sous-couche acoustique 2mm, plinthes assorties. DTU 51.11">Stratifié (25€/m²)</option>
+                                    <option value="40" data-label="Fourniture et pose de parquet contrecollé chêne véritable épaisseur 14mm couche d'usure 3mm, pose collée en plein sur ragréage, finition huilée ou vernie, plinthes chêne massif. DTU 51.2">Contrecollé (40€/m²)</option>
+                                    <option value="80" data-label="Fourniture et pose de parquet massif chêne premier choix épaisseur 22mm largeur 140mm, pose clouée sur lambourdes, ponçage 3 grains, vitrification polyuréthane mat soyeux 2 couches, plinthes chêne massif. DTU 51.1">Massif (80€/m²)</option>
                                 </select>
                             </div>
                             <div class="san-select-group">
-                                <label>Carrelage sol</label>
-                                <select id="select-carrelage-sol" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="500" data-label="Fourniture et pose de carrelage grès cérame émaillé 45x45cm antidérapant R10, pose scellée droite, joints 3mm couleur au choix, nettoyage fin de chantier. Surface 20m². DTU 52.2">20 m² Std - 500 €</option>
-                                    <option value="1000" data-label="Fourniture et pose de carrelage grès cérame émaillé 45x45cm antidérapant R10, pose scellée droite, joints 3mm couleur au choix, nettoyage fin de chantier. Surface 40m². DTU 52.2">40 m² Std - 1 000 €</option>
-                                    <option value="1600" data-label="Fourniture et pose de carrelage grès cérame pleine masse 60x60cm antidérapant R10, pose collée décalée 1/3 sur chape, joints fins 2mm époxy, nettoyage fin de chantier. Surface 40m². DTU 52.2">40 m² Confort - 1 600 €</option>
-                                    <option value="3200" data-label="Fourniture et pose de carrelage grand format 120x60cm grès cérame rectifié effet marbre ou béton ciré, pose collée double encollage, joints ultra-fins 1.5mm époxy assorti, profilés de finition inox, nettoyage fin de chantier. Surface 40m². DTU 52.2">40 m² Premium - 3 200 €</option>
-                                </select>
-                            </div>
-                            <div class="san-select-group">
-                                <label>Lino / PVC</label>
-                                <select id="select-lino" class="san-select">
-                                    <option value="0">-- Choisir --</option>
-                                    <option value="500" data-label="Fourniture et pose de revêtement sol PVC en rouleau épaisseur 2mm classe 23, pose collée en plein sur ragréage, soudure à chaud des lés, plinthes PVC souples. Surface 20m². DTU 53.2">20 m² Std - 500 €</option>
-                                    <option value="1000" data-label="Fourniture et pose de revêtement sol PVC en rouleau épaisseur 2mm classe 23, pose collée en plein sur ragréage, soudure à chaud des lés, plinthes PVC souples. Surface 40m². DTU 53.2">40 m² Std - 1 000 €</option>
-                                    <option value="1600" data-label="Fourniture et pose de sol vinyle lames clipsables épaisseur 5mm décor bois ou pierre, sous-couche intégrée, classe 33 usage intensif, plinthes assorties clipsables. Surface 40m². DTU 53.2">40 m² Confort - 1 600 €</option>
-                                </select>
+                                <label>📐 Superficie (m²)</label>
+                                <input type="number" id="input-parquet-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
                             </div>
                         </div>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>🔲 Carrelage sol - Gamme</label>
+                                <select id="select-carrelage-gamme" class="san-select">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="25" data-label="Fourniture et pose de carrelage grès cérame émaillé 45x45cm antidérapant R10, pose scellée droite, joints 3mm couleur au choix, nettoyage fin de chantier. DTU 52.2">Standard (25€/m²)</option>
+                                    <option value="40" data-label="Fourniture et pose de carrelage grès cérame pleine masse 60x60cm antidérapant R10, pose collée décalée 1/3 sur chape, joints fins 2mm époxy, nettoyage fin de chantier. DTU 52.2">Confort (40€/m²)</option>
+                                    <option value="80" data-label="Fourniture et pose de carrelage grand format 120x60cm grès cérame rectifié effet marbre ou béton ciré, pose collée double encollage, joints ultra-fins 1.5mm époxy assorti, profilés de finition inox. DTU 52.2">Premium (80€/m²)</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>📐 Superficie (m²)</label>
+                                <input type="number" id="input-carrelage-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
+                            </div>
+                        </div>
+                        <div class="san-selects-row">
+                            <div class="san-select-group">
+                                <label>🟫 Lino / PVC - Gamme</label>
+                                <select id="select-lino-gamme" class="san-select">
+                                    <option value="0">-- Choisir --</option>
+                                    <option value="25" data-label="Fourniture et pose de revêtement sol PVC en rouleau épaisseur 2mm classe 23, pose collée en plein sur ragréage, soudure à chaud des lés, plinthes PVC souples. DTU 53.2">Standard (25€/m²)</option>
+                                    <option value="40" data-label="Fourniture et pose de sol vinyle lames clipsables épaisseur 5mm décor bois ou pierre, sous-couche intégrée, classe 33 usage intensif, plinthes assorties clipsables. DTU 53.2">Confort (40€/m²)</option>
+                                </select>
+                            </div>
+                            <div class="san-select-group">
+                                <label>📐 Superficie (m²)</label>
+                                <input type="number" id="input-lino-m2" class="qty-input" placeholder="m²" min="1" max="500" style="width:100px;">
+                            </div>
+                        </div>
+                        <p id="sols-total-info" style="text-align:center;font-size:12px;color:#27ae60;margin-top:10px;font-weight:600;"></p>
                     </div>
                     
                     <div class="sub-content" data-sub="murs-rev">
@@ -1244,8 +1258,8 @@
     };
     </script>
     <script src="js/main.js?v=2.0" defer></script>
-    <script src="js/cost_calculator.js?v=8.3" defer></script>
-    <!-- CCTP v16 - 14/03/2026 -->
+    <script src="js/cost_calculator.js?v=8.4" defer></script>
+    <!-- CCTP v17 - 14/03/2026 -->
     
     <!-- Lazy Load jsPDF + Synchronisation des boutons mobile -->
     <script>
