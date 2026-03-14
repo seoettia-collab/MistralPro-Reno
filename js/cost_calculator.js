@@ -124,9 +124,9 @@ t('.depose-select').each(function(){const prix=parseFloat(t(this).val())||0;prix
 // Anciens selects non-san (compatibilité)
 t("select").each(function(){const o=t(this).attr("id");if(!o||o.startsWith("gamme-")||o.startsWith("type-peinture")||o.startsWith("select-"))return;e+=parseFloat(t(this).val())||0});
 const vat=.2*e,total=e+vat;
-t("#subtotal").text(l(e)),t("#vat").text(l(vat)),t("#total").text(l(total));
+t("#subtotal").text(formatPrice(e)),t("#vat").text(formatPrice(vat)),t("#total").text(formatPrice(total));
 // Mobile totals
-t("#mobile-subtotal").text(l(e));t("#mobile-vat").text(l(vat));t("#mobile-total").text(l(total));
+t("#mobile-subtotal").text(formatPrice(e));t("#mobile-vat").text(formatPrice(vat));t("#mobile-total").text(formatPrice(total));
 // Compteurs par catégorie
 ["plomberie","electricite","peinture","gros-oeuvre","menuiserie"].forEach(cat=>{let count=0;const panel=t(`.category-panel[data-category="${cat}"]`);
 panel.find('input[type="checkbox"]:checked').each(function(){count++});
@@ -448,19 +448,17 @@ t("#preview-ttc").text(formatPrice(ttc));
 
 function formatPrice(p){return Math.round(p).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" €"}
 
-function l(t){return new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",minimumFractionDigits:0,maximumFractionDigits:0}).format(t)}
-
 function c(){const r=t("#formMessage"),l=t(".client-form"),c=t("#client-nom").val().trim(),h=t("#client-tel").val().trim(),g=t("#client-email").val().trim(),v=t("#client-cp").val().trim(),f=t("#client-adresse").val().trim(),x=t("#client-ville").val().trim();
 if(!(c&&h&&g&&v))return r.addClass("show"),l.addClass("highlight"),void setTimeout(()=>{r.removeClass("show"),l.removeClass("highlight")},3e3);
 if(!/^[0-9]{5}$/.test(v))return r.text("⚠️ Code postal invalide (5 chiffres)").addClass("show"),l.addClass("highlight"),void setTimeout(()=>{r.removeClass("show"),r.text("⚠️ Veuillez compléter votre formulaire"),l.removeClass("highlight")},3e3);
 r.removeClass("show"),l.removeClass("highlight");
 const b={};
 // Checkboxes
-t('input[type="checkbox"]:checked').each(function(){const e=d(t(this).closest(".category-panel").data("category")||"Prestations");b[e]||(b[e]=[]),b[e].push({desc:t(this).data("label")||t(this).closest("label").find("strong").text(),qty:1,unit:"u",price:parseFloat(t(this).data("price"))||0})});
+t('input[type="checkbox"]:checked').each(function(){const e=getCatName(t(this).closest(".category-panel").data("category")||"Prestations");b[e]||(b[e]=[]),b[e].push({desc:t(this).data("label")||t(this).closest("label").find("strong").text(),qty:1,unit:"u",price:parseFloat(t(this).data("price"))||0})});
 // Tous les selects par catégorie
-Object.keys(allSelects).forEach(function(cat){const catName=d(cat);allSelects[cat].forEach(function(id){const sel=t("#"+id);const prix=parseFloat(sel.val())||0;if(prix>0){b[catName]||(b[catName]=[]);const selectedOption=sel.find("option:selected");const label=selectedOption.data("label")||sel.data("label")||selectedOption.text().split("€")[0].trim();b[catName].push({desc:label,qty:1,unit:"u",price:prix})}})});
+Object.keys(allSelects).forEach(function(cat){const catName=getCatName(cat);allSelects[cat].forEach(function(id){const sel=t("#"+id);const prix=parseFloat(sel.val())||0;if(prix>0){b[catName]||(b[catName]=[]);const selectedOption=sel.find("option:selected");const label=selectedOption.data("label")||sel.data("label")||selectedOption.text().split("€")[0].trim();b[catName].push({desc:label,qty:1,unit:"u",price:prix})}})});
 // Anciens selects non-san
-t("select").each(function(){const e=t(this).attr("id");if(e&&!e.startsWith("gamme-")&&!e.startsWith("type-peinture")&&!e.startsWith("select-")&&!t(this).hasClass("gamme-select")){const e=parseFloat(t(this).val())||0;if(e>0){const o=d(t(this).closest(".category-panel").data("category")||"Prestations");b[o]||(b[o]=[]);const n=t(this).find("option:selected").data("label")||t(this).data("label")||t(this).closest(".select-box").find("label").text().trim().split("(")[0].trim();b[o].push({desc:n,qty:1,unit:"forfait",price:e})}}});
+t("select").each(function(){const e=t(this).attr("id");if(e&&!e.startsWith("gamme-")&&!e.startsWith("type-peinture")&&!e.startsWith("select-")&&!t(this).hasClass("gamme-select")){const e=parseFloat(t(this).val())||0;if(e>0){const o=getCatName(t(this).closest(".category-panel").data("category")||"Prestations");b[o]||(b[o]=[]);const n=t(this).find("option:selected").data("label")||t(this).data("label")||t(this).closest(".select-box").find("label").text().trim().split("(")[0].trim();b[o].push({desc:n,qty:1,unit:"forfait",price:e})}}});
 if(0===Object.values(b).flat().length)return void alert("Veuillez sélectionner au moins une prestation");
 const{jsPDF:F}=window.jspdf,y=new F,C=new Date,T=C.toLocaleDateString("fr-FR"),S=new Date(C);S.setDate(S.getDate()+30);
 const w=S.toLocaleDateString("fr-FR"),P="DEV-"+C.getFullYear()+String(C.getMonth()+1).padStart(2,"0")+String(C.getDate()).padStart(2,"0")+"-"+String(Math.floor(9e3*Math.random())+1e3);
@@ -530,8 +528,6 @@ sendWebhook({nom:c,tel:h,email:g,adresse:f,cp:v,ville:x,quoteNum:P},j,{subtotal:
 const U=y.output("blob"),_=URL.createObjectURL(U),I=window.open(_,"_blank");I?I.onload=function(){I.document.title=A,I.print(),setTimeout(function(){URL.revokeObjectURL(_)},1e3)}:(y.save(A+".pdf"),URL.revokeObjectURL(_))}
 
 function u(t){return Math.round(t).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" €"}
-function d(t){return{plomberie:"Plomberie & Sanitaires",electricite:"Électricité",peinture:"Peinture & Revêtements","gros-oeuvre":"Gros Œuvre",menuiserie:"Menuiserie"}[t]||t||"Prestations"}
-function p(t){return t.includes("m2")||t.includes("peinture")||t.includes("sol")||t.includes("mur")||t.includes("plafond")||t.includes("isolation")||t.includes("placo")||t.includes("toiture")||t.includes("extension")||t.includes("cloison")||t.includes("dalle")||t.includes("faux-plafond")?"m²":t.includes("ml")||t.includes("tuyauterie")||t.includes("plinthe")||t.includes("zinguerie")||t.includes("cuisine")||t.includes("placard")?"ml":t.includes("m3")||t.includes("demolition")||t.includes("terrassement")||t.includes("fondation")?"m³":"u"}
 function m(t,e){t.setDrawColor(74,144,226),t.setLineWidth(2),t.circle(32,e+17,16,"S"),t.setFontSize(12),t.setTextColor(74,144,226),t.setFont(void 0,"bold"),t.text("MPR",24,e+20)}
 
 function updateSanTabs(){
