@@ -48,9 +48,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 
+    <!-- Preconnect CDN pour performance -->
+    <link rel="preconnect" href="https://code.jquery.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="dns-prefetch" href="https://code.jquery.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css?v=2.0">
-    <link rel="stylesheet" href="css/cost_calculator.css?v=5.4">
+    <link rel="stylesheet" href="css/cost_calculator.css?v=5.5">
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -929,7 +935,7 @@
     </main>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <!-- jsPDF chargé en lazy load au premier clic sur Télécharger -->
     <script>
     window.jsPDFLoaded = false;
