@@ -76,7 +76,7 @@ html+='<div class="preview-item"><span class="preview-item-label">'+item.label+'
 previewList.html(html);
 previewCount.text(totalItems+" prestation(s)")}
 
-function formatPrice(p){return Math.round(p).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" €"}}
+function formatPrice(p){return Math.round(p).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" €"}
 
 function l(t){return new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",minimumFractionDigits:0,maximumFractionDigits:0}).format(t)}
 
