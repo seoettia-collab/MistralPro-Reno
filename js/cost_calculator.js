@@ -468,7 +468,32 @@ let k=15;if(i)try{y.addImage(i,"PNG",15,k,40,40)}catch(t){m(y,k)}else m(y,k);
 y.setFontSize(28),y.setTextColor(74,144,226),y.setFont(void 0,"bold"),y.text("Devis",175,20),y.setFontSize(9),y.setTextColor(80,80,80),y.setFont(void 0,"normal"),y.text("N° "+P,150,28),y.text("En date du : "+T,150,32),y.text("Valable jusqu'au : "+w,150,36),y.text("Votre contact : Mistral",150,40),y.text("Tél : "+a,150,44),y.text("Email : "+s,150,48),k=60,y.setDrawColor(74,144,226),y.setLineWidth(.5),y.line(15,k,195,k),k=68,y.setFontSize(12),y.setTextColor(74,144,226),y.setFont(void 0,"bold"),y.text("Mistral Pro Reno",15,k),k+=5,y.setFontSize(9),y.setTextColor(0,0,0),y.setFont(void 0,"normal"),y.text(o,15,k),k+=4,y.text(n,15,k),k+=4,y.text("TVA N° FR74851558882",15,k),k+=4,y.setTextColor(74,144,226),y.setFont(void 0,"bold"),y.text("Tél : "+a,15,k),k+=4,y.setTextColor(0,0,0),y.setFont(void 0,"normal"),y.text("Email : "+s,15,k);
 let D=68;y.setFontSize(11),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.text(c,110,D),D+=5,y.setFontSize(9),y.setFont(void 0,"normal"),f&&(y.text(f,110,D),D+=4);
 const R=[v,x].filter(Boolean).join(" ");y.text(R,110,D),D+=4,y.text("France",110,D),D+=4,y.text(h,110,D),D+=4,g&&y.text(g,110,D),k=95,y.setFontSize(11),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.text("Devis Estimatif - Travaux de Rénovation",15,k),k+=8,y.setFillColor(74,144,226),y.rect(15,k-4,180,7,"F"),y.setTextColor(255,255,255),y.setFontSize(8),y.setFont(void 0,"bold"),y.text("N°",17,k),y.text("DÉSIGNATION",27,k),y.text("QTÉ",145,k),y.text("P.U. TTC",160,k),y.text("TOTAL TTC",175,k),k+=5,y.setTextColor(0,0,0);
-let E=0,z=1;Object.keys(b).forEach(t=>{const e=b[t];let o=0;e.forEach(t=>o+=t.qty*t.price),k>250&&(y.addPage(),k=20),k+=6,y.setFillColor(240,240,240),y.rect(15,k-4,180,6,"F"),y.setFont(void 0,"bold"),y.setFontSize(9),y.text(z+"",17,k),y.text(t.toUpperCase(),27,k);const lotTTC=o*1.2;y.text(u(lotTTC),180,k);let n=1;e.forEach(t=>{k>270&&(y.addPage(),k=20),k+=5;const e=t.qty*t.price;const ttc=e*1.2;E+=e,y.setFont(void 0,"normal"),y.setFontSize(7);y.text(z+"."+n,17,k);const maxLen=75;const o=t.desc.length>maxLen?t.desc.substring(0,maxLen)+"...":t.desc;y.text(o,27,k),y.text(t.qty+" "+t.unit,145,k),y.text(u(t.price*1.2),160,k),y.text(u(ttc),180,k),n++}),z++}),k+=15,k>250&&(y.addPage(),k=30),y.setDrawColor(74,144,226),y.setLineWidth(.5),y.line(120,k,190,k);
+let E=0,z=1;Object.keys(b).forEach(t=>{const e=b[t];let o=0;e.forEach(t=>o+=t.qty*t.price),k>250&&(y.addPage(),k=20),k+=6;
+// Lot header - dégradé bleu (haut bleu foncé, bas bleu clair 25%)
+const lotY=k-4;
+y.setFillColor(74,144,226);y.rect(15,lotY,180,3,"F");
+y.setFillColor(149,189,241);y.rect(15,lotY+3,180,3,"F");
+y.setFont(void 0,"bold"),y.setFontSize(9),y.setTextColor(255,255,255),y.text(z+"",17,k),y.text(t.toUpperCase(),27,k);const lotTTC=o*1.2;y.text(u(lotTTC),180,k);y.setTextColor(0,0,0);let n=1;e.forEach(t=>{
+// Calcul hauteur nécessaire pour la désignation
+const desc=t.desc;
+const maxWidth=115;
+const lineHeight=4;
+const lines=y.splitTextToSize(desc,maxWidth);
+const blockHeight=Math.max(lines.length*lineHeight,5);
+// Saut de page si nécessaire
+if(k+blockHeight>270){y.addPage();k=20}
+k+=blockHeight;
+const baseY=k-blockHeight+lineHeight;
+const ttc=(t.qty*t.price)*1.2;
+E+=t.qty*t.price;
+y.setFont(void 0,"normal"),y.setFontSize(7);
+y.text(z+"."+n,17,baseY);
+// Désignation multi-lignes
+lines.forEach((line,idx)=>{y.text(line,27,baseY+idx*lineHeight)});
+y.text(t.qty+" "+t.unit,145,baseY);
+y.text(u(t.price*1.2),160,baseY);
+y.text(u(ttc),180,baseY);
+n++}),z++}),k+=15,k>250&&(y.addPage(),k=30),y.setDrawColor(74,144,226),y.setLineWidth(.5),y.line(120,k,190,k);
 const $=.2*E,N=E+$,q=Math.round(.3*N),M=N-q;k+=8,y.setFontSize(10),y.setFont(void 0,"normal"),y.text("Total HT",125,k),y.text(u(E),185,k,{align:"right"}),k+=6,y.text("TVA 20%",125,k),y.text(u($),185,k,{align:"right"}),k+=8,y.setFont(void 0,"bold"),y.setFontSize(11),y.text("Total TTC",125,k),y.text(u(N),185,k,{align:"right"}),k+=10,y.setFillColor(74,144,226),y.rect(120,k-5,70,10,"F"),y.setTextColor(255,255,255),y.setFontSize(10),y.text("NET À PAYER",125,k),y.text(u(N),185,k,{align:"right"});
 let O=k-30;O<200&&(O=k-30),y.setTextColor(0,0,0),y.setFont(void 0,"bold"),y.setFontSize(9),y.text("Conditions de paiement",20,O),O+=5,y.setFont(void 0,"normal"),y.setFontSize(8),y.text("Acompte de 30% à la signature : "+u(q)+" TTC",20,O),O+=4,y.text("Solde à la fin des travaux : "+u(M)+" TTC",20,O),O+=4,y.text("Paiement par virement bancaire.",20,O);
 const L=y.internal.getNumberOfPages();for(let t=1;t<=L;t++)y.setPage(t),y.setFontSize(7),y.setTextColor(100,100,100),y.setFont(void 0,"normal"),y.text("Capital 1000 € - 85155888200029 RCS Paris - APE : 4120A",105,282,{align:"center"}),y.text("Garantie décennale - HOKEN ASSURANCE - 25 Rue Marbeuf, 75008 Paris",105,286,{align:"center"}),y.text("Page "+t+" / "+L,185,286,{align:"right"});
