@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validation Travaux - Remande</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; padding: 16px; color: #1a1a1a; }
+  .container { max-width: 500px; margin: 0 auto; }
+  .header { background: linear-gradient(135deg, #1F3864, #2E5AA8); color: #fff; border-radius: 16px 16px 0 0; padding: 24px 20px; text-align: center; }
+  .header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .header p { font-size: 13px; opacity: 0.85; }
+  .progress-bar { background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; margin-top: 16px; overflow: hidden; }
+  .progress-fill { background: #4ADE80; height: 100%; border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+  .progress-text { font-size: 12px; margin-top: 6px; opacity: 0.9; }
+  .body { background: #fff; padding: 0; }
+  .lot { border-bottom: 1px solid #e8e8e8; }
+  .lot:last-child { border-bottom: none; }
+  .lot-header { display: flex; align-items: center; padding: 14px 20px; background: #f8f9fb; font-weight: 600; font-size: 13px; color: #1F3864; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lot-num { background: #1F3864; color: #fff; font-size: 11px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; flex-shrink: 0; }
+  .item { display: flex; align-items: flex-start; padding: 12px 20px; cursor: pointer; transition: background 0.15s; -webkit-tap-highlight-color: transparent; }
+  .item:hover { background: #f5f7fa; }
+  .item.checked .checkbox { background: #4ADE80; border-color: #4ADE80; }
+  .item.checked .checkbox::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
+  .item.checked .item-text { color: #888; }
+  .checkbox { width: 26px; height: 26px; border: 2.5px solid #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; transition: all 0.2s; margin-top: 1px; }
+  .item-text { font-size: 14px; line-height: 1.45; flex: 1; }
+  .item-detail { font-size: 12px; color: #777; margin-top: 2px; }
+  .footer { background: #fff; border-radius: 0 0 16px 16px; padding: 20px; border-top: 1px solid #e8e8e8; }
+  .btn-validate { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: #e0e0e0; color: #999; pointer-events: none; }
+  .btn-validate.active { background: #4ADE80; color: #fff; pointer-events: auto; }
+  .btn-validate.active:hover { background: #34c46b; }
+  .btn-validate.done { background: #1F3864; color: #fff; pointer-events: none; }
+  .signature { display: none; margin-top: 16px; padding: 16px; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0; text-align: center; }
+  .signature.show { display: block; }
+  .signature p { font-size: 13px; color: #166534; margin-bottom: 4px; }
+  .signature .date { font-size: 12px; color: #888; }
+  .mistral { text-align: center; padding: 20px; font-size: 11px; color: #aaa; }
+  .brand { background: #fff; border-radius: 16px 16px 0 0; padding: 18px 20px; text-align: center; border-bottom: 1px solid #e8e8e8; }
+  .brand-name { font-size: 18px; font-weight: 800; color: #1F3864; letter-spacing: 1.5px; text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: #888; margin-top: 2px; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="brand">
+    <div class="brand-name">Mistral Pro Reno</div>
+    <div class="brand-sub">Peinture &amp; Rénovation</div>
+  </div>
+  <div class="header" style="border-radius: 0;">
+    <h1>Récapitulatif des Travaux</h1>
+    <p>Appartement 79 m² — Client Remande</p>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText">0 / 12 postes validés</div>
+  </div>
+  <div class="body" id="checklist"></div>
+  <div class="footer">
+    <button class="btn-validate" id="btnValidate" onclick="validate()">Tout valider ✓</button>
+    <div class="signature" id="signature">
+      <p>✅ Récapitulatif validé par le client</p>
+      <div class="date" id="sigDate"></div>
+    </div>
+  </div>
+  <div class="mistral">Mistral Pro Reno</div>
+</div>
+
+<script>
+const lots = [
+  { num: 1, title: "Démolition et dépose", items: [
+    { text: "Démolition cloison + colonne en plaque de plâtre", detail: "Évacuation gravats incluse" },
+    { text: "Dépose parquet existant — 79 m²", detail: "Ensemble de l'appartement" },
+    { text: "Dépose luminaire cuisine", detail: "Mise en sécurité du circuit" },
+  ]},
+  { num: 2, title: "Revêtement de sol", items: [
+    { text: "Lame PVC clipsable ARTENS Girraween gris — 54 m²", detail: "Couloir, SDB et salon + plinthes" },
+  ]},
+  { num: 3, title: "Enduit et préparation", items: [
+    { text: "Enduit général rebouchage et lissage — 80%", detail: "221 m² — murs et plafonds" },
+  ]},
+  { num: 4, title: "Peinture", items: [
+    { text: "Peinture blanc murs et plafonds — 276,5 m²", detail: "2 couches, acrylique lessivable" },
+    { text: "Peinture boiseries : fenêtres et portes", detail: "Sous-couche + 2 couches laquée satinée" },
+  ]},
+  { num: 5, title: "Cuisine", items: [
+    { text: "Dépose cuisine existante + Fourniture et pose cuisine complète avec îlot", detail: "Four encastré inclus dans l'îlot" },
+  ]},
+  { num: 6, title: "Luminaire + Électricité", items: [
+    { text: "Nouveau luminaire cuisine (valeur 100 € TTC)", detail: "Raccordement inclus" },
+    { text: "Remplacement 15 prises + 8 interrupteurs", detail: "Type Legrand — 6 pièces" },
+  ]},
+  { num: 7, title: "Sèche-serviette", items: [
+    { text: "Fourniture et pose sèche-serviette électrique", detail: "Raccordement et fixation murale" },
+  ]},
+  { num: 8, title: "Menuiserie", items: [
+    { text: "Déplacement porte coulissante placard", detail: "Adaptation rails + finitions" },
+  ]},
+  { num: 9, title: "Nettoyage", items: [
+    { text: "Nettoyage fin de chantier + évacuation déchèterie", detail: "Appartement prêt à habiter" },
+  ]},
+];
+
+let totalItems = 0;
+let checkedItems = 0;
+let validated = false;
+
+const checklist = document.getElementById('checklist');
+
+lots.forEach(lot => {
+  const lotDiv = document.createElement('div');
+  lotDiv.className = 'lot';
+  lotDiv.innerHTML = `<div class="lot-header"><div class="lot-num">${lot.num}</div>${lot.title}</div>`;
+  lot.items.forEach(item => {
+    totalItems++;
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'item';
+    itemDiv.innerHTML = `<div class="checkbox"></div><div><div class="item-text">${item.text}</div><div class="item-detail">${item.detail}</div></div>`;
+    itemDiv.addEventListener('click', () => {
+      if (validated) return;
+      itemDiv.classList.toggle('checked');
+      checkedItems = document.querySelectorAll('.item.checked').length;
+      updateProgress();
+    });
+    lotDiv.appendChild(itemDiv);
+  });
+  checklist.appendChild(lotDiv);
+});
+
+function updateProgress() {
+  const pct = Math.round((checkedItems / totalItems) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${checkedItems} / ${totalItems} postes validés`;
+  const btn = document.getElementById('btnValidate');
+  if (checkedItems === totalItems) {
+    btn.classList.add('active');
+  } else {
+    btn.classList.remove('active');
+  }
+}
+
+function validate() {
+  if (checkedItems < totalItems) return;
+  validated = true;
+  const btn = document.getElementById('btnValidate');
+  btn.classList.remove('active');
+  btn.classList.add('done');
+  btn.textContent = 'Validé ✓';
+  const sig = document.getElementById('signature');
+  sig.classList.add('show');
+  const now = new Date();
+  document.getElementById('sigDate').textContent = 'Le ' + now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  document.querySelectorAll('.item').forEach(i => i.style.cursor = 'default');
+}
+</script>
+</body>
+</html>
