@@ -148,8 +148,39 @@ function validate() {
   const sig = document.getElementById('signature');
   sig.classList.add('show');
   const now = new Date();
-  document.getElementById('sigDate').textContent = 'Le ' + now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('fr-FR');
+  const timeStr = now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('sigDate').textContent = 'Le ' + dateStr + ' à ' + timeStr;
   document.querySelectorAll('.item').forEach(i => i.style.cursor = 'default');
+
+  // Build recap for email
+  let recap = 'VALIDATION RÉCAPITULATIF TRAVAUX - CLIENT REMANDE\n';
+  recap += 'Appartement 79 m²\n';
+  recap += 'Date : ' + dateStr + ' à ' + timeStr + '\n\n';
+  recap += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  recap += 'POSTES VALIDÉS :\n';
+  recap += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+  document.querySelectorAll('.lot').forEach(lot => {
+    const title = lot.querySelector('.lot-header').textContent.trim();
+    recap += '▸ ' + title.toUpperCase() + '\n';
+    lot.querySelectorAll('.item').forEach(item => {
+      const text = item.querySelector('.item-text').textContent;
+      recap += '  ✅ ' + text + '\n';
+    });
+    recap += '\n';
+  });
+  recap += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  recap += 'Le client confirme avoir pris connaissance\net validé l\'ensemble des postes ci-dessus.\n';
+
+  const subject = encodeURIComponent('✅ Validation travaux Remande — ' + dateStr);
+  const body = encodeURIComponent(recap);
+  const mailto = 'mailto:contact@mistralpro-reno.fr?subject=' + subject + '&body=' + body;
+
+  // Show send button
+  document.getElementById('btnSend').style.display = 'block';
+  document.getElementById('btnSend').onclick = function() {
+    window.location.href = mailto;
+  };
 }
 </script>
 </body>
