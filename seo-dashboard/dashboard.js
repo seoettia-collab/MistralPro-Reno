@@ -593,17 +593,19 @@ function renderCockpitV2(data) {
 
         <!-- SECTION 7 : Scan SEO Site -->
         <div class="cockpit-section cockpit-site-scan">
-          <div class="section-header">
-            <h4>🔍 Scan SEO du Site</h4>
-            <button class="btn-small btn-secondary" onclick="runSiteScan()">
-              🔄 Scanner
-            </button>
-          </div>
-          <div id="site-scan-results" class="site-scan-results">
-            <p class="scan-placeholder">Cliquez sur "Scanner" pour analyser toutes les pages du site</p>
-          </div>
-        </div>
+  <div class="section-header">
+    <h4>🔍 Scan SEO du Site</h4>
+  </div>
 
+  <div id="site-scan-results" class="site-scan-results">
+    <div class="scan-empty-state">
+      <p class="scan-placeholder">Cliquez sur "Scanner" pour analyser toutes les pages du site</p>
+      <button class="btn-primary btn-scan-main" onclick="runSiteScan()">
+        🔄 Scanner le site
+      </button>
+    </div>
+  </div>
+</div>
         <!-- SECTION 8 : Mes Articles -->
         <div class="cockpit-section cockpit-my-articles">
           <div class="section-header">
