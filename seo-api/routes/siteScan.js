@@ -280,12 +280,26 @@ router.get('/', async (req, res) => {
       const $ = cheerio.load(blogResult.html);
       
       // Extraire les liens des articles
-      $('a[href*="/blog/"]').each((i, el) => {
-        const href = $(el).attr('href');
-        if (href && href.endsWith('.html') && !blogArticles.includes(href)) {
-          blogArticles.push(href.startsWith('http') ? href : SITE_URL + href);
-        }
-      });
+      $('a[href]').each((i, el) => {
+  const href = ($(el).attr('href') || '').trim();
+
+  // Garder uniquement les vrais articles du site
+  const isLocalBlogArticle =
+    href.startsWith('/blog/') && href.endsWith('.html');
+
+  const isAbsoluteBlogArticle =
+    href.startsWith(`${SITE_URL}/blog/`) && href.endsWith('.html');
+
+  if (!isLocalBlogArticle && !isAbsoluteBlogArticle) {
+    return;
+  }
+
+  const fullUrl = href.startsWith('http') ? href : `${SITE_URL}${href}`;
+
+  if (!blogArticles.includes(fullUrl)) {
+    blogArticles.push(fullUrl);
+  }
+});
       
       // Scanner les 5 premiers articles
       const articlesToScan = blogArticles.slice(0, 5);
