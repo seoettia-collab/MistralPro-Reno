@@ -24,7 +24,7 @@ async function fetchAPI(endpoint, options = {}) {
     ...options,
     headers: {
       ...headers,
-      ...options.headers
+      ...(options.headers || {})
     }
   };
 
