@@ -1049,6 +1049,19 @@ function prepareCockpitDataForAudit() {
   }
   
   // Résumé structuré pour Claude
+  const scannedBlogPages = siteScanData?.pages?.filter(p =>
+  p.url &&
+  p.url.includes('/blog/') &&
+  !p.url.endsWith('/blog.html')
+) || [];
+
+const liveContentsCount = scannedBlogPages.length > 0
+  ? scannedBlogPages.length
+  : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
+
+const totalContentsCount = scannedBlogPages.length > 0
+  ? scannedBlogPages.length
+  : contents.length;
   return {
     score_global: scoreData.score || 0,
     score_breakdown: scoreData.breakdown || {},
@@ -1060,11 +1073,11 @@ function prepareCockpitDataForAudit() {
       requetes: stats.total_queries || 0
     },
     
-    contenu: {
-      total: contents.length,
-      live: contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length,
-      en_attente: contents.filter(c => !['deployed', 'published', 'live'].includes(c.status)).length
-    },
+   contenu: {
+  total: totalContentsCount,
+  live: liveContentsCount,
+  en_attente: contents.filter(c => !['deployed', 'published', 'live'].includes(c.status)).length
+},
     
     opportunites: opportunities.slice(0, 10).map(o => ({
       keyword: o.keyword || o.target,
