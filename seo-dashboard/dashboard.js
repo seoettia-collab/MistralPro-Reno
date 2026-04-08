@@ -1039,21 +1039,34 @@ function prepareCockpitDataForAudit() {
   
   // Récupérer les données du scan si disponibles
   let siteScanData = null;
-  try {
-    const savedScan = localStorage.getItem('mpr_siteScanData');
-    if (savedScan) {
-      siteScanData = JSON.parse(savedScan);
-    }
-  } catch (e) {
-    console.warn('[Audit IA] Pas de données de scan disponibles');
+
+try {
+  const savedScan = localStorage.getItem('mpr_siteScanData');
+
+  console.log('[SCAN RAW]', savedScan);
+
+  if (savedScan) {
+    siteScanData = JSON.parse(savedScan);
   }
+
+  console.log('[SCAN PARSED]', siteScanData);
+
+} catch (e) {
+  console.warn('[Audit IA] Pas de données de scan disponibles');
+}
   
   // Résumé structuré pour Claude
-  const scannedBlogPages = siteScanData?.pages?.filter(p =>
-  p.url &&
-  p.url.includes('/blog/') &&
-  !p.url.endsWith('/blog.html')
-) || [];
+  const scannedBlogPages = siteScanData?.pages?.filter(p => {
+  if (!p.url) return false;
+
+  const url = p.url.toLowerCase();
+
+  return (
+    url.includes('/blog/') &&
+    !url.endsWith('/blog.html') &&
+    url.includes('.html')
+  );
+}) || [];
 
 const liveContentsCount = scannedBlogPages.length > 0
   ? scannedBlogPages.length
