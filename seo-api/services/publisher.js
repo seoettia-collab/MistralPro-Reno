@@ -280,6 +280,20 @@ function generateHTMLFromBrief(brief, content) {
   
   // Générer le corps de l'article via le contentGenerator
   const articleBody = generateArticleBody(brief, keyword);
+  const selectedImage = content.image_url || content.imageUrl || 'renovation_general_(9).webp';
+
+const articleImagePath = selectedImage.startsWith('http')
+  ? selectedImage
+  : selectedImage.startsWith('/images/')
+    ? selectedImage
+    : selectedImage.startsWith('images/')
+      ? `/${selectedImage}`
+      : `/images/blog/${selectedImage}`;
+
+const articleImageRelative = articleImagePath.startsWith('/images/')
+  ? `..${articleImagePath}`
+  : articleImagePath;
+  
 
   const html = `<!DOCTYPE html>
 <html lang="fr">
@@ -295,7 +309,7 @@ function generateHTMLFromBrief(brief, content) {
 <!-- BLOG_META
 title: ${escapeHTML(content.title)}
 date: ${today}
-image: renovation_general_(9).webp
+image: ${articleImagePath.replace('/images/blog/', '').replace('/images/', '')}
 category: ${category.toLowerCase()}
 excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
 -->
@@ -313,7 +327,7 @@ excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
   <meta property="og:url" content="${SITE_URL}/blog/${slug}.html">
   <meta property="og:title" content="${escapeHTML(content.title)}">
   <meta property="og:description" content="${escapeHTML(brief.meta_description || keyword)}">
-  <meta property="og:image" content="${SITE_URL}/images/renovation_general_(9).webp">
+  <meta property="og:image" content="${articleImagePath.startsWith('http') ? articleImagePath : `${SITE_URL}${articleImagePath}`}">
   <meta property="og:site_name" content="Mistral Pro Reno">
   <meta property="og:locale" content="fr_FR">
   <meta property="article:published_time" content="${today}">
@@ -334,7 +348,7 @@ excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
   
   <!-- Schema.org -->
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || keyword)}","image":"${SITE_URL}/images/renovation_general_(9).webp","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
+  {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || keyword)}",""image":"${articleImagePath.startsWith('http') ? articleImagePath : `${SITE_URL}${articleImagePath}`}"","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
   </script>
 </head>
 <body>
@@ -389,7 +403,7 @@ excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
     <article class="article-content">
       
       <figure style="margin:0 0 30px 0">
-        <img src="../images/renovation_general_(9).webp" alt="${escapeHTML(keyword)}" width="800" height="500" loading="eager" style="width:100%;height:auto;border-radius:12px">
+        <img src="${articleImageRelative}" alt="${escapeHTML(keyword)}" width="800" height="500" loading="eager" style="width:100%;height:auto;border-radius:12px">
       </figure>
 
 ${articleBody}
