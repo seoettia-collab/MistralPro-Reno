@@ -30,7 +30,6 @@ async function fetchAPI(endpoint, options = {}) {
 
   return fetch(`${API_BASE}${endpoint}`, mergedOptions);
 }
-}
 
 // Handler d'erreurs global pour éviter les crashs silencieux
 window.onerror = function(msg, url, lineNo, columnNo, error) {
