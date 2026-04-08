@@ -10,23 +10,26 @@ const API_KEY = 'mpr-seo-2026-secure-key';
 
 // Fonction fetch avec authentification API
 async function fetchAPI(endpoint, options = {}) {
-  const defaultOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': API_KEY
-    }
+  const isGSC = endpoint.includes('/api/gsc');
+
+  const headers = {
+    'Content-Type': 'application/json'
   };
-  
+
+  if (!isGSC) {
+    headers['X-API-Key'] = API_KEY;
+  }
+
   const mergedOptions = {
-    ...defaultOptions,
     ...options,
     headers: {
-      ...defaultOptions.headers,
+      ...headers,
       ...options.headers
     }
   };
-  
+
   return fetch(`${API_BASE}${endpoint}`, mergedOptions);
+}
 }
 
 // Handler d'erreurs global pour éviter les crashs silencieux
