@@ -1044,20 +1044,12 @@ function prepareCockpitDataForAudit() {
 
 try {
   const savedScan = localStorage.getItem('mpr_siteScanData');
-
   console.log('[SCAN RAW]', savedScan);
 
   if (savedScan) {
     siteScanData = JSON.parse(savedScan);
   }
 
-  console.log('[SCAN PARSED]', siteScanData);
-
-} catch (e) {
-  console.warn('[Audit IA] Pas de données de scan disponibles');
-}
-  
-  // Résumé structuré pour Claude
   console.log('[SCAN PARSED]', siteScanData);
 
 } catch (e) {
