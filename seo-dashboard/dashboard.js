@@ -1648,19 +1648,19 @@ function renderAuditIAResult(audit) {
                 decisionIcon = '📝';
                 decisionLabel = 'Créer';
                 btnClass = 'btn-primary';
-                btnAction = `executeDecision('create_content', '${escapeHtml(decision.keyword || decision.target || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+                btnAction = `executeDecision('create_content', ${JSON.stringify(decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
                 break;
               case 'optimize_page':
                 decisionIcon = '🔧';
                 decisionLabel = 'Optimiser';
                 btnClass = 'btn-secondary';
-                btnAction = `executeDecision('optimize_page', '${escapeHtml(decision.page || decision.keyword || decision.target || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+               btnAction = `executeDecision('optimize_page', ${JSON.stringify(decision.page || decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
                 break;
               case 'publish_content':
                 decisionIcon = '🚀';
                 decisionLabel = 'Publier';
                 btnClass = 'btn-success';
-                btnAction = `executeDecision('publish_content', '${escapeHtml(decision.slug || '')}', '${decision.decisionId || ''}')`;
+                btnAction = `executeDecision('publish_content', ${JSON.stringify(decision.slug || '')}, ${JSON.stringify(decision.decisionId || '')})`;
                 break;
               default:
                 decisionIcon = '⚙️';
