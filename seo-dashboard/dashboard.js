@@ -1041,6 +1041,7 @@ function prepareCockpitDataForAudit() {
   
   // Récupérer les données du scan si disponibles
   let siteScanData = null;
+  let liveContentsCount;
 
 try {
   const savedScan = localStorage.getItem('mpr_siteScanData');
@@ -1085,20 +1086,13 @@ const scannedBlogPages = siteScanData?.pages?.filter(p => {
     url.includes('.html')
   );
 }) || [];
-
-const liveContentsCount =
+liveContentsCount =
   scannedBlogPages.length > 0
     ? scannedBlogPages.length
     : blogLinks.length > 0
       ? blogLinks.length
       : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
-
-const totalContentsCount = liveContentsCount;
-
-let liveContentsCount = scannedBlogPages.length > 0
-  ? scannedBlogPages.length
-  : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
-
+  
 const totalContentsCount = scannedBlogPages.length > 0
   ? scannedBlogPages.length
   : contents.length;
