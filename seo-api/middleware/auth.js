@@ -1,11 +1,8 @@
-const publicRoutes = [
-  '/api/gsc/data',
-  '/api/gsc/test'
-];
-
 const apiAuth = (req, res, next) => {
-  // Autoriser certaines routes sans API key
-  if (publicRoutes.includes(req.path)) {
+  const url = req.originalUrl;
+
+  // Autoriser GSC sans clé API
+  if (url.includes('/api/gsc/')) {
     return next();
   }
 
