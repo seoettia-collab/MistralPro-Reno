@@ -1095,7 +1095,7 @@ const liveContentsCount =
 
 const totalContentsCount = liveContentsCount;
 
-const liveContentsCount = scannedBlogPages.length > 0
+let liveContentsCount = scannedBlogPages.length > 0
   ? scannedBlogPages.length
   : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
 
