@@ -1058,7 +1058,31 @@ try {
 }
   
   // Résumé structuré pour Claude
-  const scannedBlogPages = siteScanData?.pages?.filter(p => {
+  console.log('[SCAN PARSED]', siteScanData);
+
+} catch (e) {
+  console.warn('[Audit IA] Pas de données de scan disponibles');
+}
+
+let blogLinks = [];
+
+try {
+  const links = document.querySelectorAll('a[href*="/blog/"]');
+
+  blogLinks = Array.from(links)
+    .map(a => a.getAttribute('href'))
+    .filter(href =>
+      href &&
+      href.endsWith('.html') &&
+      !href.includes('blog.html') &&
+      !href.includes('facebook.com') &&
+      !href.includes('business.facebook')
+    );
+} catch (e) {
+  console.warn('[Audit IA] Impossible de lire les articles DOM');
+}
+
+const scannedBlogPages = siteScanData?.pages?.filter(p => {
   if (!p.url) return false;
 
   const url = p.url.toLowerCase();
@@ -1069,6 +1093,15 @@ try {
     url.includes('.html')
   );
 }) || [];
+
+const liveContentsCount =
+  scannedBlogPages.length > 0
+    ? scannedBlogPages.length
+    : blogLinks.length > 0
+      ? blogLinks.length
+      : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
+
+const totalContentsCount = liveContentsCount;
 
 const liveContentsCount = scannedBlogPages.length > 0
   ? scannedBlogPages.length
