@@ -79,8 +79,16 @@ router.post('/blog/add-article', async (req, res) => {
     const readTimeStr = readTime || '5 min';
     const descriptionText = description || title;
     
+    // TAXO-7 : slugify robuste (minuscules, accents retires, espaces -> tirets)
+    const categorySlug = categoryTag
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // retire diacritiques (é -> e)
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+
     const newArticleCard = `
-        <article class="blog-card" data-category="${categoryTag.toLowerCase().replace(/\s+/g, '-')}">
+        <article class="blog-card" data-category="${categorySlug}">
           <div class="blog-card-img">
             <img src="${imagePath}" alt="${title}" width="400" height="250" loading="lazy">
           </div>

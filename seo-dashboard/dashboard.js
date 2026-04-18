@@ -965,15 +965,14 @@ function renderMyArticles(articles) {
   // Détection catégorie à partir du slug / titre pour badge coloré
   const detectCatFromSlug = (slug, title) => {
     const s = ((slug || '') + ' ' + (title || '')).toLowerCase();
-    if (s.includes('degat') || s.includes('eaux') || s.includes('urgence')) return { label: 'Urgences', color: '#ef4444', icon: '🚨' };
-    if (s.includes('salle-de-bain') || s.includes('salle de bain')) return { label: 'Salle de bain', color: '#06b6d4', icon: '🛁' };
+    // TAXO-7 : alignement sur les 7 filtres blog.html
+    if (s.includes('degat') || s.includes('fuite') || s.includes('plomberie') || s.includes('canalisation')) return { label: 'Plomberie', color: '#06b6d4', icon: '🔧' };
+    if (s.includes('electricite') || s.includes('électricité') || s.includes('électrique') || s.includes('electrique') || s.includes('tableau')) return { label: 'Électricité', color: '#eab308', icon: '⚡' };
     if (s.includes('cuisine')) return { label: 'Cuisine', color: '#f59e0b', icon: '🍳' };
-    if (s.includes('electricite') || s.includes('électricité')) return { label: 'Électricité', color: '#eab308', icon: '⚡' };
-    if (s.includes('peinture')) return { label: 'Peinture', color: '#8b5cf6', icon: '🎨' };
-    if (s.includes('isolation') || s.includes('energetique')) return { label: 'Énergie', color: '#10b981', icon: '🌿' };
-    if (s.includes('prix') || s.includes('cout') || s.includes('coût')) return { label: 'Prix', color: '#f97316', icon: '💶' };
-    if (s.includes('appartement') || s.includes('habitation') || s.includes('ile-de-france')) return { label: 'Rénovation', color: '#3b82f6', icon: '🏠' };
-    return { label: 'Article', color: '#64748b', icon: '📄' };
+    if (s.includes('salle-de-bain') || s.includes('salle de bain') || s.includes('douche') || s.includes('baignoire')) return { label: 'Salle de bain', color: '#8b5cf6', icon: '🛁' };
+    if (s.includes('prix') || s.includes('cout') || s.includes('coût') || s.includes('tarif') || s.includes('devis') || s.includes('budget')) return { label: 'Prix', color: '#f97316', icon: '💶' };
+    // Renovation generale par defaut (maison, appartement, renovation, etc.)
+    return { label: 'Rénovation', color: '#3b82f6', icon: '🏠' };
   };
 
   const formatDate = (iso) => {
@@ -4094,18 +4093,32 @@ async function addArticleToBlogIndex(content) {
 function detectCategory(keyword) {
   if (!keyword) return 'Rénovation';
   const kw = keyword.toLowerCase();
-  
+
+  // TAXO-7 : alignement sur les 7 filtres de blog.html
+  // (Tous, Rénovation, Cuisine, Salle de bain, Plomberie, Électricité, Prix & Devis)
+
+  // Priorite 1: dégâts des eaux / plomberie
+  if (kw.includes('dégât') || kw.includes('degat') || kw.includes('fuite')
+      || kw.includes('plomberie') || kw.includes('plombier')
+      || kw.includes('infiltration') || kw.includes('canalisation')) return 'Plomberie';
+
+  // Priorite 2: electricite
+  if (kw.includes('électricité') || kw.includes('electricite')
+      || kw.includes('électrique') || kw.includes('electrique')
+      || kw.includes('tableau') || kw.includes('disjoncteur')) return 'Électricité';
+
+  // Priorite 3: cuisine
   if (kw.includes('cuisine')) return 'Cuisine';
-  if (kw.includes('salle de bain') || kw.includes('sdb')) return 'Salle de bain';
-  if (kw.includes('appartement')) return 'Appartement';
-  if (kw.includes('maison')) return 'Maison';
-  if (kw.includes('dégât') || kw.includes('degat') || kw.includes('eau')) return 'Urgences';
-  if (kw.includes('prix') || kw.includes('coût') || kw.includes('cout') || kw.includes('tarif')) return 'Prix';
-  if (kw.includes('peinture')) return 'Peinture';
-  if (kw.includes('électricité') || kw.includes('electricite')) return 'Électricité';
-  if (kw.includes('plomberie')) return 'Plomberie';
-  if (kw.includes('isolation') || kw.includes('énergétique') || kw.includes('energetique')) return 'Énergie';
-  
+
+  // Priorite 4: salle de bain
+  if (kw.includes('salle de bain') || kw.includes('sdb')
+      || kw.includes('douche') || kw.includes('baignoire')) return 'Salle de bain';
+
+  // Priorite 5: prix / tarif / coût (si pas couvert par une categorie metier)
+  if (kw.includes('prix') || kw.includes('coût') || kw.includes('cout')
+      || kw.includes('tarif') || kw.includes('devis') || kw.includes('budget')) return 'Prix';
+
+  // Priorite 6: renovation generale (maison, appartement, general)
   return 'Rénovation';
 }
 
