@@ -139,16 +139,29 @@ router.post('/optimize/apply', async (req, res) => {
   try {
     const { pageUrl, optimizations } = req.body;
 
+    // OPTIMIZE-DIAG : log du payload pour diagnostic
+    console.log('[Optimize apply] payload received:', {
+      hasPageUrl: !!pageUrl,
+      pageUrlSample: pageUrl ? String(pageUrl).substring(0, 80) : null,
+      optsType: Array.isArray(optimizations) ? 'array' : typeof optimizations,
+      optsLength: Array.isArray(optimizations) ? optimizations.length : null,
+      firstOptType: Array.isArray(optimizations) && optimizations[0] ? optimizations[0].type : null
+    });
+
     if (!pageUrl || !optimizations) {
+      console.warn('[Optimize apply] 400: champs manquants', { pageUrl: !!pageUrl, optimizations: !!optimizations });
       return res.status(400).json({
         status: 'error',
-        message: 'pageUrl et optimizations requis'
+        message: 'pageUrl et optimizations requis',
+        diag: { hasPageUrl: !!pageUrl, hasOptimizations: !!optimizations }
       });
     }
     if (!Array.isArray(optimizations) || optimizations.length === 0) {
+      console.warn('[Optimize apply] 400: optimizations invalide', { type: typeof optimizations, len: optimizations?.length });
       return res.status(400).json({
         status: 'error',
-        message: 'optimizations doit etre un tableau non vide'
+        message: 'optimizations doit etre un tableau non vide',
+        diag: { type: Array.isArray(optimizations) ? 'array' : typeof optimizations, length: Array.isArray(optimizations) ? optimizations.length : null }
       });
     }
 
@@ -157,9 +170,11 @@ router.post('/optimize/apply', async (req, res) => {
     //  -> slug = prix-renovation-appartement-paris-2026
     const slugMatch = pageUrl.match(/\/blog\/([a-z0-9-]+)\.html/i);
     if (!slugMatch) {
+      console.warn('[Optimize apply] 400: slug non extrait de pageUrl:', pageUrl);
       return res.status(400).json({
         status: 'error',
-        message: 'Impossible d extraire le slug depuis pageUrl (attendu: /blog/{slug}.html)'
+        message: 'Impossible d extraire le slug depuis pageUrl (attendu: /blog/{slug}.html)',
+        diag: { pageUrl }
       });
     }
     const slug = slugMatch[1];

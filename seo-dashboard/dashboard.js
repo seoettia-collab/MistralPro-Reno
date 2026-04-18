@@ -4722,19 +4722,31 @@ async function applyOptimizations(pageUrl, keyword) {
   `;
   
   try {
+    // OPTIMIZE-DIAG : log du payload pour debug
+    const payload = {
+      pageUrl: finalPageUrl,
+      keyword: keyword || data.keyword || '',
+      optimizations: selectedOptimizations
+    };
+    console.log('[Optimize apply] envoi payload:', {
+      pageUrl: payload.pageUrl,
+      keyword: payload.keyword,
+      optsCount: payload.optimizations.length,
+      optsTypes: payload.optimizations.map(o => o.type)
+    });
+
     const response = await fetchAPI('/api/optimize/apply', {
       method: 'POST',
-      body: JSON.stringify({
-        pageUrl: finalPageUrl,
-        keyword: keyword || data.keyword || '',
-        optimizations: selectedOptimizations
-      })
+      body: JSON.stringify(payload)
     });
-    
+
     const result = await response.json();
-    
+    console.log('[Optimize apply] response:', response.status, result);
+
     if (result.status !== 'ok') {
-      throw new Error(result.message || 'Erreur d\'application');
+      // Erreur explicite avec details si dispo
+      const detail = result.diag ? ` (${JSON.stringify(result.diag)})` : '';
+      throw new Error((result.message || 'Erreur d application') + detail);
     }
     
     // Succes - afficher les details reels
@@ -4771,10 +4783,12 @@ async function applyOptimizations(pageUrl, keyword) {
     `;
     
   } catch (error) {
+    console.error('[Optimize apply] Error:', error);
     panel.querySelector('.optimize-body').innerHTML = `
       <div class="optimize-error">
         <p>❌ Erreur lors de l'application</p>
-        <p class="error-detail">${escapeHtml(error.message)}</p>
+        <p class="error-detail">${escapeHtml(error.message || 'Erreur inconnue')}</p>
+        <p class="error-hint">Verifiez la console navigateur (F12) pour plus de details.</p>
         <button class="btn-primary" onclick="closeOptimizePanel()">Fermer</button>
       </div>
     `;
