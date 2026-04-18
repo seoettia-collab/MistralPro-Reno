@@ -164,4 +164,107 @@ router.post('/blog/add-article', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/blog/remove-article
+ * Retire la carte d'un article de blog.html (utilise apres deleteArticle)
+ */
+router.post('/blog/remove-article', async (req, res) => {
+  try {
+    const { slug } = req.body;
+
+    if (!slug) {
+      return res.status(400).json({ status: 'error', message: 'slug requis' });
+    }
+
+    if (!GITHUB_TOKEN) {
+      console.warn('[BlogIndex] GITHUB_TOKEN non configuré, mode simulation');
+      return res.json({ status: 'ok', data: { simulated: true } });
+    }
+
+    // 1. Récupérer blog.html actuel
+    const getResponse = await fetch(
+      `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/blog.html?ref=main`,
+      {
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    );
+    if (!getResponse.ok) throw new Error('Impossible de récupérer blog.html');
+
+    const fileData = await getResponse.json();
+    const currentContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
+    const fileSha = fileData.sha;
+
+    // Verifier si l'article est présent
+    if (!currentContent.includes(`blog/${slug}.html`)) {
+      console.log(`[BlogIndex] Article "${slug}" absent de blog.html, rien à supprimer`);
+      return res.json({
+        status: 'ok',
+        data: { slug, skipped: true, message: 'Article absent de blog.html' }
+      });
+    }
+
+    // 2. Supprimer le bloc <article ...>...</article> contenant blog/{slug}.html
+    // On cherche le bloc d'article contenant la reference au slug
+    const articleBlockRegex = new RegExp(
+      `\\s*<article class="blog-card"[^>]*>[\\s\\S]*?blog\\/${slug.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\.html[\\s\\S]*?<\\/article>\\s*`,
+      'g'
+    );
+
+    const updatedContent = currentContent.replace(articleBlockRegex, '\n');
+
+    if (updatedContent === currentContent) {
+      console.warn(`[BlogIndex] Pattern article-card non trouvé pour ${slug}`);
+      return res.json({
+        status: 'ok',
+        data: { slug, skipped: true, message: 'Article non trouvé dans blog.html (pattern)' }
+      });
+    }
+
+    // 3. Pusher le fichier mis à jour
+    const updateResponse = await fetch(
+      `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/blog.html`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        body: JSON.stringify({
+          message: `chore(blog): Suppression carte "${slug}" de blog.html`,
+          content: Buffer.from(updatedContent).toString('base64'),
+          sha: fileSha,
+          branch: 'main'
+        })
+      }
+    );
+
+    if (!updateResponse.ok) {
+      const errorData = await updateResponse.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Erreur mise à jour blog.html');
+    }
+
+    const result = await updateResponse.json();
+    console.log(`[BlogIndex] ✅ Carte "${slug}" supprimée de blog.html`);
+
+    res.json({
+      status: 'ok',
+      data: {
+        slug,
+        commitSha: result.commit?.sha,
+        message: 'Carte retirée de blog.html'
+      }
+    });
+
+  } catch (err) {
+    console.error('[BlogIndex] Erreur remove:', err.message);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 module.exports = router;

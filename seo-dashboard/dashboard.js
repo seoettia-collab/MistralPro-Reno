@@ -1008,7 +1008,8 @@ function renderMyArticles(articles) {
               ${dateLabel ? `<span class="article-vignette-date">${dateLabel}</span>` : ''}
             </div>
             <div class="article-vignette-actions">
-              <a href="${url}" target="_blank" rel="noopener" class="btn-article-voir">Voir l'article</a>
+              <a href="${url}" target="_blank" rel="noopener" class="btn-article-voir">Voir</a>
+              <button class="btn-article-modifier" onclick="openArticleForEdit('${article.slug}', ${JSON.stringify(title).replace(/"/g, '&quot;')})">Modifier</button>
               <button class="btn-article-supprimer" onclick="confirmDeleteArticle('${article.slug}')">Supprimer</button>
             </div>
           </div>
@@ -1040,27 +1041,85 @@ function confirmDeleteArticle(slug) {
 }
 
 /**
+ * SYNC-01 : Ouvre un article existant dans Studio SEO pour le modifier.
+ * Note: pour l'instant la "modification" consiste a regenerer l'article
+ * avec le meme slug (ecrase l'existant). Le formulaire est pre-rempli
+ * avec le titre et le contexte.
+ */
+function openArticleForEdit(slug, title) {
+  const confirmMsg = `Modifier l'article "${title}" ?
+
+Cette action va ouvrir Studio SEO avec les parametres pre-remplis.
+Vous pourrez generer une nouvelle version qui remplacera l'actuelle.
+
+Continuer ?`;
+  if (!confirm(confirmMsg)) return;
+
+  // Deviner un keyword a partir du titre
+  const keywordGuess = (title || slug.replace(/-/g, ' '))
+    .replace(/\b20\d{2}\b/g, '') // retire annees
+    .replace(/[:|,.].*$/, '')     // coupe apres le premier separateur
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+
+  // Activer l'onglet Studio SEO
+  const studioBtn = document.querySelector('[data-tab="studio-seo"]');
+  if (studioBtn) studioBtn.click();
+
+  // Pré-remplir
+  setTimeout(() => {
+    const keywordInput = document.getElementById('studioKeyword');
+    const contextInput = document.getElementById('studioContext');
+    if (keywordInput) keywordInput.value = keywordGuess;
+    if (contextInput) contextInput.value = `Modification de l'article existant "${title}" (slug: ${slug}). Ameliorer le contenu en gardant le meme angle.`;
+    if (typeof updateStudioPreview === 'function') updateStudioPreview();
+    // Scroll vers le formulaire
+    const params = document.getElementById('studio-params');
+    if (params) params.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showNotification(`📝 Modification de "${title}" — ajustez les parametres et cliquez Generer`, 'info');
+  }, 150);
+}
+
+/**
  * Supprime un article
  */
 async function deleteArticle(slug) {
   showNotification('🗑️ Suppression en cours...', 'info');
-  
+
   try {
+    // 1. Supprimer le fichier HTML + image principale + images secondaires
     const response = await fetchAPI(`/api/blog/articles/${slug}`, {
       method: 'DELETE'
     });
-    
+
     const result = await response.json();
-    
+
     if (result.status !== 'ok') {
       throw new Error(result.message || 'Erreur suppression');
     }
-    
+
+    // 2. Retirer la carte de blog.html (SYNC-01)
+    try {
+      const removeResp = await fetchAPI('/api/blog/remove-article', {
+        method: 'POST',
+        body: JSON.stringify({ slug })
+      });
+      const removeResult = await removeResp.json();
+      if (removeResult.status === 'ok') {
+        console.log('[BlogIndex] ✅ Carte retiree de blog.html:', removeResult.data);
+      } else {
+        console.warn('[BlogIndex] Echec remove-article:', removeResult.message);
+      }
+    } catch (e) {
+      console.warn('[BlogIndex] Erreur remove-article:', e.message);
+    }
+
     showNotification(`✅ Article "${formatSlugToTitle(slug)}" supprimé`, 'success');
-    
+
     // Rafraîchir la liste
     loadMyArticles();
-    
+
   } catch (error) {
     console.error('[Supprimer Article] Erreur:', error);
     showNotification(`❌ Erreur: ${error.message}`, 'error');
