@@ -1008,8 +1008,7 @@ function renderMyArticles(articles) {
               ${dateLabel ? `<span class="article-vignette-date">${dateLabel}</span>` : ''}
             </div>
             <div class="article-vignette-actions">
-              <a href="${url}" target="_blank" rel="noopener" class="btn-article-voir">Voir</a>
-              <button class="btn-article-modifier" onclick="openArticleForEdit('${article.slug}', ${JSON.stringify(title).replace(/"/g, '&quot;')})">Modifier</button>
+              <a href="${url}" target="_blank" rel="noopener" class="btn-article-voir">Voir l'article</a>
               <button class="btn-article-supprimer" onclick="confirmDeleteArticle('${article.slug}')">Supprimer</button>
             </div>
           </div>
@@ -1038,47 +1037,6 @@ function confirmDeleteArticle(slug) {
     return;
   }
   deleteArticle(slug);
-}
-
-/**
- * SYNC-01 : Ouvre un article existant dans Studio SEO pour le modifier.
- * Note: pour l'instant la "modification" consiste a regenerer l'article
- * avec le meme slug (ecrase l'existant). Le formulaire est pre-rempli
- * avec le titre et le contexte.
- */
-function openArticleForEdit(slug, title) {
-  const confirmMsg = `Modifier l'article "${title}" ?
-
-Cette action va ouvrir Studio SEO avec les parametres pre-remplis.
-Vous pourrez generer une nouvelle version qui remplacera l'actuelle.
-
-Continuer ?`;
-  if (!confirm(confirmMsg)) return;
-
-  // Deviner un keyword a partir du titre
-  const keywordGuess = (title || slug.replace(/-/g, ' '))
-    .replace(/\b20\d{2}\b/g, '') // retire annees
-    .replace(/[:|,.].*$/, '')     // coupe apres le premier separateur
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
-
-  // Activer l'onglet Studio SEO
-  const studioBtn = document.querySelector('[data-tab="studio-seo"]');
-  if (studioBtn) studioBtn.click();
-
-  // Pré-remplir
-  setTimeout(() => {
-    const keywordInput = document.getElementById('studioKeyword');
-    const contextInput = document.getElementById('studioContext');
-    if (keywordInput) keywordInput.value = keywordGuess;
-    if (contextInput) contextInput.value = `Modification de l'article existant "${title}" (slug: ${slug}). Ameliorer le contenu en gardant le meme angle.`;
-    if (typeof updateStudioPreview === 'function') updateStudioPreview();
-    // Scroll vers le formulaire
-    const params = document.getElementById('studio-params');
-    if (params) params.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    showNotification(`📝 Modification de "${title}" — ajustez les parametres et cliquez Generer`, 'info');
-  }, 150);
 }
 
 /**
