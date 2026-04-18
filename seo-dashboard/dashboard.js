@@ -3426,14 +3426,15 @@ function renderUploadedImages() {
   
   // Afficher la galerie d'images
   let imagesHtml = uploadedImages.map((img, index) => `
-    <div class="uploaded-image-item ${img.isMain ? 'is-main' : ''}" data-id="${img.id}">
+    <div class="uploaded-image-item ${img.isMain ? 'is-main' : ''} ${img.insertedInContent ? 'is-placed' : ''}" data-id="${img.id}">
       <div class="image-thumb">
         <img src="${img.dataUrl}" alt="${escapeHtml(img.filename)}" />
         ${img.isMain ? '<span class="main-badge">★ Principale</span>' : ''}
+        ${img.insertedInContent ? '<span class="placed-badge">📍 Placee</span>' : ''}
       </div>
       <div class="image-item-actions">
-        ${!img.isMain ? `<button class="btn-mini" onclick="setMainImage('${img.id}')" title="Définir comme principale">★</button>` : ''}
-        <button class="btn-mini" onclick="insertImageInContent('${img.id}')" title="Insérer dans l'article">➕</button>
+        ${!img.isMain ? `<button class="btn-mini" onclick="setMainImage('${img.id}')" title="Definir comme principale">★</button>` : ''}
+        ${!img.isMain ? `<button class="btn-mini" onclick="insertImageInContent('${img.id}')" title="Choisir emplacement dans l article">📍</button>` : ''}
         <button class="btn-mini btn-danger" onclick="removeImage('${img.id}')" title="Supprimer">×</button>
       </div>
     </div>
@@ -3471,42 +3472,150 @@ function setMainImage(imageId) {
 }
 
 /**
- * Insère une image dans le contenu de l'article
+ * IMG-PLACEMENT : ouvre un selecteur de section pour placer l image manuellement.
+ * L utilisateur choisit l emplacement exact (apres H2 de quelle section).
  */
 function insertImageInContent(imageId) {
   const image = uploadedImages.find(img => img.id === imageId);
   if (!image || !studioGeneratedContent) return;
-  
-  // Créer le HTML de l'image
-  const imageHTML = `
+
+  // Verifier si l image est deja placee quelque part dans le HTML
+  if (image.insertedInContent) {
+    const confirmReplace = confirm(
+      'Cette image est deja placee dans l article. Voulez-vous la retirer d abord puis la replacer ailleurs ?'
+    );
+    if (!confirmReplace) return;
+    // Retirer l ancienne occurrence
+    const oldRegex = new RegExp(
+      '<figure[^>]*data-image-id="' + image.id + '"[\\s\\S]*?</figure>\\s*',
+      'g'
+    );
+    studioGeneratedContent.htmlContent = (studioGeneratedContent.htmlContent || '').replace(oldRegex, '');
+    image.insertedInContent = false;
+  }
+
+  // Extraire les titres H2 de l article pour proposer les emplacements
+  const h2Matches = [...(studioGeneratedContent.htmlContent || '').matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
+
+  if (h2Matches.length === 0) {
+    showNotification('Aucune section H2 trouvee dans l article', 'warning');
+    return;
+  }
+
+  // Construire la modale de selection
+  let modal = document.getElementById('image-placement-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'image-placement-modal';
+    modal.className = 'image-placement-modal';
+    document.body.appendChild(modal);
+  }
+
+  const h2Options = h2Matches.map((m, idx) => {
+    const title = m[1].replace(/<[^>]+>/g, '').trim();
+    return `
+      <button class="placement-option" data-placement="after-h2-${idx}">
+        <span class="placement-num">${idx + 1}</span>
+        <span class="placement-label">Apres : ${escapeHtml(title.substring(0, 80))}${title.length > 80 ? '...' : ''}</span>
+      </button>
+    `;
+  }).join('');
+
+  modal.innerHTML = `
+    <div class="placement-overlay" onclick="closeImagePlacementModal()"></div>
+    <div class="placement-content">
+      <div class="placement-header">
+        <h3>📍 Placer l image</h3>
+        <button class="btn-close" onclick="closeImagePlacementModal()">✕</button>
+      </div>
+      <div class="placement-preview">
+        <img src="${image.dataUrl}" alt="preview" />
+        <p class="placement-filename">${escapeHtml(image.filename)}</p>
+      </div>
+      <div class="placement-body">
+        <p class="placement-hint">Choisissez ou placer cette image dans l article :</p>
+        <div class="placement-options">
+          <button class="placement-option placement-option-end" data-placement="before-conclusion">
+            <span class="placement-num">↓</span>
+            <span class="placement-label">A la fin, juste avant la conclusion</span>
+          </button>
+          ${h2Options}
+        </div>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'block';
+
+  // Bind des clics sur les options
+  modal.querySelectorAll('.placement-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const placement = btn.dataset.placement;
+      applyImagePlacement(image, placement, h2Matches);
+      closeImagePlacementModal();
+    });
+  });
+}
+
+/**
+ * IMG-PLACEMENT : applique le placement choisi dans le HTML et la preview
+ */
+function applyImagePlacement(image, placement, h2Matches) {
+  const figureHTML = `
     <figure class="article-inline-image" data-image-id="${image.id}">
       <img src="${image.dataUrl}" alt="${escapeHtml(image.filename)}" loading="lazy" />
       <figcaption>${escapeHtml(image.filename.replace(/\.[^/.]+$/, ''))}</figcaption>
     </figure>
   `;
-  
-  // Insérer dans l'aperçu (avant la conclusion)
-  const previewContent = document.getElementById('article-preview-content');
-  if (previewContent) {
-    const conclusion = previewContent.querySelector('.article-conclusion');
-    if (conclusion) {
-      conclusion.insertAdjacentHTML('beforebegin', imageHTML);
+
+  let html = studioGeneratedContent.htmlContent || '';
+
+  if (placement === 'before-conclusion') {
+    // Inserer avant la conclusion
+    if (/<div class="article-conclusion">/.test(html)) {
+      html = html.replace(/<div class="article-conclusion">/, figureHTML + '\n        <div class="article-conclusion">');
     } else {
-      previewContent.insertAdjacentHTML('beforeend', imageHTML);
+      html = html.replace(/<\/div>\s*<div class="article-cta">/, figureHTML + '\n        </div>\n        <div class="article-cta">');
+    }
+  } else if (placement.startsWith('after-h2-')) {
+    const idx = parseInt(placement.replace('after-h2-', ''), 10);
+    const match = h2Matches[idx];
+    if (match) {
+      // Trouver la fin de cette balise <h2>...</h2>
+      const targetH2 = match[0];
+      const targetPos = html.indexOf(targetH2);
+      if (targetPos !== -1) {
+        const insertAt = targetPos + targetH2.length;
+        html = html.substring(0, insertAt) + '\n      ' + figureHTML + html.substring(insertAt);
+      }
     }
   }
-  
-  // Insérer dans le HTML (avant </div class="article-content">)
-  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-    /<div class="article-conclusion">/,
-    imageHTML + '\n        <div class="article-conclusion">'
-  );
-  
+
+  studioGeneratedContent.htmlContent = html;
+
+  // Mettre a jour la preview aussi
+  const previewContent = document.getElementById('article-preview-content');
+  if (previewContent) {
+    // Simple rerender: on refait le innerHTML avec le contenu de l article
+    // (extraction du articleBody pour ne pas casser les meta tags)
+    const bodyMatch = html.match(/<div itemprop="articleBody">([\s\S]*?)<\/div>\s*(<div class="article-cta"|<\/article>)/);
+    if (bodyMatch) {
+      // On ne remplace que le body interne pour preserver le reste de la preview
+      const existingBody = previewContent.querySelector('[itemprop="articleBody"]') || previewContent;
+      existingBody.innerHTML = bodyMatch[1];
+    }
+  }
+
   image.insertedInContent = true;
   renderUploadedImages();
-  
-  showNotification(`Image insérée dans l'article`, 'success');
+  showNotification(`Image placee ${placement === 'before-conclusion' ? 'avant la conclusion' : 'apres la section choisie'}`, 'success');
 }
+
+function closeImagePlacementModal() {
+  const modal = document.getElementById('image-placement-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+window.closeImagePlacementModal = closeImagePlacementModal;
 
 /**
  * Supprime une image
