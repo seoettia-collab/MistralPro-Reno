@@ -440,183 +440,117 @@ function renderCockpitV2(data) {
         </div>
         ` : ''}
 
-        <!-- SECTION 3+4 : Top Opportunités + Actions côte à côte (SEO-UX-01) -->
-        <div class="cockpit-row-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="cockpit-section cockpit-opportunities">
-          <h4>💡 Top Opportunités <span class="section-count">(${topOpportunities.length}/${totalOpportunities})</span></h4>
-          ${topOpportunities.length > 0 ? `
-          <div class="opportunities-list">
-            ${topOpportunities.map(opp => {
-              const priorityClass = opp.priority === 'high' ? 'priority-high' : opp.priority === 'medium' ? 'priority-medium' : 'priority-low';
-              return `
-              <div class="opportunity-card ${priorityClass}">
-                <div class="opp-info">
-                  <span class="opp-keyword">${escapeHtml(opp.keyword || opp.target || 'N/A')}</span>
-                  <span class="opp-meta">Position ${opp.position || '-'} • ${opp.impressions || 0} imp.</span>
-                </div>
-                <div class="opp-actions">
-                  <span class="opp-type">${opp.opportunity_type || opp.type || 'SEO'}</span>
-                  <button class="btn-small btn-primary" onclick="executeAction('create_content', '${escapeHtml(opp.keyword || opp.target || '')}', ${opp.id || 'null'})">🚀 Créer</button>
-                </div>
-              </div>
-              `;
-            }).join('')}
-          </div>
-          ` : '<p class="no-data">Aucune opportunité détectée</p>'}
-        </div>
+        <!-- SEO-UX-02 : 4 colonnes compactes (Opportunités+Actions / Concurrence / Modules / Scan stats) -->
+        <div class="cockpit-row-4col">
 
-        <!-- SECTION 4 : Actions recommandées -->
-        <div class="cockpit-section cockpit-actions">
-          <h4>🎯 Actions recommandées <span class="section-count">(Top 5)</span></h4>
-          <div class="actions-list">
-            ${topActions.length > 0 ? topActions.map(action => {
-              const priorityColor = action.priority === 'HIGH' ? '#e74c3c' : action.priority === 'MEDIUM' ? '#f4c430' : '#2ecc71';
-              const actionIcon = action.action_type === 'create_content' ? '📝' : 
-                                 action.action_type === 'optimize_page' ? '🔧' : 
-                                 action.action_type === 'fix_technical' ? '⚠️' : '▶️';
-              return `
-              <div class="action-card" style="border-left: 4px solid ${priorityColor}">
-                <div class="action-info">
-                  <span class="action-icon">${actionIcon}</span>
-                  <div class="action-details">
-                    <span class="action-title">${escapeHtml(action.description)}</span>
-                    <span class="action-impact">${action.impact_label || ''}</span>
+        <!-- COLONNE 1 : Top Opportunités + Actions recommandées -->
+        <div class="cockpit-col-stack">
+          <div class="cockpit-section cockpit-opportunities">
+            <h4>💡 Top Opportunités <span class="section-count">(${topOpportunities.length}/${totalOpportunities})</span></h4>
+            ${topOpportunities.length > 0 ? `
+            <div class="opportunities-list">
+              ${topOpportunities.map(opp => {
+                const priorityClass = opp.priority === 'high' ? 'priority-high' : opp.priority === 'medium' ? 'priority-medium' : 'priority-low';
+                return `
+                <div class="opportunity-card ${priorityClass}">
+                  <div class="opp-info">
+                    <span class="opp-keyword">${escapeHtml(opp.keyword || opp.target || 'N/A')}</span>
+                    <span class="opp-meta">Pos ${opp.position || '-'} • ${opp.impressions || 0} imp</span>
                   </div>
+                  <button class="btn-small btn-primary" onclick="executeAction('create_content', '${escapeHtml(opp.keyword || opp.target || '')}', ${opp.id || 'null'})">Créer</button>
                 </div>
-                <button class="btn-action" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}', ${action.source_id || 'null'})">▶</button>
-              </div>
-              `;
-            }).join('') : '<p class="no-data">Aucune action recommandée</p>'}
+                `;
+              }).join('')}
+            </div>
+            ` : '<p class="no-data">Aucune opportunité</p>'}
+          </div>
+
+          <div class="cockpit-section cockpit-actions">
+            <h4>🎯 Actions recommandées <span class="section-count">(${topActions.length})</span></h4>
+            <div class="actions-list">
+              ${topActions.length > 0 ? topActions.map(action => {
+                const priorityColor = action.priority === 'HIGH' ? '#e74c3c' : action.priority === 'MEDIUM' ? '#f4c430' : '#2ecc71';
+                return `
+                <div class="action-card" style="border-left: 3px solid ${priorityColor}">
+                  <div class="action-info">
+                    <div class="action-details">
+                      <span class="action-title">${escapeHtml(action.description)}</span>
+                      <span class="action-impact">${action.impact_label || ''}</span>
+                    </div>
+                  </div>
+                  <button class="btn-small btn-primary" onclick="executeAction('${action.action_type}', '${escapeHtml(action.target)}', ${action.source_id || 'null'})">Lancer</button>
+                </div>
+                `;
+              }).join('') : '<p class="no-data">Aucune action recommandée</p>'}
+            </div>
           </div>
         </div>
-        </div>
-        <!-- /Row 2col -->
 
-        <!-- SECTION 5 : Concurrence -->
+        <!-- COLONNE 2 : Concurrence -->
         <div class="cockpit-section cockpit-competitors">
           <h4>👥 Concurrence <span class="section-count">(${topCompetitors.length}/5)</span></h4>
-          <div class="competitors-grid">
+          <div class="competitors-list-compact">
             ${topCompetitors.length > 0 ? topCompetitors.map(c => {
               const domain = c.domain || c.url || 'N/A';
-              const position = c.avg_position ? c.avg_position.toFixed(1) : '-';
-              const keywords = c.keywords_count || c.tracked_keywords || 0;
               return `
-              <div class="competitor-card">
-                <div class="competitor-info">
-                  <span class="competitor-domain">${escapeHtml(domain)}</span>
-                </div>
-                <a href="https://${domain}" target="_blank" class="competitor-link" title="Voir le site">🔗</a>
+              <div class="competitor-row">
+                <span class="competitor-domain" title="${escapeHtml(domain)}">${escapeHtml(domain)}</span>
+                <a href="https://${domain}" target="_blank" rel="noopener" class="competitor-link-btn">Voir</a>
               </div>
               `;
             }).join('') : `
               <div class="competitors-empty">
-                <p>Aucun concurrent suivi</p>
-                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=competitors]').click()">+ Ajouter</button>
+                <p>Aucun concurrent</p>
+                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=competitors]').click()">Ajouter</button>
               </div>
             `}
           </div>
         </div>
 
-        <!-- SECTION 6 : Sous-modules techniques (accordéons en grille) -->
-        <div class="cockpit-submodules-wrapper">
+        <!-- COLONNE 3 : Modules (sous-modules techniques) -->
+        <div class="cockpit-section cockpit-modules-col">
           <h4>📊 Modules</h4>
-          <div class="cockpit-submodules">
-          
-            <!-- Search Console -->
-            <div class="submodule-accordion">
-              <button class="accordion-btn" onclick="toggleAccordion(this)">
-                <span class="accordion-title">📈 Search Console</span>
-                <span class="accordion-summary">${stats.total_queries || 0} req. • ${stats.total_clicks || 0} clics</span>
-                <span class="accordion-icon">▼</span>
-              </button>
-              <div class="accordion-content">
-                <div class="submodule-stats">
-                  <div class="stat-row"><span>Requêtes</span><span>${stats.total_queries || 0}</span></div>
-                  <div class="stat-row"><span>Clics</span><span>${stats.total_clicks || 0}</span></div>
-                  <div class="stat-row"><span>Impressions</span><span>${formatNumber(stats.total_impressions || 0)}</span></div>
-                  <div class="stat-row"><span>Position</span><span>${stats.avg_position ? stats.avg_position.toFixed(1) : '-'}</span></div>
-                </div>
-                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=searchconsole]').click()">→</button>
-              </div>
+          <div class="modules-list-compact">
+            <div class="module-row" onclick="document.querySelector('[data-tab=searchconsole]').click()">
+              <span class="module-label">📈 Search Console</span>
+              <span class="module-value">${stats.total_queries || 0} req • ${stats.total_clicks || 0} clics</span>
             </div>
-
-            <!-- Contenu -->
-            <div class="submodule-accordion">
-              <button class="accordion-btn" onclick="toggleAccordion(this)">
-                <span class="accordion-title">📄 Contenu</span>
-                <span class="accordion-summary">${liveCount} live • ${pendingCount} att.</span>
-                <span class="accordion-icon">▼</span>
-              </button>
-              <div class="accordion-content">
-                <div class="submodule-stats">
-                  <div class="stat-row"><span>Total</span><span>${contents.length}</span></div>
-                  <div class="stat-row"><span>Live</span><span>${liveCount}</span></div>
-                  <div class="stat-row"><span>Attente</span><span>${pendingCount}</span></div>
-                </div>
-                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=content]').click()">→</button>
-              </div>
+            <div class="module-row" onclick="document.querySelector('[data-tab=content]').click()">
+              <span class="module-label">📄 Contenu</span>
+              <span class="module-value">${liveCount} live • ${pendingCount} att</span>
             </div>
-
-            <!-- Audit technique -->
-            <div class="submodule-accordion">
-              <button class="accordion-btn" onclick="toggleAccordion(this)">
-                <span class="accordion-title">🔍 Audit</span>
-                <span class="accordion-summary">${auditOk}/${auditTotal} OK</span>
-                <span class="accordion-icon">▼</span>
-              </button>
-              <div class="accordion-content">
-                <div class="submodule-stats">
-                  <div class="stat-row"><span>Pages</span><span>${auditTotal}</span></div>
-                  <div class="stat-row"><span>OK</span><span>${auditOk}</span></div>
-                  <div class="stat-row"><span>Erreurs</span><span>${auditTotal - auditOk}</span></div>
-                </div>
-                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=audit]').click()">→</button>
-              </div>
+            <div class="module-row" onclick="document.querySelector('[data-tab=audit]').click()">
+              <span class="module-label">🔍 Audit</span>
+              <span class="module-value">${auditOk}/${auditTotal} OK</span>
             </div>
-
-            <!-- Conversions -->
-            <div class="submodule-accordion">
-              <button class="accordion-btn" onclick="toggleAccordion(this)">
-                <span class="accordion-title">🎯 Conv.</span>
-                <span class="accordion-summary">${conversions.total || 0} tot.</span>
-                <span class="accordion-icon">▼</span>
-              </button>
-              <div class="accordion-content">
-                <div class="submodule-stats">
-                  <div class="stat-row"><span>Total</span><span>${conversions.total || 0}</span></div>
-                  <div class="stat-row"><span>Mois</span><span>${conversions.this_month || 0}</span></div>
-                  <div class="stat-row"><span>Semaine</span><span>${conversions.this_week || 0}</span></div>
-                </div>
-                <button class="btn-small btn-secondary" onclick="document.querySelector('[data-tab=conversions]').click()">→</button>
-              </div>
+            <div class="module-row" onclick="document.querySelector('[data-tab=conversions]').click()">
+              <span class="module-label">🎯 Conversions</span>
+              <span class="module-value">${conversions.total || 0} tot</span>
             </div>
-            
           </div>
         </div>
 
-        <!-- SECTION 7 : Scan SEO Site -->
-        <div class="cockpit-section cockpit-site-scan">
-  <div class="section-header">
-    <h4>🔍 Scan SEO du Site <span id="scan-last-info" class="section-count"></span></h4>
-    <div class="scan-mode-toggle" style="display:flex;gap:8px;align-items:center;font-size:12px;">
-      <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
-        <input type="radio" name="scanMode" value="auto" id="scanModeAuto" onchange="setScanMode('auto')"> Auto (1x/24h)
-      </label>
-      <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
-        <input type="radio" name="scanMode" value="manual" id="scanModeManual" onchange="setScanMode('manual')"> Manuel
-      </label>
-    </div>
-  </div>
+        <!-- COLONNE 4 : Scan SEO stats + toggle Auto/Manuel -->
+        <div class="cockpit-section cockpit-site-scan" id="cockpit-site-scan-col">
+          <div class="section-header">
+            <h4>🔍 Scan SEO du Site</h4>
+            <div class="scan-mode-toggle">
+              <label><input type="radio" name="scanMode" value="auto" id="scanModeAuto" onchange="setScanMode('auto')"> Auto</label>
+              <label><input type="radio" name="scanMode" value="manual" id="scanModeManual" onchange="setScanMode('manual')"> Manuel</label>
+            </div>
+          </div>
+          <div id="scan-last-info-col" class="section-count"></div>
+          <div id="site-scan-results" class="site-scan-results">
+            <div class="scan-empty-state">
+              <p class="scan-placeholder">Cliquez pour scanner</p>
+              <button class="btn-small btn-primary" onclick="runSiteScan()">Scanner le site</button>
+            </div>
+          </div>
+        </div>
 
-  <div id="site-scan-results" class="site-scan-results">
-    <div class="scan-empty-state">
-      <p class="scan-placeholder">Cliquez sur "Scanner" pour analyser toutes les pages du site</p>
-      <button class="btn-primary btn-scan-main" onclick="runSiteScan()">
-        🔄 Scanner le site
-      </button>
-    </div>
-  </div>
-</div>
+        </div>
+        <!-- /Row 4col -->
+
         <!-- SECTION 8 : Mes Articles -->
         <div class="cockpit-section cockpit-my-articles">
           <div class="section-header">
@@ -752,16 +686,16 @@ function hasRecentScan() {
 }
 
 function updateScanLastInfo() {
-  const info = document.getElementById('scan-last-info');
+  const info = document.getElementById('scan-last-info-col') || document.getElementById('scan-last-info');
   if (!info) return;
   const last = getLastScanTimestamp();
   const mode = getScanMode();
   if (last === 0) {
-    info.textContent = `(mode ${mode} • jamais scanné)`;
+    info.textContent = `mode ${mode} • jamais scanné`;
     return;
   }
   const hoursAgo = Math.round((Date.now() - last) / (1000 * 60 * 60));
-  info.textContent = `(mode ${mode} • dernier scan il y a ${hoursAgo}h)`;
+  info.textContent = `mode ${mode} • scan il y a ${hoursAgo}h`;
 }
 
 function applyScanModeUI() {

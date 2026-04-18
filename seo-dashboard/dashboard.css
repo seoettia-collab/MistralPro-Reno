@@ -9702,3 +9702,221 @@ select:focus {
   color: #10b981;
   font-weight: 600;
 }
+
+/* =====================================================================
+   SEO-UX-02 — Cockpit 4 colonnes compact
+   ===================================================================== */
+.cockpit-row-4col {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+@media (max-width: 1300px) {
+  .cockpit-row-4col { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 780px) {
+  .cockpit-row-4col { grid-template-columns: 1fr; }
+}
+
+.cockpit-col-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cockpit-col-stack .cockpit-section {
+  flex: 1;
+}
+
+.cockpit-row-4col .cockpit-section {
+  margin-bottom: 0;
+  padding: 12px 14px;
+}
+.cockpit-row-4col h4 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Concurrence compacte */
+.competitors-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.competitor-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.competitor-row .competitor-domain {
+  color: #cbd5e1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 6px;
+}
+.competitor-link-btn {
+  background: #3b82f6;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.competitor-link-btn:hover {
+  background: #2563eb;
+}
+
+/* Modules compact list */
+.modules-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.module-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.module-row:hover {
+  background: #1e293b;
+  border-color: #3b82f6;
+}
+.module-row .module-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.module-row .module-value {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Scan col toggle */
+#cockpit-site-scan-col .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+#cockpit-site-scan-col .scan-mode-toggle {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+}
+#cockpit-site-scan-col .scan-mode-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+#cockpit-site-scan-col .scan-mode-toggle input[type="radio"] {
+  accent-color: #3b82f6;
+  margin: 0;
+  transform: scale(0.85);
+}
+#scan-last-info-col {
+  font-size: 10px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+/* Opportunity card compacte */
+.cockpit-opportunities .opportunity-card {
+  padding: 8px 10px;
+  gap: 8px;
+}
+.cockpit-opportunities .opp-info { gap: 2px; }
+.cockpit-opportunities .opp-keyword {
+  font-size: 12px;
+  font-weight: 700;
+}
+.cockpit-opportunities .opp-meta {
+  font-size: 10px;
+}
+.cockpit-opportunities .opp-actions .btn-small {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+/* Action card compacte */
+.cockpit-actions .action-card {
+  padding: 8px 10px;
+  gap: 8px;
+}
+.cockpit-actions .action-title {
+  font-size: 12px;
+  font-weight: 600;
+}
+.cockpit-actions .action-impact {
+  font-size: 10px;
+  color: #94a3b8;
+}
+.cockpit-actions .btn-small {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+/* =====================================================================
+   SEO-UX-02 — Scan SEO : 1 seule ligne horizontale scrollable
+   ===================================================================== */
+.scan-pages-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 10px;
+  padding: 8px 4px 12px 4px;
+  max-height: none;
+}
+.scan-pages-grid .scan-page-compact {
+  min-width: 180px;
+  max-width: 220px;
+  flex: 0 0 auto;
+  padding: 8px 10px;
+}
+.scan-pages-grid .scan-page-compact-name {
+  font-size: 12px;
+}
+.scan-pages-grid .scan-page-compact-url {
+  font-size: 10px;
+}
+.scan-pages-grid .scan-page-compact-issue,
+.scan-pages-grid .scan-page-compact-ok {
+  font-size: 10px;
+}
+/* Scrollbar compacte */
+.scan-pages-grid::-webkit-scrollbar { height: 8px; }
+.scan-pages-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+.scan-pages-grid::-webkit-scrollbar-track { background: transparent; }
+
+/* Summary scan stats également compact */
+.scan-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.scan-summary .scan-stat {
+  padding: 8px 10px;
+}
+.scan-summary .scan-stat-value {
+  font-size: 18px;
+}
+.scan-summary .scan-stat-label {
+  font-size: 10px;
+}
