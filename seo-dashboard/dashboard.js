@@ -863,12 +863,6 @@ function renderSiteScanResults(data) {
         `;
       }).join('')}
     </div>
-    
-    <div class="scan-actions">
-      <button class="btn-primary" onclick="launchAuditIAWithScan()">
-        🤖 Analyser avec Audit IA
-      </button>
-    </div>
   `;
 }
 
@@ -1009,31 +1003,59 @@ function renderMyArticles(articles) {
     `;
     return;
   }
-  
+
+  // SEO-UX-01 — Carte article premium
+  // Détection catégorie à partir du slug / titre pour badge coloré
+  const detectCatFromSlug = (slug, title) => {
+    const s = ((slug || '') + ' ' + (title || '')).toLowerCase();
+    if (s.includes('degat') || s.includes('eaux') || s.includes('urgence')) return { label: 'Urgences', color: '#ef4444', icon: '🚨' };
+    if (s.includes('salle-de-bain') || s.includes('salle de bain')) return { label: 'Salle de bain', color: '#06b6d4', icon: '🛁' };
+    if (s.includes('cuisine')) return { label: 'Cuisine', color: '#f59e0b', icon: '🍳' };
+    if (s.includes('electricite') || s.includes('électricité')) return { label: 'Électricité', color: '#eab308', icon: '⚡' };
+    if (s.includes('peinture')) return { label: 'Peinture', color: '#8b5cf6', icon: '🎨' };
+    if (s.includes('isolation') || s.includes('energetique')) return { label: 'Énergie', color: '#10b981', icon: '🌿' };
+    if (s.includes('prix') || s.includes('cout') || s.includes('coût')) return { label: 'Prix', color: '#f97316', icon: '💶' };
+    if (s.includes('appartement') || s.includes('habitation') || s.includes('ile-de-france')) return { label: 'Rénovation', color: '#3b82f6', icon: '🏠' };
+    return { label: 'Article', color: '#64748b', icon: '📄' };
+  };
+
+  const formatDate = (iso) => {
+    if (!iso) return '';
+    try {
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch (e) { return ''; }
+  };
+
   container.innerHTML = `
-    <div class="articles-count">${articles.length} article${articles.length > 1 ? 's' : ''} publié${articles.length > 1 ? 's' : ''}</div>
-    <div class="articles-grid">
-      ${articles.map(article => `
-        <div class="article-card" data-slug="${article.slug}">
-          <div class="article-card-image">
-            ${article.imageUrl 
-              ? `<img src="${article.imageUrl}" alt="${article.slug}" loading="lazy" onerror="this.src='/images/placeholder.webp'">`
-              : `<div class="article-no-image">📄</div>`
-            }
+    <div class="articles-count">🟢 ${articles.length} article${articles.length > 1 ? 's' : ''} en ligne</div>
+    <div class="articles-grid-premium">
+      ${articles.map(article => {
+        const cat = detectCatFromSlug(article.slug, article.title);
+        const imgSrc = article.imageUrl || '/images/blog/default-blog.webp';
+        const dateLabel = formatDate(article.live_at || article.deployed_at || article.created_at);
+        const title = article.title || formatSlugToTitle(article.slug);
+        const url = article.url || `https://www.mistralpro-reno.fr/blog/${article.slug}.html`;
+        return `
+        <div class="article-card-premium" data-slug="${article.slug}">
+          <div class="article-card-image-wrap">
+            <img class="article-card-image" src="${imgSrc}" alt="${escapeHtml(title)}" loading="lazy"
+                 onerror="this.onerror=null;this.src='/images/blog/default-blog.webp'">
+            <span class="article-card-badge" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
+            <span class="article-card-status" title="Article en ligne">🟢 LIVE</span>
+            <button class="article-card-menu" onclick="confirmDeleteArticle('${article.slug}')" title="Supprimer">⋯</button>
           </div>
           <div class="article-card-body">
-            <h5 class="article-card-title">${article.title || formatSlugToTitle(article.slug)}</h5>
-            <div class="article-card-actions">
-              <a href="${article.url}" target="_blank" class="btn-small btn-primary" title="Voir l'article">
-                👁️ Voir
-              </a>
-              <button class="btn-small btn-danger" onclick="confirmDeleteArticle('${article.slug}')" title="Supprimer">
-                🗑️
-              </button>
-            </div>
+            <h5 class="article-card-title">${escapeHtml(title)}</h5>
+            ${dateLabel ? `<div class="article-card-date">📅 Publié le ${dateLabel}</div>` : ''}
+            <a href="${url}" target="_blank" rel="noopener" class="article-card-cta">
+              Voir l'article →
+            </a>
           </div>
         </div>
-      `).join('')}
+        `;
+      }).join('')}
     </div>
   `;
 }
