@@ -4696,6 +4696,22 @@ async function applyOptimizations(pageUrl, keyword) {
     alert('⚠️ Aucune optimisation sélectionnée');
     return;
   }
+
+  // OPTIMIZE-FIX : fallback robuste pour pageUrl
+  // Ordre de priorite: arg -> data.pageUrl -> data.keyword si URL format -> rien
+  let finalPageUrl = pageUrl || data.pageUrl || '';
+  if (!finalPageUrl && data.keyword && data.keyword.startsWith('/')) {
+    // La 'target' d'une decision optimize_page est parfois un chemin (/blog/...)
+    finalPageUrl = `https://www.mistralpro-reno.fr${data.keyword}`;
+  }
+  if (!finalPageUrl && keyword && keyword.startsWith('/')) {
+    finalPageUrl = `https://www.mistralpro-reno.fr${keyword}`;
+  }
+
+  if (!finalPageUrl) {
+    alert('⚠️ Impossible de determiner l\'URL de la page a optimiser');
+    return;
+  }
   
   // Afficher loading
   panel.querySelector('.optimize-body').innerHTML = `
@@ -4709,8 +4725,8 @@ async function applyOptimizations(pageUrl, keyword) {
     const response = await fetchAPI('/api/optimize/apply', {
       method: 'POST',
       body: JSON.stringify({
-        pageUrl: pageUrl || data.pageUrl,
-        keyword: keyword,
+        pageUrl: finalPageUrl,
+        keyword: keyword || data.keyword || '',
         optimizations: selectedOptimizations
       })
     });

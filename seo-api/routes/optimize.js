@@ -74,16 +74,24 @@ router.post('/optimize/analyze', async (req, res) => {
 
     // Si pas d'API key Anthropic, générer une analyse simulée
     if (!ANTHROPIC_API_KEY) {
+      const simData = generateSimulatedAnalysis(targetUrl, keyword, pageData, relatedQueries, actionType);
+      // Toujours inclure pageUrl et keyword pour que le bouton "Appliquer" fonctionne
+      simData.pageUrl = targetUrl;
+      simData.keyword = keyword || '';
       return res.json({
         status: 'ok',
-        data: generateSimulatedAnalysis(targetUrl, keyword, pageData, relatedQueries, actionType),
+        data: simData,
         simulated: true
       });
     }
 
     // Appeler Claude pour l'analyse
     const analysis = await callClaudeForOptimization(targetUrl, keyword, pageData, relatedQueries, actionType);
-    
+    // OPTIMIZE-FIX : injecter pageUrl et keyword dans la reponse pour que
+    // le bouton 'Appliquer' du frontend ait toujours ces valeurs
+    analysis.pageUrl = targetUrl;
+    analysis.keyword = keyword || '';
+
     res.json({
       status: 'ok',
       data: analysis,
