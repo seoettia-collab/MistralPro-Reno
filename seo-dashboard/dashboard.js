@@ -2183,18 +2183,37 @@ function updateStateArticleFromContent(content) {
 /**
  * Navigation vers Studio SEO IA avec mot-clé pré-rempli
  */
+/**
+ * STUDIO-UX : met à jour le hint visuel sous le champ mot-clé
+ * pour lever l'ambiguïté "qu'est-ce que le bouton Générer va produire ?"
+ */
+function updateStudioPreview() {
+  const keywordInput = document.getElementById('studioKeyword');
+  const hint = document.getElementById('studio-keyword-hint');
+  if (!keywordInput || !hint) return;
+  const keyword = keywordInput.value.trim();
+  if (keyword) {
+    hint.innerHTML = `✓ Article à générer : <strong>"${escapeHtml(keyword)}"</strong>`;
+    hint.className = 'studio-keyword-hint active';
+  } else {
+    hint.innerHTML = '';
+    hint.className = 'studio-keyword-hint';
+  }
+}
+
 function goToStudioSEO(keyword, actionId) {
   // Activer l'onglet Studio SEO
   document.querySelector('[data-tab="studio-seo"]').click();
-  
+
   // Pré-remplir le mot-clé
   setTimeout(() => {
     const keywordInput = document.getElementById('studioKeyword');
     if (keywordInput && keyword) {
       keywordInput.value = keyword;
       console.log('[Studio SEO] Mot-clé pré-rempli:', keyword);
+      updateStudioPreview();
     }
-    
+
     // Afficher les recommandations IA si disponibles
     displayStudioRecommendations();
   }, 100);
@@ -2320,6 +2339,9 @@ function generateFromRecommendation(keyword, title) {
   if (lengthSelect) {
     lengthSelect.value = 'long';
   }
+
+  // Mettre à jour le hint visuel
+  if (typeof updateStudioPreview === 'function') updateStudioPreview();
   
   // Scroll vers le formulaire
   document.getElementById('studio-params').scrollIntoView({ behavior: 'smooth' });

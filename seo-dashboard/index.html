@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>SEO Dashboard — Mistral Pro Reno</title>
   <link rel="icon" type="image/x-icon" href="/seo-dashboard/favicon.ico">
-  <link rel="stylesheet" href="/seo-dashboard/dashboard.css?v=20260418k">
+  <link rel="stylesheet" href="/seo-dashboard/dashboard.css?v=20260418l">
 </head>
 <body>
   <header class="header">
@@ -150,7 +150,8 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="studioKeyword">Mot-clé principal *</label>
-                <input type="text" id="studioKeyword" placeholder="Ex: prix renovation cuisine paris" />
+                <input type="text" id="studioKeyword" placeholder="Ex: prix renovation cuisine paris" oninput="updateStudioPreview()" />
+                <div id="studio-keyword-hint" class="studio-keyword-hint"></div>
               </div>
               <div class="form-group">
                 <label for="studioType">Type</label>
@@ -186,7 +187,7 @@
                 <input type="text" id="studioContext" placeholder="Ex: Focus sur Paris 17ème, mentionner les dégâts des eaux..." />
               </div>
               <button class="btn-generate-inline" onclick="generateSEOContent()">
-                ✨ Générer le contenu
+                ✨ Générer cet article
               </button>
             </div>
           </div>
@@ -808,6 +809,6 @@
     </section>
   </main>
 
-  <script src="/seo-dashboard/dashboard.js?v=20260418k"></script>
+  <script src="/seo-dashboard/dashboard.js?v=20260418l"></script>
 </body>
 </html>
