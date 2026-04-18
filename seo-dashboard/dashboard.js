@@ -2781,7 +2781,7 @@ function renderStudioResult(content) {
             <!-- IMG-PROMPT : suggestion de prompt image en anglais -->
             <div class="image-prompt-box" id="image-prompt-box">
               <div class="image-prompt-header">
-                <span class="image-prompt-label">🎨 Image prompt (EN) — copy to CapCut/Midjourney/DALL-E</span>
+                <span class="image-prompt-label">🎨 Image prompt (EN) — copy to CapCut / ChatGPT Images / Midjourney</span>
                 <div class="image-prompt-actions">
                   <button class="btn-mini" onclick="regenerateImagePrompt()" title="Régénérer un nouveau prompt">🔄</button>
                   <button class="btn-mini btn-copy-prompt" onclick="copyImagePrompt()" title="Copier le prompt">📋 Copier</button>
@@ -3126,7 +3126,7 @@ async function generateImagePromptForArticle(forceNew = false) {
   const category = detectCategory(keyword) || 'Renovation';
   const context = studioGeneratedContent.context || '';
 
-  const userPrompt = `You are an expert at writing visual prompts for AI image generators (Midjourney, DALL-E, Stable Diffusion, CapCut).
+  const userPrompt = `You are an expert at writing visual prompts for AI image generators (ChatGPT Images, Midjourney, Stable Diffusion, CapCut).
 
 Write a SHORT image prompt in ENGLISH (2 to 3 sentences maximum, ~40-60 words total) for a featured blog image that illustrates this article.
 
@@ -3206,7 +3206,7 @@ async function copyImagePrompt() {
   }
   try {
     await navigator.clipboard.writeText(text);
-    showNotification('✅ Prompt image copie — collez-le dans CapCut / Midjourney', 'success');
+    showNotification('✅ Prompt image copie — collez-le dans CapCut / ChatGPT Images / Midjourney', 'success');
   } catch (e) {
     // Fallback
     const ta = document.createElement('textarea');
