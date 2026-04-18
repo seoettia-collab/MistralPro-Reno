@@ -201,7 +201,7 @@ async function collectImpactSignals() {
  */
 async function collectConversionSignals() {
   try {
-    // Table conversions peut ne pas avoir les colonnes attendues
+    // Table conversions peut etre vide ou absente (tracking optionnel)
     const conversions = await dbAll(`
       SELECT * FROM conversions
       ORDER BY id DESC
@@ -214,7 +214,11 @@ async function collectConversionSignals() {
       conversion_rate: 0
     };
   } catch (err) {
-    console.error('collectConversionSignals error:', err.message);
+    // Table conversions absente = cas normal tant que le tracking n est pas configure
+    // On log en info (pas error) pour ne pas polluer Vercel
+    if (!String(err.message).includes('no such table')) {
+      console.error('collectConversionSignals error:', err.message);
+    }
     return {
       recent_conversions: 0,
       pages_without_cta: 0,

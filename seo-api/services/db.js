@@ -191,6 +191,17 @@ const initSchema = async () => {
       applied_at DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS conversions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      page_url TEXT,
+      event_type TEXT,
+      keyword TEXT,
+      source TEXT,
+      value REAL DEFAULT 0,
+      metadata TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `;
   
   // Exécuter chaque statement séparément
