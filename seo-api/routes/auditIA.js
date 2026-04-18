@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const { countLive, getAllLive, checkIntegrity } = require('../services/contentCounter');
 const { analyzeBlogPage } = require('../services/blogPageAnalyzer');
+const { dbAll } = require('../services/db');
 
 // Clé API Anthropic depuis variables d'environnement
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -203,7 +204,29 @@ router.post('/audit-ia/analyze', async (req, res) => {
     } catch (e) {
       console.warn('[AUDIT_BLOG_01] analyse blog.html échouée:', e.message);
     }
-    
+
+    // AUDIT-OPT-DEDUPE — liste des pages deja optimisees recemment pour le prompt
+    let recentlyOptimizedInfo = [];
+    try {
+      const recentOpts = await dbAll(`
+        SELECT page_url, created_at FROM optimization_history
+        WHERE status = 'applied'
+          AND created_at >= datetime('now', '-7 days')
+        ORDER BY created_at DESC
+      `);
+      recentlyOptimizedInfo = recentOpts.map(r => {
+        const u = String(r.page_url || '');
+        const m = u.match(/\/blog\/([a-z0-9-]+)\.html/i);
+        return {
+          slug: m ? m[1] : u,
+          page_url: u,
+          date: r.created_at
+        };
+      });
+    } catch (e) {
+      console.warn('[AUDIT_OPT_DEDUPE] prompt info failed:', e.message);
+    }
+
     // Vérifier la clé API
     if (!ANTHROPIC_API_KEY) {
       console.warn('[Audit IA] ANTHROPIC_API_KEY non configurée, mode simulation');
@@ -317,6 +340,16 @@ RÈGLES STRICTES AVANT TOUTE DÉCISION create_content :
 - Tu peux proposer des angles DIFFÉRENTS (arrondissement précis, sous-niche, longue traîne) tant que le slug final sera distinct`
   : 'Aucun article live actuellement — la création de contenu est prioritaire'}
 
+PAGES OPTIMISÉES RÉCEMMENT (derniers 7 jours) — NE PAS RE-PROPOSER en optimize_page :
+${recentlyOptimizedInfo.length > 0
+  ? `${recentlyOptimizedInfo.length} page(s) deja optimisee(s) recemment :
+${recentlyOptimizedInfo.map((o, i) =>
+  `${i + 1}. slug="${o.slug}" | url=${o.page_url} | optimisee le ${o.date}`
+).join('\n')}
+
+RÈGLE STRICTE : NE PROPOSE JAMAIS un optimize_page sur une des URL/slugs ci-dessus. Elles ont ete traitees recemment. Propose plutot optimize_page sur des pages NON presentes dans cette liste.`
+  : 'Aucune page optimisee recemment — tu peux proposer des optimize_page sur les articles existants qui en ont besoin.'}
+
 ${blogPageAnalysis ? `ANALYSE DE LA PAGE PUBLIQUE /blog.html (source terrain visuelle) :
 - URL analysée : ${blogPageAnalysis.url}
 - Article à la une (featured) : ${blogPageAnalysis.featured ? `"${blogPageAnalysis.featured.title}" (slug=${blogPageAnalysis.featured.slug}, catégorie=${blogPageAnalysis.featured.category}, date=${blogPageAnalysis.featured.date_shown || '?'})` : 'aucun'}
@@ -415,6 +448,9 @@ Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
     // AUDIT-COUNT-02 — Filtre serveur anti-doublon (dernière défense)
     // Si malgré le prompt Claude propose un create_content dont le slug correspond
     // à un article déjà live, on le retire automatiquement.
+    //
+    // AUDIT-OPT-DEDUPE — aussi filtrer les optimize_page sur pages optimisees
+    // dans les 7 derniers jours (via table optimization_history)
     if (auditData.decisions && liveArticlesList.length > 0) {
       const liveSlugsSet = new Set(
         liveArticlesList.map(a => (a.slug || '').toLowerCase()).filter(Boolean)
@@ -423,24 +459,61 @@ Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
         liveArticlesList.map(a => (a.keyword || '').toLowerCase().trim()).filter(Boolean)
       );
 
+      // Recuperer les pages optimisees dans les 7 derniers jours
+      let recentlyOptimizedPaths = new Set();
+      try {
+        const recentOpts = await dbAll(`
+          SELECT page_url FROM optimization_history
+          WHERE status = 'applied'
+            AND created_at >= datetime('now', '-7 days')
+        `);
+        recentlyOptimizedPaths = new Set(
+          recentOpts.map(r => {
+            // Normaliser: extraire le chemin (slug.html) quelle que soit la forme de l URL
+            const u = String(r.page_url || '').toLowerCase();
+            const m = u.match(/\/blog\/([a-z0-9-]+)\.html/);
+            return m ? m[1] : u;
+          }).filter(Boolean)
+        );
+        console.log('[AUDIT_OPT_DEDUPE] pages optimisees recemment (7j):', recentlyOptimizedPaths.size, Array.from(recentlyOptimizedPaths));
+      } catch (e) {
+        console.warn('[AUDIT_OPT_DEDUPE] lecture optimization_history failed:', e.message);
+      }
+
       const beforeFilter = auditData.decisions.length;
       auditData.decisions = auditData.decisions.filter(d => {
-        if (d.type !== 'create_content') return true;
-        // Extraire le slug de target_page ou du keyword
-        const targetSlug = (d.target_page || '')
-          .replace(/^\/?blog\//, '')
-          .replace(/\.html$/, '')
-          .toLowerCase();
-        const targetKeyword = (d.keyword || '').toLowerCase().trim();
+        // create_content: filtrer si slug ou keyword match article live
+        if (d.type === 'create_content') {
+          const targetSlug = (d.target_page || '')
+            .replace(/^\/?blog\//, '')
+            .replace(/\.html$/, '')
+            .toLowerCase();
+          const targetKeyword = (d.keyword || '').toLowerCase().trim();
 
-        if (targetSlug && liveSlugsSet.has(targetSlug)) {
-          console.warn('[AUDIT_COUNT_PROMPT_BLOCKED] doublon slug retiré:', targetSlug);
-          return false;
+          if (targetSlug && liveSlugsSet.has(targetSlug)) {
+            console.warn('[AUDIT_COUNT_PROMPT_BLOCKED] doublon slug retiré:', targetSlug);
+            return false;
+          }
+          if (targetKeyword && liveKeywordsSet.has(targetKeyword)) {
+            console.warn('[AUDIT_COUNT_PROMPT_BLOCKED] doublon keyword retiré:', targetKeyword);
+            return false;
+          }
+          return true;
         }
-        if (targetKeyword && liveKeywordsSet.has(targetKeyword)) {
-          console.warn('[AUDIT_COUNT_PROMPT_BLOCKED] doublon keyword retiré:', targetKeyword);
-          return false;
+
+        // optimize_page: filtrer si la page a ete optimisee dans les 7 derniers jours
+        if (d.type === 'optimize_page' && recentlyOptimizedPaths.size > 0) {
+          const targetRaw = String(d.target_page || d.keyword || '').toLowerCase();
+          // Extraire le slug si format /blog/X.html, sinon comparer directement
+          const mSlug = targetRaw.match(/\/blog\/([a-z0-9-]+)\.html/);
+          const targetSlug = mSlug ? mSlug[1] : targetRaw.replace(/^\/+|\/+$/g, '');
+
+          if (targetSlug && recentlyOptimizedPaths.has(targetSlug)) {
+            console.warn('[AUDIT_OPT_DEDUPE] optimize_page recent retiré:', targetSlug);
+            return false;
+          }
         }
+
         return true;
       });
       if (beforeFilter !== auditData.decisions.length) {
