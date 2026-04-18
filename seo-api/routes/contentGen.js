@@ -253,6 +253,13 @@ function buildArticleHTML(article, keyword, slug, imagePath) {
     ? resolvedImagePath
     : `https://www.mistralpro-reno.fr${resolvedImagePath.startsWith('/') ? resolvedImagePath : '/' + resolvedImagePath}`;
 
+  // STUDIO-PUB-01A : chemin relatif depuis /blog/ pour l'affichage <img>
+  const imagePathRelative = resolvedImagePath.startsWith('http')
+    ? resolvedImagePath
+    : resolvedImagePath.startsWith('/')
+      ? `..${resolvedImagePath}`
+      : `../${resolvedImagePath}`;
+
   // Schema.org Article
   const schemaOrg = {
     "@context": "https://schema.org",
@@ -339,71 +346,179 @@ ${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEn
   </script>`;
   }
 
-  // HTML final
+  // HTML final — STUDIO-PUB-01A : template complet aligne avec le site
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5MZSVPL');</script>
+  <!-- End Google Tag Manager -->
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
   <title>${escapeHtml(article.title)}</title>
   <meta name="description" content="${escapeHtml(article.metaDescription)}">
-  <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://www.mistralpro-reno.fr/blog/${slug}.html">
-  
+
   <!-- Open Graph -->
   <meta property="og:type" content="article">
   <meta property="og:title" content="${escapeHtml(article.title)}">
   <meta property="og:description" content="${escapeHtml(article.metaDescription)}">
   <meta property="og:url" content="https://www.mistralpro-reno.fr/blog/${slug}.html">
   <meta property="og:site_name" content="Mistral Pro Reno">
+  <meta property="og:locale" content="fr_FR">
   <meta property="og:image" content="${absoluteImageUrl}">
-  
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(article.title)}">
+  <meta name="twitter:description" content="${escapeHtml(article.metaDescription)}">
+  <meta name="twitter:image" content="${absoluteImageUrl}">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+  <!-- CSS (paths relatifs depuis /blog/) -->
+  <link rel="stylesheet" href="../css/style.css?v=2.0">
+  <link rel="stylesheet" href="../css/blog.css?v=1.1">
+
   <!-- Schema.org Article -->
   <script type="application/ld+json">
 ${JSON.stringify(schemaOrg, null, 2)}
   </script>
   ${faqSchema}
-  
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/blog.css">
 </head>
 <body>
-  <!-- Header inclus via JS -->
-  
-  <main class="blog-article">
-    <article itemscope itemtype="https://schema.org/Article">
-      <header class="article-header">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5MZSVPL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <header>
+    <div class="top-bar">
+      <div class="container">
+        <div class="top-bar-content">
+          <div class="contact-info">
+            <a href="tel:0755188937"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> 07 55 18 89 37</a>
+            <span class="hide-mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lun-Ven 08h-18h</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <div class="container">
+        <a href="/" class="logo">MISTRAL PRO RENO</a>
+        <button class="mobile-menu-btn" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/">ACCUEIL</a></li>
+          <li><a href="../services.html">SERVICES</a></li>
+          <li><a href="../projets.html">PROJETS</a></li>
+          <li><a href="../degat-des-eaux.html">DÉGÂT DES EAUX</a></li>
+          <li><a href="../blog.html" class="active">BLOG</a></li>
+          <li><a href="../cost_calculator.html">SIMULATEUR DEVIS</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="article-hero">
+      <div class="container">
+        <nav class="article-breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/">Accueil</a> &gt; <a href="../blog.html">Blog</a> &gt; <span>${escapeHtml(article.h1)}</span>
+        </nav>
         <h1 itemprop="headline">${escapeHtml(article.h1)}</h1>
         <div class="article-meta">
-          <span class="article-date" itemprop="datePublished" content="${dateISO}">Publié le ${dateLocal}</span>
-          <span class="article-author" itemprop="author" itemscope itemtype="https://schema.org/Organization">
-            Par <span itemprop="name">Mistral Pro Reno</span>
-          </span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Publié le ${dateLocal}</span>
+          <span class="article-author">Par Mistral Pro Reno</span>
         </div>
-      </header>
-      
-      <div class="article-content" itemprop="articleBody">
+      </div>
+    </section>
+
+    <article class="article-content" itemscope itemtype="https://schema.org/Article">
+      <meta itemprop="datePublished" content="${dateISO}">
+      <figure style="margin:0 0 30px 0">
+        <img src="${imagePathRelative}" alt="${escapeHtml(article.h1)}" width="800" height="500" loading="eager" style="width:100%;height:auto;border-radius:12px">
+      </figure>
+
+      <div itemprop="articleBody">
         <p class="article-intro"><strong>${formatContent(article.introduction)}</strong></p>
-        
+
 ${sectionsHTML}
-        
+
         <div class="article-conclusion">
           <p>${formatContent(article.conclusion)}</p>
         </div>
-        
+
 ${faqHTML}
-        
+
         <div class="article-cta">
           <h3>Besoin d'un devis pour votre projet ?</h3>
-          <p>Contactez Mistral Pro Reno pour un devis gratuit et personnalisé.</p>
-          <a href="/cost_calculator.html" class="btn-primary">Obtenir un devis gratuit</a>
+          <p>Obtenez une estimation gratuite en quelques clics avec notre simulateur.</p>
+          <a href="../cost_calculator.html" class="btn btn-primary">Simulateur de Devis Gratuit</a>
+        </div>
+
+        <div class="article-share">
+          <span>Partager cet article :</span>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.mistralpro-reno.fr/blog/${slug}.html" target="_blank" rel="noopener noreferrer" class="share-btn share-facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            Facebook
+          </a>
+          <button class="share-btn share-copy" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='✓ Copié !'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copier le lien
+          </button>
+        </div>
+
+        <div class="author-box">
+          <div class="author-avatar">MPR</div>
+          <div class="author-info">
+            <h4>Mistral Pro Reno</h4>
+            <p>Expert en rénovation à Paris et Île-de-France depuis plus de 30 ans. Garantie décennale.</p>
+          </div>
         </div>
       </div>
     </article>
   </main>
-  
-  <!-- Footer inclus via JS -->
-  <script src="/js/main.js"></script>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Mistral Pro Reno</h4>
+          <p>Expert en rénovation à Paris et Île-de-France depuis plus de 30 ans.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="../services.html">Rénovation complète</a></li>
+            <li><a href="../degat-des-eaux.html">Dégât des eaux</a></li>
+            <li><a href="../cost_calculator.html">Devis gratuit</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p><a href="tel:0755188937">07 55 18 89 37</a></p>
+          <p>Paris & Île-de-France</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; ${new Date().getFullYear()} Mistral Pro Reno - Tous droits réservés</p>
+        <a href="../mentions-legales.html">Mentions légales</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js" defer></script>
 </body>
 </html>`;
 }

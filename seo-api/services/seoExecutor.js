@@ -284,8 +284,8 @@ function generatePageHTML(seoContent) {
   <meta property="og:url" content="https://www.mistralpro-reno.fr/${type === 'service' ? 'services' : 'blog'}/${slug}.html">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="stylesheet" href="/css/blog.css">
+  <link rel="stylesheet" href="/css/style.css?v=2.0">
+  <link rel="stylesheet" href="/css/blog.css?v=1.1">
   
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
