@@ -10465,3 +10465,69 @@ select:focus {
   color: #64748b;
   font-family: inherit;
 }
+
+/* =====================================================================
+   OPTIMIZE-APPLY — UI du succes apres application reelle des optis
+   ===================================================================== */
+.optimize-success .applied-details { margin: 12px 0; }
+.optimize-success .applied-list {
+  list-style: none; padding: 0; margin: 8px 0;
+  max-height: 200px; overflow-y: auto;
+}
+.optimize-success .applied-list li {
+  padding: 6px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 3px solid #10b981;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+.optimize-success .applied-list li strong {
+  color: #10b981;
+  margin-right: 6px;
+}
+.optimize-success .applied-empty {
+  color: #64748b;
+  font-style: italic;
+  font-size: 13px;
+}
+.optimize-success .skipped-block {
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 6px;
+}
+.optimize-success .skipped-title {
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px 0;
+}
+.optimize-success .skipped-list {
+  list-style: none; padding: 0; margin: 0;
+}
+.optimize-success .skipped-list li {
+  font-size: 12px;
+  color: #cbd5e1;
+  padding: 3px 0;
+  line-height: 1.4;
+}
+.optimize-success .skipped-list li strong {
+  color: #f59e0b;
+}
+.optimize-success .commit-info,
+.optimize-success .deploy-info {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 8px 0 4px 0;
+  text-align: center;
+}
+.optimize-success .commit-info a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-family: 'Menlo', monospace;
+  font-weight: 700;
+}
+.optimize-success .commit-info a:hover { text-decoration: underline; }

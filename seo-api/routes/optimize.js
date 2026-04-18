@@ -109,35 +109,244 @@ router.post('/optimize/analyze', async (req, res) => {
 
 /**
  * POST /api/optimize/apply
- * Applique les optimisations proposées
+ * Applique reellement les optimisations SEO sur l article existant:
+ * fetch GitHub -> modifie HTML (title, meta description, H1, og, twitter)
+ * -> re-push GitHub.
+ *
+ * Body: { pageUrl, optimizations: [{ type, proposed, current, ... }] }
+ * Supporte type: 'title', 'metaDescription', 'h1'
+ * Le type 'content' n est pas applique automatiquement (a regenerer manuellement).
  */
 router.post('/optimize/apply', async (req, res) => {
   try {
     const { pageUrl, optimizations } = req.body;
-    
+
     if (!pageUrl || !optimizations) {
       return res.status(400).json({
         status: 'error',
         message: 'pageUrl et optimizations requis'
       });
     }
+    if (!Array.isArray(optimizations) || optimizations.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'optimizations doit etre un tableau non vide'
+      });
+    }
 
-    // Pour l'instant, on enregistre l'action d'optimisation
-    // L'application réelle nécessite l'accès GitHub (à implémenter)
-    
-    // Enregistrer dans la base
-    await dbRun(`
-      INSERT INTO optimization_history (page_url, optimizations, status, created_at)
-      VALUES (?, ?, 'pending', datetime('now'))
-    `, [pageUrl, JSON.stringify(optimizations)]);
+    // 1. Extraire le slug depuis pageUrl
+    // ex: https://www.mistralpro-reno.fr/blog/prix-renovation-appartement-paris-2026.html
+    //  -> slug = prix-renovation-appartement-paris-2026
+    const slugMatch = pageUrl.match(/\/blog\/([a-z0-9-]+)\.html/i);
+    if (!slugMatch) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Impossible d extraire le slug depuis pageUrl (attendu: /blog/{slug}.html)'
+      });
+    }
+    const slug = slugMatch[1];
+    const filePath = `blog/${slug}.html`;
 
-    res.json({
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    const GITHUB_REPO = 'seoettia-collab/MistralPro-Reno';
+    const GITHUB_API_URL = 'https://api.github.com';
+
+    if (!GITHUB_TOKEN) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'GITHUB_TOKEN non configure - impossible d applique les optimisations'
+      });
+    }
+
+    // 2. Fetch fichier actuel depuis GitHub
+    const getResp = await fetch(
+      `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/${filePath}?ref=main`,
+      {
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    );
+    if (!getResp.ok) {
+      return res.status(404).json({
+        status: 'error',
+        message: `Article ${filePath} introuvable sur GitHub (${getResp.status})`
+      });
+    }
+    const fileData = await getResp.json();
+    let html = Buffer.from(fileData.content, 'base64').toString('utf-8');
+    const fileSha = fileData.sha;
+    const htmlBefore = html;
+
+    // 3. Appliquer chaque optimisation
+    const applied = [];
+    const skipped = [];
+
+    const escapeForHtml = (s) => String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+
+    const escapeForRegex = (s) => String(s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    for (const opt of optimizations) {
+      const type = opt.type;
+      const proposed = opt.proposed || '';
+
+      if (!proposed) {
+        skipped.push({ type, reason: 'proposed manquant' });
+        continue;
+      }
+
+      let changed = false;
+
+      if (type === 'title') {
+        // Remplace <title>...</title> (premier match)
+        const titleRegex = /<title>[^<]*<\/title>/i;
+        if (titleRegex.test(html)) {
+          html = html.replace(titleRegex, `<title>${escapeForHtml(proposed)}</title>`);
+          changed = true;
+        }
+        // Aussi og:title
+        const ogTitleRegex = /(<meta\s+property="og:title"\s+content=")[^"]*(")/i;
+        if (ogTitleRegex.test(html)) {
+          html = html.replace(ogTitleRegex, `$1${escapeForHtml(proposed)}$2`);
+        }
+        // Aussi twitter:title
+        const twTitleRegex = /(<meta\s+name="twitter:title"\s+content=")[^"]*(")/i;
+        if (twTitleRegex.test(html)) {
+          html = html.replace(twTitleRegex, `$1${escapeForHtml(proposed)}$2`);
+        }
+      }
+
+      else if (type === 'metaDescription' || type === 'meta' || type === 'description') {
+        // Remplace <meta name="description" content="...">
+        const metaRegex = /(<meta\s+name="description"\s+content=")[^"]*(")/i;
+        if (metaRegex.test(html)) {
+          html = html.replace(metaRegex, `$1${escapeForHtml(proposed)}$2`);
+          changed = true;
+        }
+        // Aussi og:description
+        const ogDescRegex = /(<meta\s+property="og:description"\s+content=")[^"]*(")/i;
+        if (ogDescRegex.test(html)) {
+          html = html.replace(ogDescRegex, `$1${escapeForHtml(proposed)}$2`);
+        }
+        // Aussi twitter:description
+        const twDescRegex = /(<meta\s+name="twitter:description"\s+content=")[^"]*(")/i;
+        if (twDescRegex.test(html)) {
+          html = html.replace(twDescRegex, `$1${escapeForHtml(proposed)}$2`);
+        }
+      }
+
+      else if (type === 'h1') {
+        // Remplace le premier <h1 ...>...</h1>
+        // Support <h1> simple et <h1 itemprop="headline">
+        const h1Regex = /<h1\b[^>]*>[\s\S]*?<\/h1>/i;
+        const match = html.match(h1Regex);
+        if (match) {
+          // Preserver les attributs du <h1> existant (itemprop, class, id, etc.)
+          const openTagMatch = match[0].match(/<h1\b[^>]*>/i);
+          const openTag = openTagMatch ? openTagMatch[0] : '<h1>';
+          html = html.replace(h1Regex, `${openTag}${escapeForHtml(proposed)}</h1>`);
+          changed = true;
+        }
+      }
+
+      else if (type === 'content') {
+        // Le contenu necessite une regeneration complete via Claude, trop complexe
+        // pour une modif ciblee. On skip et on demande a l utilisateur de regenerer
+        // l article entier depuis Studio SEO.
+        skipped.push({
+          type: 'content',
+          reason: 'Modifications de contenu non automatisees. Regenerer article via Studio SEO.'
+        });
+        continue;
+      }
+
+      else {
+        skipped.push({ type, reason: `Type non supporte: ${type}` });
+        continue;
+      }
+
+      if (changed) {
+        applied.push({ type, proposed: proposed.substring(0, 80) });
+      } else {
+        skipped.push({ type, reason: 'Pattern non trouve dans le HTML' });
+      }
+    }
+
+    // 4. Si rien n'a change, ne pas re-pusher
+    if (html === htmlBefore || applied.length === 0) {
+      // On enregistre quand meme pour tracabilite
+      try {
+        await dbRun(`
+          INSERT INTO optimization_history (page_url, optimizations, status, created_at)
+          VALUES (?, ?, 'skipped', datetime('now'))
+        `, [pageUrl, JSON.stringify(optimizations)]);
+      } catch (e) { /* DB indispo, non bloquant */ }
+
+      return res.json({
+        status: 'ok',
+        message: 'Aucune modification appliquee (patterns non trouves ou content skipped)',
+        data: { pageUrl, applied, skipped }
+      });
+    }
+
+    // 5. Re-push sur GitHub
+    const commitMsg = `feat(seo): Optimisations SEO sur ${slug} (${applied.map(a => a.type).join(', ')})`;
+    const putResp = await fetch(
+      `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/${filePath}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        body: JSON.stringify({
+          message: commitMsg,
+          content: Buffer.from(html).toString('base64'),
+          sha: fileSha,
+          branch: 'main'
+        })
+      }
+    );
+
+    if (!putResp.ok) {
+      const errData = await putResp.json().catch(() => ({}));
+      console.error('[Optimize apply] GitHub PUT fail:', putResp.status, errData);
+      return res.status(500).json({
+        status: 'error',
+        message: errData.message || `GitHub PUT erreur ${putResp.status}`
+      });
+    }
+    const putResult = await putResp.json();
+
+    // 6. Enregistrer dans la DB (trace)
+    try {
+      await dbRun(`
+        INSERT INTO optimization_history (page_url, optimizations, status, created_at)
+        VALUES (?, ?, 'applied', datetime('now'))
+      `, [pageUrl, JSON.stringify(optimizations)]);
+    } catch (e) { /* non bloquant */ }
+
+    console.log(`[Optimize apply] ✅ ${slug} - ${applied.length} opti(s) applique(s), commit: ${putResult.commit?.sha?.substring(0, 7)}`);
+
+    return res.json({
       status: 'ok',
-      message: 'Optimisations enregistrées',
+      message: `${applied.length} optimisation(s) appliquee(s) avec succes`,
       data: {
         pageUrl,
-        optimizations,
-        nextStep: 'Publication via GitHub requise'
+        slug,
+        applied,
+        skipped,
+        commitSha: putResult.commit?.sha,
+        commitUrl: putResult.commit?.html_url,
+        deployInfo: 'Deploiement OVH automatique via GitHub Actions (~45s)'
       }
     });
 

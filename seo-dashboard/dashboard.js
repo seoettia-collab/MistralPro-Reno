@@ -4737,13 +4737,35 @@ async function applyOptimizations(pageUrl, keyword) {
       throw new Error(result.message || 'Erreur d\'application');
     }
     
-    // Succès
+    // Succes - afficher les details reels
+    const applied = result.data?.applied || [];
+    const skipped = result.data?.skipped || [];
+    const commitUrl = result.data?.commitUrl;
+    const commitSha = result.data?.commitSha;
+
+    const appliedHtml = applied.length
+      ? `<ul class="applied-list">${applied.map(a => `<li>✓ <strong>${escapeHtml(a.type)}</strong> : ${escapeHtml(a.proposed || '')}</li>`).join('')}</ul>`
+      : '<p class="applied-empty">Aucune modification appliquee.</p>';
+
+    const skippedHtml = skipped.length
+      ? `<div class="skipped-block">
+           <p class="skipped-title">⚠️ Non appliques (${skipped.length}) :</p>
+           <ul class="skipped-list">${skipped.map(s => `<li><strong>${escapeHtml(s.type)}</strong> - ${escapeHtml(s.reason || '')}</li>`).join('')}</ul>
+         </div>`
+      : '';
+
+    const commitHtml = commitUrl
+      ? `<p class="commit-info">📝 Commit GitHub : <a href="${escapeHtml(commitUrl)}" target="_blank" rel="noopener">${escapeHtml((commitSha || '').substring(0, 7))}</a></p>
+         <p class="deploy-info">🚀 Deploiement OVH automatique (~45s)</p>`
+      : '';
+
     panel.querySelector('.optimize-body').innerHTML = `
       <div class="optimize-success">
         <div class="success-icon">✅</div>
-        <h4>Optimisations enregistrées</h4>
-        <p>${selectedOptimizations.length} modification(s) prête(s) à être publiée(s)</p>
-        <p class="next-step">💡 La publication réelle nécessite l'endpoint GitHub (à venir)</p>
+        <h4>${applied.length > 0 ? `${applied.length} optimisation(s) appliquee(s)` : 'Aucune modification appliquee'}</h4>
+        <div class="applied-details">${appliedHtml}</div>
+        ${skippedHtml}
+        ${commitHtml}
         <button class="btn-large btn-primary" onclick="closeOptimizePanel()">Fermer</button>
       </div>
     `;
