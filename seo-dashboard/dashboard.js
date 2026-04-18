@@ -4101,19 +4101,27 @@ async function executeAction(actionType, target, sourceId) {
  * Ouvre le Studio SEO avec un mot-clé pré-rempli
  */
 function openStudioWithKeyword(keyword) {
-  // Activer l'onglet Studio SEO
-  const studioBtn = document.querySelector('[data-tab="studio"]');
+  // Activer l'onglet Studio SEO (SEO-UX-01: fix IDs corrects)
+  const studioBtn = document.querySelector('[data-tab="studio-seo"]');
   if (studioBtn) {
     studioBtn.click();
-    
+
     // Attendre que l'onglet soit chargé puis pré-remplir
     setTimeout(() => {
-      const keywordInput = document.getElementById('studio-keyword');
+      const keywordInput = document.getElementById('studioKeyword');
       if (keywordInput) {
         keywordInput.value = keyword;
         keywordInput.focus();
+        keywordInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Petit highlight visuel pour confirmer l'action
+        keywordInput.style.boxShadow = '0 0 0 3px rgba(59,130,246,.4)';
+        setTimeout(() => { keywordInput.style.boxShadow = ''; }, 1200);
+      } else {
+        console.warn('[executeAction] #studioKeyword introuvable');
       }
     }, 300);
+  } else {
+    console.warn('[executeAction] onglet studio-seo introuvable');
   }
 }
 
