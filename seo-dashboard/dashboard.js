@@ -440,7 +440,8 @@ function renderCockpitV2(data) {
         </div>
         ` : ''}
 
-        <!-- SECTION 3 : Top Opportunités -->
+        <!-- SECTION 3+4 : Top Opportunités + Actions côte à côte (SEO-UX-01) -->
+        <div class="cockpit-row-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
         <div class="cockpit-section cockpit-opportunities">
           <h4>💡 Top Opportunités <span class="section-count">(${topOpportunities.length}/${totalOpportunities})</span></h4>
           ${topOpportunities.length > 0 ? `
@@ -488,6 +489,8 @@ function renderCockpitV2(data) {
             }).join('') : '<p class="no-data">Aucune action recommandée</p>'}
           </div>
         </div>
+        </div>
+        <!-- /Row 2col -->
 
         <!-- SECTION 5 : Concurrence -->
         <div class="cockpit-section cockpit-competitors">
@@ -594,7 +597,15 @@ function renderCockpitV2(data) {
         <!-- SECTION 7 : Scan SEO Site -->
         <div class="cockpit-section cockpit-site-scan">
   <div class="section-header">
-    <h4>🔍 Scan SEO du Site</h4>
+    <h4>🔍 Scan SEO du Site <span id="scan-last-info" class="section-count"></span></h4>
+    <div class="scan-mode-toggle" style="display:flex;gap:8px;align-items:center;font-size:12px;">
+      <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
+        <input type="radio" name="scanMode" value="auto" id="scanModeAuto" onchange="setScanMode('auto')"> Auto (1x/24h)
+      </label>
+      <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
+        <input type="radio" name="scanMode" value="manual" id="scanModeManual" onchange="setScanMode('manual')"> Manuel
+      </label>
+    </div>
   </div>
 
   <div id="site-scan-results" class="site-scan-results">
@@ -636,6 +647,11 @@ function renderCockpitV2(data) {
     `;
 
     container.innerHTML = html;
+
+    // SEO-UX-01 : déclencher l'auto-scan après rendu du DOM
+    try { autoScanIfNeeded(); } catch (e) { console.warn('autoScan failed', e); }
+    // Charger la liste des articles
+    try { if (typeof loadMyArticles === 'function') loadMyArticles(); } catch (e) {}
 }
 
 /**
@@ -688,8 +704,14 @@ async function runSiteScan() {
     }
     
     siteScanResults = result.data;
+    // SEO-UX-01 : persister timestamp + données pour mode auto
+    try {
+      localStorage.setItem('mpr_siteScanData', JSON.stringify(result.data));
+      localStorage.setItem('mpr_siteScanTimestamp', String(Date.now()));
+    } catch (e) { /* storage full */ }
     renderSiteScanResults(result.data);
-    
+    updateScanLastInfo();
+
     showNotification(`✅ Scan terminé : ${result.data.pages.length} pages analysées`, 'success');
     
   } catch (error) {
@@ -701,6 +723,90 @@ async function runSiteScan() {
       </div>
     `;
   }
+}
+
+/**
+ * SEO-UX-01 — Scan auto intelligent
+ * Gère le mode auto/manuel + déclenche un scan si le dernier date > 24h
+ */
+const SCAN_AUTO_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+
+function getScanMode() {
+  return localStorage.getItem('mpr_scanMode') || 'auto'; // défaut auto
+}
+
+function setScanMode(mode) {
+  localStorage.setItem('mpr_scanMode', mode);
+  showNotification(mode === 'auto' ? 'Mode scan automatique (1x/24h) activé' : 'Mode scan manuel activé', 'info');
+  updateScanLastInfo();
+}
+
+function getLastScanTimestamp() {
+  const ts = localStorage.getItem('mpr_siteScanTimestamp');
+  return ts ? parseInt(ts, 10) : 0;
+}
+
+function hasRecentScan() {
+  const last = getLastScanTimestamp();
+  return last > 0 && (Date.now() - last) < SCAN_AUTO_TTL_MS;
+}
+
+function updateScanLastInfo() {
+  const info = document.getElementById('scan-last-info');
+  if (!info) return;
+  const last = getLastScanTimestamp();
+  const mode = getScanMode();
+  if (last === 0) {
+    info.textContent = `(mode ${mode} • jamais scanné)`;
+    return;
+  }
+  const hoursAgo = Math.round((Date.now() - last) / (1000 * 60 * 60));
+  info.textContent = `(mode ${mode} • dernier scan il y a ${hoursAgo}h)`;
+}
+
+function applyScanModeUI() {
+  const mode = getScanMode();
+  const autoRadio = document.getElementById('scanModeAuto');
+  const manualRadio = document.getElementById('scanModeManual');
+  if (autoRadio) autoRadio.checked = (mode === 'auto');
+  if (manualRadio) manualRadio.checked = (mode === 'manual');
+  updateScanLastInfo();
+}
+
+/**
+ * Réhydrate les résultats depuis le localStorage sans relancer le scan
+ */
+function rehydrateLastScan() {
+  try {
+    const saved = localStorage.getItem('mpr_siteScanData');
+    if (!saved) return false;
+    const data = JSON.parse(saved);
+    if (!data || !data.pages) return false;
+    siteScanResults = data;
+    renderSiteScanResults(data);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Hook appelé après le rendu du cockpit pour décider si on lance un scan auto
+ */
+async function autoScanIfNeeded() {
+  applyScanModeUI();
+  const mode = getScanMode();
+
+  // Toujours tenter de réhydrater l'affichage depuis le dernier scan
+  rehydrateLastScan();
+
+  if (mode !== 'auto') return; // mode manuel : on ne lance rien
+  if (hasRecentScan()) {
+    console.log('[SCAN_AUTO] scan récent (< 24h), pas de relance');
+    return;
+  }
+  console.log('[SCAN_AUTO] dernier scan > 24h (ou inexistant), lancement auto');
+  await runSiteScan();
 }
 
 /**

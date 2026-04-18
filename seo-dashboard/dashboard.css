@@ -9327,3 +9327,21 @@ select:focus {
   font-size: 16px;
   font-weight: 700;
 }
+
+/* SEO-UX-01 — Layout compact : Top Opportunités + Actions côte à côte */
+.cockpit-row-2col {
+  margin-bottom: 16px;
+}
+@media (max-width: 900px) {
+  .cockpit-row-2col {
+    grid-template-columns: 1fr !important;
+  }
+}
+/* SEO-UX-01 — Scan mode toggle alignement */
+.scan-mode-toggle input[type="radio"] {
+  accent-color: #3b82f6;
+  margin: 0;
+}
+.scan-mode-toggle label {
+  color: #cbd5e1;
+}
