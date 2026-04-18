@@ -1762,24 +1762,25 @@ function renderAuditIAResult(audit) {
             const impactColor = impactScore >= 70 ? '#10b981' : impactScore >= 40 ? '#f59e0b' : '#9ca3af';
             const decisionType = decision.type || 'unknown';
 
-            let decisionLabel, btnAction;
+            let decisionLabel, actionTarget;
             switch(decisionType) {
               case 'create_content':
                 decisionLabel = 'Créer';
-                btnAction = `executeDecision('create_content', ${JSON.stringify(decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
+                actionTarget = decision.keyword || '';
                 break;
               case 'optimize_page':
                 decisionLabel = 'Optimiser';
-                btnAction = `executeDecision('optimize_page', ${JSON.stringify(decision.page || decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
+                actionTarget = decision.page || decision.keyword || '';
                 break;
               case 'publish_content':
                 decisionLabel = 'Publier';
-                btnAction = `executeDecision('publish_content', ${JSON.stringify(decision.slug || '')}, ${JSON.stringify(decision.decisionId || '')})`;
+                actionTarget = decision.slug || '';
                 break;
               default:
                 decisionLabel = 'Exécuter';
-                btnAction = `executeDecision('${decisionType}', '${escapeHtml(decision.target || decision.keyword || '')}', '${decision.decisionId || decision.actionId || ''}')`;
+                actionTarget = decision.target || decision.keyword || '';
             }
+            const actionDecisionId = decision.decisionId || decision.actionId || '';
 
             const typeBadge = decisionType === 'create_content' ? { label: 'CRÉATION', color: '#3b82f6' }
                             : decisionType === 'optimize_page' ? { label: 'OPTIMISATION', color: '#f59e0b' }
@@ -1792,7 +1793,7 @@ function renderAuditIAResult(audit) {
             const keyword = decision.keyword;
 
             return `
-            <div class="decision-vignette" data-decision-id="${decision.decisionId || decision.actionId || ''}">
+            <div class="decision-vignette" data-decision-id="${escapeHtml(actionDecisionId)}">
               <div class="decision-vignette-head">
                 <span class="decision-type-badge-mini" style="background:${typeBadge.color}">${typeBadge.label}</span>
                 <span class="decision-impact-badge" style="background:${impactColor}">${impactScore}/100</span>
@@ -1801,7 +1802,10 @@ function renderAuditIAResult(audit) {
               ${keyword && keyword !== title ? `<div class="decision-vignette-kw">🔑 ${escapeHtml(keyword)}</div>` : ''}
               ${reason ? `<p class="decision-vignette-reason">${escapeHtml(reason)}</p>` : ''}
               ${competitor ? `<div class="decision-vignette-vs">⚔️ vs ${escapeHtml(competitor)}</div>` : ''}
-              <button class="decision-vignette-btn" onclick="${btnAction}">
+              <button class="decision-vignette-btn"
+                      data-action-type="${escapeHtml(decisionType)}"
+                      data-action-target="${escapeHtml(actionTarget)}"
+                      data-action-decision-id="${escapeHtml(actionDecisionId)}">
                 ${decisionLabel} →
               </button>
             </div>
@@ -1819,6 +1823,16 @@ function renderAuditIAResult(audit) {
   `;
 
   container.innerHTML = html;
+
+  // SEO-UX-03 FIX : binding propre des boutons decisions (plus de onclick inline)
+  container.querySelectorAll('.decision-vignette-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.getAttribute('data-action-type');
+      const target = btn.getAttribute('data-action-target');
+      const decisionId = btn.getAttribute('data-action-decision-id');
+      executeDecision(type, target, decisionId);
+    });
+  });
 }
 
 /**
