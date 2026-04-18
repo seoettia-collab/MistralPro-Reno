@@ -842,23 +842,21 @@ function renderSiteScanResults(data) {
       </div>
     </div>
     
-    <div class="scan-pages-list">
+    <div class="scan-pages-grid">
       ${sortedPages.map(page => {
         const scoreColor = page.score >= 70 ? '#10b981' : page.score >= 40 ? '#f59e0b' : '#ef4444';
-        const issuesHtml = (page.issues || []).slice(0, 3).map(issue => `
-          <span class="issue-tag issue-${issue.type}">${issue.message}</span>
-        `).join('');
-        
+        const issuesCount = (page.issues || []).length;
+        const firstIssue = issuesCount > 0 ? page.issues[0].message : null;
         return `
-        <div class="scan-page-item">
-          <div class="scan-page-score" style="background: ${scoreColor}">${page.score || 0}</div>
-          <div class="scan-page-info">
-            <span class="scan-page-name">${escapeHtml(page.name)}</span>
-            <span class="scan-page-url">${escapeHtml(page.url.replace('https://www.mistralpro-reno.fr', ''))}</span>
+        <div class="scan-page-compact">
+          <div class="scan-page-compact-header">
+            <span class="scan-page-compact-score" style="background: ${scoreColor}">${page.score || 0}</span>
+            <span class="scan-page-compact-name">${escapeHtml(page.name)}</span>
           </div>
-          <div class="scan-page-issues">
-            ${issuesHtml || '<span class="issue-tag issue-ok">✅ OK</span>'}
-          </div>
+          <div class="scan-page-compact-url">${escapeHtml(page.url.replace('https://www.mistralpro-reno.fr', ''))}</div>
+          ${issuesCount > 0
+            ? `<div class="scan-page-compact-issue">⚠️ ${escapeHtml(firstIssue)}${issuesCount > 1 ? ` (+${issuesCount - 1})` : ''}</div>`
+            : `<div class="scan-page-compact-ok">✅ Aucune issue</div>`}
         </div>
         `;
       }).join('')}
@@ -1030,7 +1028,7 @@ function renderMyArticles(articles) {
 
   container.innerHTML = `
     <div class="articles-count">🟢 ${articles.length} article${articles.length > 1 ? 's' : ''} en ligne</div>
-    <div class="articles-grid-premium">
+    <div class="articles-grid-compact">
       ${articles.map(article => {
         const cat = detectCatFromSlug(article.slug, article.title);
         const imgSrc = article.imageUrl || '/images/blog/default-blog.webp';
@@ -1038,20 +1036,22 @@ function renderMyArticles(articles) {
         const title = article.title || formatSlugToTitle(article.slug);
         const url = article.url || `https://www.mistralpro-reno.fr/blog/${article.slug}.html`;
         return `
-        <div class="article-card-premium" data-slug="${article.slug}">
-          <div class="article-card-image-wrap">
-            <img class="article-card-image" src="${imgSrc}" alt="${escapeHtml(title)}" loading="lazy"
+        <div class="article-vignette" data-slug="${article.slug}">
+          <div class="article-vignette-thumb">
+            <img src="${imgSrc}" alt="${escapeHtml(title)}" loading="lazy"
                  onerror="this.onerror=null;this.src='/images/blog/default-blog.webp'">
-            <span class="article-card-badge" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
-            <span class="article-card-status" title="Article en ligne">🟢 LIVE</span>
-            <button class="article-card-menu" onclick="confirmDeleteArticle('${article.slug}')" title="Supprimer">⋯</button>
+            <span class="article-vignette-badge" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
           </div>
-          <div class="article-card-body">
-            <h5 class="article-card-title">${escapeHtml(title)}</h5>
-            ${dateLabel ? `<div class="article-card-date">📅 Publié le ${dateLabel}</div>` : ''}
-            <a href="${url}" target="_blank" rel="noopener" class="article-card-cta">
-              Voir l'article →
-            </a>
+          <div class="article-vignette-body">
+            <h5 class="article-vignette-title">${escapeHtml(title)}</h5>
+            <div class="article-vignette-meta">
+              <span class="article-vignette-status">🟢 LIVE</span>
+              ${dateLabel ? `<span class="article-vignette-date">${dateLabel}</span>` : ''}
+            </div>
+            <div class="article-vignette-actions">
+              <a href="${url}" target="_blank" rel="noopener" class="btn-article-voir">Voir l'article</a>
+              <button class="btn-article-supprimer" onclick="confirmDeleteArticle('${article.slug}')">Supprimer</button>
+            </div>
           </div>
         </div>
         `;
