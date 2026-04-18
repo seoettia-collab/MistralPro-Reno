@@ -27,14 +27,32 @@ router.post('/optimize/analyze', async (req, res) => {
 
     // Déterminer l'URL de la page à analyser
     let targetUrl = pageUrl;
-    
-    // Générer l'URL par défaut basée sur le keyword
+
+    // OPTIMIZE-SLUG-FIX : le keyword peut etre:
+    //  a) un vrai mot-cle ('prix renovation appartement')
+    //  b) un chemin relatif ('/blog/slug.html') - cas optimize_page
+    //  c) une URL absolue ('https://...') - cas rare
+    // Si c est deja un chemin/URL, on l utilise tel quel (pas de slugify qui casse)
     if (!targetUrl && keyword) {
-      const slug = keyword.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-]/g, '');
-      targetUrl = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
+      const k = String(keyword).trim();
+
+      if (/^https?:\/\//i.test(k)) {
+        // URL absolue
+        targetUrl = k;
+      } else if (k.startsWith('/')) {
+        // Chemin relatif (/blog/slug.html)
+        targetUrl = `https://www.mistralpro-reno.fr${k}`;
+      } else if (/\.html?$/i.test(k) || k.includes('/')) {
+        // Chemin sans / initial ('blog/slug.html')
+        targetUrl = `https://www.mistralpro-reno.fr/${k.replace(/^\/+/, '')}`;
+      } else {
+        // Vrai mot-cle -> slugify puis construire URL
+        const slug = k.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '');
+        targetUrl = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
+      }
     }
 
     // Récupérer les données SEO de cette page si elle existe
