@@ -100,14 +100,25 @@
 index.html (Accueil)
 ├── services.html (Services)
 ├── projets.html (Réalisations)
-├── blog.html (Blog)
-│   ├── blog/cout-renovation-appartement-paris.html
+├── blog.html (Blog — liste des articles)
+│   ├── blog/cout-renovation-appartement-paris.html (PILIER)
 │   ├── blog/degat-des-eaux-5-etapes.html
+│   ├── blog/prix-renovation-appartement-paris-2026.html
+│   ├── blog/prix-renovation-de-habitation-ile-de-france.html
+│   ├── blog/prix-renovation-salle-de-bain-paris-2026.html
 │   └── blog/renovation-salle-de-bain-guide-prix.html
 ├── cost_calculator.html (Simulateur devis)
 ├── degat-des-eaux.html (Landing urgence)
 ├── mentions-legales.html (Légal)
-└── merci.html (Confirmation formulaire)
+├── merci.html (Confirmation formulaire)
+└── 404.html (Erreur)
+```
+
+**Dashboard SEO interne** (non indexé, protégé) :
+
+```
+seo-dashboard/ (OVH, protégé par .htaccess)
+└── Backend API Vercel : mistral-pro-reno.vercel.app
 ```
 
 ---
@@ -312,16 +323,17 @@ Header set X-XSS-Protection "1; mode=block"
 blog.html (Liste des articles)
 └── /blog/
     ├── cout-renovation-appartement-paris.html (PILIER)
-    ├── renovation-appartement-paris-prix-m2.html
-    ├── combien-coutent-travaux-renovation-maison.html
-    ├── renovation-salle-de-bain-guide-prix.html
     ├── degat-des-eaux-5-etapes.html
-    ├── prix-renovation-cuisine-paris.html
-    ├── prix-renovation-salle-de-bain-paris.html
-    ├── prix-travaux-electricite-appartement.html
-    ├── prix-travaux-peinture-appartement.html
-    └── prix-travaux-isolation-appartement.html
+    ├── prix-renovation-appartement-paris-2026.html
+    ├── prix-renovation-de-habitation-ile-de-france.html
+    ├── prix-renovation-salle-de-bain-paris-2026.html
+    ├── renovation-salle-de-bain-guide-prix.html
+    └── TEMPLATE.html (modèle pour Studio SEO)
 ```
+
+**6 articles publiés** (au 18 avril 2026).
+Les articles sont générés automatiquement par le Studio SEO
+du Dashboard (voir section 12).
 
 ### Cluster SEO "Coût des Travaux"
 
@@ -389,64 +401,90 @@ blog.html (Liste des articles)
 
 | Fichier | Contenu | Articles |
 |---------|---------|----------|
-| `sitemap.xml` | Plan du site | 10 articles blog |
-| `robots.txt` | Directives crawlers | Sitemap déclaré |
+| `sitemap.xml` | Plan du site | 6 articles blog publiés |
+| `robots.txt` | Directives crawlers | Sitemap déclaré, seo-dashboard disallowed |
 
 ---
 
-## 12. SEO AI APPLICATION (PROJET FUTUR)
+## 12. SEO DASHBOARD — APPLICATION OPÉRATIONNELLE
 
-### Description
+### Statut : LOT 1 ✅ TERMINÉ — LOT 2 🔵 EN COURS
 
-Application indépendante permettant l'analyse et l'optimisation SEO automatisée du site Mistral Pro Reno.
+Le SEO Dashboard est une application interne opérationnelle permettant
+l'analyse et l'optimisation SEO automatisée du site.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    SEO AI APPLICATION                            │
+│                    SEO DASHBOARD (LOT 1 ✅)                      │
+│                                                                  │
+│  Frontend : /seo-dashboard/ (OVH, protégé)                      │
+│  Backend  : https://mistral-pro-reno.vercel.app (API)           │
+│  DB       : Turso/LibSQL                                        │
+│  Source   : Google Search Console API (Service Account)         │
 │                                                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │ Audit SEO    │  │ Analyse      │  │ Suivi        │          │
-│  │ automatique  │  │ pages        │  │ mots-clés    │          │
+│  │ 🏠 Cockpit   │  │ 🤖 Audit IA  │  │ 🚀 Studio    │          │
+│  │ SEO          │  │ Décisionnel  │  │ SEO IA       │          │
 │  └──────────────┘  └──────────────┘  └──────────────┘          │
 │                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │ Génération   │  │ Génération   │  │ Suivi        │          │
-│  │ articles IA  │  │ images IA    │  │ performance  │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
+│  + Scan SEO automatique                                         │
+│  + Analyse concurrentielle                                      │
+│  + Génération articles via Claude                               │
+│  + Publication GitHub API → blog.html                           │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Fonctionnalités prévues
-
-| Module | Description |
-|--------|-------------|
-| **Audit SEO** | Analyse technique automatique du site |
-| **Analyse pages** | Vérification meta, schema, performance |
-| **Suivi mots-clés** | Tracking positions Google |
-| **Génération articles** | Création contenu optimisé via IA |
-| **Génération images** | Création visuels via IA |
-| **Suivi performance** | Dashboard métriques SEO |
-
-### Architecture prévue
+### Architecture réelle
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Frontend       │────▶│  Backend API    │────▶│  Services IA    │
-│  React/Vue      │     │  Node.js        │     │  OpenAI/Claude  │
+│  Frontend       │────▶│  Backend API    │────▶│  Google Search  │
+│  dashboard.js   │     │  Node.js        │     │  Console API    │
+│  (HTML/CSS/JS)  │     │  Express        │     │  (Service Acc.) │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
+                               │
+                               ├──────────▶ Anthropic Claude API
+                               │            (Audit IA + génération)
+                               │
+                               ├──────────▶ GitHub API
+                               │            (publication articles)
                                │
                                ▼
                         ┌─────────────────┐
-                        │  Base données   │
-                        │  PostgreSQL     │
+                        │  Base Turso     │
+                        │  (LibSQL)       │
                         └─────────────────┘
 ```
 
-### Contraintes
+### Modules opérationnels
 
-- **Application séparée** du site vitrine
-- **Aucune modification** de l'architecture actuelle du dashboard Facebook Ads
-- **Repo indépendant** à créer
+| Module | Statut | Fonction |
+|--------|--------|----------|
+| **Cockpit SEO** | ✅ | Vue synthétique, KPIs, alertes, score global |
+| **Audit IA** | ✅ | Diagnostic Claude, forces/faiblesses, décisions |
+| **Studio SEO** | ✅ | Génération + publication articles |
+| **Scan SEO** | ✅ | Audit technique automatique du site |
+| **GSC Pipeline** | ✅ | Import réel Google Search Console |
+| **Opportunités** | ✅ | Détection automatique mots-clés |
+| **Concurrents** | ✅ | Suivi 4 concurrents directs |
+| **Publication** | 🟡 | Fonctionne mais INSERT DB manquant (PUBLISHER-IMG-01) |
+
+### Directives et historique
+
+| Identifiant | Sujet | Statut |
+|-------------|-------|--------|
+| `GSC-PIPELINE-01` | Intégration GSC Service Account | ✅ 18/04/2026 |
+| `AUDIT-COUNT-01` | Stabilisation compteur articles | ✅ 18/04/2026 |
+| `PUBLISHER-IMG-01` | Injection image + INSERT contents DB | 🔵 En cours |
+
+### Documentation dédiée
+
+Pour les détails du Dashboard, consulter :
+- `/docs/SEO_DASHBOARD_ARCHITECTURE.md` — Architecture technique
+- `/docs/SEO_DASHBOARD_FICHE_TECHNIQUE.md` — Routes API, modules
+- `/docs/SEO_DASHBOARD_CHECKLIST.md` — Avancement LOT 1-4
+- `/docs/ARCHITECTURE_SEO_V2.md` — Cible 3 onglets
+- `/docs/SESSION_HANDOFF.md` — Passation entre sessions
 
 ---
 
@@ -503,4 +541,4 @@ grep "window\." dashboard.js | grep -v "//"
 
 ---
 
-*Dernière mise à jour : 9 mars 2026*
+*Dernière mise à jour : 18 avril 2026 — SEO Dashboard opérationnel, 6 articles publiés*
