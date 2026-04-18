@@ -1682,152 +1682,128 @@ function renderAuditIAResult(audit) {
   const competitors = competition?.competitors || [];
   const opportunities = competition?.opportunities || [];
   const decisions = audit.decisions || audit.actions || [];
-  
+
   const html = `
-    <div class="audit-ia-result">
-      
-      <!-- Résumé -->
-      <div class="audit-section audit-summary">
-        <h3>📋 Résumé de l'audit</h3>
-        <p class="summary-text">${escapeHtml(summary)}</p>
-        <div class="audit-meta">
-          <span>🕐 Généré le ${new Date().toLocaleString('fr-FR')}</span>
-          <button class="btn-small btn-secondary" onclick="copyAuditReport()">📋 Copier rapport</button>
-          <button class="btn-small btn-secondary" onclick="launchFullAuditIA()">🔄 Relancer</button>
+    <div class="audit-ia-result-compact">
+
+      <!-- Ligne 1 : Résumé pleine largeur (actions à droite) -->
+      <div class="audit-section audit-summary-compact">
+        <div class="audit-summary-head">
+          <h3>📋 Résumé de l'audit</h3>
+          <div class="audit-summary-actions">
+            <span class="audit-meta-date">🕐 ${new Date().toLocaleString('fr-FR')}</span>
+            <button class="btn-small btn-primary" onclick="copyAuditReport()">Copier rapport</button>
+            <button class="btn-small btn-secondary" onclick="launchFullAuditIA()">Relancer</button>
+          </div>
         </div>
+        <p class="summary-text">${escapeHtml(summary)}</p>
       </div>
-      
-      <!-- Forces & Faiblesses -->
-      <div class="audit-two-cols">
-        <div class="audit-section audit-strengths">
-          <h3>💪 Forces SEO</h3>
-          <ul class="audit-list strengths-list">
-            ${strengths.length > 0 
-              ? strengths.map(s => `<li><span class="list-icon">✅</span> ${escapeHtml(s)}</li>`).join('')
+
+      <!-- Ligne 2 : Forces + Faiblesses + Concurrence + Opportunités (4 colonnes) -->
+      <div class="audit-row-4col">
+        <div class="audit-section audit-strengths-compact">
+          <h4>💪 Forces SEO <span class="section-count">(${strengths.length})</span></h4>
+          <ul class="audit-list-compact">
+            ${strengths.length > 0
+              ? strengths.map(s => `<li><span class="list-icon ok">✅</span> ${escapeHtml(s)}</li>`).join('')
               : '<li class="empty-state">Aucune force identifiée</li>'}
           </ul>
         </div>
-        
-        <div class="audit-section audit-weaknesses">
-          <h3>⚠️ Faiblesses SEO</h3>
-          <ul class="audit-list weaknesses-list">
+
+        <div class="audit-section audit-weaknesses-compact">
+          <h4>⚠️ Faiblesses SEO <span class="section-count">(${weaknesses.length})</span></h4>
+          <ul class="audit-list-compact">
             ${weaknesses.length > 0
-              ? weaknesses.map(w => `<li><span class="list-icon">⚠️</span> ${escapeHtml(w)}</li>`).join('')
+              ? weaknesses.map(w => `<li><span class="list-icon warn">⚠️</span> ${escapeHtml(w)}</li>`).join('')
               : '<li class="empty-state">Aucune faiblesse identifiée</li>'}
           </ul>
         </div>
-      </div>
-      
-      <!-- Analyse Concurrence -->
-      ${competition ? `
-      <div class="audit-section audit-competition">
-        <h3>🏆 Analyse Concurrentielle</h3>
-        <p class="competition-analysis">${escapeHtml(competition.analysis || 'Analyse en cours...')}</p>
-        
-        ${competitors.length > 0 ? `
-        <div class="competitors-grid">
-          ${competitors.map(comp => {
-            const threatLevel = comp.threat_level || 'LOW';
-            const threatClass = threatLevel === 'HIGH' ? 'threat-high' : threatLevel === 'MEDIUM' ? 'threat-medium' : 'threat-low';
-            const threatIcon = threatLevel === 'HIGH' ? '🔴' : threatLevel === 'MEDIUM' ? '🟠' : '🟢';
-            return `
-            <div class="competitor-analysis-card ${threatClass}">
-              <div class="competitor-header">
-                <span class="competitor-domain-lg">${escapeHtml(comp.domain || 'Concurrent')}</span>
-                <span class="threat-badge ${threatClass}">${threatIcon} ${threatLevel}</span>
+
+        <div class="audit-section audit-competitors-compact">
+          <h4>🏆 Concurrents <span class="section-count">(${competitors.length})</span></h4>
+          ${competition?.analysis ? `<p class="competition-analysis-mini">${escapeHtml(competition.analysis.substring(0, 120))}${competition.analysis.length > 120 ? '…' : ''}</p>` : ''}
+          <div class="competitors-list-mini">
+            ${competitors.length > 0 ? competitors.map(comp => {
+              const threat = comp.threat_level || 'LOW';
+              const color = threat === 'HIGH' ? '#ef4444' : threat === 'MEDIUM' ? '#f59e0b' : '#10b981';
+              return `
+              <div class="competitor-row-mini" style="border-left:3px solid ${color}">
+                <div class="competitor-row-mini-main">
+                  <span class="competitor-domain-mini">${escapeHtml(comp.domain || 'Concurrent')}</span>
+                  <span class="threat-badge-mini" style="background:${color}">${threat}</span>
+                </div>
+                ${comp.positioning ? `<span class="competitor-pos-mini">${escapeHtml(comp.positioning)}</span>` : ''}
               </div>
-              <p class="competitor-positioning">${escapeHtml(comp.positioning || 'Positionnement non analysé')}</p>
-            </div>
-            `;
-          }).join('')}
+              `;
+            }).join('') : '<p class="empty-state">Aucun concurrent</p>'}
+          </div>
         </div>
-        ` : ''}
-        
-        ${opportunities.length > 0 ? `
-        <div class="competition-opportunities">
-          <h4>💡 Opportunités face aux concurrents</h4>
-          <ul class="opportunities-list">
-            ${opportunities.map(opp => `<li><span class="list-icon">→</span> ${escapeHtml(opp)}</li>`).join('')}
+
+        <div class="audit-section audit-opportunities-compact">
+          <h4>💡 Opportunités <span class="section-count">(${opportunities.length})</span></h4>
+          <ul class="audit-list-compact">
+            ${opportunities.length > 0
+              ? opportunities.map(opp => `<li><span class="list-icon arrow">→</span> ${escapeHtml(opp)}</li>`).join('')
+              : '<li class="empty-state">Aucune opportunité</li>'}
           </ul>
         </div>
-        ` : ''}
       </div>
-      ` : ''}
-      
-      <!-- Décisions IA exécutables -->
-      <div class="audit-section audit-decisions">
-        <h3>⚡ Décisions IA</h3>
-        <p class="section-intro">Décisions prêtes à exécuter. Cliquez pour lancer l'action.</p>
-        
-        <div class="decisions-list">
+
+      <!-- Ligne 3 : Décisions IA en vignettes compactes -->
+      <div class="audit-section audit-decisions-compact">
+        <div class="section-header">
+          <h3>⚡ Décisions IA <span class="section-count">(${decisions.length})</span></h3>
+          <span class="section-intro-inline">Cliquez pour lancer l'action</span>
+        </div>
+
+        <div class="decisions-grid-compact">
           ${decisions.length > 0 ? decisions.map((decision, idx) => {
             const impactScore = decision.impact_score || decision.impactScore || 50;
             const impactColor = impactScore >= 70 ? '#10b981' : impactScore >= 40 ? '#f59e0b' : '#9ca3af';
             const decisionType = decision.type || 'unknown';
-            
-            // Déterminer l'icône et le label selon le type
-            let decisionIcon, decisionLabel, btnClass, btnAction;
+
+            let decisionLabel, btnAction;
             switch(decisionType) {
               case 'create_content':
-                decisionIcon = '📝';
                 decisionLabel = 'Créer';
-                btnClass = 'btn-primary';
                 btnAction = `executeDecision('create_content', ${JSON.stringify(decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
                 break;
               case 'optimize_page':
-                decisionIcon = '🔧';
                 decisionLabel = 'Optimiser';
-                btnClass = 'btn-secondary';
-               btnAction = `executeDecision('optimize_page', ${JSON.stringify(decision.page || decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
+                btnAction = `executeDecision('optimize_page', ${JSON.stringify(decision.page || decision.keyword || '')}, ${JSON.stringify(decision.decisionId || '')})`;
                 break;
               case 'publish_content':
-                decisionIcon = '🚀';
                 decisionLabel = 'Publier';
-                btnClass = 'btn-success';
                 btnAction = `executeDecision('publish_content', ${JSON.stringify(decision.slug || '')}, ${JSON.stringify(decision.decisionId || '')})`;
                 break;
               default:
-                decisionIcon = '⚙️';
                 decisionLabel = 'Exécuter';
-                btnClass = 'btn-secondary';
                 btnAction = `executeDecision('${decisionType}', '${escapeHtml(decision.target || decision.keyword || '')}', '${decision.decisionId || decision.actionId || ''}')`;
             }
-            
-            // Extraire les infos de la décision
+
+            const typeBadge = decisionType === 'create_content' ? { label: 'CRÉATION', color: '#3b82f6' }
+                            : decisionType === 'optimize_page' ? { label: 'OPTIMISATION', color: '#f59e0b' }
+                            : decisionType === 'publish_content' ? { label: 'PUBLICATION', color: '#10b981' }
+                            : { label: decisionType.replace('_', ' ').toUpperCase(), color: '#64748b' };
+
             const title = decision.title_suggested || decision.title || decision.keyword || decision.target || decision.page || 'Décision';
             const reason = decision.reason || '';
             const competitor = decision.competitor || decision.vs_competitor;
-            const fixes = decision.fixes || [];
-            
+            const keyword = decision.keyword;
+
             return `
-            <div class="decision-card" data-decision-id="${decision.decisionId || decision.actionId || ''}">
-              <div class="decision-header">
-                <span class="decision-icon">${decisionIcon}</span>
-                <div class="decision-type-info">
-                  <span class="decision-type-label">${decisionLabel}</span>
-                  <span class="decision-type-badge type-${decisionType}">${decisionType.replace('_', ' ')}</span>
-                </div>
-                <div class="decision-impact" title="Score d'impact: ${impactScore}/100">
-                  <svg viewBox="0 0 36 36" class="impact-circle">
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2a2a3e" stroke-width="3"/>
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="${impactColor}" stroke-width="3" 
-                      stroke-dasharray="${impactScore} 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
-                  </svg>
-                  <span class="impact-value">${impactScore}</span>
-                </div>
+            <div class="decision-vignette" data-decision-id="${decision.decisionId || decision.actionId || ''}">
+              <div class="decision-vignette-head">
+                <span class="decision-type-badge-mini" style="background:${typeBadge.color}">${typeBadge.label}</span>
+                <span class="decision-impact-badge" style="background:${impactColor}">${impactScore}/100</span>
               </div>
-              <div class="decision-body">
-                <h4 class="decision-title">${escapeHtml(title)}</h4>
-                ${decision.keyword ? `<p class="decision-keyword">🔑 ${escapeHtml(decision.keyword)}</p>` : ''}
-                ${reason ? `<p class="decision-reason">${escapeHtml(reason)}</p>` : ''}
-                ${fixes.length > 0 ? `<p class="decision-fixes">📋 ${fixes.map(f => escapeHtml(f)).join(' • ')}</p>` : ''}
-                ${competitor ? `<p class="decision-competitor"><span class="vs-icon">⚔️</span> vs ${escapeHtml(competitor)}</p>` : ''}
-              </div>
-              <div class="decision-footer">
-                <button class="${btnClass}" onclick="${btnAction}">
-                  ${decisionIcon} ${decisionLabel}
-                </button>
-              </div>
+              <h5 class="decision-vignette-title">${escapeHtml(title)}</h5>
+              ${keyword && keyword !== title ? `<div class="decision-vignette-kw">🔑 ${escapeHtml(keyword)}</div>` : ''}
+              ${reason ? `<p class="decision-vignette-reason">${escapeHtml(reason)}</p>` : ''}
+              ${competitor ? `<div class="decision-vignette-vs">⚔️ vs ${escapeHtml(competitor)}</div>` : ''}
+              <button class="decision-vignette-btn" onclick="${btnAction}">
+                ${decisionLabel} →
+              </button>
             </div>
             `;
           }).join('') : `
@@ -1838,10 +1814,10 @@ function renderAuditIAResult(audit) {
           `}
         </div>
       </div>
-      
+
     </div>
   `;
-  
+
   container.innerHTML = html;
 }
 

@@ -9982,3 +9982,265 @@ select:focus {
   font-size: 14px;
   margin: 0;
 }
+
+/* =====================================================================
+   SEO-UX-03 — Audit IA : layout compact (4 cols + vignettes decisions)
+   ===================================================================== */
+.audit-ia-result-compact { display: flex; flex-direction: column; gap: 14px; width: 100%; min-width: 0; max-width: 100%; }
+
+.audit-ia-result-compact .audit-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.audit-ia-result-compact .audit-section h3 { font-size: 14px; margin: 0 0 8px 0; }
+.audit-ia-result-compact .audit-section h4 { font-size: 13px; margin: 0 0 8px 0; display: flex; align-items: center; gap: 6px; }
+.audit-ia-result-compact .section-count { font-size: 11px; color: #94a3b8; font-weight: 500; }
+
+/* Summary compact */
+.audit-summary-compact .audit-summary-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.audit-summary-compact .summary-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  margin: 0;
+}
+.audit-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.audit-meta-date {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Row 4 colonnes : Forces + Faiblesses + Concurrents + Opportunités */
+.audit-row-4col {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+@media (max-width: 1300px) { .audit-row-4col { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px)  { .audit-row-4col { grid-template-columns: minmax(0, 1fr); } }
+
+/* Listes compactes */
+.audit-list-compact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.audit-list-compact li {
+  padding: 6px 8px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #cbd5e1;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.4;
+}
+.audit-list-compact li::before { display: none; }
+.audit-list-compact .list-icon { flex-shrink: 0; font-size: 12px; }
+.audit-list-compact .list-icon.ok { color: #10b981; }
+.audit-list-compact .list-icon.warn { color: #f59e0b; }
+.audit-list-compact .list-icon.arrow { color: #3b82f6; font-weight: 700; }
+.audit-list-compact .empty-state {
+  color: #64748b;
+  font-style: italic;
+  font-size: 11px;
+  background: transparent;
+  border: none;
+}
+
+/* Concurrents mini-rows */
+.competition-analysis-mini {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+.competitors-list-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.competitor-row-mini {
+  padding: 6px 8px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.competitor-row-mini-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.competitor-domain-mini {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.threat-badge-mini {
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+}
+.competitor-pos-mini {
+  font-size: 10px;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Décisions IA vignettes compactes */
+.audit-decisions-compact .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.section-intro-inline {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.decisions-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.decision-vignette {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform .15s ease, border-color .15s ease;
+  min-width: 0;
+}
+.decision-vignette:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+}
+
+.decision-vignette-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.decision-type-badge-mini {
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: .4px;
+  white-space: nowrap;
+}
+.decision-impact-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.decision-vignette-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.decision-vignette-kw {
+  font-size: 11px;
+  color: #3b82f6;
+  font-weight: 600;
+}
+.decision-vignette-reason {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.decision-vignette-vs {
+  font-size: 10px;
+  color: #f59e0b;
+  font-weight: 600;
+}
+.decision-vignette-btn {
+  margin-top: auto;
+  padding: 7px 12px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: background .15s ease;
+  letter-spacing: .2px;
+}
+.decision-vignette-btn:hover { background: #2563eb; }
+
+.empty-decisions {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 24px;
+  color: #94a3b8;
+}
+.empty-decisions .empty-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
