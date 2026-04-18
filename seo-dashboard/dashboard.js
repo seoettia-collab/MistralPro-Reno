@@ -1032,19 +1032,35 @@ function clearSavedRecommendations() {
 /**
  * Prépare les données du cockpit pour l'analyse Claude
  */
-function prepareCockpitDataForAudit() {
+async function prepareCockpitDataForAudit() {
   if (!cockpitCache) {
     return null;
   }
   
   const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = cockpitCache;
   
-  // AUDIT-COUNT-01 — Source unique : contents (DB)
-  // Les sources siteScanData + DOM étaient trop fragiles et donnaient 0 à tort
+  // AUDIT-COUNT-01 Option B — Source canonique : blog.html live
+  // Raison : la table `contents` (DB) n'est pas alimentée par le pipeline
+  // Studio SEO actuel (qui publie directement via GitHub API).
+  // parseArticlesFromBlogHtml() = vérité terrain (ce qui est réellement en ligne).
+  // Option A (fix publisher + INSERT contents) prévue en nouvelle session.
   const LIVE_STATUSES = ['deployed', 'published', 'live'];
-  const liveContentsCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
-  const totalContentsCount = contents.length;
+  let liveContentsCount = 0;
+  
+  try {
+    const liveArticles = await parseArticlesFromBlogHtml();
+    liveContentsCount = Array.isArray(liveArticles) ? liveArticles.length : 0;
+    console.log('[AUDIT-COUNT-01] Articles live depuis blog.html:', liveContentsCount);
+  } catch (e) {
+    // Fallback sur la DB si blog.html inaccessible
+    console.warn('[AUDIT-COUNT-01] blog.html inaccessible, fallback DB', e);
+    liveContentsCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
+  }
+  
+  // Brouillons = contenus en DB non encore publiés
   const draftsCount = contents.filter(c => !LIVE_STATUSES.includes(c.status)).length;
+  // Total = articles live + brouillons en attente
+  const totalContentsCount = liveContentsCount + draftsCount;
   
   // Récupérer les données du scan pour le contexte général (NON utilisées pour le comptage)
   let siteScanData = null;
@@ -1523,8 +1539,8 @@ async function launchFullAuditIA() {
   `;
   
   try {
-    // Étape 1: Préparer les données
-    const cockpitData = prepareCockpitDataForAudit();
+    // Étape 1: Préparer les données (async — AUDIT-COUNT-01 Option B)
+    const cockpitData = await prepareCockpitDataForAudit();
     
     // Update UI
     container.querySelector('.step:nth-child(1)').classList.add('done');
