@@ -3,7 +3,7 @@
 **Date :** 18 avril 2026
 **Auteur :** Claude (Ingénieur technique)
 **Destination :** Nouvelle conversation Claude
-**Priorité :** PUBLISHER-IMG-01 (AUDIT-COUNT-01 est clos)
+**Priorité :** Aucune (PUBLISHER-IMG-01, AUDIT-COUNT-01, GSC-PIPELINE-01 clos)
 
 ---
 
@@ -162,7 +162,65 @@ Appel mis à jour avec `await` dans `launchFullAuditIA`.
 
 ---
 
-## 4bis. PRIORITÉ #2 — PUBLISHER-IMG-01 + AUDIT-COUNT-01-A (À TRAITER)
+## 4bis. PRIORITÉ #2 — PUBLISHER-IMG-01 ✅ CLOS (18 avril 2026)
+
+Cette session a regroupé **2 corrections liées** sur le publisher :
+
+### A) Image principale — FIX appliqué
+
+Dans `seo-api/services/publisher.js` :
+- Résolution image normalisée (accepte `image_url`, `imageUrl`, `image`)
+- Fallback explicite `default-blog.webp` (remplace le fallback caché)
+- Bug JSON schema.org ligne 351 corrigé (`""image":` → `,"image":`)
+- Logs ajoutés : `[PUBLISHER_IMG_TRACE]`, `[PUBLISHER_IMG_NORMALIZED]`, `[PUBLISHER_IMG_DEFAULT]`
+
+Dans `seo-api/routes/contentGen.js` :
+- `buildArticleHTML()` accepte un `imagePath` explicite
+- `og:image` et schema `image` utilisent l'URL absolue résolue
+- Simulated content utilise `default-blog.webp` au lieu de référence slug inexistante
+
+Dans `seo-dashboard/dashboard.js` :
+- `integrateMainImageToHTML()` injecte `default-blog.webp` si pas d'image uploadée
+- `addArticleToBlogIndex()` fallback sur `images/blog/default-blog.webp`
+
+Image créée : `images/blog/default-blog.webp` (copie de `renovation_general_(9).webp`)
+
+### B) Table contents DB — FIX appliqué
+
+Dans `seo-api/services/db.js` :
+- Migrations ajoutées : `live_at`, `deployed_at`, `deployed_url`, `image_url`, `word_count`, `category`
+
+Dans `seo-api/services/content.js` :
+- Nouvelle fonction `upsertPublishedContent()` (idempotent par slug)
+- Nouvelle fonction `backfillPublishedArticles()` (one-shot)
+
+Dans `seo-api/routes/content.js` :
+- Nouvelle route `POST /api/content/register-published` (UPSERT)
+- Nouvelle route `POST /api/content/backfill` (6 articles par défaut)
+
+Dans `seo-api/services/publisher.js` :
+- `autoPublish()` UPDATE `deployed_url`, `live_at`, `deployed_at`, `image_url` à l'étape LIVE
+- Logs ajoutés : `[CONTENTS_UPSERT_START]`, `[CONTENTS_INSERT_OK]`, `[CONTENTS_UPDATE_OK]`, `[CONTENTS_DB_ERROR]`, `[CONTENTS_BACKFILL_OK]`
+
+Dans `seo-dashboard/dashboard.js` :
+- `registerPublishedContent()` appelle désormais l'API UPSERT (fin du no-op)
+- `prepareCockpitDataForAudit()` remet la DB comme source canonique (blog.html fallback)
+- Log renommé : `[AUDIT_DB_SOURCE_RESTORED]`
+
+### Étape manuelle restante (backfill)
+
+Après redéploiement Vercel, appeler une fois :
+```
+POST https://mistral-pro-reno.vercel.app/api/content/backfill
+Headers: X-API-Key: mpr-seo-2026-secure-key
+Body: {} (utilise la liste par défaut des 6 articles)
+```
+
+Résultat attendu : `{ inserted: 6, updated: 0, errors: [], total: 6 }`
+
+---
+
+## 4ter. ANCIEN PUBLISHER-IMG-01 (archive de la spec initiale)
 
 Cette session regroupera **2 corrections liées** sur le publisher :
 

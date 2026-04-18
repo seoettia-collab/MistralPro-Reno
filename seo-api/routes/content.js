@@ -4,7 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { getAllContents, getContentById, createContent, updateContentStatus, getNextTransitions, VALID_TRANSITIONS, STATUS_LABELS } = require('../services/content');
+const { getAllContents, getContentById, createContent, updateContentStatus, getNextTransitions, upsertPublishedContent, backfillPublishedArticles, VALID_TRANSITIONS, STATUS_LABELS } = require('../services/content');
 const { generateContentIdeas, saveIdeaAsContent } = require('../services/contentIdeas');
 const { dbGet } = require('../services/db');
 
@@ -122,6 +122,117 @@ router.patch('/content/:id/status', async (req, res) => {
     res.json({ status: 'ok', changes: result.changes });
 
   } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+// POST /api/content/register-published
+// PUBLISHER-IMG-01 : UPSERT idempotent appelé par Studio SEO après push GitHub réussi.
+router.post('/content/register-published', async (req, res) => {
+  try {
+    const {
+      slug,
+      title,
+      keyword,
+      type = 'blog',
+      category,
+      deployed_url,
+      image_url,
+      word_count,
+      status = 'live'
+    } = req.body || {};
+
+    if (!slug || !title) {
+      return res.status(400).json({ status: 'error', message: 'slug et title requis' });
+    }
+
+    const result = await upsertPublishedContent({
+      slug,
+      title,
+      keyword,
+      type,
+      category,
+      deployed_url,
+      image_url,
+      word_count,
+      status
+    });
+
+    res.json({ status: 'ok', data: result });
+  } catch (err) {
+    console.error('[CONTENTS_DB_ERROR] register-published:', err.message);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+// POST /api/content/backfill
+// PUBLISHER-IMG-01 : backfill one-shot idempotent des articles déjà en ligne.
+// Body : { articles: [{ slug, title, keyword?, category?, deployed_url?, image_url? }, ...] }
+// Si body.articles absent, utilise la liste connue des 6 articles de production.
+router.post('/content/backfill', async (req, res) => {
+  try {
+    const providedArticles = Array.isArray(req.body?.articles) ? req.body.articles : null;
+
+    // Liste canonique des 6 articles déjà en production (source de vérité)
+    const DEFAULT_ARTICLES = [
+      {
+        slug: 'cout-renovation-appartement-paris',
+        title: "Combien coûte une rénovation d'appartement à Paris ?",
+        keyword: 'coût rénovation appartement Paris',
+        category: 'Prix',
+        image_url: 'cout-renovation-appartement-paris.webp'
+      },
+      {
+        slug: 'degat-des-eaux-5-etapes',
+        title: 'Dégât des eaux : les 5 étapes à suivre',
+        keyword: 'dégât des eaux',
+        category: 'Urgences',
+        image_url: 'degat-des-eaux-5-etapes.webp'
+      },
+      {
+        slug: 'prix-renovation-appartement-paris-2026',
+        title: 'Prix Rénovation Appartement Paris 2026',
+        keyword: 'prix rénovation appartement Paris 2026',
+        category: 'Prix',
+        image_url: 'prix-renovation-appartement-paris-2026.webp'
+      },
+      {
+        slug: 'prix-renovation-de-habitation-ile-de-france',
+        title: "Prix rénovation d'habitation en Île-de-France",
+        keyword: 'prix rénovation habitation Île-de-France',
+        category: 'Prix',
+        image_url: 'prix-renovation-de-habitation-ile-de-france.webp'
+      },
+      {
+        slug: 'prix-renovation-salle-de-bain-paris-2026',
+        title: 'Prix Rénovation Salle de Bain Paris 2026',
+        keyword: 'prix rénovation salle de bain Paris 2026',
+        category: 'Salle de bain',
+        image_url: 'prix-renovation-salle-de-bain-paris-2026.webp'
+      },
+      {
+        slug: 'renovation-salle-de-bain-guide-prix',
+        title: 'Rénovation salle de bain : guide des prix',
+        keyword: 'rénovation salle de bain prix',
+        category: 'Salle de bain',
+        image_url: 'default-blog.webp'
+      }
+    ];
+
+    const articles = providedArticles && providedArticles.length > 0 ? providedArticles : DEFAULT_ARTICLES;
+
+    const stats = await backfillPublishedArticles(articles);
+
+    res.json({
+      status: 'ok',
+      data: {
+        ...stats,
+        total: articles.length,
+        source: providedArticles ? 'body' : 'default'
+      }
+    });
+  } catch (err) {
+    console.error('[CONTENTS_DB_ERROR] backfill:', err.message);
     res.status(500).json({ status: 'error', message: err.message });
   }
 });

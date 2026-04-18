@@ -166,15 +166,22 @@ Génère l'article complet en JSON selon le format spécifié.`;
     
     // Générer le slug
     const slug = generateSlug(keyword);
-    
+
+    // PUBLISHER-IMG-01 : image path explicite (accepte override du frontend si fourni)
+    const imagePath = (req.body?.imagePath && typeof req.body.imagePath === 'string')
+      ? req.body.imagePath
+      : `/images/blog/${slug}.webp`;
+
+    console.log('[PUBLISHER_IMG_TRACE] contentGen', { slug, imagePath, providedBy: req.body?.imagePath ? 'frontend' : 'convention' });
+
     // Construire le HTML final
-    const htmlContent = buildArticleHTML(articleData, keyword, slug);
-    
+    const htmlContent = buildArticleHTML(articleData, keyword, slug, imagePath);
+
     // Compter les mots
     const wordCount = countWords(htmlContent);
-    
+
     console.log(`[Content Gen] ✅ Article généré: ${wordCount} mots`);
-    
+
     res.json({
       status: 'ok',
       data: {
@@ -186,6 +193,7 @@ Génère l'article complet en JSON selon le format spécifié.`;
         metaDescription: articleData.metaDescription,
         wordCount,
         htmlContent,
+        imagePath,
         sections: articleData.sections?.length || 0,
         faq: articleData.faq?.length || 0,
         generatedAt: new Date().toISOString()
@@ -232,17 +240,26 @@ function countWords(html) {
 
 /**
  * Construit le HTML complet de l'article
+ * PUBLISHER-IMG-01 : accepte imagePath explicite (default-blog.webp par défaut)
  */
-function buildArticleHTML(article, keyword, slug) {
+function buildArticleHTML(article, keyword, slug, imagePath) {
   const dateISO = new Date().toISOString();
   const dateLocal = new Date().toLocaleDateString('fr-FR');
-  
+
+  // Résolution image : explicite > convention slug > default
+  const resolvedImagePath = imagePath
+    || `/images/blog/${slug}.webp`;
+  const absoluteImageUrl = resolvedImagePath.startsWith('http')
+    ? resolvedImagePath
+    : `https://www.mistralpro-reno.fr${resolvedImagePath.startsWith('/') ? resolvedImagePath : '/' + resolvedImagePath}`;
+
   // Schema.org Article
   const schemaOrg = {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": article.h1,
     "description": article.metaDescription,
+    "image": absoluteImageUrl,
     "author": {
       "@type": "Organization",
       "name": "Mistral Pro Reno",
@@ -339,7 +356,7 @@ ${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEn
   <meta property="og:description" content="${escapeHtml(article.metaDescription)}">
   <meta property="og:url" content="https://www.mistralpro-reno.fr/blog/${slug}.html">
   <meta property="og:site_name" content="Mistral Pro Reno">
-  <meta property="og:image" content="https://www.mistralpro-reno.fr/images/blog/${slug}.webp">
+  <meta property="og:image" content="${absoluteImageUrl}">
   
   <!-- Schema.org Article -->
   <script type="application/ld+json">
@@ -459,9 +476,10 @@ function generateSimulatedContent(keyword, type = 'blog', tone = 'professional',
     ]
   };
   
-  const htmlContent = buildArticleHTML(article, keyword, slug);
+  const simulatedImagePath = '/images/blog/default-blog.webp';
+  const htmlContent = buildArticleHTML(article, keyword, slug, simulatedImagePath);
   const wordCount = countWords(htmlContent);
-  
+
   return {
     keyword,
     type,
@@ -471,6 +489,7 @@ function generateSimulatedContent(keyword, type = 'blog', tone = 'professional',
     metaDescription: article.metaDescription,
     wordCount,
     htmlContent,
+    imagePath: simulatedImagePath,
     sections: article.sections.length,
     faq: article.faq.length,
     generatedAt: new Date().toISOString()

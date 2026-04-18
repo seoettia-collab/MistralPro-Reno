@@ -111,11 +111,22 @@ async function autoPublish(contentId) {
       // === ÉTAPE 8 : Marquer LIVE ===
       currentStep = 'Marquage LIVE';
       steps.push({ step: currentStep, status: 'running' });
-      
-      await dbRun(
-        'UPDATE contents SET status = ? WHERE id = ?',
-        ['live', contentId]
-      );
+
+      // PUBLISHER-IMG-01 : persister deployed_url + live_at + image_url
+      const liveAt = new Date().toISOString();
+      try {
+        await dbRun(
+          `UPDATE contents
+           SET status = ?, live_at = ?, deployed_at = ?, deployed_url = ?, image_url = COALESCE(image_url, ?)
+           WHERE id = ?`,
+          ['live', liveAt, liveAt, deployedUrl, content.image_url || content.imageUrl || null, contentId]
+        );
+        console.log('[CONTENTS_UPDATE_OK]', { contentId, slug, status: 'live', deployedUrl });
+      } catch (e) {
+        console.error('[CONTENTS_DB_ERROR]', { contentId, error: e.message });
+        // Fallback : au minimum le statut doit passer à live
+        await dbRun('UPDATE contents SET status = ? WHERE id = ?', ['live', contentId]);
+      }
       steps[steps.length - 1].status = 'ok';
       
       return {
@@ -280,19 +291,52 @@ function generateHTMLFromBrief(brief, content) {
   
   // Générer le corps de l'article via le contentGenerator
   const articleBody = generateArticleBody(brief, keyword);
-  const selectedImage = content.image_url || content.imageUrl || 'renovation_general_(9).webp';
 
-const articleImagePath = selectedImage.startsWith('http')
-  ? selectedImage
-  : selectedImage.startsWith('/images/')
+  // PUBLISHER-IMG-01 : résolution image normalisée
+  // Accepte les variantes connues ; fallback explicite default-blog.webp
+  const rawImage = content.image_url
+    || content.imageUrl
+    || content.image
+    || null;
+
+  console.log('[PUBLISHER_IMG_TRACE]', {
+    content_id: content.id,
+    slug,
+    image_url: content.image_url,
+    imageUrl: content.imageUrl,
+    image: content.image,
+    raw_resolved: rawImage
+  });
+
+  let selectedImage;
+  let usedDefault = false;
+  if (rawImage && typeof rawImage === 'string' && rawImage.trim()) {
+    selectedImage = rawImage.trim();
+  } else {
+    selectedImage = 'default-blog.webp';
+    usedDefault = true;
+    console.log('[PUBLISHER_IMG_DEFAULT]', { slug, fallback: 'images/blog/default-blog.webp' });
+  }
+
+  const articleImagePath = selectedImage.startsWith('http')
     ? selectedImage
-    : selectedImage.startsWith('images/')
-      ? `/${selectedImage}`
-      : `/images/blog/${selectedImage}`;
+    : selectedImage.startsWith('/images/')
+      ? selectedImage
+      : selectedImage.startsWith('images/')
+        ? `/${selectedImage}`
+        : `/images/blog/${selectedImage}`;
 
-const articleImageRelative = articleImagePath.startsWith('/images/')
-  ? `..${articleImagePath}`
-  : articleImagePath;
+  const articleImageRelative = articleImagePath.startsWith('/images/')
+    ? `..${articleImagePath}`
+    : articleImagePath;
+
+  console.log('[PUBLISHER_IMG_NORMALIZED]', {
+    slug,
+    selectedImage,
+    articleImagePath,
+    articleImageRelative,
+    usedDefault
+  });
   
 
   const html = `<!DOCTYPE html>
@@ -348,7 +392,7 @@ excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
   
   <!-- Schema.org -->
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || keyword)}",""image":"${articleImagePath.startsWith('http') ? articleImagePath : `${SITE_URL}${articleImagePath}`}"","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
+  {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || keyword)}","image":"${articleImagePath.startsWith('http') ? articleImagePath : `${SITE_URL}${articleImagePath}`}","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
   </script>
 </head>
 <body>

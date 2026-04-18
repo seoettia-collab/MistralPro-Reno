@@ -1039,24 +1039,32 @@ async function prepareCockpitDataForAudit() {
   
   const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = cockpitCache;
   
-  // AUDIT-COUNT-01 Option B — Source canonique : blog.html live
-  // Raison : la table `contents` (DB) n'est pas alimentée par le pipeline
-  // Studio SEO actuel (qui publie directement via GitHub API).
-  // parseArticlesFromBlogHtml() = vérité terrain (ce qui est réellement en ligne).
-  // Option A (fix publisher + INSERT contents) prévue en nouvelle session.
+  // PUBLISHER-IMG-01 : source canonique restaurée = DB contents
+  // Depuis que le Studio SEO alimente contents via /api/content/register-published
+  // et que le backfill a aligné les 6 articles existants, la DB est fiable.
+  // blog.html reste un fallback en cas de DB indisponible.
   const LIVE_STATUSES = ['deployed', 'published', 'live'];
-  let liveContentsCount = 0;
-  
-  try {
-    const liveArticles = await parseArticlesFromBlogHtml();
-    liveContentsCount = Array.isArray(liveArticles) ? liveArticles.length : 0;
-    console.log('[AUDIT-COUNT-01] Articles live depuis blog.html:', liveContentsCount);
-  } catch (e) {
-    // Fallback sur la DB si blog.html inaccessible
-    console.warn('[AUDIT-COUNT-01] blog.html inaccessible, fallback DB', e);
-    liveContentsCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
+  const dbLiveCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
+  let liveContentsCount = dbLiveCount;
+  let source = 'db';
+
+  if (dbLiveCount === 0) {
+    // Fallback : la DB est vide, on retombe sur blog.html
+    try {
+      const liveArticles = await parseArticlesFromBlogHtml();
+      const parsedCount = Array.isArray(liveArticles) ? liveArticles.length : 0;
+      if (parsedCount > 0) {
+        liveContentsCount = parsedCount;
+        source = 'blog_html_fallback';
+        console.warn('[AUDIT_DB_SOURCE_RESTORED] DB vide, fallback blog.html :', parsedCount);
+      }
+    } catch (e) {
+      console.warn('[AUDIT_DB_SOURCE_RESTORED] DB vide ET blog.html inaccessible', e);
+    }
+  } else {
+    console.log('[AUDIT_DB_SOURCE_RESTORED] Source DB contents :', dbLiveCount);
   }
-  
+
   // Brouillons = contenus en DB non encore publiés
   const draftsCount = contents.filter(c => !LIVE_STATUSES.includes(c.status)).length;
   // Total = articles live + brouillons en attente
@@ -1073,10 +1081,11 @@ async function prepareCockpitDataForAudit() {
     console.warn('[Audit IA] Pas de données de scan disponibles');
   }
   
-  console.log('[AUDIT-COUNT-01] Contenu:', {
+  console.log('[AUDIT_DB_SOURCE_RESTORED] Contenu:', {
     total: totalContentsCount,
     live: liveContentsCount,
-    en_attente: draftsCount
+    en_attente: draftsCount,
+    source: source
   });
   
   return {
@@ -3131,30 +3140,37 @@ function integrateMainImageToPreview() {
 
 /**
  * Intègre l'image principale dans le HTML final
+ * PUBLISHER-IMG-01 : si pas d'image uploadée, utilise default-blog.webp explicite
+ * plutôt que d'insérer une référence à un fichier slug.webp inexistant.
  */
 function integrateMainImageToHTML() {
+  if (!studioGeneratedContent) return;
+
   const mainImage = uploadedImages.find(img => img.isMain);
-  if (!mainImage || !studioGeneratedContent) return;
-  
+
   // Supprimer l'ancienne image principale si elle existe
   studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
     /<figure class="article-image">[\s\S]*?<\/figure>\s*/g,
     ''
   );
-  
-  // Ajouter la nouvelle image principale après le header
+
+  // Déterminer la source image à injecter
+  const imageSrc = mainImage
+    ? `/images/blog/${studioGeneratedContent.slug}.webp`
+    : `/images/blog/default-blog.webp`;
+
   const imageHTML = `
       <figure class="article-image">
-        <img src="/images/blog/${studioGeneratedContent.slug}.webp" alt="${escapeHtml(studioGeneratedContent.h1)}" />
+        <img src="${imageSrc}" alt="${escapeHtml(studioGeneratedContent.h1)}" loading="eager" />
       </figure>
 `;
-  
+
   studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
     '</header>',
     '</header>\n' + imageHTML
   );
-  
-  studioGeneratedContent.hasImage = true;
+
+  studioGeneratedContent.hasImage = !!mainImage;
 }
 
 /**
@@ -3555,7 +3571,7 @@ async function addArticleToBlogIndex(content) {
         title: content.h1 || content.title,
         description: content.metaDescription,
         category: detectCategory(content.keyword),
-        imageUrl: content.hasImage ? `images/blog/${content.slug}.webp` : 'images/renovation_general_(9).webp',
+        imageUrl: content.hasImage ? `images/blog/${content.slug}.webp` : 'images/blog/default-blog.webp',
         readTime: estimateReadTime(content.wordCount)
       })
     });
@@ -3838,9 +3854,44 @@ function renderPublishSuccess(finalURL, commitUrl) {
  * Note: La publication GitHub est suffisante, pas besoin d'API secondaire
  */
 async function registerPublishedContent(slug, content) {
-  // Fonction désactivée - publication GitHub gère tout
-  // L'endpoint POST /api/content n'existe pas et n'est pas nécessaire
-  console.log('[Publication] Contenu publié via GitHub:', `/blog/${slug}.html`);
+  // PUBLISHER-IMG-01 : enregistre le contenu publié dans la table contents (UPSERT).
+  // Appelé après push GitHub réussi pour alimenter la source canonique DB.
+  try {
+    const deployedUrl = `https://www.mistralpro-reno.fr/blog/${slug}.html`;
+    const mainImage = (typeof uploadedImages !== 'undefined')
+      ? uploadedImages.find(img => img.isMain)
+      : null;
+    const imageUrl = content.hasImage && mainImage
+      ? `/images/blog/${slug}.webp`
+      : '/images/blog/default-blog.webp';
+
+    const response = await fetchAPI('/api/content/register-published', {
+      method: 'POST',
+      body: JSON.stringify({
+        slug,
+        title: content.h1 || content.title,
+        keyword: content.keyword || null,
+        type: content.type || 'blog',
+        category: detectCategory(content.keyword),
+        deployed_url: deployedUrl,
+        image_url: imageUrl,
+        word_count: content.wordCount || 0,
+        status: 'live'
+      })
+    });
+
+    if (!response.ok) {
+      console.warn('[CONTENTS_DB_ERROR] register-published HTTP', response.status);
+      return false;
+    }
+
+    const result = await response.json();
+    console.log('[CONTENTS_UPSERT_START] result:', result);
+    return result.status === 'ok';
+  } catch (error) {
+    console.error('[CONTENTS_DB_ERROR] register-published:', error.message);
+    return false;
+  }
 }
 
 /**

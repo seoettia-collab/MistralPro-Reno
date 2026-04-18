@@ -145,6 +145,139 @@ async function updateContentStatus(id, newStatus) {
   return { success: true, changes: result.changes };
 }
 
+/**
+ * PUBLISHER-IMG-01 : Insérer OU mettre à jour un contenu déjà publié
+ * Source : Studio SEO après push GitHub réussi, ou backfill articles existants.
+ * Comportement idempotent : si un enregistrement existe déjà pour ce slug,
+ * on fait UPDATE ; sinon INSERT.
+ *
+ * @param {Object} data
+ * @param {string} data.slug - slug canonique (sert de clé logique)
+ * @param {string} data.title
+ * @param {string} [data.keyword]
+ * @param {string} [data.type='blog']
+ * @param {string} [data.category]
+ * @param {string} [data.deployed_url]
+ * @param {string} [data.image_url]
+ * @param {number} [data.word_count]
+ * @param {string} [data.status='live']
+ * @returns {Promise<{id:number, action:'insert'|'update'}>}
+ */
+async function upsertPublishedContent(data) {
+  const {
+    slug,
+    title,
+    keyword = null,
+    type = 'blog',
+    category = null,
+    deployed_url = null,
+    image_url = null,
+    word_count = 0,
+    status = 'live'
+  } = data;
+
+  if (!slug || !title) {
+    throw new Error('slug et title requis');
+  }
+
+  console.log('[CONTENTS_UPSERT_START]', { slug, title, status });
+
+  // Chercher un enregistrement existant par slug_suggested
+  const existing = await dbGet(
+    'SELECT id FROM contents WHERE slug_suggested = ? LIMIT 1',
+    [slug]
+  );
+
+  const nowIso = new Date().toISOString();
+  const isLive = ['live', 'deployed', 'published'].includes(status);
+  const liveAt = isLive ? nowIso : null;
+  const deployedAt = isLive ? nowIso : null;
+
+  if (existing && existing.id) {
+    // UPDATE : ne pas écraser les valeurs non fournies
+    await dbRun(
+      `UPDATE contents
+       SET title = COALESCE(?, title),
+           keyword = COALESCE(?, keyword),
+           type = COALESCE(?, type),
+           category = COALESCE(?, category),
+           status = ?,
+           deployed_url = COALESCE(?, deployed_url),
+           image_url = COALESCE(?, image_url),
+           word_count = COALESCE(NULLIF(?, 0), word_count),
+           live_at = COALESCE(live_at, ?),
+           deployed_at = COALESCE(deployed_at, ?)
+       WHERE id = ?`,
+      [title, keyword, type, category, status, deployed_url, image_url, word_count, liveAt, deployedAt, existing.id]
+    );
+    console.log('[CONTENTS_UPDATE_OK]', { id: existing.id, slug });
+    return { id: existing.id, action: 'update' };
+  }
+
+  // INSERT
+  const result = await dbRun(
+    `INSERT INTO contents
+       (type, title, keyword, status, slug_suggested, category, deployed_url, image_url, word_count, live_at, deployed_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [type, title, keyword, status, slug, category, deployed_url, image_url, word_count, liveAt, deployedAt]
+  );
+
+  console.log('[CONTENTS_INSERT_OK]', { id: result.lastID, slug });
+
+  try {
+    await logEvent(ACTION_TYPES.CONTENT_CREATED, {
+      content_id: result.lastID,
+      title,
+      type,
+      keyword,
+      source: 'upsertPublishedContent'
+    });
+  } catch (e) {
+    // Log non bloquant
+  }
+
+  return { id: result.lastID, action: 'insert' };
+}
+
+/**
+ * PUBLISHER-IMG-01 : backfill idempotent des articles déjà en ligne.
+ * Source : liste explicite fournie par l'appelant (route backfill).
+ *
+ * @param {Array<Object>} articles - chaque objet doit contenir au moins
+ *   { slug, title, keyword, category, deployed_url, image_url }
+ * @returns {Promise<{inserted:number, updated:number, errors:Array}>}
+ */
+async function backfillPublishedArticles(articles) {
+  const stats = { inserted: 0, updated: 0, errors: [] };
+
+  if (!Array.isArray(articles) || articles.length === 0) {
+    return stats;
+  }
+
+  for (const a of articles) {
+    try {
+      const res = await upsertPublishedContent({
+        slug: a.slug,
+        title: a.title,
+        keyword: a.keyword || null,
+        type: a.type || 'blog',
+        category: a.category || null,
+        deployed_url: a.deployed_url || `https://www.mistralpro-reno.fr/blog/${a.slug}.html`,
+        image_url: a.image_url || null,
+        word_count: a.word_count || 0,
+        status: 'live'
+      });
+      if (res.action === 'insert') stats.inserted++;
+      else stats.updated++;
+    } catch (e) {
+      stats.errors.push({ slug: a.slug, error: e.message });
+    }
+  }
+
+  console.log('[CONTENTS_BACKFILL_OK]', stats);
+  return stats;
+}
+
 module.exports = {
   getAllContents,
   getContentById,
@@ -152,6 +285,8 @@ module.exports = {
   updateContentStatus,
   isValidTransition,
   getNextTransitions,
+  upsertPublishedContent,
+  backfillPublishedArticles,
   VALID_TRANSITIONS,
   STATUS_LABELS
 };

@@ -223,7 +223,25 @@ const initSchema = async () => {
       // Colonne existe déjà, ignorer
     }
   }
-  
+
+  // Migration PUBLISHER-IMG-01 : ajouter colonnes manquantes à contents
+  const contentsMigrations = [
+    "ALTER TABLE contents ADD COLUMN live_at DATETIME",
+    "ALTER TABLE contents ADD COLUMN deployed_at DATETIME",
+    "ALTER TABLE contents ADD COLUMN deployed_url TEXT",
+    "ALTER TABLE contents ADD COLUMN image_url TEXT",
+    "ALTER TABLE contents ADD COLUMN word_count INTEGER DEFAULT 0",
+    "ALTER TABLE contents ADD COLUMN category TEXT"
+  ];
+
+  for (const migration of contentsMigrations) {
+    try {
+      await db.execute(migration);
+    } catch (e) {
+      // Colonne existe déjà, ignorer
+    }
+  }
+
   // Insérer site pilote
   await db.execute({
     sql: "INSERT OR IGNORE INTO sites (domain) VALUES (?)",
