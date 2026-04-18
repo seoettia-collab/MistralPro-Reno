@@ -567,16 +567,24 @@ function renderCockpitV2(data) {
           </div>
         </div>
 
-        <!-- SECTION 9 : Bouton Audit IA -->
+        <!-- SECTION 9 : Bouton Audit IA + Historique -->
         <div class="cockpit-section cockpit-cta">
           <div class="cta-box">
             <div class="cta-info">
               <h4>🤖 Audit IA complet</h4>
               <p>Analyse approfondie avec Claude basée sur le scan du site pour obtenir des recommandations personnalisées.</p>
             </div>
-            <button class="btn-large btn-primary" onclick="goToAuditIA()">
-              <span>🚀 Lancer Audit IA</span>
-            </button>
+            <div class="cta-actions">
+              <div class="audit-history-wrapper">
+                <button class="btn-history" onclick="toggleAuditHistoryDropdown(event)">
+                  📜 Historique (<span id="audit-history-btn-count">${getAuditHistory().length}</span>) ▼
+                </button>
+                <div id="audit-history-dropdown" class="audit-history-dd"></div>
+              </div>
+              <button class="btn-large btn-primary" onclick="goToAuditIA()">
+                <span>🚀 Lancer Audit IA</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1105,6 +1113,170 @@ function clearSavedRecommendations() {
     console.log('[Audit IA] Recommandations effacées de localStorage');
   } catch (e) {
     console.warn('[Audit IA] Erreur suppression localStorage:', e);
+  }
+}
+
+/**
+ * AUDIT-HISTORY — Historique local des 5 derniers audits IA
+ * Permet de consulter un ancien audit sans re-consommer de tokens Anthropic.
+ */
+const AUDIT_HISTORY_KEY = 'mpr_auditHistory';
+const AUDIT_HISTORY_MAX = 5;
+
+function getAuditHistory() {
+  try {
+    const raw = localStorage.getItem(AUDIT_HISTORY_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    console.warn('[Audit History] getAuditHistory failed:', e);
+    return [];
+  }
+}
+
+function addAuditToHistory(auditData) {
+  try {
+    const history = getAuditHistory();
+    const entry = {
+      id: `audit_${Date.now()}`,
+      created_at: new Date().toISOString(),
+      summary: (auditData.summary || '').substring(0, 120),
+      decisions_count: (auditData.decisions || auditData.actions || []).length,
+      data: auditData
+    };
+    history.unshift(entry); // ajout en tête (plus récent en premier)
+    // Conserver max 5
+    const trimmed = history.slice(0, AUDIT_HISTORY_MAX);
+    localStorage.setItem(AUDIT_HISTORY_KEY, JSON.stringify(trimmed));
+    console.log('[Audit History] Ajouté. Total:', trimmed.length);
+  } catch (e) {
+    console.warn('[Audit History] addAuditToHistory failed:', e);
+  }
+}
+
+function deleteAuditFromHistory(id) {
+  try {
+    const history = getAuditHistory();
+    const filtered = history.filter(a => a.id !== id);
+    localStorage.setItem(AUDIT_HISTORY_KEY, JSON.stringify(filtered));
+    console.log('[Audit History] Supprimé:', id);
+    return filtered;
+  } catch (e) {
+    console.warn('[Audit History] deleteAuditFromHistory failed:', e);
+    return [];
+  }
+}
+
+function loadAuditFromHistory(id) {
+  const history = getAuditHistory();
+  const entry = history.find(a => a.id === id);
+  if (!entry) {
+    console.warn('[Audit History] Audit introuvable:', id);
+    showNotification('Audit introuvable dans l\'historique', 'warning');
+    return;
+  }
+  lastAuditIA = entry.data;
+  saveRecommendations(entry.data); // actualise aussi mpr_lastAuditIA
+  showNotification('Audit chargé depuis l\'historique (sans token consommé)', 'info');
+  // Aller sur l'onglet Audit IA et afficher
+  const tab = document.querySelector('[data-tab="audit-ia"]');
+  if (tab) tab.click();
+  setTimeout(() => {
+    if (typeof renderAuditIAResult === 'function') {
+      renderAuditIAResult(entry.data);
+    }
+  }, 150);
+}
+
+function formatHistoryDate(iso) {
+  try {
+    const d = new Date(iso);
+    const diffMs = Date.now() - d.getTime();
+    const diffMin = Math.round(diffMs / 60000);
+    const diffH = Math.round(diffMin / 60);
+    if (diffMin < 1) return 'à l\'instant';
+    if (diffMin < 60) return `il y a ${diffMin} min`;
+    if (diffH < 24) return `il y a ${diffH}h`;
+    const diffD = Math.round(diffH / 24);
+    return `il y a ${diffD}j`;
+  } catch (e) { return ''; }
+}
+
+/**
+ * Toggle le dropdown historique
+ */
+function toggleAuditHistoryDropdown(event) {
+  event && event.stopPropagation();
+  const dd = document.getElementById('audit-history-dropdown');
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  // Fermer tous les autres dropdowns éventuels
+  document.querySelectorAll('.audit-history-dd.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) {
+    renderAuditHistoryDropdown();
+    dd.classList.add('open');
+    // Fermer au clic extérieur
+    setTimeout(() => {
+      document.addEventListener('click', closeAuditHistoryOnOutside, { once: true });
+    }, 50);
+  }
+}
+
+function closeAuditHistoryOnOutside(e) {
+  const dd = document.getElementById('audit-history-dropdown');
+  if (dd && !dd.contains(e.target)) {
+    dd.classList.remove('open');
+  } else if (dd) {
+    // Re-bind si on a cliqué dedans
+    document.addEventListener('click', closeAuditHistoryOnOutside, { once: true });
+  }
+}
+
+function renderAuditHistoryDropdown() {
+  const dd = document.getElementById('audit-history-dropdown');
+  if (!dd) return;
+  const history = getAuditHistory();
+  if (history.length === 0) {
+    dd.innerHTML = '<div class="audit-history-empty">Aucun audit en historique</div>';
+    return;
+  }
+  dd.innerHTML = history.map(a => `
+    <div class="audit-history-item" data-id="${a.id}">
+      <div class="audit-history-item-main" data-load-id="${a.id}">
+        <div class="audit-history-item-date">${formatHistoryDate(a.created_at)}</div>
+        <div class="audit-history-item-summary">${escapeHtml(a.summary || 'Audit sans résumé')}</div>
+        <div class="audit-history-item-meta">${a.decisions_count} décision${a.decisions_count > 1 ? 's' : ''}</div>
+      </div>
+      <button class="audit-history-item-del" data-del-id="${a.id}" title="Supprimer">Supprimer</button>
+    </div>
+  `).join('');
+
+  // Bindings
+  dd.querySelectorAll('[data-load-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.getAttribute('data-load-id');
+      dd.classList.remove('open');
+      loadAuditFromHistory(id);
+    });
+  });
+  dd.querySelectorAll('[data-del-id]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-del-id');
+      if (!confirm('Supprimer cet audit de l\'historique ?')) return;
+      deleteAuditFromHistory(id);
+      renderAuditHistoryDropdown();
+      refreshAuditHistoryButton();
+    });
+  });
+}
+
+function refreshAuditHistoryButton() {
+  const btn = document.getElementById('audit-history-btn-count');
+  if (btn) {
+    const n = getAuditHistory().length;
+    btn.textContent = n;
   }
 }
 
@@ -1650,6 +1822,7 @@ async function launchFullAuditIA() {
     // Étape 3: Afficher le résultat
     lastAuditIA = auditResult;
     saveRecommendations(auditResult); // Sauvegarder dans localStorage
+    addAuditToHistory(auditResult); // AUDIT-HISTORY : ajouter a l'historique (5 max)
     renderAuditIAResult(auditResult);
     
   } catch (error) {
