@@ -12,22 +12,47 @@ Objectif : garantir que chaque session démarre avec la même compréhension du 
 - Règles de communication
 - Rôles projet
 - Format des rapports
+- Format identifiants [MODULE]-[CODE]-[N°]
 
-### 2. Lire **ARCHITECTURE.md**
+### 2. Lire **SESSION_HANDOFF.md** (si présent)
+- État actuel du projet
+- Directives closes
+- Directive en cours
+- Checklist démarrage nouvelle conversation
+
+### 3. Lire **ARCHITECTURE.md**
 - Structure technique du site
 - Organisation des fichiers
 - Flux techniques
 
-### 3. Lire **FICHE_TECHNIQUE.md**
+### 4. Lire **FICHE_TECHNIQUE.md**
 - Références rapides
 - Pages principales
 - Scripts et dépendances
 
-### 4. Lire **CHECKLIST.md**
-- Procédures de build
+### 5. Lire **SEO_DASHBOARD_CHECKLIST.md**
+- Avancement des LOT 1-4
+- État des directives
 - QA technique
-- Sécurité
-- Déploiement
+
+---
+
+## RÈGLE DE SYNCHRONISATION (CRITIQUE)
+
+```
+Claude envoie un message
+        ↓
+Ricardo transmet à GPT
+        ↓
+GPT répond
+        ↓
+Ricardo transmet à Claude
+        ↓
+Claude exécute (ou repropose)
+```
+
+**Aucun message parallèle.** Claude attend toujours le retour GPT
+avant de continuer. Même principe dans l'autre sens.
 
 ---
 
@@ -61,4 +86,4 @@ Fichier d'amorçage officiel du projet.
 
 ---
 
-*Dernière mise à jour : 9 mars 2026*
+*Dernière mise à jour : 18 avril 2026*

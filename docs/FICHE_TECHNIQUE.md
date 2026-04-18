@@ -32,18 +32,19 @@
 
 ### Articles de blog (`/blog/`)
 
+**6 articles publiés** (au 18 avril 2026) :
+
 | Fichier | Sujet |
 |---------|-------|
 | `cout-renovation-appartement-paris.html` | Coût rénovation appartement Paris (PILIER) |
-| `renovation-appartement-paris-prix-m2.html` | Prix rénovation au m² Paris |
-| `combien-coutent-travaux-renovation-maison.html` | Coût travaux rénovation maison |
-| `renovation-salle-de-bain-guide-prix.html` | Guide prix rénovation salle de bain |
 | `degat-des-eaux-5-etapes.html` | 5 étapes après un dégât des eaux |
-| `prix-renovation-cuisine-paris.html` | Prix rénovation cuisine Paris |
-| `prix-renovation-salle-de-bain-paris.html` | Prix rénovation salle de bain Paris |
-| `prix-travaux-electricite-appartement.html` | Prix travaux électricité |
-| `prix-travaux-peinture-appartement.html` | Prix travaux peinture |
-| `prix-travaux-isolation-appartement.html` | Prix travaux isolation |
+| `prix-renovation-appartement-paris-2026.html` | Prix rénovation appartement Paris 2026 |
+| `prix-renovation-de-habitation-ile-de-france.html` | Prix rénovation habitation Île-de-France |
+| `prix-renovation-salle-de-bain-paris-2026.html` | Prix rénovation salle de bain Paris 2026 |
+| `renovation-salle-de-bain-guide-prix.html` | Guide prix rénovation salle de bain |
+
+**Template :**
+- `TEMPLATE.html` — Modèle utilisé par Studio SEO pour générer les nouveaux articles
 
 ---
 
@@ -339,4 +340,4 @@ Push main → GitHub Actions → FTP Deploy → OVH /www/
 
 ---
 
-*Dernière mise à jour : 14 mars 2026*
+*Dernière mise à jour : 18 avril 2026*

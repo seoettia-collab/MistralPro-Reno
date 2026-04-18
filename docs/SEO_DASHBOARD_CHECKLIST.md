@@ -19,7 +19,7 @@
 ✅ Structure frontend (HTML/CSS/JS)
 ✅ Backend API (Node.js + Express)
 ✅ Base de données (Turso/LibSQL)
-✅ Intégration Google Search Console
+✅ Intégration Google Search Console (Service Account)
 ✅ Déploiement Vercel (backend)
 ✅ Déploiement OVH (frontend)
 ✅ 11/11 onglets fonctionnels
@@ -27,20 +27,48 @@
 ✅ QA Console JS validé
 ```
 
-### LOT 2 — Production & Automatisation SEO 🔵
+### LOT 2 — Production & Automatisation SEO 🔵 EN COURS
 
 **Objectif** : Exploiter le dashboard pour produire du contenu SEO et optimiser le site.
 
 ```
-□ Exploitation données Google Search Console
-□ Détection opportunités SEO
-□ Génération idées contenus
-□ Génération briefs Claude
-□ Optimisation pages existantes
-□ Suivi conversions
-□ Création articles via Auto SEO Executor
-□ Publication et déploiement automatisé
+✅ Exploitation données Google Search Console (GSC-PIPELINE-01, 18/04/2026)
+   - Service Account opérationnel
+   - /api/gsc/test + /api/gsc/fetch OK
+   - Données remontent dans le dashboard
+
+✅ Détection opportunités SEO
+   - Module Opportunités fonctionnel
+   - Scoring automatique
+
+✅ Génération idées contenus (Studio SEO)
+✅ Génération briefs Claude
+✅ Création articles via Studio SEO IA
+✅ Publication automatisée (GitHub API → blog.html)
+
+✅ Scan SEO du site
+   - Bouton Scanner fonctionnel
+   - Correction bug URLs Facebook (sitescan.js)
+
+✅ Audit IA décisionnel
+   - Pipeline opérationnel
+   - Forces/Faiblesses, analyse concurrentielle
+   - 5 décisions IA avec scores
+   - AUDIT-COUNT-01 Option B appliquée (18/04/2026)
+
+□ Optimisation pages existantes (en cours)
+□ Suivi conversions (à brancher)
+□ PUBLISHER-IMG-01 : image article + INSERT contents DB
+□ Backfill 6 articles existants dans table contents
 ```
+
+**Articles publiés (6) :**
+- `cout-renovation-appartement-paris.html` (pilier)
+- `degat-des-eaux-5-etapes.html`
+- `prix-renovation-appartement-paris-2026.html`
+- `prix-renovation-de-habitation-ile-de-france.html`
+- `prix-renovation-salle-de-bain-paris-2026.html`
+- `renovation-salle-de-bain-guide-prix.html`
 
 ### LOT 3 — Stabilisation & Sécurité
 
@@ -685,4 +713,4 @@ STATUT FINAL : ✅ VALIDÉ / ❌ À CORRIGER
 
 ---
 
-*Dernière mise à jour : 9 mars 2026*
+*Dernière mise à jour : 18 avril 2026 — LOT 2 en cours, GSC + Audit IA opérationnels*
