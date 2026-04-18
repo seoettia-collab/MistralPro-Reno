@@ -5,7 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { countLive, checkIntegrity } = require('../services/contentCounter');
+const { countLive, getAllLive, checkIntegrity } = require('../services/contentCounter');
 
 // Clé API Anthropic depuis variables d'environnement
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -172,6 +172,22 @@ router.post('/audit-ia/analyze', async (req, res) => {
       }
       console.log('[AUDIT_COUNT_FIXED]', { dbLive, groundLive, ok: true });
     }
+
+    // AUDIT-COUNT-02 — Enrichissement prompt : liste explicite des articles live
+    // pour empêcher Claude de reproposer des sujets déjà publiés.
+    let liveArticlesList = [];
+    try {
+      const rows = await getAllLive();
+      liveArticlesList = rows.map(r => ({
+        slug: r.slug_suggested || null,
+        title: r.title || null,
+        keyword: r.keyword || null,
+        deployed_url: r.deployed_url || null
+      }));
+      console.log('[AUDIT_COUNT_TRACE] liveArticlesList size:', liveArticlesList.length);
+    } catch (e) {
+      console.warn('[AUDIT_COUNT_INTEGRITY_ALERT] getAllLive failed:', e.message);
+    }
     
     // Vérifier la clé API
     if (!ANTHROPIC_API_KEY) {
@@ -270,9 +286,20 @@ ${cockpitData.contenu && cockpitData.contenu.en_attente > 0
   ? `${cockpitData.contenu.en_attente} contenus en attente de publication`
   : 'Aucun contenu en attente'}
 
-ARTICLES DÉJÀ PUBLIÉS (ne pas reproposer à la création) :
-${cockpitData.contenu && cockpitData.contenu.live > 0
-  ? `${cockpitData.contenu.live} articles déjà LIVE — vérifie la liste avant toute proposition 'create_content' pour éviter les doublons`
+ARTICLES DÉJÀ PUBLIÉS (interdiction absolue de les reproposer en create_content) :
+${liveArticlesList.length > 0
+  ? `${liveArticlesList.length} article(s) live ci-dessous.
+
+LISTE EXHAUSTIVE DES ARTICLES EXISTANTS :
+${liveArticlesList.map((a, i) =>
+  `${i + 1}. slug="${a.slug}" | titre="${a.title}" | keyword="${a.keyword || '-'}" | url=${a.deployed_url || '/blog/' + a.slug + '.html'}`
+).join('\n')}
+
+RÈGLES STRICTES AVANT TOUTE DÉCISION create_content :
+- NE PROPOSE JAMAIS un article dont le slug correspond à un slug ci-dessus
+- NE PROPOSE JAMAIS un article dont le keyword principal duplique exactement un keyword ci-dessus
+- Si un sujet est déjà couvert, propose plutôt 'optimize_page' sur la page existante
+- Tu peux proposer des angles DIFFÉRENTS (arrondissement précis, sous-niche, longue traîne) tant que le slug final sera distinct`
   : 'Aucun article live actuellement — la création de contenu est prioritaire'}
 
 Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
@@ -343,6 +370,42 @@ Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
         ...decision,
         decisionId: `decision_${timestamp}_${index}`
       }));
+    }
+
+    // AUDIT-COUNT-02 — Filtre serveur anti-doublon (dernière défense)
+    // Si malgré le prompt Claude propose un create_content dont le slug correspond
+    // à un article déjà live, on le retire automatiquement.
+    if (auditData.decisions && liveArticlesList.length > 0) {
+      const liveSlugsSet = new Set(
+        liveArticlesList.map(a => (a.slug || '').toLowerCase()).filter(Boolean)
+      );
+      const liveKeywordsSet = new Set(
+        liveArticlesList.map(a => (a.keyword || '').toLowerCase().trim()).filter(Boolean)
+      );
+
+      const beforeFilter = auditData.decisions.length;
+      auditData.decisions = auditData.decisions.filter(d => {
+        if (d.type !== 'create_content') return true;
+        // Extraire le slug de target_page ou du keyword
+        const targetSlug = (d.target_page || '')
+          .replace(/^\/?blog\//, '')
+          .replace(/\.html$/, '')
+          .toLowerCase();
+        const targetKeyword = (d.keyword || '').toLowerCase().trim();
+
+        if (targetSlug && liveSlugsSet.has(targetSlug)) {
+          console.warn('[AUDIT_COUNT_PROMPT_BLOCKED] doublon slug retiré:', targetSlug);
+          return false;
+        }
+        if (targetKeyword && liveKeywordsSet.has(targetKeyword)) {
+          console.warn('[AUDIT_COUNT_PROMPT_BLOCKED] doublon keyword retiré:', targetKeyword);
+          return false;
+        }
+        return true;
+      });
+      if (beforeFilter !== auditData.decisions.length) {
+        console.log('[AUDIT_COUNT_FIXED] filtre doublons:', beforeFilter, '→', auditData.decisions.length);
+      }
     }
     
     // Compatibilité : si Claude retourne actions au lieu de decisions, convertir
