@@ -469,9 +469,10 @@ Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
         `);
         recentlyOptimizedPaths = new Set(
           recentOpts.map(r => {
-            // Normaliser: extraire le chemin (slug.html) quelle que soit la forme de l URL
+            // Normaliser: extraire juste le slug/nom de fichier quelle que soit la forme
+            // Supporte /blog/X.html ET /X.html (racine) - OPTIMIZE-PATH-FIX
             const u = String(r.page_url || '').toLowerCase();
-            const m = u.match(/\/blog\/([a-z0-9-]+)\.html/);
+            const m = u.match(/(?:^|\/)([a-z0-9_-]+)\.html?(?:$|\?)/);
             return m ? m[1] : u;
           }).filter(Boolean)
         );
@@ -504,8 +505,8 @@ Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
         // optimize_page: filtrer si la page a ete optimisee dans les 7 derniers jours
         if (d.type === 'optimize_page' && recentlyOptimizedPaths.size > 0) {
           const targetRaw = String(d.target_page || d.keyword || '').toLowerCase();
-          // Extraire le slug si format /blog/X.html, sinon comparer directement
-          const mSlug = targetRaw.match(/\/blog\/([a-z0-9-]+)\.html/);
+          // Meme normalisation que recentlyOptimizedPaths : on extrait le slug/nom de fichier
+          const mSlug = targetRaw.match(/(?:^|\/)([a-z0-9_-]+)\.html?(?:$|\?)/);
           const targetSlug = mSlug ? mSlug[1] : targetRaw.replace(/^\/+|\/+$/g, '');
 
           if (targetSlug && recentlyOptimizedPaths.has(targetSlug)) {

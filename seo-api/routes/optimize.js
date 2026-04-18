@@ -165,20 +165,43 @@ router.post('/optimize/apply', async (req, res) => {
       });
     }
 
-    // 1. Extraire le slug depuis pageUrl
-    // ex: https://www.mistralpro-reno.fr/blog/prix-renovation-appartement-paris-2026.html
-    //  -> slug = prix-renovation-appartement-paris-2026
-    const slugMatch = pageUrl.match(/\/blog\/([a-z0-9-]+)\.html/i);
+    // 1. Extraire le chemin du fichier depuis pageUrl
+    //
+    // OPTIMIZE-PATH-FIX : support des 2 types de pages:
+    //  a) /blog/slug.html       -> filePath = 'blog/slug.html', slug = 'slug'
+    //  b) /slug.html (racine)   -> filePath = 'slug.html', slug = 'slug'
+    //
+    // Le pageUrl peut arriver sous 3 formats:
+    //  - URL absolue: https://www.mistralpro-reno.fr/X
+    //  - chemin avec /: /X
+    //  - chemin sans / initial: X
+    let urlPath = pageUrl;
+    // Strip le domaine si present
+    urlPath = urlPath.replace(/^https?:\/\/[^\/]+/, '');
+    // S assurer qu on commence par /
+    if (!urlPath.startsWith('/')) urlPath = '/' + urlPath;
+    // Retirer les query strings et fragments
+    urlPath = urlPath.split('?')[0].split('#')[0];
+
+    // Normaliser: /index -> /index.html, / -> /index.html
+    if (urlPath === '/' || urlPath === '') urlPath = '/index.html';
+    if (!/\.html?$/i.test(urlPath)) urlPath = urlPath + '.html';
+
+    // Extraire filePath (sans le / initial) et slug
+    const filePath = urlPath.substring(1); // retire le / initial -> 'blog/X.html' ou 'X.html'
+
+    // Le slug est le nom de fichier sans extension
+    const slugMatch = filePath.match(/(?:^|\/)([a-z0-9_-]+)\.html?$/i);
     if (!slugMatch) {
-      console.warn('[Optimize apply] 400: slug non extrait de pageUrl:', pageUrl);
+      console.warn('[Optimize apply] 400: slug non extrait de pageUrl:', { pageUrl, urlPath, filePath });
       return res.status(400).json({
         status: 'error',
-        message: 'Impossible d extraire le slug depuis pageUrl (attendu: /blog/{slug}.html)',
-        diag: { pageUrl }
+        message: 'Impossible d extraire le slug depuis pageUrl',
+        diag: { pageUrl, urlPath, filePath }
       });
     }
     const slug = slugMatch[1];
-    const filePath = `blog/${slug}.html`;
+    console.log('[Optimize apply] path resolved:', { pageUrl, filePath, slug });
 
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const GITHUB_REPO = 'seoettia-collab/MistralPro-Reno';
