@@ -3,7 +3,7 @@
 **Date :** 18 avril 2026
 **Auteur :** Claude (Ingénieur technique)
 **Destination :** Nouvelle conversation Claude
-**Priorité :** GSC-PIPELINE-01 puis AUDIT-COUNT-01
+**Priorité :** PUBLISHER-IMG-01 (AUDIT-COUNT-01 est clos)
 
 ---
 
@@ -92,133 +92,101 @@ Toujours respecter :
 
 ---
 
-## 3. PRIORITÉ #1 — GSC-PIPELINE-01 (À FINALISER)
+## 3. PRIORITÉ #1 — GSC-PIPELINE-01 ✅ CLOS (validé par GPT le 18 avril)
 
-### 3.1 Contexte
+### 3.1 Statut final
 
-Directive GPT reçue le 18 avril :
-> Brancher le SEO Dashboard sur Google Search Console pour remplacer les données fictives.
+- ✅ Google Cloud Console — projet `cool-furnace-480422-a5`
+- ✅ API Search Console activée
+- ✅ Service Account : `seo-dashboard-gsc@cool-furnace-480422-a5.iam.gserviceaccount.com`
+- ✅ Service Account ajouté dans GSC (accès Intégral)
+- ✅ Variable Vercel `google_service_account_json` configurée
+- ✅ Route `/api/gsc/test` : **OK**
+- ✅ Route `/api/gsc/fetch` : **OK** (import réel fonctionne)
+- ✅ Données GSC remontent dans le dashboard
+- ✅ Middleware API ajusté pour laisser passer les routes GSC
 
-### 3.2 Ce qui est fait
+Confirmation GPT : *"Données GSC remontent bien dans le dashboard"*
 
-✅ Google Cloud Console — projet `cool-furnace-480422-a5` ("Mistral Google Ads API")
-✅ API Search Console activée
-✅ Service Account créé : `seo-dashboard-gsc@cool-furnace-480422-a5.iam.gserviceaccount.com`
-✅ Clé JSON téléchargée par Ricardo
-✅ Service Account ajouté dans GSC avec accès "Intégral"
-✅ Code backend modifié (Service Account au lieu de OAuth)
-✅ Route `/api/gsc/test` créée
-✅ Code poussé sur main (commit `f0bf7b3`)
-
-### 3.3 Ce qui reste à faire
-
-1. **Configurer variable Vercel** (Ricardo doit le faire)
-   - Settings → Environment Variables → Add
-   - Key : `google_service_account_json` (MINUSCULES OBLIGATOIRES)
-   - Value : le JSON complet du Service Account
-   - Environments : Production + Preview + Development
-   - **IMPORTANT** : Faire un Redeploy après (Deployments → ... → Redeploy)
-
-2. **Tester la connexion**
-   ```bash
-   curl "https://mistral-pro-reno.vercel.app/api/gsc/test" \
-     -H "X-API-Key: mpr-seo-2026-secure-key"
-   ```
-   Résultat attendu : `{"status":"ok", "sites":[...]}`
-
-3. **Tester le fetch des données**
-   ```bash
-   curl "https://mistral-pro-reno.vercel.app/api/gsc/fetch" \
-     -H "X-API-Key: mpr-seo-2026-secure-key"
-   ```
-
-4. **Vérifier stockage Turso** :
-   - Table `queries` (données agrégées)
-   - Table `gsc_pages` (par page)
-   - Table `page_queries` (croisement)
-   - Table `query_daily` (historique journalier)
-
-5. **Intégration Dashboard** :
-   - Remplacer dans le Cockpit les données `localStorage` par l'API réelle
-   - Modules impactés : Cockpit, Opportunités SEO, Recommandations IA
-   - Vérifier que le scoring SEO utilise les vraies données
-
-6. **Livrable final** (format gouvernance) :
-   ```
-   GSC-PIPELINE-01
-   CLÔTURE — GSC connecté
-   [Preuve données réelles + QA checklist]
-   — Claude
-   ```
-
-### 3.4 Fichiers concernés
+### 3.2 Fichiers concernés (pour référence)
 
 - `seo-api/services/gsc.js` — Service authentification + fetch
 - `seo-api/routes/gsc.js` — Routes `/api/gsc/*`
-- `seo-api/services/db.js` — Accès Turso
-- `seo-dashboard/dashboard.js` — Intégration frontend
 
 ---
 
-## 4. PRIORITÉ #2 — AUDIT-COUNT-01 (BUG À CORRIGER)
+## 4. PRIORITÉ #2 — AUDIT-COUNT-01 ✅ CLOS (18 avril 2026)
 
-### 4.1 Problème
+### 4.1 Problème (résolu)
 
-Dans `seo-dashboard/dashboard.js`, fonction `prepareCockpitDataForAudit()` lignes **1035-1098** :
+Dans `seo-dashboard/dashboard.js`, fonction `prepareCockpitDataForAudit()` :
+Le comptage de `contenu.live` utilisait **3 sources en cascade** (siteScan → DOM → contents),
+ce qui donnait **0 article à tort**.
 
-Le comptage de `contenu.live` utilise **3 sources en cascade**, ce qui rend le résultat fragile :
+### 4.2 Solution appliquée
 
-```javascript
-liveContentsCount =
-  scannedBlogPages.length > 0            // Source 1 : siteScanData (peut être vide/périmé)
-    ? scannedBlogPages.length
-    : blogLinks.length > 0                // Source 2 : DOM actuel (dashboard n'a pas les liens blog !)
-      ? blogLinks.length
-      : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length; // Source 3 : DB
-```
-
-**Résultat :** L'audit IA affiche souvent `0 article` même quand des articles existent réellement.
-
-### 4.2 Solution proposée
-
-**Une seule source fiable** : `blog.html` en production (même méthode que "Mes Articles").
+Conformément à la recommandation GPT : **source unique = `contents` (DB)**.
 
 ```javascript
-async function prepareCockpitDataForAudit() {
-  // ...
-
-  // UNE SEULE SOURCE : blog.html live (vérité terrain)
-  const articles = await parseArticlesFromBlogHtml();
-  const liveContentsCount = articles.length;
-
-  // contents = brouillons encore non publiés
-  const draftsCount = contents.filter(c =>
-    !['deployed', 'published', 'live'].includes(c.status)
-  ).length;
-
-  return {
-    contenu: {
-      total: liveContentsCount + draftsCount,
-      live: liveContentsCount,
-      en_attente: draftsCount
-    },
-    // ...
-  };
-}
+const LIVE_STATUSES = ['deployed', 'published', 'live'];
+const liveContentsCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
+const totalContentsCount = contents.length;
+const draftsCount = contents.filter(c => !LIVE_STATUSES.includes(c.status)).length;
 ```
 
-### 4.3 Impact à vérifier
+Suppression de la logique `siteScanData + blogLinks` dans le comptage (mais `siteScanData`
+reste utilisé pour `scan_site` plus bas dans le return — contexte IA général).
 
-- `prepareCockpitDataForAudit()` devient **async**
-- Vérifier tous les appels : doivent utiliser `await`
-- Chercher : `grep -n "prepareCockpitDataForAudit" seo-dashboard/dashboard.js`
+### 4.3 Impact
 
-### 4.4 Livrable
+- ✅ Fonction reste synchrone (pas d'async ajouté)
+- ✅ Audit IA affiche le vrai compteur
+- ✅ Zéro régression sur GSC, scan, publication
+- ✅ Logs `[AUDIT-COUNT-01]` ajoutés pour debug
+
+### 4.4 Commit
+
+`b3d4abf feat(AUDIT-COUNT-01): Source unique contents pour comptage articles`
+
+---
+
+## 4bis. PRIORITÉ #2 — PUBLISHER-IMG-01 (À TRAITER)
+
+### 4bis.1 Problème (signalé par GPT)
+
+Dans `seo-api/services/publisher.js`, fonction `generateHTMLFromBrief()` ligne 275 :
+
+L'image sélectionnée dans Studio SEO **n'arrive pas** dans l'article publié.
+Conséquence : `renovation_general_(9).webp` (fallback) est utilisé partout :
+- `BLOG_META image`
+- `og:image`
+- Schema `image`
+- Image principale dans le body
+
+### 4bis.2 Piste d'investigation
+
+```javascript
+// Ligne 283 publisher.js :
+const selectedImage = content.image_url
+  || content.imageUrl
+  || 'renovation_general_(9).webp';  // ← Fallback atteint = bug
+```
+
+Le champ `content.image_url` / `content.imageUrl` n'arrive probablement pas côté backend.
+
+### 4bis.3 Plan d'action (nouvelle conversation)
+
+1. **Trace côté Studio SEO** : quelle clé contient l'image sélectionnée dans `dashboard.js` ?
+2. **Trace côté route publisher** : ce qui arrive dans `req.body`
+3. **Trace côté service** : ce que reçoit `content` dans `generateHTMLFromBrief()`
+4. **Correction ciblée** du point de rupture
+5. **Remplacement du fallback** : créer `images/blog/default-blog.webp` explicite
+
+### 4bis.4 Livrable attendu
 
 ```
-AUDIT-COUNT-01
-CLÔTURE — Simplification comptage articles
-[Avant/après + preuve fonctionnement]
+PUBLISHER-IMG-01
+CLÔTURE — Image principale correctement injectée
 — Claude
 ```
 
@@ -301,8 +269,8 @@ Claude, nouvelle session de travail MistralPro-Reno.
 Lis d'abord /docs/SESSION_HANDOFF.md pour la passation complète.
 Puis /docs/GOUVERNANCE.md pour les règles.
 
-Priorité #1 : finaliser GSC-PIPELINE-01
-Priorité #2 : corriger AUDIT-COUNT-01
+Priorité : PUBLISHER-IMG-01
+(AUDIT-COUNT-01 et GSC-PIPELINE-01 sont clos)
 
 Confirme réception au format gouvernance.
 — Ricardo

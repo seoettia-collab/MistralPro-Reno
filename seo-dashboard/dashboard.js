@@ -1039,63 +1039,30 @@ function prepareCockpitDataForAudit() {
   
   const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = cockpitCache;
   
-  // Récupérer les données du scan si disponibles
-  let siteScanData = null;
-  let liveContentsCount;
-
-try {
-  const savedScan = localStorage.getItem('mpr_siteScanData');
-  console.log('[SCAN RAW]', savedScan);
-
-  if (savedScan) {
-    siteScanData = JSON.parse(savedScan);
-  }
-
-  console.log('[SCAN PARSED]', siteScanData);
-
-} catch (e) {
-  console.warn('[Audit IA] Pas de données de scan disponibles');
-}
-
-let blogLinks = [];
-
-try {
-  const links = document.querySelectorAll('a[href*="/blog/"]');
-
-  blogLinks = Array.from(links)
-    .map(a => a.getAttribute('href'))
-    .filter(href =>
-      href &&
-      href.endsWith('.html') &&
-      !href.includes('blog.html') &&
-      !href.includes('facebook.com') &&
-      !href.includes('business.facebook')
-    );
-} catch (e) {
-  console.warn('[Audit IA] Impossible de lire les articles DOM');
-}
-
-const scannedBlogPages = siteScanData?.pages?.filter(p => {
-  if (!p.url) return false;
-
-  const url = p.url.toLowerCase();
-
-  return (
-    url.includes('/blog/') &&
-    !url.endsWith('/blog.html') &&
-    url.includes('.html')
-  );
-}) || [];
-liveContentsCount =
-  scannedBlogPages.length > 0
-    ? scannedBlogPages.length
-    : blogLinks.length > 0
-      ? blogLinks.length
-      : contents.filter(c => ['deployed', 'published', 'live'].includes(c.status)).length;
+  // AUDIT-COUNT-01 — Source unique : contents (DB)
+  // Les sources siteScanData + DOM étaient trop fragiles et donnaient 0 à tort
+  const LIVE_STATUSES = ['deployed', 'published', 'live'];
+  const liveContentsCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
+  const totalContentsCount = contents.length;
+  const draftsCount = contents.filter(c => !LIVE_STATUSES.includes(c.status)).length;
   
-const totalContentsCount = scannedBlogPages.length > 0
-  ? scannedBlogPages.length
-  : contents.length;
+  // Récupérer les données du scan pour le contexte général (NON utilisées pour le comptage)
+  let siteScanData = null;
+  try {
+    const savedScan = localStorage.getItem('mpr_siteScanData');
+    if (savedScan) {
+      siteScanData = JSON.parse(savedScan);
+    }
+  } catch (e) {
+    console.warn('[Audit IA] Pas de données de scan disponibles');
+  }
+  
+  console.log('[AUDIT-COUNT-01] Contenu:', {
+    total: totalContentsCount,
+    live: liveContentsCount,
+    en_attente: draftsCount
+  });
+  
   return {
     score_global: scoreData.score || 0,
     score_breakdown: scoreData.breakdown || {},
@@ -1107,11 +1074,11 @@ const totalContentsCount = scannedBlogPages.length > 0
       requetes: stats.total_queries || 0
     },
     
-   contenu: {
-  total: totalContentsCount,
-  live: liveContentsCount,
-  en_attente: contents.filter(c => !['deployed', 'published', 'live'].includes(c.status)).length
-},
+    contenu: {
+      total: totalContentsCount,
+      live: liveContentsCount,
+      en_attente: draftsCount
+    },
     
     opportunites: opportunities.slice(0, 10).map(o => ({
       keyword: o.keyword || o.target,
