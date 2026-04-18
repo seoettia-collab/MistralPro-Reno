@@ -9512,13 +9512,18 @@ select:focus {
    =================================================================== */
 .articles-grid-compact {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
-@media (max-width: 1500px) { .articles-grid-compact { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 1150px) { .articles-grid-compact { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 820px)  { .articles-grid-compact { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 520px)  { .articles-grid-compact { grid-template-columns: 1fr; } }
+@media (max-width: 1500px) { .articles-grid-compact { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 1150px) { .articles-grid-compact { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 820px)  { .articles-grid-compact { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px)  { .articles-grid-compact { grid-template-columns: minmax(0, 1fr); } }
+
+.article-vignette { min-width: 0; }
 
 .article-vignette {
   background: #1e293b;
@@ -9872,22 +9877,22 @@ select:focus {
 }
 
 /* =====================================================================
-   SEO-UX-02 — Scan SEO : 1 seule ligne horizontale scrollable
+   SEO-UX-02 REV — Scan SEO : grille qui wrap, PAS de scroll horizontal
    ===================================================================== */
 .scan-pages-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px;
-  padding: 8px 4px 12px 4px;
+  padding: 8px 0 12px 0;
   max-height: none;
+  overflow: visible;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 .scan-pages-grid .scan-page-compact {
-  min-width: 180px;
-  max-width: 220px;
-  flex: 0 0 auto;
+  min-width: 0;
+  max-width: none;
   padding: 8px 10px;
 }
 .scan-pages-grid .scan-page-compact-name {
@@ -9900,10 +9905,6 @@ select:focus {
 .scan-pages-grid .scan-page-compact-ok {
   font-size: 10px;
 }
-/* Scrollbar compacte */
-.scan-pages-grid::-webkit-scrollbar { height: 8px; }
-.scan-pages-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-.scan-pages-grid::-webkit-scrollbar-track { background: transparent; }
 
 /* Summary scan stats également compact */
 .scan-summary {
