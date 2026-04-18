@@ -115,55 +115,63 @@ Confirmation GPT : *"Données GSC remontent bien dans le dashboard"*
 
 ---
 
-## 4. PRIORITÉ #2 — AUDIT-COUNT-01 ✅ CLOS (18 avril 2026)
+## 4. PRIORITÉ #2 — AUDIT-COUNT-01 ✅ CLOS (Option B appliquée)
 
-### 4.1 Problème (résolu)
+### 4.1 Problème
 
-Dans `seo-dashboard/dashboard.js`, fonction `prepareCockpitDataForAudit()` :
-Le comptage de `contenu.live` utilisait **3 sources en cascade** (siteScan → DOM → contents),
-ce qui donnait **0 article à tort**.
+Dans `seo-dashboard/dashboard.js`, la fonction `prepareCockpitDataForAudit()`
+mélangeait 3 sources fragiles (siteScan → DOM → contents DB) et affichait
+**0 article à tort**.
 
-### 4.2 Solution appliquée
+### 4.2 Investigation approfondie
 
-Conformément à la recommandation GPT : **source unique = `contents` (DB)**.
+Découverte : `GET /api/content` retourne `[]` — **la table `contents` DB est vide**.
+Pourtant 6 articles sont publiés sur le site.
+
+**Root cause en amont** : Studio SEO publie directement via GitHub API sans
+alimenter la table `contents`. Toute la chaîne DB (alerts, decisionEngine,
+stats, seoScore, impactAnalysis) compte donc 0.
+
+### 4.3 Solution appliquée (Option B — temporaire)
+
+Source canonique = **blog.html live** (vérité terrain).
 
 ```javascript
-const LIVE_STATUSES = ['deployed', 'published', 'live'];
-const liveContentsCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
-const totalContentsCount = contents.length;
-const draftsCount = contents.filter(c => !LIVE_STATUSES.includes(c.status)).length;
+async function prepareCockpitDataForAudit() {
+  // ...
+  const liveArticles = await parseArticlesFromBlogHtml();
+  const liveContentsCount = liveArticles.length;
+  const draftsCount = contents.filter(c => !LIVE_STATUSES.includes(c.status)).length;
+  const totalContentsCount = liveContentsCount + draftsCount;
+  // ...
+}
 ```
 
-Suppression de la logique `siteScanData + blogLinks` dans le comptage (mais `siteScanData`
-reste utilisé pour `scan_site` plus bas dans le return — contexte IA général).
+Fallback DB si `blog.html` inaccessible.
+Appel mis à jour avec `await` dans `launchFullAuditIA`.
 
-### 4.3 Impact
+### 4.4 Impact
 
-- ✅ Fonction reste synchrone (pas d'async ajouté)
-- ✅ Audit IA affiche le vrai compteur
+- ✅ Audit IA affiche le vrai compteur (6 articles)
 - ✅ Zéro régression sur GSC, scan, publication
-- ✅ Logs `[AUDIT-COUNT-01]` ajoutés pour debug
+- ⚠️ Option A (fix structurel DB) reste à faire → voir PUBLISHER-IMG-01
 
-### 4.4 Commit
+### 4.5 Commit
 
-`46ed3d9 feat(AUDIT-COUNT-01): Source unique contents pour comptage articles`
+`5d8cde0 fix(AUDIT-COUNT-01): Option B - Source canonique blog.html live`
 
 ---
 
-## 4bis. PRIORITÉ #2 — PUBLISHER-IMG-01 (À TRAITER)
+## 4bis. PRIORITÉ #2 — PUBLISHER-IMG-01 + AUDIT-COUNT-01-A (À TRAITER)
 
-### 4bis.1 Problème (signalé par GPT)
+Cette session regroupera **2 corrections liées** sur le publisher :
+
+### A) Image principale non injectée (signalé GPT)
 
 Dans `seo-api/services/publisher.js`, fonction `generateHTMLFromBrief()` ligne 275 :
-
-L'image sélectionnée dans Studio SEO **n'arrive pas** dans l'article publié.
-Conséquence : `renovation_general_(9).webp` (fallback) est utilisé partout :
-- `BLOG_META image`
-- `og:image`
-- Schema `image`
-- Image principale dans le body
-
-### 4bis.2 Piste d'investigation
+L'image sélectionnée dans Studio SEO n'arrive pas dans l'article publié.
+Fallback `renovation_general_(9).webp` utilisé partout :
+- `BLOG_META image`, `og:image`, Schema `image`, image body
 
 ```javascript
 // Ligne 283 publisher.js :
@@ -172,21 +180,39 @@ const selectedImage = content.image_url
   || 'renovation_general_(9).webp';  // ← Fallback atteint = bug
 ```
 
-Le champ `content.image_url` / `content.imageUrl` n'arrive probablement pas côté backend.
+### B) Table contents DB non alimentée (découvert en AUDIT-COUNT-01)
 
-### 4bis.3 Plan d'action (nouvelle conversation)
+Le publisher ne fait **pas** d'INSERT dans la table `contents` lors de la
+publication. Conséquence : toute la chaîne DB compte 0 articles.
 
-1. **Trace côté Studio SEO** : quelle clé contient l'image sélectionnée dans `dashboard.js` ?
-2. **Trace côté route publisher** : ce qui arrive dans `req.body`
-3. **Trace côté service** : ce que reçoit `content` dans `generateHTMLFromBrief()`
-4. **Correction ciblée** du point de rupture
-5. **Remplacement du fallback** : créer `images/blog/default-blog.webp` explicite
+Impacté : `alerts.js`, `decisionEngine.js`, `stats.js`, `seoScore.js`,
+`impactAnalysis.js`, `prepareCockpitDataForAudit` (fallback).
 
-### 4bis.4 Livrable attendu
+### Plan d'action combiné
+
+1. **Trace côté Studio SEO** : identifier la clé image dans le payload
+2. **Trace côté route publisher** : voir ce qui arrive dans `req.body`
+3. **Corriger injection image** dans `generateHTMLFromBrief()`
+4. **Ajouter INSERT contents** au moment de la publication :
+   ```sql
+   INSERT INTO contents (type, title, keyword, slug_suggested, status, live_at, deployed_url)
+   VALUES (?, ?, ?, ?, 'live', ?, ?)
+   ```
+5. **Backfill** : script one-shot pour inscrire les 6 articles existants
+6. **Créer image par défaut explicite** : `images/blog/default-blog.webp`
+   (remplace le fallback silencieux)
+7. **Revenir sur `prepareCockpitDataForAudit`** : rétablir la DB comme source
+   unique une fois la table alimentée (supprimer la dépendance à
+   `parseArticlesFromBlogHtml`)
+
+### Livrable attendu
 
 ```
 PUBLISHER-IMG-01
-CLÔTURE — Image principale correctement injectée
+CLÔTURE — Image injectée + DB contents alimentée
+- Article test avec image choisie
+- 6 articles existants backfill dans contents
+- Audit IA revient sur source DB unique
 — Claude
 ```
 
