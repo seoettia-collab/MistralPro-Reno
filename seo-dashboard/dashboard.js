@@ -2777,6 +2777,21 @@ function renderStudioResult(content) {
           <!-- Upload Image -->
           <div class="seo-info-card image-upload-card">
             <h4>🖼️ Images article <span class="optional-tag">Optionnel</span></h4>
+
+            <!-- IMG-PROMPT : suggestion de prompt image en anglais -->
+            <div class="image-prompt-box" id="image-prompt-box">
+              <div class="image-prompt-header">
+                <span class="image-prompt-label">🎨 Image prompt (EN) — copy to CapCut/Midjourney/DALL-E</span>
+                <div class="image-prompt-actions">
+                  <button class="btn-mini" onclick="regenerateImagePrompt()" title="Régénérer un nouveau prompt">🔄</button>
+                  <button class="btn-mini btn-copy-prompt" onclick="copyImagePrompt()" title="Copier le prompt">📋 Copier</button>
+                </div>
+              </div>
+              <div class="image-prompt-content" id="image-prompt-content">
+                <span class="image-prompt-loading">⏳ Génération du prompt image...</span>
+              </div>
+            </div>
+
             <div id="image-upload-container" class="image-upload-container">
               <div class="upload-dropzone" id="upload-dropzone">
                 <input type="file" id="image-file-input" accept="image/*" multiple onchange="handleImageUpload(event)" hidden />
@@ -2854,6 +2869,11 @@ function renderStudioResult(content) {
   
   // Initialiser le drag & drop
   initImageDropzone();
+
+  // IMG-PROMPT : lancer la generation du prompt image en arriere-plan
+  if (typeof generateImagePromptForArticle === 'function') {
+    setTimeout(() => generateImagePromptForArticle(), 200);
+  }
 }
 
 /**
@@ -3068,6 +3088,136 @@ function extractArticleContent(htmlContent) {
 
 // Cache pour les images uploadées (tableau)
 let uploadedImages = [];
+
+// ══════════════════════════════════════════════════════════════════════════════
+// IMG-PROMPT — Generation d un prompt image en anglais pour l article
+// ══════════════════════════════════════════════════════════════════════════════
+
+let _imagePromptCache = null;
+let _imagePromptInProgress = false;
+
+/**
+ * Genere un prompt image en anglais (2-3 phrases) via Claude API,
+ * base sur le keyword, le titre et le contexte de l article courant.
+ * Appele automatiquement apres rendu du Studio SEO.
+ */
+async function generateImagePromptForArticle(forceNew = false) {
+  const box = document.getElementById('image-prompt-content');
+  if (!box) return;
+  if (_imagePromptInProgress) return;
+
+  // Si deja en cache et pas force, afficher depuis le cache
+  if (_imagePromptCache && !forceNew) {
+    box.textContent = _imagePromptCache;
+    return;
+  }
+
+  if (!studioGeneratedContent) {
+    box.innerHTML = '<span class="image-prompt-muted">Generez un article pour obtenir un prompt image.</span>';
+    return;
+  }
+
+  _imagePromptInProgress = true;
+  box.innerHTML = '<span class="image-prompt-loading">⏳ Generation du prompt image...</span>';
+
+  const keyword = studioGeneratedContent.keyword || '';
+  const title = studioGeneratedContent.h1 || studioGeneratedContent.title || '';
+  const meta = studioGeneratedContent.metaDescription || '';
+  const category = detectCategory(keyword) || 'Renovation';
+  const context = studioGeneratedContent.context || '';
+
+  const userPrompt = `You are an expert at writing visual prompts for AI image generators (Midjourney, DALL-E, Stable Diffusion, CapCut).
+
+Write a SHORT image prompt in ENGLISH (2 to 3 sentences maximum, ~40-60 words total) for a featured blog image that illustrates this article.
+
+Article context:
+- Title: ${title}
+- Keyword: ${keyword}
+- Category: ${category}
+- Meta description: ${meta}
+${context ? `- Extra context: ${context}` : ''}
+
+Requirements for the prompt:
+- Describe a single, clear scene (interior, materials, people if relevant)
+- Professional renovation / construction aesthetic
+- Modern, well-lit, realistic photography style
+- No text, no logos, no watermarks
+- Respect the Parisian / Ile-de-France context when relevant
+- Vary the angle and setting if the user regenerates (pick a different perspective)
+
+Output ONLY the final prompt text. No preamble, no quotes, no explanations.`;
+
+  try {
+    const response = await fetchAPI('/api/content/generate-prompt', {
+      method: 'POST',
+      body: JSON.stringify({ prompt: userPrompt, maxTokens: 200 })
+    });
+    const data = await response.json();
+    if (data.status === 'ok' && data.data?.text) {
+      _imagePromptCache = data.data.text.trim();
+      box.textContent = _imagePromptCache;
+    } else {
+      // Fallback: prompt local si l API n est pas dispo
+      _imagePromptCache = buildFallbackImagePrompt(title, keyword, category);
+      box.textContent = _imagePromptCache;
+    }
+  } catch (e) {
+    console.warn('[IMG_PROMPT] Erreur API, fallback local:', e);
+    _imagePromptCache = buildFallbackImagePrompt(title, keyword, category);
+    box.textContent = _imagePromptCache;
+  } finally {
+    _imagePromptInProgress = false;
+  }
+}
+
+/**
+ * Prompt image genere localement en cas d indisponibilite de l API.
+ */
+function buildFallbackImagePrompt(title, keyword, category) {
+  const settings = {
+    'Cuisine': 'A modern, bright Parisian kitchen with clean lines, matte finish cabinets, marble countertop and pendant lights. Natural daylight through a large window, wooden floor, minimalist design. Professional interior photography, realistic, no text.',
+    'Salle de bain': 'A contemporary Parisian bathroom renovation with a walk-in shower, black fixtures, light grey tiles and a floating vanity. Soft natural lighting, matte finishes, neat and high-end atmosphere. Professional interior photography, realistic, no text.',
+    'Appartement': 'A freshly renovated Haussmannian apartment living room in Paris with high ceilings, white walls, hardwood parquet floor and large windows. Bright natural light, minimalist furniture, clean composition. Professional interior photography, realistic, no text.',
+    'Plomberie': 'A professional plumber in workwear installing modern piping under a sink in a bright Parisian apartment. Clean tools on the floor, focused action, realistic documentary style photo, no text.',
+    'Électricité': 'An electrician in uniform carefully working on a modern electrical panel in a renovated Parisian apartment. Clean wiring, focused hands, realistic professional photo, no text.',
+    'Renovation': 'A bright Parisian apartment under renovation, with partially finished walls, new wooden floor being installed, craftsman tools neatly placed, natural daylight. Professional, realistic documentary photography, no text.'
+  };
+  return settings[category] || settings['Renovation'];
+}
+
+/**
+ * Regenerer un nouveau prompt image (different du precedent)
+ */
+function regenerateImagePrompt() {
+  _imagePromptCache = null; // vider le cache pour forcer une nouvelle generation
+  generateImagePromptForArticle(true);
+}
+
+/**
+ * Copier le prompt image dans le presse-papiers
+ */
+async function copyImagePrompt() {
+  const box = document.getElementById('image-prompt-content');
+  if (!box) return;
+  const text = (box.textContent || '').trim();
+  if (!text || text.startsWith('⏳') || text.startsWith('Generez')) {
+    showNotification('Attendez la fin de la generation du prompt', 'warning');
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    showNotification('✅ Prompt image copie — collez-le dans CapCut / Midjourney', 'success');
+  } catch (e) {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showNotification('✅ Prompt copie', 'success'); }
+    catch (_) { showNotification('Impossible de copier automatiquement', 'error'); }
+    document.body.removeChild(ta);
+  }
+}
 
 /**
  * Initialise la zone de drag & drop multi-images

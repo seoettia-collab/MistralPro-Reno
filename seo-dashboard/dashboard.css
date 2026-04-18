@@ -10390,3 +10390,78 @@ select:focus {
 }
 
 /* Bouton Modifier retire: workflow = Supprimer + Recreer (plus simple, plus honnete) */
+
+/* =====================================================================
+   IMG-PROMPT — Prompt image en anglais dans l'etape image du Studio SEO
+   ===================================================================== */
+.image-prompt-box {
+  margin-bottom: 14px;
+  padding: 12px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.image-prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.image-prompt-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+.image-prompt-actions {
+  display: flex;
+  gap: 6px;
+}
+.image-prompt-actions .btn-mini {
+  background: #334155;
+  color: #e2e8f0;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.image-prompt-actions .btn-mini:hover {
+  background: #475569;
+}
+.image-prompt-actions .btn-copy-prompt {
+  background: #10b981;
+  color: #fff;
+}
+.image-prompt-actions .btn-copy-prompt:hover {
+  background: #059669;
+}
+.image-prompt-content {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #e2e8f0;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  background: #020617;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 42px;
+}
+.image-prompt-loading {
+  color: #94a3b8;
+  font-style: italic;
+  font-family: inherit;
+}
+.image-prompt-muted {
+  color: #64748b;
+  font-family: inherit;
+}

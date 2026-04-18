@@ -611,4 +611,61 @@ function generateSimulatedContent(keyword, type = 'blog', tone = 'professional',
   };
 }
 
+/**
+ * POST /api/content/generate-prompt
+ * Genere un court texte via Claude API (utilise pour le prompt image, etc.)
+ * Body: { prompt: string, maxTokens?: number }
+ */
+router.post('/content/generate-prompt', async (req, res) => {
+  try {
+    const { prompt, maxTokens = 200 } = req.body;
+
+    if (!prompt || typeof prompt !== 'string') {
+      return res.status(400).json({ status: 'error', message: 'prompt requis' });
+    }
+
+    if (!ANTHROPIC_API_KEY) {
+      console.warn('[Generate Prompt] ANTHROPIC_API_KEY non configuree');
+      return res.status(503).json({
+        status: 'error',
+        message: 'API Anthropic non configuree, fallback local attendu'
+      });
+    }
+
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: Math.min(Math.max(Number(maxTokens) || 200, 50), 500),
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      console.error('[Generate Prompt] Erreur Anthropic:', response.status, errText);
+      return res.status(502).json({ status: 'error', message: 'Erreur API Anthropic' });
+    }
+
+    const data = await response.json();
+    const text = (data.content && data.content[0] && data.content[0].text) || '';
+
+    return res.json({
+      status: 'ok',
+      data: {
+        text: text.trim(),
+        usage: data.usage || null
+      }
+    });
+  } catch (err) {
+    console.error('[Generate Prompt] Erreur:', err.message);
+    return res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 module.exports = router;
