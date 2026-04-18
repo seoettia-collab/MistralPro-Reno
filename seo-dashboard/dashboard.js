@@ -551,6 +551,9 @@ function renderCockpitV2(data) {
         </div>
         <!-- /Row 4col -->
 
+        <!-- Details du scan : pleine largeur, affiche seulement apres scan -->
+        <div id="site-scan-details-full" class="site-scan-details-full" style="display:none;"></div>
+
         <!-- SECTION 8 : Mes Articles -->
         <div class="cockpit-section cockpit-my-articles">
           <div class="section-header">
@@ -747,55 +750,69 @@ async function autoScanIfNeeded() {
  * Affiche les résultats du scan SEO
  */
 function renderSiteScanResults(data) {
-  const container = document.getElementById('site-scan-results');
+  const colContainer = document.getElementById('site-scan-results');
+  const detailsContainer = document.getElementById('site-scan-details-full');
   const { pages, summary } = data;
-  
+
   // Trier par score (plus bas en premier = plus urgent)
   const sortedPages = [...pages].sort((a, b) => (a.score || 0) - (b.score || 0));
-  
+
   // Couleur du score moyen
   const avgScoreColor = summary.avgScore >= 70 ? '#10b981' : summary.avgScore >= 40 ? '#f59e0b' : '#ef4444';
-  
-  container.innerHTML = `
-    <div class="scan-summary">
-      <div class="scan-stat">
-        <span class="scan-stat-value" style="color: ${avgScoreColor}">${summary.avgScore}</span>
-        <span class="scan-stat-label">Score moyen</span>
-      </div>
-      <div class="scan-stat">
-        <span class="scan-stat-value">${summary.totalPages}</span>
-        <span class="scan-stat-label">Pages</span>
-      </div>
-      <div class="scan-stat scan-stat-critical">
-        <span class="scan-stat-value">${summary.criticalIssues}</span>
-        <span class="scan-stat-label">Critiques</span>
-      </div>
-      <div class="scan-stat scan-stat-warning">
-        <span class="scan-stat-value">${summary.warningIssues}</span>
-        <span class="scan-stat-label">Warnings</span>
-      </div>
-    </div>
-    
-    <div class="scan-pages-grid">
-      ${sortedPages.map(page => {
-        const scoreColor = page.score >= 70 ? '#10b981' : page.score >= 40 ? '#f59e0b' : '#ef4444';
-        const issuesCount = (page.issues || []).length;
-        const firstIssue = issuesCount > 0 ? page.issues[0].message : null;
-        return `
-        <div class="scan-page-compact">
-          <div class="scan-page-compact-header">
-            <span class="scan-page-compact-score" style="background: ${scoreColor}">${page.score || 0}</span>
-            <span class="scan-page-compact-name">${escapeHtml(page.name)}</span>
-          </div>
-          <div class="scan-page-compact-url">${escapeHtml(page.url.replace('https://www.mistralpro-reno.fr', ''))}</div>
-          ${issuesCount > 0
-            ? `<div class="scan-page-compact-issue">⚠️ ${escapeHtml(firstIssue)}${issuesCount > 1 ? ` (+${issuesCount - 1})` : ''}</div>`
-            : `<div class="scan-page-compact-ok">✅ Aucune issue</div>`}
+
+  // COL 4 : mini stats compactes (Score / Pages / Critiques / Warnings en 2x2)
+  if (colContainer) {
+    colContainer.innerHTML = `
+      <div class="scan-mini-grid">
+        <div class="scan-mini-stat">
+          <span class="scan-mini-value" style="color:${avgScoreColor}">${summary.avgScore}</span>
+          <span class="scan-mini-label">Score</span>
         </div>
-        `;
-      }).join('')}
-    </div>
-  `;
+        <div class="scan-mini-stat">
+          <span class="scan-mini-value">${summary.totalPages}</span>
+          <span class="scan-mini-label">Pages</span>
+        </div>
+        <div class="scan-mini-stat scan-stat-critical">
+          <span class="scan-mini-value">${summary.criticalIssues}</span>
+          <span class="scan-mini-label">Critiques</span>
+        </div>
+        <div class="scan-mini-stat scan-stat-warning">
+          <span class="scan-mini-value">${summary.warningIssues}</span>
+          <span class="scan-mini-label">Warnings</span>
+        </div>
+      </div>
+      <button class="btn-small btn-secondary scan-rerun-btn" onclick="runSiteScan()">Relancer</button>
+    `;
+  }
+
+  // SECTION PLEINE LARGEUR : détails des pages
+  if (detailsContainer) {
+    detailsContainer.style.display = 'block';
+    detailsContainer.innerHTML = `
+      <div class="section-header">
+        <h4>📄 Pages analysées (${sortedPages.length})</h4>
+      </div>
+      <div class="scan-pages-grid">
+        ${sortedPages.map(page => {
+          const scoreColor = page.score >= 70 ? '#10b981' : page.score >= 40 ? '#f59e0b' : '#ef4444';
+          const issuesCount = (page.issues || []).length;
+          const firstIssue = issuesCount > 0 ? page.issues[0].message : null;
+          return `
+          <div class="scan-page-compact">
+            <div class="scan-page-compact-header">
+              <span class="scan-page-compact-score" style="background: ${scoreColor}">${page.score || 0}</span>
+              <span class="scan-page-compact-name">${escapeHtml(page.name)}</span>
+            </div>
+            <div class="scan-page-compact-url">${escapeHtml(page.url.replace('https://www.mistralpro-reno.fr', ''))}</div>
+            ${issuesCount > 0
+              ? `<div class="scan-page-compact-issue">⚠️ ${escapeHtml(firstIssue)}${issuesCount > 1 ? ` (+${issuesCount - 1})` : ''}</div>`
+              : `<div class="scan-page-compact-ok">✅ Aucune issue</div>`}
+          </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
 }
 
 /**

@@ -9921,3 +9921,64 @@ select:focus {
 .scan-summary .scan-stat-label {
   font-size: 10px;
 }
+
+/* =====================================================================
+   SEO-UX-02 FIX — Scan SEO : mini stats en col 4, details pleine largeur
+   ===================================================================== */
+.scan-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 6px;
+}
+.scan-mini-stat {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 6px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.scan-mini-stat.scan-stat-critical .scan-mini-value { color: #ef4444; }
+.scan-mini-stat.scan-stat-warning .scan-mini-value { color: #f59e0b; }
+.scan-mini-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2e8f0;
+  line-height: 1.1;
+}
+.scan-mini-label {
+  font-size: 9px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+.scan-rerun-btn {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 11px;
+  padding: 5px 8px;
+}
+
+/* Details pleine largeur sous les 4 colonnes */
+.site-scan-details-full {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.site-scan-details-full .section-header {
+  margin-bottom: 10px;
+}
+.site-scan-details-full h4 {
+  font-size: 14px;
+  margin: 0;
+}
