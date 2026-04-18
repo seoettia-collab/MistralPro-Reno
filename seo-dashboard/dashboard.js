@@ -3417,30 +3417,61 @@ function integrateMainImageToHTML() {
   if (!studioGeneratedContent) return;
 
   const mainImage = uploadedImages.find(img => img.isMain);
+  const slug = studioGeneratedContent.slug;
+  const h1Safe = escapeHtml(studioGeneratedContent.h1 || '');
 
-  // Supprimer l'ancienne image principale si elle existe
-  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-    /<figure class="article-image">[\s\S]*?<\/figure>\s*/g,
-    ''
-  );
+  // STUDIO-UX-FIX : le nouveau template STUDIO-PUB-01A contient deja sa propre
+  // figure avec l'image principale. On ne la duplique plus.
+  // Logique:
+  // 1. Supprimer toute ancienne <figure class="article-image"> (pattern pre-fix)
+  // 2. Ne pas injecter une 2e image si le template contient deja sa figure hero
+  // 3. Remplacer uniquement le src si besoin pour pointer vers la bonne image
+  let html = studioGeneratedContent.htmlContent || '';
 
-  // Déterminer la source image à injecter
-  const imageSrc = mainImage
-    ? `/images/blog/${studioGeneratedContent.slug}.webp`
+  // Etape 1 : supprimer ancien pattern <figure class="article-image">
+  html = html.replace(/<figure class="article-image">[\s\S]*?<\/figure>\s*/g, '');
+
+  // Etape 2 : detecter si le template possede deja une figure hero avec img src ../images/blog/
+  const heroImgRegex = /<figure[^>]*>\s*<img\s+src="\.\.\/images\/blog\/[^"]+"/;
+  const hasHeroImg = heroImgRegex.test(html);
+
+  const targetSrcRelative = mainImage
+    ? `../images/blog/${slug}.webp`
+    : `../images/blog/default-blog.webp`;
+  const targetSrcAbsolute = mainImage
+    ? `/images/blog/${slug}.webp`
     : `/images/blog/default-blog.webp`;
 
-  const imageHTML = `
+  if (hasHeroImg) {
+    // Le template a deja sa figure hero — on remplace juste le src pour etre sur
+    // qu'il pointe vers le bon slug (au cas ou le slug aurait change en cours)
+    html = html.replace(
+      /(<figure[^>]*>\s*<img\s+src=")\.\.\/images\/blog\/[^"]+(")/,
+      `$1${targetSrcRelative}$2`
+    );
+    // Plus besoin d'injecter une 2e image
+  } else {
+    // Ancien template — fallback: injecter apres </header> ou au debut du main
+    const imageHTML = `
       <figure class="article-image">
-        <img src="${imageSrc}" alt="${escapeHtml(studioGeneratedContent.h1)}" loading="eager" />
+        <img src="${targetSrcAbsolute}" alt="${h1Safe}" loading="eager" />
       </figure>
 `;
+    if (html.includes('</header>')) {
+      html = html.replace('</header>', '</header>\n' + imageHTML);
+    } else if (html.includes('<main>')) {
+      html = html.replace('<main>', '<main>\n' + imageHTML);
+    }
+  }
 
-  studioGeneratedContent.htmlContent = studioGeneratedContent.htmlContent.replace(
-    '</header>',
-    '</header>\n' + imageHTML
-  );
-
+  studioGeneratedContent.htmlContent = html;
   studioGeneratedContent.hasImage = !!mainImage;
+  console.log('[IMG_INJECT_FIX]', {
+    slug,
+    hasHeroImg,
+    mainImage: !!mainImage,
+    targetSrcRelative
+  });
 }
 
 /**
