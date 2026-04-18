@@ -1039,16 +1039,22 @@ async function prepareCockpitDataForAudit() {
   
   const { stats, scoreData, alerts, actions, opportunities, contents, auditPages, conversions, competitors } = cockpitCache;
   
-  // PUBLISHER-IMG-01 : source canonique restaurée = DB contents
-  // Depuis que le Studio SEO alimente contents via /api/content/register-published
-  // et que le backfill a aligné les 6 articles existants, la DB est fiable.
-  // blog.html reste un fallback en cas de DB indisponible.
+  // AUDIT-COUNT-02 : source canonique DB contents + cross-check avec stats.contents_published
+  // Le backend audit-ia applique aussi un garde-fou d'intégrité en complément.
   const LIVE_STATUSES = ['deployed', 'published', 'live'];
   const dbLiveCount = contents.filter(c => LIVE_STATUSES.includes(c.status)).length;
-  let liveContentsCount = dbLiveCount;
+  const statsLiveCount = (stats && typeof stats.contents_published === 'number') ? stats.contents_published : 0;
+  // Utiliser le max entre les deux sources DB (le frontend cockpitCache vs /api/stats)
+  let liveContentsCount = Math.max(dbLiveCount, statsLiveCount);
   let source = 'db';
 
-  if (dbLiveCount === 0) {
+  console.log('[AUDIT_COUNT_TRACE] frontend', {
+    dbLiveFromContents: dbLiveCount,
+    statsLiveFromStats: statsLiveCount,
+    retained: liveContentsCount
+  });
+
+  if (liveContentsCount === 0) {
     // Fallback : la DB est vide, on retombe sur blog.html
     try {
       const liveArticles = await parseArticlesFromBlogHtml();
@@ -1056,13 +1062,13 @@ async function prepareCockpitDataForAudit() {
       if (parsedCount > 0) {
         liveContentsCount = parsedCount;
         source = 'blog_html_fallback';
-        console.warn('[AUDIT_DB_SOURCE_RESTORED] DB vide, fallback blog.html :', parsedCount);
+        console.warn('[AUDIT_COUNT_INTEGRITY_ALERT] DB vide, fallback blog.html :', parsedCount);
       }
     } catch (e) {
-      console.warn('[AUDIT_DB_SOURCE_RESTORED] DB vide ET blog.html inaccessible', e);
+      console.warn('[AUDIT_COUNT_INTEGRITY_ALERT] DB vide ET blog.html inaccessible', e);
     }
   } else {
-    console.log('[AUDIT_DB_SOURCE_RESTORED] Source DB contents :', dbLiveCount);
+    console.log('[AUDIT_DB_SOURCE_RESTORED] Source DB contents :', liveContentsCount);
   }
 
   // Brouillons = contenus en DB non encore publiés

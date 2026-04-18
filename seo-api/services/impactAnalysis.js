@@ -1,9 +1,11 @@
 /**
  * SEO Dashboard - Impact Analysis Service
  * Mesure l'effet réel des contenus publiés sur les métriques SEO
+ * AUDIT-COUNT-02 : utilise contentCounter canonique (LIVE_STATUSES)
  */
 
 const { dbAll, dbRun, dbGet } = require('./db');
+const { LIVE_STATUSES, isLive } = require('./contentCounter');
 
 /**
  * Calculer l'impact SEO d'un contenu publié
@@ -19,7 +21,7 @@ async function calculateContentImpact(contentId) {
     return { error: 'Contenu non trouvé' };
   }
   
-  if (content.status !== 'published') {
+  if (!isLive(content)) {
     return { error: 'Contenu non publié', status: content.status };
   }
 
@@ -132,13 +134,14 @@ function calculateImpactScore(metrics) {
  * @returns {Promise<Object>}
  */
 async function analyzeAllPublishedContent() {
-  // Récupérer tous les contenus publiés
+  // Récupérer tous les contenus publiés (canonique LIVE_STATUSES)
+  const placeholders = LIVE_STATUSES.map(() => '?').join(',');
   const publishedContents = await dbAll(`
     SELECT id, title, keyword, type, created_at 
     FROM contents 
-    WHERE status = 'published' AND keyword IS NOT NULL
+    WHERE status IN (${placeholders}) AND keyword IS NOT NULL
     ORDER BY created_at DESC
-  `);
+  `, LIVE_STATUSES);
 
   const results = {
     total_published: publishedContents.length,
@@ -217,12 +220,13 @@ async function getImpactSummary() {
     LIMIT 14
   `);
 
-  // Contenus publiés récemment
+  // Contenus publiés récemment (canonique LIVE_STATUSES)
+  const placeholders2 = LIVE_STATUSES.map(() => '?').join(',');
   const recentPublished = await dbAll(`
     SELECT COUNT(*) as count
     FROM contents
-    WHERE status = 'published' AND created_at >= date('now', '-30 days')
-  `);
+    WHERE status IN (${placeholders2}) AND created_at >= date('now', '-30 days')
+  `, LIVE_STATUSES);
 
   return {
     global: {

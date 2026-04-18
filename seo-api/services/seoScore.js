@@ -55,15 +55,16 @@ async function calculateTechniqueScore() {
 
 /**
  * Calculer le score contenu
+ * AUDIT-COUNT-02 : utilise LIVE_STATUSES canonique pour 'published'
  * @returns {Promise<{score: number, details: Object}>}
  */
 async function calculateContenuScore() {
   const stats = await dbGet(`
     SELECT 
       COUNT(*) as total,
-      SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published,
+      SUM(CASE WHEN status IN ('live','deployed','published') THEN 1 ELSE 0 END) as published,
       SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft,
-      SUM(CASE WHEN status = 'validated' THEN 1 ELSE 0 END) as validated
+      SUM(CASE WHEN status IN ('ready','validated') THEN 1 ELSE 0 END) as validated
     FROM contents
   `);
 

@@ -5,10 +5,41 @@
 
 const express = require('express');
 const router = express.Router();
+const { countLive, checkIntegrity } = require('../services/contentCounter');
 
 // Clé API Anthropic depuis variables d'environnement
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_REPO = 'seoettia-collab/MistralPro-Reno';
+const GITHUB_API_URL = 'https://api.github.com';
+
+/**
+ * AUDIT-COUNT-02 — Source terrain articles GitHub
+ * Sert de contrôle d'intégrité pour valider le compteur DB.
+ */
+async function getGroundTruthArticlesCount() {
+  if (!GITHUB_TOKEN) return 0;
+  try {
+    const response = await fetch(
+      `${GITHUB_API_URL}/repos/${GITHUB_REPO}/contents/blog`,
+      {
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    );
+    if (!response.ok) return 0;
+    const files = await response.json();
+    return files.filter(f => f.name.endsWith('.html') && f.name !== 'TEMPLATE.html').length;
+  } catch (e) {
+    console.error('[AUDIT_COUNT_INTEGRITY_ALERT] ground truth fetch failed:', e.message);
+    return 0;
+  }
+}
 
 /**
  * Génère un slug URL-friendly à partir d'un texte
@@ -110,6 +141,37 @@ router.post('/audit-ia/analyze', async (req, res) => {
         message: 'cockpitData requis'
       });
     }
+
+    // AUDIT-COUNT-02 — Garde-fou d'intégrité obligatoire
+    // Croise le compteur DB canonique avec la source terrain GitHub
+    // pour empêcher l'audit IA de partir sur une donnée mensongère.
+    console.log('[AUDIT_COUNT_TRACE] audit-ia incoming cockpit contenu:', cockpitData.contenu);
+    const dbLive = await countLive();
+    const groundLive = await getGroundTruthArticlesCount();
+    const integrity = checkIntegrity(dbLive, groundLive);
+
+    if (!integrity.ok) {
+      // Cas critique : DB=0 mais articles terrain existent → ne pas laisser
+      // le prompt partir avec un faux "0 article publié"
+      if (integrity.alert === 'DB_EMPTY_BUT_GROUND_NONEMPTY') {
+        console.error('[AUDIT_COUNT_PROMPT_BLOCKED]', integrity);
+      }
+      // Corriger cockpitData.contenu avec la valeur effective (max(DB, terrain))
+      const corrected = {
+        ...(cockpitData.contenu || {}),
+        live: integrity.effectiveCount,
+        total: integrity.effectiveCount + ((cockpitData.contenu && cockpitData.contenu.en_attente) || 0),
+        integrity_alert: integrity.alert
+      };
+      cockpitData.contenu = corrected;
+      console.log('[AUDIT_COUNT_FIXED]', { before: dbLive, effective: integrity.effectiveCount });
+    } else {
+      // Aligner explicitement sur la valeur DB canonique
+      if (cockpitData.contenu) {
+        cockpitData.contenu.live = dbLive;
+      }
+      console.log('[AUDIT_COUNT_FIXED]', { dbLive, groundLive, ok: true });
+    }
     
     // Vérifier la clé API
     if (!ANTHROPIC_API_KEY) {
@@ -207,6 +269,11 @@ CONTENUS PRÊTS À PUBLIER :
 ${cockpitData.contenu && cockpitData.contenu.en_attente > 0
   ? `${cockpitData.contenu.en_attente} contenus en attente de publication`
   : 'Aucun contenu en attente'}
+
+ARTICLES DÉJÀ PUBLIÉS (ne pas reproposer à la création) :
+${cockpitData.contenu && cockpitData.contenu.live > 0
+  ? `${cockpitData.contenu.live} articles déjà LIVE — vérifie la liste avant toute proposition 'create_content' pour éviter les doublons`
+  : 'Aucun article live actuellement — la création de contenu est prioritaire'}
 
 Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
 

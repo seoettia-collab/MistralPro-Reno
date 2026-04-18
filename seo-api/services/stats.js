@@ -1,8 +1,10 @@
 /**
  * SEO Dashboard - Stats Service
+ * AUDIT-COUNT-02 : utilise contentCounter canonique pour contents_published
  */
 
 const { dbGet, dbAll } = require('./db');
+const { countLive } = require('./contentCounter');
 
 /**
  * Récupérer les statistiques globales
@@ -24,9 +26,13 @@ async function getStats() {
   const oppMedium = await dbGet(`SELECT COUNT(*) as count FROM opportunities WHERE priority = 'medium'`);
   const oppLow = await dbGet(`SELECT COUNT(*) as count FROM opportunities WHERE priority = 'low'`);
 
-  // Stats Contenus
+  // Stats Contenus — source canonique AUDIT-COUNT-02
   const contentsTotal = await dbGet(`SELECT COUNT(*) as count FROM contents`);
-  const contentsPublished = await dbGet(`SELECT COUNT(*) as count FROM contents WHERE status = 'published'`);
+  const contentsPublished = await countLive();
+  console.log('[AUDIT_COUNT_STATUS_NORMALIZED] stats.js', {
+    contents_total: contentsTotal.count || 0,
+    contents_published: contentsPublished
+  });
 
   return {
     // Search Console
@@ -42,7 +48,7 @@ async function getStats() {
 
     // Contenus
     contents_total: contentsTotal.count || 0,
-    contents_published: contentsPublished.count || 0
+    contents_published: contentsPublished
   };
 }
 
