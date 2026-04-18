@@ -146,7 +146,7 @@ reste utilisé pour `scan_site` plus bas dans le return — contexte IA généra
 
 ### 4.4 Commit
 
-`b3d4abf feat(AUDIT-COUNT-01): Source unique contents pour comptage articles`
+`46ed3d9 feat(AUDIT-COUNT-01): Source unique contents pour comptage articles`
 
 ---
 
