@@ -3779,23 +3779,52 @@ async function publishContent() {
   
   try {
     // Étape 0: Uploader les images si présentes
+    // IMG-INLINE-FIX : on collecte aussi les paths pour pouvoir remplacer les
+    // base64 dans le HTML avant le push.
+    const imageFilePathByDataUrl = new Map();
     if (hasImagesToUpload) {
       console.log('[Publication] Upload images...');
-      
+
       for (let i = 0; i < uploadedImages.length; i++) {
         const img = uploadedImages[i];
         const imageSuffix = img.isMain ? '' : `-${i + 1}`;
         const imageResult = await uploadImageToGitHub(slug, img.dataUrl, imageSuffix);
-        
+
         if (imageResult.success) {
           console.log(`[Publication] ✅ Image ${i + 1} uploadée:`, imageResult.path);
+          // imageResult.path ex: "images/blog/renovation-cuisine-paris-2026-2.webp"
+          // Dans un article blog (chemin "../"), on prefix ../
+          imageFilePathByDataUrl.set(img.dataUrl, `../${imageResult.path}`);
         } else {
           console.warn(`[Publication] ⚠️ Échec upload image ${i + 1}:`, imageResult.error);
         }
       }
-      
+
       updatePublishStep('step0', 'done');
       updatePublishStep('step1', 'active');
+    }
+
+    // IMG-INLINE-FIX : remplacer TOUS les base64 data URLs dans le HTML
+    // par les chemins vers les fichiers uploades. Evite d'embarquer des
+    // dizaines de Ko de base64 dans le HTML publie.
+    if (imageFilePathByDataUrl.size > 0 && studioGeneratedContent.htmlContent) {
+      let htmlBefore = studioGeneratedContent.htmlContent.length;
+      let replacedCount = 0;
+      for (const [dataUrl, filePath] of imageFilePathByDataUrl.entries()) {
+        // Echapper le dataUrl pour utilisation en regex est inutile: on utilise split+join
+        if (studioGeneratedContent.htmlContent.includes(dataUrl)) {
+          studioGeneratedContent.htmlContent =
+            studioGeneratedContent.htmlContent.split(dataUrl).join(filePath);
+          replacedCount++;
+        }
+      }
+      let htmlAfter = studioGeneratedContent.htmlContent.length;
+      console.log('[IMG_INLINE_FIX]', {
+        replaced: replacedCount,
+        sizeBefore: htmlBefore,
+        sizeAfter: htmlAfter,
+        gainKb: Math.round((htmlBefore - htmlAfter) / 1024)
+      });
     }
     
     // Étape 1: Préparer le contenu
