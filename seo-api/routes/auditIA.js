@@ -6,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const { countLive, getAllLive, checkIntegrity } = require('../services/contentCounter');
+const { analyzeBlogPage } = require('../services/blogPageAnalyzer');
 
 // Clé API Anthropic depuis variables d'environnement
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -188,6 +189,20 @@ router.post('/audit-ia/analyze', async (req, res) => {
     } catch (e) {
       console.warn('[AUDIT_COUNT_INTEGRITY_ALERT] getAllLive failed:', e.message);
     }
+
+    // AUDIT-BLOG-01 — Analyse complète de blog.html en production
+    // Donne à l'IA la vision de ce qui est réellement affiché sur la page blog
+    let blogPageAnalysis = null;
+    try {
+      blogPageAnalysis = await analyzeBlogPage();
+      console.log('[AUDIT_BLOG_01_FETCHED]', {
+        featured: blogPageAnalysis.featured?.slug,
+        cards: blogPageAnalysis.stats.cards_count,
+        consistent: blogPageAnalysis.consistency.is_consistent
+      });
+    } catch (e) {
+      console.warn('[AUDIT_BLOG_01] analyse blog.html échouée:', e.message);
+    }
     
     // Vérifier la clé API
     if (!ANTHROPIC_API_KEY) {
@@ -301,6 +316,31 @@ RÈGLES STRICTES AVANT TOUTE DÉCISION create_content :
 - Si un sujet est déjà couvert, propose plutôt 'optimize_page' sur la page existante
 - Tu peux proposer des angles DIFFÉRENTS (arrondissement précis, sous-niche, longue traîne) tant que le slug final sera distinct`
   : 'Aucun article live actuellement — la création de contenu est prioritaire'}
+
+${blogPageAnalysis ? `ANALYSE DE LA PAGE PUBLIQUE /blog.html (source terrain visuelle) :
+- URL analysée : ${blogPageAnalysis.url}
+- Article à la une (featured) : ${blogPageAnalysis.featured ? `"${blogPageAnalysis.featured.title}" (slug=${blogPageAnalysis.featured.slug}, catégorie=${blogPageAnalysis.featured.category}, date=${blogPageAnalysis.featured.date_shown || '?'})` : 'aucun'}
+- Nombre de cartes dans la grille : ${blogPageAnalysis.stats.cards_count}
+- Catégories utilisées : ${Object.entries(blogPageAnalysis.stats.by_category).map(([k,v]) => `${k}(${v})`).join(', ') || 'aucune'}
+- Filtres catégories disponibles : ${blogPageAnalysis.categories_available.join(', ') || 'aucun filtre détecté'}
+
+COHÉRENCE DB ↔ PAGE BLOG :
+- Cohérent : ${blogPageAnalysis.consistency.is_consistent ? 'OUI ✅' : 'NON ⚠️'}
+${blogPageAnalysis.consistency.missing_on_page.length > 0 ? `- Articles EN DB mais NON AFFICHÉS sur blog.html (${blogPageAnalysis.consistency.missing_on_page.length}) : ${blogPageAnalysis.consistency.missing_on_page.join(', ')}` : ''}
+${blogPageAnalysis.consistency.orphans_on_page.length > 0 ? `- Articles AFFICHÉS sur blog.html mais INCONNUS en DB (${blogPageAnalysis.consistency.orphans_on_page.length}) : ${blogPageAnalysis.consistency.orphans_on_page.join(', ')}` : ''}
+
+DÉTAIL DE CHAQUE CARTE AFFICHÉE :
+${[blogPageAnalysis.featured, ...blogPageAnalysis.cards].filter(Boolean).map((c, i) =>
+  `${i + 1}. ${c.is_featured ? '[À LA UNE]' : '[GRILLE]   '} slug=${c.slug} | cat=${c.category || '-'} | date=${c.date_shown || '-'} | lecture=${c.read_time || '-'}`
+).join('\n')}
+
+INSIGHTS À UTILISER :
+- Si des cartes sont "orphelines" (affichées mais plus en DB), propose fix_technical pour les nettoyer
+- Si des articles DB ne sont pas affichés, propose fix_technical pour les ajouter à blog.html
+- Si des catégories sont sur-représentées (ex: 5 articles "Prix" sur 6), suggère diversification
+- Identifie les catégories manquantes dans les filtres mais présentes dans les cartes (ou inversement)
+- Évalue si l'article featured est bien choisi (date récente, impact SEO)
+` : 'Analyse de blog.html non disponible pour cette session (fallback sur DB uniquement).'}
 
 Fournis ton analyse ET tes décisions en JSON selon le format spécifié.`;
 

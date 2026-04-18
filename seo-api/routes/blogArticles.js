@@ -6,6 +6,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { analyzeBlogPage } = require('../services/blogPageAnalyzer');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO = 'seoettia-collab/MistralPro-Reno';
@@ -167,6 +168,21 @@ router.delete('/blog/articles/:slug', async (req, res) => {
       status: 'error',
       message: error.message
     });
+  }
+});
+
+/**
+ * GET /api/blog/analyze
+ * AUDIT-BLOG-01 : analyse complète de blog.html en production
+ * (cartes visibles, catégories, cohérence DB/page)
+ */
+router.get('/blog/analyze', async (req, res) => {
+  try {
+    const result = await analyzeBlogPage();
+    res.json({ status: 'ok', data: result });
+  } catch (err) {
+    console.error('[AUDIT_BLOG_01] erreur analyze:', err.message);
+    res.status(500).json({ status: 'error', message: err.message });
   }
 });
 
