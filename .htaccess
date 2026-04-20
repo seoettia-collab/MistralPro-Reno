@@ -12,6 +12,8 @@ Redirect 301 /landing.html /cost_calculator.html
 Redirect 301 /contact.html /cost_calculator.html
 Redirect 301 /landing /cost_calculator.html
 Redirect 301 /contact /cost_calculator.html
+Redirect 301 /devis /cost_calculator.html
+Redirect 301 /devis-travaux /cost_calculator.html
 
 # =========================================
 # CACHE OPTIMIZATION - Mistral Pro Reno
