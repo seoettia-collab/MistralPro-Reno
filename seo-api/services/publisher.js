@@ -394,6 +394,10 @@ excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Article","headline":"${escapeHTML(content.title)}","datePublished":"${today}","dateModified":"${today}","author":{"@type":"Organization","name":"Mistral Pro Reno"},"publisher":{"@type":"Organization","name":"Mistral Pro Reno","logo":{"@type":"ImageObject","url":"${SITE_URL}/images/logo.webp"}},"description":"${escapeHTML(brief.meta_description || keyword)}","image":"${articleImagePath.startsWith('http') ? articleImagePath : `${SITE_URL}${articleImagePath}`}","mainEntityOfPage":{"@type":"WebPage","@id":"${SITE_URL}/blog/${slug}.html"}}
   </script>
+  <!-- BREADCRUMB-01 -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"${SITE_URL}/"},{"@type":"ListItem","position":2,"name":"Blog","item":"${SITE_URL}/blog.html"},{"@type":"ListItem","position":3,"name":"${escapeHTML(content.title)}","item":"${SITE_URL}/blog/${slug}.html"}]}
+  </script>
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->

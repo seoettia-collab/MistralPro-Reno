@@ -3300,6 +3300,8 @@ function processUploadedImage(file) {
         dataUrl: resizedDataUrl,
         originalSize: file.size,
         isMain: isMain,
+        width: targetWidth,   // IMG-PLACEMENT : dimensions de sortie (anti-CLS)
+        height: targetHeight,
         insertedInContent: false
       };
       
@@ -3560,10 +3562,16 @@ function insertImageInContent(imageId) {
  * IMG-PLACEMENT : applique le placement choisi dans le HTML et la preview
  */
 function applyImagePlacement(image, placement, h2Matches) {
+  // IMG-PLACEMENT : alt descriptif (jamais le nom de fichier) + dimensions anti-CLS
+  const altText = (typeof studioGeneratedContent !== 'undefined' && studioGeneratedContent && studioGeneratedContent.h1)
+    ? studioGeneratedContent.h1
+    : image.filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+  const imgW = image.width || 700;
+  const imgH = image.height || 500;
   const figureHTML = `
     <figure class="article-inline-image" data-image-id="${image.id}">
-      <img src="${image.dataUrl}" alt="${escapeHtml(image.filename)}" loading="lazy" />
-      <figcaption>${escapeHtml(image.filename.replace(/\.[^/.]+$/, ''))}</figcaption>
+      <img src="${image.dataUrl}" alt="${escapeHtml(altText)}" width="${imgW}" height="${imgH}" loading="lazy" />
+      <figcaption>${escapeHtml(altText)}</figcaption>
     </figure>
   `;
 

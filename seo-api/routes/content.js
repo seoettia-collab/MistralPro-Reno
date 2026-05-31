@@ -177,45 +177,80 @@ router.post('/content/backfill', async (req, res) => {
     const DEFAULT_ARTICLES = [
       {
         slug: 'cout-renovation-appartement-paris',
-        title: "Combien coûte une rénovation d'appartement à Paris ?",
-        keyword: 'coût rénovation appartement Paris',
+        title: 'Coût rénovation appartement Paris 2026',
+        keyword: 'cout renovation appartement paris',
         category: 'Prix',
         image_url: 'cout-renovation-appartement-paris.webp'
       },
       {
         slug: 'degat-des-eaux-5-etapes',
-        title: 'Dégât des eaux : les 5 étapes à suivre',
-        keyword: 'dégât des eaux',
+        title: 'Dégât des Eaux : 5 Étapes Essentielles [Guide 2024]',
+        keyword: 'degat des eaux 5 etapes',
         category: 'Urgences',
         image_url: 'degat-des-eaux-5-etapes.webp'
       },
       {
         slug: 'prix-renovation-appartement-paris-2026',
-        title: 'Prix Rénovation Appartement Paris 2026',
-        keyword: 'prix rénovation appartement Paris 2026',
+        title: 'Prix Rénovation Appartement Paris 2026 : Tarifs & Devis',
+        keyword: 'prix renovation appartement paris 2026',
         category: 'Prix',
         image_url: 'prix-renovation-appartement-paris-2026.webp'
       },
       {
         slug: 'prix-renovation-de-habitation-ile-de-france',
-        title: "Prix rénovation d'habitation en Île-de-France",
-        keyword: 'prix rénovation habitation Île-de-France',
+        title: 'Prix Rénovation Habitation Île-de-France 2026 | Devis Gratuit',
+        keyword: 'prix renovation de habitation ile de france',
         category: 'Prix',
         image_url: 'prix-renovation-de-habitation-ile-de-france.webp'
       },
       {
         slug: 'prix-renovation-salle-de-bain-paris-2026',
-        title: 'Prix Rénovation Salle de Bain Paris 2026',
-        keyword: 'prix rénovation salle de bain Paris 2026',
+        title: 'Prix Rénovation Salle de Bain Paris 2026 : Tarifs & Devis',
+        keyword: 'prix renovation salle de bain paris 2026',
         category: 'Salle de bain',
         image_url: 'prix-renovation-salle-de-bain-paris-2026.webp'
       },
       {
+        slug: 'renovation-cuisine-paris-2026',
+        title: 'Rénovation Cuisine Paris 2026 : Prix et Tendances par Arrondissement',
+        keyword: 'renovation cuisine paris 2026',
+        category: 'Cuisine',
+        image_url: 'renovation-cuisine-paris-2026.webp'
+      },
+      {
+        slug: 'renovation-electricite-paris-2026',
+        title: 'Rénovation Électricité Paris 2026 : Normes, Prix et Artisans',
+        keyword: 'renovation electricite paris 2026',
+        category: 'Électricité',
+        image_url: 'renovation-electricite-paris-2026.webp'
+      },
+      {
+        slug: 'renovation-energetique-paris-2026-aides',
+        title: 'Rénovation Énergétique Paris 2026 : Toutes les Aides Disponibles',
+        keyword: 'renovation energetique paris 2026 aides',
+        category: 'Énergétique',
+        image_url: 'renovation-energetique-paris-2026-aides.webp'
+      },
+      {
+        slug: 'renovation-maison-ile-de-france-2026',
+        title: 'Rénovation Maison Île-de-France 2026 : Guide Complet et Prix',
+        keyword: 'renovation maison ile de france 2026',
+        category: 'Maison',
+        image_url: 'renovation-maison-ile-de-france-2026.webp'
+      },
+      {
+        slug: 'renovation-plomberie-paris-17-2026',
+        title: 'Rénovation Plomberie Paris 17ème 2026 : Guide & Tarifs',
+        keyword: 'renovation plomberie paris 17 2026',
+        category: 'Plomberie',
+        image_url: 'renovation-plomberie-paris-17-2026.webp'
+      },
+      {
         slug: 'renovation-salle-de-bain-guide-prix',
-        title: 'Rénovation salle de bain : guide des prix',
-        keyword: 'rénovation salle de bain prix',
+        title: 'Rénovation salle de bain Paris - Prix 2026',
+        keyword: 'renovation salle de bain guide prix',
         category: 'Salle de bain',
-        image_url: 'default-blog.webp'
+        image_url: 'renovation-salle-de-bain-guide-prix.webp'
       }
     ];
 

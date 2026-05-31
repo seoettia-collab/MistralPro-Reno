@@ -346,6 +346,16 @@ ${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEn
   </script>`;
   }
 
+  // BREADCRUMB-01 : BreadcrumbList JSON-LD
+  const breadcrumbSchema = `
+  <script type="application/ld+json">
+${JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.mistralpro-reno.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.mistralpro-reno.fr/blog.html" },
+    { "@type": "ListItem", "position": 3, "name": article.h1, "item": `https://www.mistralpro-reno.fr/blog/${slug}.html` }
+  ] }, null, 2)}
+  </script>`;
+
   // HTML final — STUDIO-PUB-01A : template complet aligne avec le site
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -394,7 +404,7 @@ ${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEn
   <script type="application/ld+json">
 ${JSON.stringify(schemaOrg, null, 2)}
   </script>
-  ${faqSchema}
+  ${faqSchema}${breadcrumbSchema}
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
