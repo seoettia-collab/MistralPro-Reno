@@ -521,8 +521,8 @@ const L=y.internal.getNumberOfPages();for(let t=1;t<=L;t++)y.setPage(t),
 y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,275,195,275),
 y.setFontSize(6),y.setTextColor(100,100,100),y.setFont(void 0,"normal"),
 y.text("capital de 1000 € - 85155888200029 RCS Paris - APE : 4120A",105,279,{align:"center"}),
-y.text("Tél : +33 (0) 7 55 18 89 37 - Email : contact@mistral-renov.com - https://www.mistralpro-reno.fr/",105,283,{align:"center"}),
-y.text("Garantie décennale - HOKEN ASSURANCE - 25 Rue Marbeuf, 75008 Paris, France - Couverture : France",105,287,{align:"center"}),
+y.text("Tél : +33 (0) 7 55 18 89 37 - Email : contact@mistralpro-reno.fr - https://www.mistralpro-reno.fr/",105,283,{align:"center"}),
+y.text("Assurance décennale & RC Pro - MIC Insurance Company (Groupe Leader) - Police n° LUNSMB2602366 - Couverture : France",105,287,{align:"center"}),
 y.text("Page "+t+" / "+L,185,287,{align:"right"});
 const A="Devis-"+P+"-"+c.replace(/[^a-zA-Z0-9]/g,"-").replace(/-+/g,"-").toUpperCase();y.setProperties({title:A,subject:"Devis travaux de rénovation",author:e,creator:e});
 const j=[];Object.keys(b).forEach(t=>{b[t].forEach(e=>{j.push({categorie:t,description:e.desc,quantite:e.qty,unite:e.unit,prix_unitaire:e.price,total:e.qty*e.price})})});
