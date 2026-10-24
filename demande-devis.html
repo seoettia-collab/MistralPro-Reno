@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, follow">
+  <title>Votre projet de rénovation | Mistral Pro Reno</title>
+  <meta name="description" content="Salle de bain, cuisine, peinture ou rénovation complète à Paris et en Île-de-France. Demandez votre devis gratuit, réponse sous 48h.">
+  <link rel="icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="/css/demande-devis.css">
+  <script src="/js/demande-devis.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">MISTRAL <span>PRO RENO</span></a><a class="call" href="tel:0755188937">07 55 18 89 37</a></header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">PARIS & ÎLE-DE-FRANCE</p>
+      <h1 id="page-title">Vos travaux commencent par un échange.</h1>
+      <p class="subtitle">Dites-nous ce que vous souhaitez rénover. Nous vous rappelons pour étudier votre projet.</p>
+      <p class="promise">Devis gratuit et sans engagement · Réponse sous 48h</p>
+      <img src="/images/salle_de_bain.webp" width="800" height="600" alt="Aménagement d’une salle de bain" fetchpriority="high">
+      <p class="caption">Salle de bain, cuisine, peinture et rénovation intérieure.</p>
+    </section>
+    <section class="card" aria-labelledby="form-title">
+      <form id="lead-form" method="post" action="https://ettia.app.n8n.cloud/webhook/landing-form">
+        <h2 id="form-title">Parlons de votre projet</h2>
+        <fieldset id="services"><legend>Quels travaux envisagez-vous ?</legend><p class="hint">Plusieurs choix possibles.</p>
+          <div class="choices">
+            <label><input type="checkbox" name="travaux" value="Salle de bain"><span>Salle de bain</span></label>
+            <label><input type="checkbox" name="travaux" value="Cuisine"><span>Cuisine</span></label>
+            <label><input type="checkbox" name="travaux" value="Peinture"><span>Peinture</span></label>
+            <label><input type="checkbox" name="travaux" value="Rénovation complète"><span>Rénovation complète</span></label>
+            <label><input type="checkbox" name="travaux" value="Autres travaux"><span>Autres travaux</span></label>
+          </div>
+        </fieldset>
+        <div class="fields">
+          <label for="lead-name">Votre prénom<input id="lead-name" name="nom" autocomplete="given-name" maxlength="80" required></label>
+          <label for="lead-phone">Votre téléphone<input id="lead-phone" name="telephone" type="tel" autocomplete="tel" maxlength="24" placeholder="06 12 34 56 78" required></label>
+          <label for="lead-postcode">Code postal des travaux<input id="lead-postcode" name="code_postal" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="75017" required></label>
+        </div>
+        <details><summary>Ajouter une précision <span>(facultatif)</span></summary><label for="lead-message">Votre projet en quelques mots<textarea id="lead-message" name="message" rows="3" maxlength="1500"></textarea></label></details>
+        <div class="trap" aria-hidden="true"><label>Ne pas remplir<input name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p id="form-error" role="alert" tabindex="-1" hidden></p>
+        <button id="send" type="submit" disabled>Être rappelé pour mon devis</button>
+        <noscript><p>Activez JavaScript pour envoyer le formulaire, ou appelez le <a href="tel:0755188937">07 55 18 89 37</a>.</p></noscript>
+        <p class="privacy">Vos coordonnées servent à vous recontacter au sujet de vos travaux. <a href="/mentions-legales.html">Informations sur vos données</a>.</p>
+      </form>
+      <div id="confirmation" tabindex="-1" hidden><p class="eyebrow">DEMANDE TRANSMISE</p><h2>Merci pour votre confiance.</h2><p>Nous vous recontactons sous 48h pour échanger sur votre projet et préparer la suite.</p><a class="return" href="/">Retour au site</a></div>
+    </section>
+  </main>
+  <footer>Mistral Pro Reno · 9 rue Anatole de la Forge, 75017 Paris<br><a href="/projets.html">Nos réalisations</a> · <a href="/mentions-legales.html">Mentions légales</a></footer>
+</body>
+</html>
