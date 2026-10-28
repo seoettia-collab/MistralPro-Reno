@@ -1,0 +1,169 @@
+@font-face {
+  font-family: Archivo;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/devis-travaux/fonts/archivo-latin.woff2") format("woff2");
+}
+:root {
+  color-scheme: light;
+  --bg: #f3f2f2;
+  --panel: #fff;
+  --line: #d6d3d1;
+  --text: #201e1d;
+  --muted: #5f5b58;
+  --accent: #2a2fd4;
+  --accent-dark: #1b1f94;
+  --accent-night: #0f1158;
+  --accent-soft: #ebecfc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.45 Archivo, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+a { color: var(--accent-dark); }
+a:hover { color: var(--accent); }
+.layout { max-width: 440px; margin: 0 auto; padding: 24px 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); box-shadow: 0 18px 48px rgba(32, 30, 29, .16); }
+
+/* En-tête entreprise */
+.intro { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 2px solid var(--text); }
+.brand-block { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.brand { font-size: 17px; font-weight: 700; line-height: 1.1; color: var(--text); text-decoration: none; }
+.eyebrow { color: var(--muted); font-size: 12px; margin: 0; }
+
+.phone-top { font-size: 15px; font-weight: 700; white-space: nowrap; color: var(--accent-dark); text-decoration: none; }
+
+/* Bandeau */
+.banner { display: grid; gap: 2px; padding: 12px 14px; background: var(--accent); color: #fff; }
+.banner h1 { margin: 0; font-size: 22px; line-height: 1.05; letter-spacing: -.2px; }
+.banner p { margin: 0; font-size: 14px; }
+
+/* Formulaire */
+#project-form { padding: 14px; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.section-title { display: block; float: left; width: 100%; font-size: 17px; font-weight: 700; padding: 0; margin: 0; }
+.section-title + .hint { clear: both; padding-top: 4px; }
+.muted, .hint, .privacy { color: var(--muted); }
+.muted { font-size: 13px; font-weight: 400; }
+.hint { font-size: 12px; margin: 2px 0 8px; }
+
+/* Cases travaux (générées par form.js : label.choice > input[type=checkbox] + texte) */
+.services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.choice {
+  position: relative;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 2px solid var(--line);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.choice:hover { border-color: var(--accent); }
+.choice input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid #8a8582;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.choice input:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.choice input::before {
+  content: "";
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+  opacity: 0;
+}
+.choice input:checked::before { opacity: 1; }
+.choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-night); }
+.choice input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Champs */
+label { display: block; font-size: 17px; font-weight: 700; }
+.identity { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.identity label:last-child { grid-column: 1 / -1; }
+input:not([type=checkbox]), textarea {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  margin-top: 5px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+}
+input:not([type=checkbox]):hover, textarea:hover { border-color: #8a8582; }
+input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+textarea { resize: vertical; min-height: 56px; }
+::placeholder { color: #8a8582; opacity: 1; }
+.detail { margin-top: 0; }
+.trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Boutons */
+button {
+  font: inherit;
+  cursor: pointer;
+  min-height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 0 16px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: left;
+}
+button:hover { background: var(--accent-dark); }
+button:disabled { opacity: .65; cursor: wait; }
+.secondary { background: #fff; color: var(--text); border: 1px solid var(--text); font-size: 15px; }
+.secondary:hover { background: var(--bg); }
+.privacy { font-size: 11px; line-height: 1.45; margin: 10px 0 0; }
+#feedback { color: var(--accent-dark); font-size: 14px; font-weight: 600; margin: 10px 0 0; }
+#feedback:empty { display: none; }
+
+/* Confirmation */
+#confirmation { padding: 18px 14px; }
+#confirmation h2 { font-size: 22px; line-height: 1.15; margin: 12px 0 6px; }
+#confirmation p { margin: 0 0 6px; }
+.check { display: grid; place-items: center; color: #fff; background: var(--accent); width: 40px; height: 40px; font-size: 22px; }
+.phone { display: inline-block; font-size: 19px; font-weight: 700; text-decoration: none; margin: 6px 0; }
+#chosen-summary { color: var(--muted); font-size: 14px; }
+
+/* Mentions légales */
+footer { display: grid; gap: 2px; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--bg); color: var(--muted); font-size: 10.5px; line-height: 1.5; }
+[hidden] { display: none !important; }
+
+@media (max-width: 380px) {
+  .layout { padding: 12px 8px; }
+  .choice { font-size: 14px; padding: 0 10px; }
+  .identity { grid-template-columns: 1fr; }
+}
