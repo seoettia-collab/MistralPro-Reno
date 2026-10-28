@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Votre projet — Mistral Pro Reno</title>
+  <link rel="stylesheet" href="/devis-travaux/form.css">
+</head>
+<body>
+<main class="layout">
+  <section class="card" aria-label="Demande de rappel">
+    <header class="intro">
+      <div class="brand-block">
+        <a class="brand" href="/devis-travaux">Mistral Pro Reno</a>
+        <p class="eyebrow">Entreprise générale du bâtiment · Île-de-France</p>
+        <a class="phone-top" href="tel:+33609109069"><span aria-hidden="true">☎</span> 06 09 10 90 69</a>
+      </div>
+    </header>
+    <div class="banner">
+      <h1>Votre devis gratuit</h1>
+      <p>Remplissez, envoyez. On vous rappelle sous 48 h.</p>
+    </div>
+    <form id="project-form">
+      <fieldset id="form-fields">
+        <legend class="section-title">Travaux à faire</legend>
+        <p class="hint">Plusieurs choix possibles.</p>
+        <div id="services" class="services"></div>
+        <label class="detail">Votre projet en quelques mots <span class="muted">(facultatif)</span><textarea name="message" maxlength="1500" rows="2" placeholder="Ex. refaire la salle de bain, douche à l'italienne…"></textarea></label>
+        <div class="identity">
+          <label>Prénom <input name="nom" autocomplete="given-name" maxlength="80" required></label>
+          <label>Téléphone <input name="telephone" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" required placeholder="06 00 00 00 00"></label>
+          <label>Code postal du projet <input name="code_postal" autocomplete="postal-code" inputmode="numeric" pattern="(75|77|78|91|92|93|94|95)[0-9]{3}" minlength="5" maxlength="5" required aria-describedby="postal-help"></label>
+        </div>
+        <p id="postal-help" class="hint">Votre projet se situe en Île-de-France.</p>
+        <div class="trap" aria-hidden="true"><label>Site web<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      </fieldset>
+      <p id="feedback" role="status" aria-live="polite" tabindex="-1"></p>
+      <button id="submit" type="submit">Envoyer ma demande <span aria-hidden="true">→</span></button>
+      <p class="privacy">Gratuit et sans engagement. Vos coordonnées sont utilisées uniquement pour répondre à votre demande.</p>
+      <noscript><p>Activez JavaScript pour envoyer votre demande, ou appelez-nous au 06 09 10 90 69.</p></noscript>
+    </form>
+    <div id="confirmation" hidden tabindex="-1">
+      <div class="check" aria-hidden="true">✓</div>
+      <h2>Votre demande est enregistrée.</h2>
+      <p>Notre équipe vous recontactera pour parler de votre projet.</p>
+      <p id="chosen-summary"></p>
+      <a class="phone" href="tel:+33609109069">06 09 10 90 69</a>
+      <button id="new-request" type="button" class="secondary">Faire une autre demande</button>
+    </div>
+    <footer>
+      <span>MISTRAL PRO RENO · SARL au capital de 1 000 € · 9 rue Anatole de la Forge, 75017 Paris</span>
+      <span>SIRET 851 558 882 00029 · RCS Paris 851 558 882 · TVA FR74851558882</span>
+      <span>Mistral Pro Reno · Île-de-France</span>
+    </footer>
+  </section>
+</main>
+<script type="application/json" id="public-context">{"business":{"name":"Mistral Pro Reno","activity":"Entreprise générale du bâtiment","area":"Île-de-France","phone":"06 09 10 90 69"},"services":["Cuisine","Salle de bain","Peinture","Rénovation","Extension","Maison"]}</script>
+<script src="/devis-travaux/form.js" defer></script>
+</body>
+</html>
