@@ -167,3 +167,6 @@ footer { display: grid; gap: 2px; padding: 10px 14px; border-top: 1px solid var(
   .choice { font-size: 14px; padding: 0 10px; }
   .identity { grid-template-columns: 1fr; }
 }
+
+.measurement-choice{margin:16px 0;padding:12px 0;border-top:1px solid #dce1e8}.measurement-label{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5;cursor:pointer}.measurement-label input{flex:0 0 auto;width:18px;height:18px;margin:2px 0 0;accent-color:#155fd0}.measurement-choice .privacy{margin:8px 0 0;font-size:12px;line-height:1.5}
+
