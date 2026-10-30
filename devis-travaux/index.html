@@ -21,6 +21,10 @@
       <h1>Votre devis gratuit</h1>
       <p>Remplissez, envoyez. On vous rappelle sous 48 h.</p>
     </div>
+    <section class="measurement-choice" aria-label="Mesure publicitaire facultative">
+      <label class="measurement-label"><input id="openai-measurement-consent" type="checkbox" aria-describedby="measurement-help"><span>Autoriser la mesure publicitaire OpenAI pour cette demande <span class="muted">(facultatif)</span></span></label>
+      <p id="measurement-help" class="privacy">Si vous l’autorisez, OpenAI utilise des cookies et peut recevoir des coordonnées hachées pour rapprocher votre demande d’une publicité. Laissez la case vide pour refuser ou décochez-la pour retirer votre accord. Votre demande de devis reste possible dans tous les cas.</p>
+    </section>
     <form id="project-form">
       <fieldset id="form-fields">
         <legend class="section-title">Travaux à faire</legend>
@@ -37,7 +41,7 @@
       </fieldset>
       <p id="feedback" role="status" aria-live="polite" tabindex="-1"></p>
       <button id="submit" type="submit">Envoyer ma demande <span aria-hidden="true">→</span></button>
-      <p class="privacy">Gratuit et sans engagement. Vos coordonnées sont utilisées uniquement pour répondre à votre demande.</p>
+      <p class="privacy">Gratuit et sans engagement. Vos coordonnées servent à répondre à votre demande. La mesure publicitaire facultative est expliquée ci-dessus.</p>
       <noscript><p>Activez JavaScript pour envoyer votre demande, ou appelez-nous au 06 09 10 90 69.</p></noscript>
     </form>
     <div id="confirmation" hidden tabindex="-1">
@@ -56,6 +60,8 @@
   </section>
 </main>
 <script type="application/json" id="public-context">{"business":{"name":"Mistral Pro Reno","activity":"Entreprise générale du bâtiment","area":"Île-de-France","phone":"06 09 10 90 69"},"services":["Cuisine","Salle de bain","Peinture","Rénovation","Extension","Maison"]}</script>
+<script src="/devis-travaux/measure.js" defer></script>
 <script src="/devis-travaux/form.js" defer></script>
 </body>
 </html>
+
