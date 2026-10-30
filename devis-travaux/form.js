@@ -22,18 +22,22 @@
         label.append(checkbox, document.createTextNode(name));
         document.getElementById('services').append(label);
     }
-    let memoryRecord = null, inFlight = false;
+    let memoryRecord = null, inFlight = false, storageAvailable = true;
     function readRecord() {
+        if (memoryRecord) return memoryRecord;
+        if (!storageAvailable) return null;
         try {
             const record = JSON.parse(sessionStorage.getItem(storageKey));
             if (record && record.version === 1 && Date.now() - record.createdAt < maxAge &&
-                /^[0-9a-f-]{36}$/i.test(record.id)) return record;
-        } catch (_) { /* Storage can be unavailable; memory still protects double-clicks. */ }
-        return memoryRecord;
+                /^[0-9a-f-]{36}$/i.test(record.id)) return (memoryRecord = record);
+        } catch (_) { storageAvailable = false; }
+        return null;
     }
     function saveRecord(record) {
         memoryRecord = record;
-        try { sessionStorage.setItem(storageKey, JSON.stringify(record)); return true; } catch (_) { return false; }
+        if (!storageAvailable) return false;
+        try { sessionStorage.setItem(storageKey, JSON.stringify(record)); return true; }
+        catch (_) { storageAvailable = false; return false; }
     }
     async function fingerprint(payload) {
         const bytes = new TextEncoder().encode(JSON.stringify(payload));
@@ -41,6 +45,11 @@
         return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
     }
     function message(text) { feedback.textContent = text; feedback.focus(); }
+    function pendingMessage() {
+        return storageAvailable
+            ? 'La confirmation est indisponible. Réessayez avec les mêmes informations : votre demande ne sera pas enregistrée deux fois.'
+            : 'La confirmation est indisponible. Réessayez avec les mêmes informations sans fermer ni recharger cette page.';
+    }
     function showConfirmation(services) {
         form.hidden = true; confirmation.hidden = false;
         document.getElementById('chosen-summary').textContent = 'Travaux : ' + services.join(' · ');
@@ -64,6 +73,9 @@
         if (!payload.nom || !/^(75|77|78|91|92|93|94|95)\d{3}$/.test(payload.code_postal)) {
             message('Vérifiez votre prénom et le code postal en Île-de-France.'); return;
         }
+        if (typeof crypto === 'undefined' || typeof crypto.randomUUID !== 'function' || !crypto.subtle) {
+            message('Votre navigateur ne permet pas de sécuriser cette demande. Contactez-nous par téléphone.'); return;
+        }
         inFlight = true; fields.disabled = true; submit.disabled = true; feedback.textContent = '';
         let timer;
         try {
@@ -76,11 +88,8 @@
             if (!record || record.fingerprint !== hash) {
                 record = { version: 1, id: crypto.randomUUID(), fingerprint: hash, createdAt: Date.now(), stored: false };
             }
-            if (!saveRecord(record)) {
-                memoryRecord = null;
-                message('Votre navigateur ne permet pas de sécuriser la reprise de cette demande. Contactez-nous par téléphone.');
-                return;
-            }
+            // The in-memory record remains authoritative when browser storage is blocked.
+            saveRecord(record);
             payload.submission_id = record.id;
             const controller = new AbortController();
             timer = setTimeout(() => controller.abort(), 20000);
@@ -93,15 +102,15 @@
             if ([400, 403, 413, 415].includes(response.status)) {
                 // These responses occur before persistence: editing and resubmitting is safe.
                 memoryRecord = null;
-                try { sessionStorage.removeItem(storageKey); } catch (_) {}
+                try { sessionStorage.removeItem(storageKey); } catch (_) { storageAvailable = false; }
                 message('La demande n’a pas été enregistrée. Vérifiez vos informations ou contactez-nous par téléphone.');
             } else if (response.status === 429) {
                 message('Patientez une minute, puis réessayez. Vos informations restent affichées.');
             } else {
-                message('La confirmation est indisponible. Réessayez avec les mêmes informations : votre demande ne sera pas enregistrée deux fois.');
+                message(pendingMessage());
             }
         } catch (_) {
-            message('La confirmation est indisponible. Réessayez avec les mêmes informations : votre demande ne sera pas enregistrée deux fois.');
+            message(pendingMessage());
         } finally {
             clearTimeout(timer); inFlight = false; fields.disabled = false; submit.disabled = false;
         }
@@ -110,8 +119,9 @@
         const record = readRecord();
         if (record && !record.stored) return;
         memoryRecord = null;
-        try { sessionStorage.removeItem(storageKey); } catch (_) {}
+        try { sessionStorage.removeItem(storageKey); } catch (_) { storageAvailable = false; }
         form.reset(); feedback.textContent = ''; form.hidden = false; confirmation.hidden = true;
         form.elements.nom.focus();
     });
 })();
+
