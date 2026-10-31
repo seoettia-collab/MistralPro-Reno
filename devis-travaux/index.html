@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Votre projet — Mistral Pro Reno</title>
+  <title>Votre projet de salle de bain — Mistral Pro Reno</title>
   <link rel="stylesheet" href="/devis-travaux/form.css">
 </head>
 <body>
@@ -18,9 +18,33 @@
       </div>
     </header>
     <div class="banner">
-      <h1>Votre devis gratuit</h1>
-      <p>Remplissez, envoyez. On vous rappelle sous 48 h.</p>
+      <p class="banner-kicker">Devis gratuit · Île-de-France</p>
+      <h1>Votre projet de salle de bain</h1>
+      <p>Décrivez votre projet. On vous rappelle sous 48 h.</p>
     </div>
+    <form id="project-form">
+      <fieldset id="form-fields">
+        <legend class="visually-hidden">Votre demande de devis</legend>
+        <section class="form-panel project-panel" aria-labelledby="project-title">
+          <h2 id="project-title" class="section-title"><span class="step-number" aria-hidden="true">01</span> Votre projet</h2>
+          <p class="hint">Sélectionnez vos travaux. Plusieurs choix possibles.</p>
+          <div id="services" class="services"></div>
+        </section>
+        <section class="form-panel contact-panel" aria-labelledby="contact-title">
+          <h2 id="contact-title" class="section-title"><span class="step-number" aria-hidden="true">02</span> Vos coordonnées</h2>
+          <p class="hint">Pour vous rappeler et préparer votre devis.</p>
+          <div class="identity">
+            <label>Prénom <input name="nom" autocomplete="given-name" maxlength="80" required></label>
+            <label>Téléphone <input name="telephone" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" required placeholder="06 00 00 00 00"></label>
+            <label>Code postal du projet <input name="code_postal" autocomplete="postal-code" inputmode="numeric" pattern="(75|77|78|91|92|93|94|95)[0-9]{3}" minlength="5" maxlength="5" required aria-describedby="postal-help"></label>
+          </div>
+          <p id="postal-help" class="hint postal-help">Votre projet se situe en Île-de-France.</p>
+          <label class="detail">Quelques précisions <span class="muted">(facultatif)</span><textarea name="message" maxlength="1500" rows="2" placeholder="Ex. refaire la salle de bain, remplacer la baignoire…"></textarea></label>
+        </section>
+        <div class="trap" aria-hidden="true"><label>Site web<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      </fieldset>
+      <p id="feedback" role="status" aria-live="polite" tabindex="-1"></p>
+    </form>
     <section class="measurement-choice" aria-label="Mesure publicitaire facultative">
       <h2 class="measurement-title">Mesure des publicités — au choix</h2>
       <label class="measurement-label"><input id="openai-measurement-consent" type="checkbox" aria-describedby="measurement-help"><span>J’accepte la mesure publicitaire OpenAI <span class="muted">(facultatif)</span></span></label>
@@ -30,25 +54,11 @@
         <p class="privacy">Laissez la case vide pour refuser cette mesure. Sur cette page, vous pouvez retirer votre accord en décochant la case, y compris après l’envoi de votre demande.</p>
       </details>
     </section>
-    <form id="project-form">
-      <fieldset id="form-fields">
-        <legend class="section-title">Travaux à faire</legend>
-        <p class="hint">Plusieurs choix possibles.</p>
-        <div id="services" class="services"></div>
-        <label class="detail">Votre projet en quelques mots <span class="muted">(facultatif)</span><textarea name="message" maxlength="1500" rows="2" placeholder="Ex. refaire la salle de bain, douche à l'italienne…"></textarea></label>
-        <div class="identity">
-          <label>Prénom <input name="nom" autocomplete="given-name" maxlength="80" required></label>
-          <label>Téléphone <input name="telephone" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" required placeholder="06 00 00 00 00"></label>
-          <label>Code postal du projet <input name="code_postal" autocomplete="postal-code" inputmode="numeric" pattern="(75|77|78|91|92|93|94|95)[0-9]{3}" minlength="5" maxlength="5" required aria-describedby="postal-help"></label>
-        </div>
-        <p id="postal-help" class="hint">Votre projet se situe en Île-de-France.</p>
-        <div class="trap" aria-hidden="true"><label>Site web<input name="website" tabindex="-1" autocomplete="off"></label></div>
-      </fieldset>
-      <p id="feedback" role="status" aria-live="polite" tabindex="-1"></p>
-      <button id="submit" type="submit">Envoyer ma demande <span aria-hidden="true">→</span></button>
-      <p class="privacy">Gratuit et sans engagement. Vos coordonnées servent à répondre à votre demande. La mesure publicitaire facultative est expliquée ci-dessus.</p>
+    <div class="form-actions">
+      <button id="submit" type="submit" form="project-form">Demander mon devis gratuit <span aria-hidden="true">→</span></button>
+      <p class="privacy">Gratuit et sans engagement. Vos coordonnées servent à répondre à votre demande.</p>
       <noscript><p>Activez JavaScript pour envoyer votre demande, ou appelez-nous au 06 09 10 90 69.</p></noscript>
-    </form>
+    </div>
     <div id="confirmation" hidden tabindex="-1">
       <div class="check" aria-hidden="true">✓</div>
       <h2>Votre demande est enregistrée.</h2>
@@ -69,5 +79,6 @@
 <script src="/devis-travaux/form.js" defer></script>
 </body>
 </html>
+
 
 
