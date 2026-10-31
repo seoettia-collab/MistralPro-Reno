@@ -113,7 +113,14 @@ test('HTML consentfacultatifet accessibleaprèsconfirmation ; CSPminimale',()=>{
     const html=fs.readFileSync(path.join(assets,'index.html'),'utf8');
     const consent=html.match(/<input[^>]*id="openai-measurement-consent"[^>]*>/)[0];
     assert.ok(!/required|checked|name=/.test(consent));
-    assert.ok(html.indexOf('id="openai-measurement-consent"')<html.indexOf('<form id="project-form">'));
+    const formMarkup=html.match(/<form id="project-form">[\s\S]*?<\/form>/)[0];
+    assert.ok(!formMarkup.includes('id="openai-measurement-consent"'));
+    assert.ok(html.indexOf('id="openai-measurement-consent"')>html.indexOf('</form>'));
+    const submitTag=html.match(/<button[^>]*id="submit"[^>]*>/)[0];
+    assert.ok(submitTag.includes('type="submit"'));assert.ok(submitTag.includes('form="project-form"'));
+    assert.ok(html.indexOf('id="openai-measurement-consent"')<html.indexOf('id="submit"'));
+    const css=fs.readFileSync(path.join(assets,'form.css'),'utf8');
+    assert.match(css,/#project-form\[hidden\]\s*~\s*\.form-actions\s*\{\s*display:\s*none/);
     assert.ok(html.includes('coordonnées hachées'));assert.ok(html.includes('Laissez la case vide pour refuser'));
     assert.ok(html.indexOf('src="/devis-travaux/measure.js"')<html.indexOf('src="/devis-travaux/form.js"'));
     assert.ok(!/<link[^>]+(?:preconnect|dns-prefetch)/.test(html));assert.ok(!/https:\/\/(?:bzr|bzrcdn)\.openai\.com/.test(html));
@@ -130,3 +137,4 @@ test('rechargement : ancien reçu confirmé non rejoué, timeout confirmé ensui
     const ambiguous=new Map();await fixture({withForm:true,storage:ambiguous,transport:async()=>{throw Error('timeout');}}).submit();
     const retry=fixture({withForm:true,storage:ambiguous});await retry.consent(true);retry.load();await retry.submit();assert.equal(retry.events().length,1);
 });
+
