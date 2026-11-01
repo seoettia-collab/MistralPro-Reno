@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Validate SEO and generate canonical sitemap
+        run: python3 scripts/check-seo.py --write
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -26,3 +29,4 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.ftp-deploy-sync-state.json
+

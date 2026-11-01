@@ -1,165 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://www.mistralpro-reno.fr/</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mistralpro-reno.fr/"/>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mistralpro-reno.fr/zh/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mistralpro-reno.fr/"/>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/zh/</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mistralpro-reno.fr/"/>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mistralpro-reno.fr/zh/"/>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/projets.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/degat-des-eaux.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/cost_calculator.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.mistralpro-reno.fr/blog.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/blog/cout-renovation-appartement-paris.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/blog/degat-des-eaux-5-etapes.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/blog/prix-renovation-appartement-paris-2026.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/blog/prix-renovation-de-habitation-ile-de-france.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/blog/prix-renovation-salle-de-bain-paris-2026.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/blog/renovation-cuisine-paris-2026.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/blog/renovation-electricite-paris-2026.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/blog/renovation-energetique-paris-2026-aides.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/blog/renovation-maison-ile-de-france-2026.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/blog/renovation-plomberie-paris-17-2026.html</loc>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/blog/renovation-salle-de-bain-guide-prix.html</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.mistralpro-reno.fr/contact.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://www.mistralpro-reno.fr/cost_calculator.html</loc>
   </url>
   <url>
-    <loc>https://www.mistralpro-reno.fr/landing.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://www.mistralpro-reno.fr/degat-des-eaux.html</loc>
   </url>
   <url>
-    <loc>https://www.mistralpro-reno.fr/services/cuisine.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://www.mistralpro-reno.fr/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mistralpro-reno.fr/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mistralpro-reno.fr/zh/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mistralpro-reno.fr/" />
   </url>
   <url>
-    <loc>https://www.mistralpro-reno.fr/services/salle-de-bain.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://www.mistralpro-reno.fr/projets.html</loc>
   </url>
   <url>
-    <loc>https://www.mistralpro-reno.fr/services/electricite.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/plomberie.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/renovation-appartement.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/peinture.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/menuiserie.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/toiture.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/extension.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.mistralpro-reno.fr/services/copropriete.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://www.mistralpro-reno.fr/services.html</loc>
   </url>
   <url>
     <loc>https://www.mistralpro-reno.fr/services/bureaux-commerces.html</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/copropriete.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/cuisine.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/electricite.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/extension.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/menuiserie.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/peinture.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/plomberie.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/renovation-appartement.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/salle-de-bain.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/services/toiture.html</loc>
+  </url>
+  <url>
+    <loc>https://www.mistralpro-reno.fr/zh/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mistralpro-reno.fr/" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mistralpro-reno.fr/zh/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mistralpro-reno.fr/" />
   </url>
 </urlset>

@@ -76,3 +76,13 @@ Redirect 301 /devis /cost_calculator.html
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
 </IfModule>
+
+# SEO: do not index the publishing template itself.
+<IfModule mod_headers.c>
+  <Files "TEMPLATE.html">
+    Header always set X-Robots-Tag "noindex, nofollow"
+  </Files>
+</IfModule>
+
+# Preserve an HTTP 404 while displaying the existing helpful error page.
+ErrorDocument 404 /404.html
