@@ -12,7 +12,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate SEO and generate canonical sitemap
-        run: python3 scripts/check-seo.py --write
+        run: |
+          python3 scripts/check-seo.py --write
+          node --test tests/quote-delivery-status.test.js
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
