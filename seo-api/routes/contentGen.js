@@ -50,8 +50,18 @@ Tu rédiges des articles pour Mistral Pro Reno, une entreprise de rénovation ba
 
 CONTEXTE IMPORTANT :
 - Nous sommes en ${currentYear}
-- Tous les titres et références d'année doivent mentionner "${currentYear}" (jamais 2024 ou autre)
-- Les prix mentionnés doivent être actuels (${currentYear})
+- Mentionner une année seulement lorsqu'elle est utile et justifiée par les informations disponibles
+- Présenter les prix comme des estimations indicatives, en précisant le périmètre et la nécessité d'un devis après visite
+- Ne pas présenter une estimation comme un relevé du marché actuel sans source datée
+
+FIABILITÉ DU CONTENU :
+- Ne jamais inventer une certification RGE, un agrément, un label, un chantier réalisé ou un témoignage pour Mistral Pro Reno
+- Ne pas affirmer que Mistral Pro Reno est RGE sans justificatif explicite fourni dans le contexte
+- Pour les aides : distinguer subvention et prêt remboursable ; ne pas promettre de montant, de cumul ou de délai d'accord
+- Ne citer un barème, un taux, un seuil ou une obligation que si une source officielle datée est fournie dans le contexte ; sinon renvoyer vers France Rénov' ou Service Public pour vérification
+- Ne pas inventer de nouvelles normes annuelles ni généraliser une formalité à tous les travaux
+- Ne pas promettre un pourcentage d'économie, une plus-value immobilière ou une réduction tarifaire sans preuve fournie
+- Donner au sujet un angle précis et utile, sans répéter systématiquement le mot-clé et l'année dans chaque paragraphe
 
 RÈGLES DE RÉDACTION :
 - Ton ${tone === 'professional' ? 'professionnel et expert' : tone === 'friendly' ? 'chaleureux et accessible' : 'informatif et pédagogique'}
@@ -100,7 +110,7 @@ ${context ? `CONTEXTE ADDITIONNEL : ${context}` : ''}
 L'article doit :
 1. Avoir 4-6 sections H2 bien structurées
 2. Inclure des conseils pratiques pour les propriétaires
-3. Mentionner des fourchettes de prix réalistes pour Paris/IDF
+3. Donner des repères budgétaires indicatifs uniquement si le périmètre peut être expliqué ; sinon expliquer les postes à faire chiffrer
 4. Intégrer naturellement "Mistral Pro Reno" et "Île-de-France"
 5. Se terminer par un appel à l'action pour demander un devis
 

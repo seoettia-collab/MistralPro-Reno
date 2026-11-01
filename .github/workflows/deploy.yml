@@ -17,6 +17,7 @@ jobs:
         run: |
           python3 scripts/check-seo.py --write
           node --test tests/quote-delivery-status.test.js
+          node --test tests/blog-filters.test.js
           python3 -B tests/indexnow_test.py
       
       - name: Deploy via FTP
