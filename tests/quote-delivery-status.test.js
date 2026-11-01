@@ -59,7 +59,9 @@ test('Every calculator FAQ in JSON-LD is available in the visible HTML', () => {
   const html = fs.readFileSync(path.join(root, 'cost_calculator.html'), 'utf8');
   const faq = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
     .map(m => JSON.parse(m[1])).find(s => s['@type'] === 'FAQPage');
-  const body = html.slice(html.indexOf('<body>'));
+  const bodyMatch = html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i);
+  assert.ok(bodyMatch, 'The document has a body element');
+  const body = bodyMatch[1];
   assert.equal(faq.mainEntity.length, 5);
   for (const question of faq.mainEntity) {
     assert.ok(body.includes(question.name));
