@@ -10,11 +10,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Validate SEO and generate canonical sitemap
         run: |
           python3 scripts/check-seo.py --write
           node --test tests/quote-delivery-status.test.js
+          python3 -B tests/indexnow_test.py
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -31,4 +34,8 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.ftp-deploy-sync-state.json
+
+      - name: Notify IndexNow after verified deployment
+        continue-on-error: true
+        run: python3 scripts/notify-indexnow.py
 
