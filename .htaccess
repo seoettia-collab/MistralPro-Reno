@@ -1,9 +1,14 @@
 # =========================================
-# REDIRECTION WWW - Force www prefix
+# CANONICAL URLS - HTTPS, www and directory index
 # =========================================
 RewriteEngine On
-RewriteCond %{HTTP_HOST} ^mistralpro-reno\.fr [NC]
-RewriteRule ^(.*)$ https://www.mistralpro-reno.fr/$1 [L,R=301]
+# Only redirect explicit index.html requests, never Apache's internal index lookup.
+RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html(?:[?\s]) [NC]
+RewriteRule ^(.*/)?index\.html$ https://www.mistralpro-reno.fr/$1 [L,R=301]
+
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^www\.mistralpro-reno\.fr$ [NC]
+RewriteRule ^ https://www.mistralpro-reno.fr%{REQUEST_URI} [L,R=301,NE]
 
 # =========================================
 # REDIRECTIONS 301 - Pages supprimées

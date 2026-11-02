@@ -52,7 +52,7 @@ test('A cached HTML page without the new status element still runs', async () =>
 test('Public status element and cache version are deployed together', () => {
   const html = fs.readFileSync(path.join(root, 'cost_calculator.html'), 'utf8');
   assert.match(html, /id="quote-delivery-status" role="status" aria-live="polite"/);
-  assert.match(html, /js\/cost_calculator\.js\?v=11\.4/);
+  assert.match(html, /js\/cost_calculator\.js\?v=11\.5/);
 });
 
 test('Every calculator FAQ in JSON-LD is available in the visible HTML', () => {
