@@ -33,3 +33,7 @@ Captures navigateur réel réalisées en mode aperçu sur 360/390/768/1440, dép
 Après validation seulement : rediriger `cost_calculator.html` vers cette page en conservant les paramètres, puis remplacer les liens menus/CTA dans les sources courantes. Le retour arrière conserve le simulateur d’origine et retire la nouvelle orientation, sans toucher aux demandes reçues.
 
 Sources techniques : https://mozilla.github.io/pdf.js/examples/ ; version vérifiée https://github.com/mozilla/pdf.js/releases/tag/v4.10.38 .
+
+Recette finale : 57 tests Node du site et 6 tests Python IndexNow passent, check-seo.py --write valide 37 pages/29 URL indexables avec inventaire partiel du dépôt (tous HTML publics téléchargés, actifs vérifiés dans arbre Git). Nouvelle page temporairement noindex pendant activation, sans changement de navigation ; suppression du noindex et redirection legacy dans un commit de bascule distinct après readiness.
+
+Parcours réel Chromium + HTTP/HMAC + PDF.js natif/scanné + PDFKit + SQLite validé avec IA simulée sur Node20.19.5/better-sqlite3 11.7.0. Les champs restent après erreur, les coordonnées inchangées permettent retour après questions, les formulaires POST et boutons initialement désactivés empêchent tout envoi de données en URL sans JS ; fallback téléphone explicite. Avertissements/exclusions et questions du résultat visibles, reçu unique sur résultat réussi.

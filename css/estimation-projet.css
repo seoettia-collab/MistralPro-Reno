@@ -13,3 +13,5 @@
 .estimate-upload{position:relative}.estimate-upload input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}.estimate-upload:focus-within{outline:3px solid #d0ad17;outline-offset:3px}.estimate-file-trigger{display:inline-flex;margin-top:14px;min-height:44px;align-items:center;padding:0 16px;border:1px solid #646b65;border-radius:6px;font-size:13px;font-weight:600;color:#171c19;background:#fffefa}
 
 @media(max-width:900px){.estimate-layout[data-step=project-step] .estimate-intro,.estimate-layout[data-step=result-step] .estimate-intro{display:none}.estimate-layout[data-step=project-step],.estimate-layout[data-step=result-step]{margin-top:20px}}
+
+.estimate-table .estimate-section-row th{text-align:left;background:#f6f3eb;font-size:13px;padding:12px 8px}
