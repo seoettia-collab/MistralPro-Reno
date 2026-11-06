@@ -28,7 +28,7 @@ La route du backend et le bridge Mistral Devis doivent être configurés et acti
 
 Syntaxe JS contrôlée et 5 tests Node simulés : aperçu sans appel, conservation de saisie en panne, refus de session invalide, UUID identique après résultat incertain, reçu discordant ne confirmant pas une réception. Aucune donnée réelle ou génération payante utilisée.
 
-Restent avant fusion : revue visuelle 360/390/768/1440 sur navigateur avec assets réels, test de sélection/retrait de fichiers, PDF normal et scanné, erreurs de parsing, rendu PDF final, tests Express et chaîne de bout en bout isolée. Chromium n’était pas installé localement et son téléchargement a échoué ; ne pas annoncer de captures ou recette navigateur effectuées.
+Captures navigateur réel réalisées en mode aperçu sur 360/390/768/1440, départ et conversation, avec logo/photo/fontes réels chargés et sans débordement horizontal. Le choix de fichiers est personnalisé en français et accessible au clavier. Revue visuelle indépendante designer validée sur départ/conversation, mobile/tablette/desktop après corrections (breakpoint 900 px, introduction masquée pendant discussion mobile). Restent avant fusion : test de sélection/retrait de fichiers, PDF normal et scanné, erreurs de parsing, tests Express et chaîne de bout en bout isolée. PDFKit multipage testé séparément côté Devis ; le rendu typographique doit être confirmé dans un lecteur standard.
 
 Après validation seulement : rediriger `cost_calculator.html` vers cette page en conservant les paramètres, puis remplacer les liens menus/CTA dans les sources courantes. Le retour arrière conserve le simulateur d’origine et retire la nouvelle orientation, sans toucher aux demandes reçues.
 
