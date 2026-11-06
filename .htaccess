@@ -10,6 +10,9 @@ RewriteCond %{HTTPS} !=on [OR]
 RewriteCond %{HTTP_HOST} !^www\.mistralpro-reno\.fr$ [NC]
 RewriteRule ^ https://www.mistralpro-reno.fr%{REQUEST_URI} [L,R=301,NE]
 
+# Browsers also request the conventional root icon when no page icon is cached.
+RedirectMatch 301 ^/favicon\.ico$ /images/favicon.ico
+
 # =========================================
 # REDIRECTIONS 301 - Ancien simulateur et alias publics
 # =========================================
