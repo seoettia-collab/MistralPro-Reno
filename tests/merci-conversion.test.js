@@ -47,7 +47,7 @@ test('merci has no executable script or tracking iframe and offers a real next s
   assert.ok(scripts.every(match => /type="application\/ld\+json"/.test(match[1])));
   assert.doesNotMatch(html, /googletagmanager|<iframe\b|\b24\s*h\b/i);
   assert.match(html, /href="\/devis-travaux\/"/);
-  assert.match(html, /href="\/cost_calculator.html"/);
+  assert.match(html, /href="\/estimation-projet.html"/);
   assert.match(html, /ne confirme pas l’enregistrement d’une demande/);
   assert.match(html, /Après réception de votre demande[^<]*48 h/);
   assert.doesNotMatch(html, /Merci pour votre demande|a bien été généré/);

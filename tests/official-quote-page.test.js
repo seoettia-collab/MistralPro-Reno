@@ -173,7 +173,7 @@ test('copied client differs from backend source only by the exact approved intak
 test('new page policy scopes CORS destination without broadening the existing website', () => {
   const root=read('.htaccess'), scoped=read('devis-travaux/.htaccess');
   assert.ok(!root.includes('Redirect 301 /devis-travaux '));
-  assert.ok(root.includes('Redirect 301 /devis /cost_calculator.html'));
+  assert.ok(root.includes('Redirect 301 /devis /estimation-projet.html'));
   assert.ok(!root.includes('Content-Security-Policy'));
   assert.ok(scoped.includes("connect-src 'self' https://facebook-ads-backend-s20a.onrender.com https://bzr.openai.com https://bzrcdn.openai.com;"));
   assert.ok(scoped.includes("script-src 'self' https://bzrcdn.openai.com; style-src 'self'"));
