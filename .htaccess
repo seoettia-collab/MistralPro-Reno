@@ -11,13 +11,16 @@ RewriteCond %{HTTP_HOST} !^www\.mistralpro-reno\.fr$ [NC]
 RewriteRule ^ https://www.mistralpro-reno.fr%{REQUEST_URI} [L,R=301,NE]
 
 # =========================================
-# REDIRECTIONS 301 - Pages supprimées
+# REDIRECTIONS 301 - Ancien simulateur et alias publics
 # =========================================
-Redirect 301 /landing.html /cost_calculator.html
-Redirect 301 /contact.html /cost_calculator.html
-Redirect 301 /landing /cost_calculator.html
-Redirect 301 /contact /cost_calculator.html
-Redirect 301 /devis /cost_calculator.html
+# mod_alias preserves the original query string when the target has no query.
+# Keep this rule only after /estimation-projet.html readiness is verified.
+Redirect 301 /cost_calculator.html /estimation-projet.html
+Redirect 301 /landing.html /estimation-projet.html
+Redirect 301 /contact.html /estimation-projet.html
+Redirect 301 /landing /estimation-projet.html
+Redirect 301 /contact /estimation-projet.html
+Redirect 301 /devis /estimation-projet.html
 
 # =========================================
 # CACHE OPTIMIZATION - Mistral Pro Reno
