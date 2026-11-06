@@ -7,3 +7,5 @@
 /* Confort de lecture et saisie sur téléphone, sans zoom automatique iOS. */
 .estimate-fields label,.estimate-label{font-size:13px}.estimate-panel p{font-size:15px}.estimate-button{font-size:14px}.estimate-privacy{font-size:12px!important}.estimate-consent{font-size:12px}.estimate-upload strong{font-size:14px}.estimate-upload small{font-size:12px}.estimate-site input:not([type=checkbox]):not([type=file]),.estimate-site textarea{font-size:16px}.estimate-reassure{font-size:12px!important}.estimate-steps li{font-size:11px}.estimate-text-button{font-size:12px}.estimate-file-list li{font-size:13px}
 @media(max-width:700px){.estimate-steps li{font-size:11px}.estimate-panel p{font-size:15px}.estimate-table{font-size:12px}.estimate-eyebrow{font-size:10px!important}}
+
+.estimate-trap{position:absolute!important;left:-10000px;width:1px;height:1px;overflow:hidden}
