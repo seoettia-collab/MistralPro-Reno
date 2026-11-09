@@ -15,9 +15,9 @@ var attribution={};['utm_source','utm_medium','utm_campaign','utm_content','camp
 var money=new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
 function node(tag,text,cls){var el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
 function locked(){return !!(request&&request.uncertain);}
-function contact(){var data={};contactNames.forEach(function(name){data[name]=String(form.elements[name].value||'').trim();});data.contact_consent=form.elements.contact_consent.checked;return data;}
+function contact(){var data={};contactNames.forEach(function(name){data[name]=String(form.elements[name].value||'').trim();});return data;}
 function contactValid(data){
- if(!contactNames.every(function(name){return data[name].length>0;} )||data.contact_consent!==true)return false;
+ if(!contactNames.every(function(name){return data[name].length>0;} ))return false;
  var phone=data.phone.replace(/[\s().-]/g,'');
  if(!/^(?:0[1-9]\d{8}|\+33[1-9]\d{8}|0033[1-9]\d{8})$/.test(phone))return false;
  if(!/^(75|77|78|91|92|93|94|95)\d{3}$/.test(data.postal_code)||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))return false;
@@ -29,7 +29,7 @@ function currentLocal(){return localQueue[localIndex];}
 function localDone(){return localQueue.length>0&&localQueue.every(function(q){return engine.answered(q,localAnswers[q.id]);});}
 function syncControls(){
  document.querySelectorAll('.estimate-panel button,.estimate-panel input,.estimate-panel textarea').forEach(function(el){el.disabled=busy||locked();});
- contactNames.concat(['contact_consent','website']).forEach(function(name){form.elements[name].disabled=busy||locked()||sessionUsed;});
+ contactNames.concat(['website']).forEach(function(name){form.elements[name].disabled=busy||locked()||sessionUsed;});
  message.disabled=busy||locked()||sessionUsed&&!editingOrientation;
  categoryInputs.forEach(function(el){el.disabled=busy||locked()||sessionUsed&&!editingOrientation;});
  var retry=document.getElementById('retry-request');retry.disabled=busy;retry.hidden=!!(request&&request.phase==='session');
@@ -51,7 +51,7 @@ function showView(next,focus){
  ['local','question','review','restart','refine'].forEach(function(name){document.getElementById(name+'-screen').hidden=view!==name;});
  document.getElementById('project-attachments').hidden=!['local','question','review','refine'].includes(view);
  document.getElementById('change-categories').hidden=!sessionUsed||view==='restart';
- document.getElementById('project-title').textContent=view==='local'?'Quelques questions pour préciser vos travaux':view==='review'?'Votre projet avant envoi.':view==='restart'?'Une nouvelle orientation.':'Précisons votre projet.';
+ document.getElementById('project-title').textContent=view==='local'?'Vos travaux':view==='review'?'Votre estimation':view==='restart'?'Une nouvelle orientation.':'Précisons votre projet.';
  document.querySelectorAll('.estimate-steps li').forEach(function(li,i){if(i===(isResult?2:view==='entry'?0:1))li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});
  document.getElementById('project-error').textContent='';syncControls();
  if(focus){var id={local:'local-question',question:'active-question',review:'review-title',restart:'restart-title',refine:'refine-label',entry:'panel-title',result:'download-pdf'}[view];document.getElementById(id).focus();}
@@ -63,12 +63,12 @@ function evaluateEntry(){
  if(busy||locked()||sessionUsed&&!editingOrientation)return;
  var signature=inputSignature();if(signature===entrySignature)return;
  if(!manualCategories){categories=engine.detect(message.value);categoryInputs.forEach(function(input){input.checked=categories.includes(input.value);});}
- var detected=document.getElementById('category-detection');detected.hidden=!categories.length&&!manualCategories;detected.textContent=manualCategories?(categories.length?'Votre choix : '+categories.join(' / ')+'.':'Aucune catégorie imposée : nous précisons votre projet à partir de votre texte.'):'Repéré dans votre texte : '+categories.join(' / ')+'. Vous pouvez corriger les cases.';
+ var detected=document.getElementById('category-detection');detected.hidden=!categories.length&&!manualCategories;detected.textContent=manualCategories?(categories.length?'Votre choix : '+categories.join(' / ')+'.':''):'Repéré dans votre texte : '+categories.join(' / ')+'.';
  entrySignature=inputSignature();
  var nextKey=JSON.stringify(categories),changed=nextKey!==categoryKey;
  if(changed||!localQueue.length){reconcile();categoryKey=nextKey;}
  summary();
- var eligible=entryValid();document.getElementById('entry-status').textContent=eligible?'Les questions de préparation sont disponibles ci-dessous. Rien n’est envoyé avant votre demande d’estimation.':'Indiquez votre projet, complétez les sept coordonnées valides en Île-de-France et cochez votre accord pour afficher les questions.';
+ var eligible=entryValid();
  if(!eligible){if(['local','review'].includes(view)){resumeView=view;showView('entry',false);}return;}
  if(view==='entry'){if(resumeView==='review'&&localDone()){reviewMode='local';renderReview(false);}else showLocal(false);}
  else if(view==='local'&&changed)showLocal(false);
@@ -156,9 +156,9 @@ async function generate(retry){
  if(locked()&&!retry||retry&&(!locked()||request.phase!=='generate'))return;
  if(!retry){
   if(view!=='review')return;
-  // Read current values again, including silent autofill and withdrawn consent.
+  // Read current values again, including silent autofill.
   if(!sessionUsed||editingOrientation)evaluateEntry();
-  if(view!=='review'||!entryValid()||!localDone()){error.textContent='Vérifiez votre projet, vos coordonnées et votre accord avant de demander l’estimation.';return;}
+  if(view!=='review'||!entryValid()||!localDone()){error.textContent='Vérifiez votre projet et vos coordonnées.';return;}
  }
  if(preview){error.textContent='Aperçu de conception : aucun appel IA, envoi de demande ou téléchargement réel.';return;}
  var turn,combined,qa;
