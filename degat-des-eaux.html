@@ -265,9 +265,7 @@
   <h2 id="rappel-titre">Demander un devis</h2>
   <p>Décrivez les dégâts. Nous vous rappellerons pour préciser les travaux.</p>
 
-  <form id="project-form" method="post"
-        data-storage-key="mpr.degat-des-eaux.v1"
-        data-project-prefix="Dégât des eaux">
+  <form id="project-form" method="post">
     <fieldset id="form-fields">
       <legend>Votre demande de rappel</legend>
 
@@ -298,14 +296,12 @@
 
   <div id="confirmation" role="status" tabindex="-1" hidden>
     <p>Demande reçue. Nous vous rappellerons au numéro indiqué.</p>
-    <span id="chosen-summary" hidden></span>
     <button id="new-request" type="button">Nouvelle demande</button>
   </div>
 
   <noscript><p>Pour demander un devis, appelez le <a href="tel:0755188937">07 55 18 89 37</a>.</p></noscript>
 </section>
-<script type="application/json" id="public-context">{"services":[]}</script>
-<script src="/devis-travaux/form.js?v=2" defer></script>
+<script src="/js/degat-des-eaux-devis.js?v=1" defer></script>
         <section style="padding: 60px 20px; background: #f8f9fa;">
             <div class="container">
                 <h2 style="text-align: center; margin-bottom: 50px; font-size: 32px;">Travaux de remise en état après un dégât des eaux</h2>

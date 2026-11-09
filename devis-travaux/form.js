@@ -6,7 +6,7 @@
     const submit = document.getElementById('submit');
     const feedback = document.getElementById('feedback');
     const confirmation = document.getElementById('confirmation');
-    const storageKey = form.dataset.storageKey || 'mpr.project-submission.v1';
+    const storageKey = 'mpr.project-submission.v1';
     const maxAge = 7 * 24 * 60 * 60 * 1000;
     const attribution = {};
     const query = new URLSearchParams(location.search);
@@ -74,9 +74,6 @@
             code_postal: String(values.get('code_postal') || '').trim(),
             travaux: services, message: String(values.get('message') || '').trim(),
             website: String(values.get('website') || ''), ...attribution };
-        if (form.dataset.projectPrefix) {
-            payload.message = form.dataset.projectPrefix + ' — ' + payload.message;
-        }
         if (!payload.nom || !/^(75|77|78|91|92|93|94|95)\d{3}$/.test(payload.code_postal)) {
             message('Vérifiez votre prénom et le code postal en Île-de-France.'); return;
         }
