@@ -90,3 +90,22 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em
 .presta{list-style:none;padding:0;margin:24px 0 0;border-top:1px solid var(--rule)}
 .presta li{padding:12px 0 12px 28px;border-bottom:1px solid var(--rule);position:relative;font-size:15px}
 .presta li::before{content:"—";position:absolute;left:0;color:var(--gold-deep)}
+.grid-metiers{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:48px 32px}
+.carte-metier{display:flex;flex-direction:column;gap:8px}
+.carte-metier .plate{aspect-ratio:4/3;margin-bottom:10px}
+.carte-metier .n{font-family:var(--serif);font-size:16px;color:var(--gold-deep);font-feature-settings:"tnum" 1}
+.carte-metier h2{font-size:28px;line-height:1.15}
+.carte-metier p{margin:0;font-size:15px;color:var(--ink-2)}
+.carte-metier .go{font-size:14px;color:var(--gold-deep)}
+.metier-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:48px;align-items:center}
+.metier-hero .plate{aspect-ratio:4/3}
+.faq{border-top:1px solid var(--rule)}
+.faq details{border-bottom:1px solid var(--rule);padding:18px 0}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:24px;font-family:var(--serif);font-size:22px;line-height:1.25}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary span{color:var(--gold-deep)}
+.faq details[open] summary span{transform:rotate(45deg)}
+.faq p{margin:12px 0 0;color:var(--ink-2);max-width:60ch}
+.liens-projets{display:flex;flex-wrap:wrap;gap:10px}
+.liens-projets a{border:1px solid var(--rule);padding:10px 16px;border-radius:2px;font-family:var(--serif);font-size:19px}
+.liens-projets a:hover{border-color:var(--gold)}
