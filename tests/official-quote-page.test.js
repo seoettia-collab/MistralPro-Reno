@@ -168,15 +168,15 @@ test('copied client differs from backend source only by the exact approved intak
   assert.equal(hosted.split(endpoint).length, 2);
   const canonical = hosted.replace(endpoint, '/public/lead-requests');
   const gitHash = crypto.createHash('sha1').update('blob '+Buffer.byteLength(canonical)+'\0').update(canonical).digest('hex');
-  assert.equal(gitHash, '913d5c10ded9fbe8eabf6a8b9f6a1441b0c18038');
+  assert.equal(gitHash, 'da94adbb443ea7deb57710a7afab22c3023585b6');
 });
 test('new page policy scopes CORS destination without broadening the existing website', () => {
   const root=read('.htaccess'), scoped=read('devis-travaux/.htaccess');
   assert.ok(!root.includes('Redirect 301 /devis-travaux '));
   assert.ok(root.includes('Redirect 301 /devis /estimation-projet.html'));
   assert.ok(!root.includes('Content-Security-Policy'));
-  assert.ok(scoped.includes("connect-src 'self' https://facebook-ads-backend-s20a.onrender.com https://bzr.openai.com https://bzrcdn.openai.com;"));
-  assert.ok(scoped.includes("script-src 'self' https://bzrcdn.openai.com; style-src 'self'"));
+  assert.ok(scoped.includes("connect-src 'self' https://facebook-ads-backend-s20a.onrender.com;"));
+  assert.ok(scoped.includes("script-src 'self'; style-src 'self'"));
   assert.ok(scoped.includes('Cache-Control "no-store"'));assert.ok(scoped.includes('ExpiresActive Off'));
 });
 test('browser sends one JSON request to the fixed backend and retains paid attribution', async () => {
