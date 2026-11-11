@@ -18,6 +18,8 @@ RedirectMatch 301 ^/favicon\.ico$ /images/favicon.ico
 # =========================================
 # mod_alias preserves the original query string when the target has no query.
 # Keep this rule only after /estimation-projet.html readiness is verified.
+# Retired portfolio: keep previously shared URLs useful.
+Redirect 301 /projets.html /
 Redirect 301 /cost_calculator.html /estimation-projet.html
 Redirect 301 /landing.html /estimation-projet.html
 Redirect 301 /contact.html /estimation-projet.html

@@ -1,13 +1,15 @@
+@import url('/fonts/manrope/manrope.css?v=20261111.1');
+
 /* Mistral Pro Reno — shared presentation layer.
    Keep calculator fields, calculation grids and dialogs under their own styles. */
 
 .premium-site {
-  font-family: 'Raleway', Arial, sans-serif;
-  --premium-ink: #171c19;
-  --premium-paper: #f6f3eb;
-  --premium-white: #fffefa;
-  --premium-accent: #f4c430;
-  --premium-muted: #646b65;
+  font-family: 'Manrope', Arial, sans-serif;
+  --premium-ink: #202321;
+  --premium-paper: #f8f5ef;
+  --premium-white: #f8f5ef;
+  --premium-accent: #ffca18;
+  --premium-muted: #5f605c;
   --premium-rule: #dcded5;
   --premium-width: 1280px;
   background: var(--premium-white);
@@ -1225,4 +1227,150 @@
 @media (max-width: 700px) {
   .premium-calculator .simulator-header h1,
   .premium-calculator .simulator-header h2 { font-size: 23px; }
+}
+
+/* Approved visual direction — photographic, warm and direct. */
+body.premium-site,
+body.premium-site.fonts-loaded {
+  font-family: 'Manrope', Arial, sans-serif;
+  --yellow: #ffca18;
+  --black: #202321;
+  --gray-text: #5f605c;
+  --gray-light: #f1ede5;
+  background: var(--premium-paper);
+  color: var(--premium-ink);
+}
+.premium-site button,
+.premium-site input,
+.premium-site select,
+.premium-site textarea { font-family: inherit; }
+.premium-site .premium-nav { min-height: 96px; }
+.premium-brand { font-weight: 800; font-size: 24px; letter-spacing: -.055em; gap: 4px; }
+.premium-brand small { font-size: 9px; letter-spacing: .12em; }
+.premium-nav-links a { font-size: 13px; font-weight: 700; }
+.premium-header-phone { font-size: 13px; font-weight: 800; }
+.premium-header .premium-header-cta {
+  min-height: 48px;
+  border-color: var(--premium-accent);
+  border-radius: 4px;
+  background: var(--premium-accent);
+  color: var(--premium-ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+.premium-header .premium-header-cta:hover { background: #ffda50; border-color: #ffda50; }
+.premium-site .premium-button,
+.premium-site .btn-primary {
+  border-radius: 4px;
+  background: var(--premium-accent);
+  border-color: var(--premium-accent);
+  color: var(--premium-ink);
+  font-weight: 800;
+  box-shadow: none;
+}
+.premium-site .premium-button:hover,
+.premium-site .btn-primary:hover { background: #ffda50; border-color: #ffda50; color: var(--premium-ink); }
+.premium-site .premium-button--outline,
+.premium-site .btn-secondary { background: transparent; border-color: #c5c0b7; color: var(--premium-ink); border-radius: 4px; }
+.premium-site .premium-page-hero h1,
+.premium-site:not(.premium-home) .hero h1,
+.premium-site .article-header h1,
+.premium-site .article-hero h1,
+.premium-site .blog-hero h1 { font-weight: 800; letter-spacing: -.055em; line-height: 1.09; }
+.premium-site .premium-section-heading h2,
+.premium-site .section-title,
+.premium-site .article-content h2,
+.premium-site .article-content h3,
+.premium-site .premium-service-card h2,
+.premium-site .premium-service-card h3,
+.premium-site .premium-editorial-links h3 { font-weight: 800; }
+.premium-site .premium-contact-band h2 { font-weight: 800; }
+.premium-site .premium-section--muted,
+.premium-site .bg-gray,
+.premium-site .blog-filters { background: #f1ede5; }
+.premium-site .premium-footer { background: #202321; }
+.premium-site .premium-footer p,
+.premium-site .premium-footer address { color: #c6c5bd; }
+
+/* Estimation keeps its existing progressive intake and submission behavior. */
+.premium-site.estimate-site .estimate-intro h1 { font-weight: 800; }
+.premium-site.estimate-site .estimate-panel { background: #fffefa; border-color: #d8d2c7; border-radius: 10px; box-shadow: none; }
+.premium-site.estimate-site .estimate-panel h2 { font-weight: 800; }
+.premium-site.estimate-site .estimate-button:not(.secondary) { background: var(--premium-accent); color: var(--premium-ink); border-radius: 5px; font-weight: 800; }
+.premium-site.estimate-site .estimate-button.secondary { background: transparent; color: var(--premium-ink); border-color: #c5c0b7; }
+.premium-site.estimate-site .estimate-assistant,
+.premium-site.estimate-site .estimate-upload,
+.premium-site.estimate-site .estimate-notice,
+.premium-site.estimate-site .estimate-question { background: #f1ede5; }
+.premium-site.estimate-site .estimate-budget { background: #fff4c5; }
+.premium-site.estimate-site input[type=checkbox] { accent-color: #202321; }
+
+/* The direct quote form shares the same palette, retaining all field anatomy. */
+.premium-site.premium-quote {
+  --bg: #f8f5ef; --panel: #fffefa; --project: #fffefa;
+  --line: #d8d2c7; --text: #202321; --muted: #5f605c;
+  --accent: #ffca18; --accent-dark: #202321; --accent-soft: #fff4c5;
+}
+.premium-quote .card { border: 1px solid #d8d2c7; border-radius: 10px; box-shadow: none; }
+.premium-quote .intro { border-bottom-color: #d8d2c7; }
+.premium-quote .brand { color: var(--text); font-weight: 800; letter-spacing: -.04em; }
+.premium-quote .banner { border-left-color: #ffca18; color: #f8f5ef; background: #202321; }
+.premium-quote .banner-kicker { color: #ffca18; }
+.premium-quote .banner h1 { font-weight: 800; letter-spacing: -.04em; }
+.premium-quote .form-panel { border-color: #d8d2c7; border-radius: 7px; }
+.premium-quote .project-panel { border-top-color: #ffca18; }
+.premium-quote .contact-panel { border-top-color: #202321; background: #fffefa; }
+.premium-quote .choice,
+.premium-quote .choice input,
+.premium-quote input:not([type=checkbox]),
+.premium-quote textarea { background: #fffefa; border-color: #c5c0b7; color: #202321; }
+.premium-quote .choice:has(input[value="Salle de bain"]) { background: #fffefa; border-color: #c5c0b7; }
+.premium-quote .choice:has(input:checked) { border-color: #202321; background: #fff4c5; color: #202321; box-shadow: none; }
+.premium-quote .choice input:checked,
+.premium-quote .measurement-label input:checked { background: #ffca18; }
+.premium-quote .detail,
+.premium-quote .measurement-choice,
+.premium-quote .intro { border-color: #d8d2c7; }
+.premium-quote ::placeholder { color: #73756e; }
+.premium-quote .submit-btn { background: #ffca18; color: #202321; border-color: #ffca18; border-radius: 4px; }
+.premium-quote footer { color: #5f605c; }
+
+/* Chinese and post-submission pages retain their content and native language. */
+body.premium-zh { font-family: 'Manrope', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+.premium-zh > header { background: #f8f5ef; color: #202321; border-bottom: 1px solid #d8d2c7; }
+.premium-zh .logo { font-weight: 800; letter-spacing: -.04em; }
+.premium-zh .logo span { color: #202321; }
+.premium-zh .lang-switch a { color: #202321; border-color: #c5c0b7; }
+.premium-zh .lang-switch a.active,
+.premium-zh .hero-cta { background: #ffca18; color: #202321; border-color: #ffca18; border-radius: 4px; }
+.premium-zh h1,
+.premium-zh h2 { font-weight: 800; }
+.premium-zh h1 span,
+.premium-zh h2 span { color: #202321; }
+.premium-zh section:nth-of-type(even) { background: #f1ede5; }
+.premium-zh .service-card { background: #fffefa; border-color: #d8d2c7; box-shadow: none; }
+.premium-zh footer { background: #202321; color: #f8f5ef; }
+.premium-thanks h1,
+.premium-thanks h2 { font-weight: 800; letter-spacing: -.04em; }
+.premium-thanks main > .container { padding-bottom: 35px; }
+
+@media (max-width: 1100px) {
+  .premium-site .premium-nav { gap: 18px; }
+  .premium-brand { font-size: 21px; }
+  .premium-nav-links { gap: 18px; }
+}
+@media (max-width: 700px) {
+  .premium-site .premium-nav { min-height: 78px; gap: 14px; }
+  .premium-brand { font-size: 20px; }
+  .premium-brand small { font-size: 7px; letter-spacing: .085em; }
+  .premium-site .premium-nav-links a { font-size: 15px; }
+  .premium-site .premium-page-hero h1,
+  .premium-site:not(.premium-home) .hero h1,
+  .premium-site .article-header h1 { font-size: clamp(29px, 8.5vw, 42px); }
+  .premium-site.premium-thanks h1 { font-size: 34px !important; }
+  .premium-site.premium-thanks h2 { font-size: 25px !important; }
+  .premium-thanks main > .container > div { max-width: 100%; }
+  .premium-thanks main > .container > div[style*="padding: 40px"] { padding: 22px !important; }
+  .premium-zh .logo { font-size: 18px; }
+  .premium-zh .lang-switch a { padding: 6px 9px; margin-left: 4px; }
 }
