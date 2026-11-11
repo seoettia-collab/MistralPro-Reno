@@ -6,6 +6,7 @@ if(!engine)return;
 var form=document.getElementById('identity-form'),projectForm=document.getElementById('project-form'),message=document.getElementById('project-message'),answer=document.getElementById('question-answer');
 var session=null,identity=null,selected=[],history=[],acceptedQA=[],prepared=new Map(),request=null,result=null,busy=false,pdfLib=null;
 var categories=[],manualCategories=false,localAnswers={},localQueue=[],localIndex=0,questions=[],answers=[],questionIndex=0;
+var detailedTrades=[];
 var view='entry',resumeView='local',reviewMode='local',previousView='entry',orientation=0,sessionUsed=false,editingOrientation=false,entrySummarized=false;
 var debounce=null,categoryKey='',lastChoiceAt=0,refinement='',entrySignature=null,autofillTimer=null,autofillTicks=0;
 var categoryInputs=Array.from(document.querySelectorAll('input[name="project-category"]'));
@@ -26,7 +27,9 @@ function contactValid(data){
 function entryValid(){return contactValid(sessionUsed?identity:contact())&&!!(categories.length||message.value.trim());}
 function trades(){return categories.length?categories:['Autre projet'];}
 function currentLocal(){return localQueue[localIndex];}
-function localDone(){return localQueue.length>0&&localQueue.every(function(q){return engine.answered(q,localAnswers[q.id]);});}
+function localDone(){return localQueue.length>0&&localQueue.filter(function(q){return !q.optional;}).every(function(q){return engine.answered(q,localAnswers[q.id]);});}
+function localSettings(){return{details:detailedTrades};}
+function clearTradeDetails(trade){engine.queue([trade],localAnswers,{details:[trade]}).forEach(function(q){if(q.optional)delete localAnswers[q.id];});}
 function syncControls(){
  document.querySelectorAll('.estimate-panel button,.estimate-panel input,.estimate-panel textarea').forEach(function(el){el.disabled=busy||locked();});
  contactNames.concat(['website']).forEach(function(name){form.elements[name].disabled=busy||locked()||sessionUsed;});
@@ -58,7 +61,7 @@ function showView(next,focus){
  if(focus){var id={local:'local-question',question:'active-question',review:'review-title',restart:'restart-title',refine:'refine-label',entry:'panel-title','local-complete':'identity-continue',result:'download-pdf'}[view];document.getElementById(id).focus();}
 }
 function summary(){var data=sessionUsed?identity:contact();document.getElementById('entry-summary').textContent=entrySummarized?(categories.join(' / ')||'Votre projet')+' · '+data.first_name+' '+data.last_name+' · '+data.city+' — Voir les informations':'Votre projet et vos coordonnées';}
-function reconcile(){var old=currentLocal(),id=old&&old.id;localAnswers=engine.prune(trades(),localAnswers);localQueue=engine.queue(trades(),localAnswers);var found=localQueue.findIndex(function(q){return q.id===id;});localIndex=found>=0?found:Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));}
+function reconcile(){var old=currentLocal(),id=old&&old.id;detailedTrades=detailedTrades.filter(function(trade){return trades().includes(trade);});localAnswers=engine.prune(trades(),localAnswers,localSettings());localQueue=engine.queue(trades(),localAnswers,localSettings());var found=localQueue.findIndex(function(q){return q.id===id;});localIndex=found>=0?found:Math.max(0,localQueue.findIndex(function(q){return !q.optional&&!engine.answered(q,localAnswers[q.id]);}));}
 function inputSignature(){return JSON.stringify({contact:contact(),project:message.value,categories:categoryInputs.filter(function(input){return input.checked;}).map(function(input){return input.value;}),manual:manualCategories});}
 function evaluateEntry(proceed){
  proceed=proceed===true;
@@ -74,7 +77,7 @@ function evaluateEntry(proceed){
  var hasProject=!!(categories.length||message.value.trim());
  if(!hasProject){showView('entry',false);if(proceed){document.getElementById('identity-error').textContent='Décrivez vos travaux ou choisissez une catégorie.';message.focus();}return;}
  if(proceed){
-  if(!localDone()){document.getElementById('identity-error').textContent='Répondez aux questions de votre projet ou choisissez « Je ne sais pas ».';localIndex=Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));showLocal(true);return;}
+  if(!localDone()){document.getElementById('identity-error').textContent='Répondez aux questions de votre projet ou choisissez « Je ne sais pas ».';localIndex=Math.max(0,localQueue.findIndex(function(q){return !q.optional&&!engine.answered(q,localAnswers[q.id]);}));showLocal(true);return;}
   if(!entryValid()){document.getElementById('identity-error').textContent='Complétez vos coordonnées : téléphone français, e-mail valide et code postal en Île-de-France.';showView('local-complete',false);form.reportValidity();return;}
   document.getElementById('identity-error').textContent='';reviewMode='local';summarizeEntry();renderReview(true);return;
  }
@@ -96,23 +99,42 @@ function acceptAdvance(){var now=Date.now();if(now-lastChoiceAt<300)return false
 function showLocal(focus,selectedAction){
  document.getElementById('local-error').textContent='';
  var q=currentLocal();if(!q)return;var options=document.getElementById('local-options'),restoreFocus=null;options.replaceChildren();
- document.getElementById('local-counter').textContent=(categories.length?q.trade:'Votre projet')+' · Question '+(localIndex+1)+' sur '+localQueue.length;
+ var visibleQueue=localQueue.filter(function(item){return item.optional===q.optional;});
+ document.getElementById('local-counter').textContent=(categories.length?q.trade:'Votre projet')+(q.optional?' · Précisions facultatives':'')+' · Question '+(visibleQueue.findIndex(function(item){return item.id===q.id;})+1)+' sur '+visibleQueue.length;
  document.getElementById('local-question').textContent=q.label;
- if(q.type==='equipment'){
+ if(q.simple){
+  options.setAttribute('role','group');options.setAttribute('aria-labelledby','local-question');
+  q.options.forEach(function(o){var label=node('label',undefined,'estimate-local-choice'),checkbox=node('input');checkbox.type='checkbox';if(o.value===selectedAction)restoreFocus=checkbox;checkbox.checked=Array.isArray(localAnswers[q.id])&&localAnswers[q.id].includes(o.value);checkbox.setAttribute('aria-label',o.label);checkbox.onchange=function(){
+   if(busy||locked()||view!=='local'||!currentLocal()||currentLocal().id!==q.id)return;
+   var values=Array.isArray(localAnswers[q.id])?localAnswers[q.id].slice():[];values=values.filter(function(value){return value!==o.value;});if(checkbox.checked)values.push(o.value);localAnswers[q.id]=values;clearTradeDetails(q.trade);reconcile();showLocal(false,o.value);
+  };label.append(checkbox,node('span',o.label));options.append(label);});
+ }else if(q.type==='equipment'){
   q.equipment.forEach(function(item){var card=node('div',undefined,'estimate-equipment-card'),title=node('h4',item.label,'estimate-equipment-picture estimate-picture-'+item.picture),actions=node('div',undefined,'estimate-equipment-actions');card.setAttribute('role','group');card.setAttribute('aria-label',item.label);q.options.filter(function(o){return o.equipment===item.id;}).forEach(function(o){var button=node('button',o.action,'estimate-equipment-action');button.type='button';if(o.value===selectedAction)restoreFocus=button;button.setAttribute('aria-label',item.label+' : '+o.action);button.setAttribute('aria-pressed',String(Array.isArray(localAnswers[q.id])&&localAnswers[q.id].includes(o.value)));button.onclick=function(){if(busy||locked()||view!=='local'||!currentLocal()||currentLocal().id!==q.id)return;var values=Array.isArray(localAnswers[q.id])?localAnswers[q.id].filter(function(value){return value.split(':')[0]!==item.id;}):[];values.push(o.value);localAnswers[q.id]=values;reconcile();showLocal(false,o.value);};actions.append(button);});card.append(title,actions);options.append(card);});
  }else q.options.forEach(function(o){var button=node('button',o.label,'estimate-local-choice');button.type='button';button.setAttribute('aria-pressed',q.type==='multi'?String(Array.isArray(localAnswers[q.id])&&localAnswers[q.id].includes(o.value)):String(localAnswers[q.id]===o.value));button.onclick=function(){
   if(busy||locked()||view!=='local'||!currentLocal()||currentLocal().id!==q.id)return;
   if(q.type==='single'){if(!acceptAdvance())return;localAnswers[q.id]=o.value;advanceLocal(q.id);}
   else{var values=Array.isArray(localAnswers[q.id])?localAnswers[q.id].slice():[];if(values.includes(o.value))values=values.filter(function(v){return v!==o.value;});else{if(['none','keep','whole'].includes(o.value))values=[];else values=values.filter(function(v){return !['none','keep','whole'].includes(v);});values.push(o.value);}localAnswers[q.id]=values;reconcile();showLocal(false);}
  };options.append(button);});
+ if(q.simple||q.optional){var detailLink=node('button',q.optional?'Revenir au questionnaire simple':'Préciser mon projet (facultatif)','estimate-text-button');detailLink.type='button';detailLink.onclick=function(){
+  if(busy||locked()||view!=='local'||!currentLocal()||currentLocal().id!==q.id)return;
+  saveLocalDraft();if(q.simple&&!detailedTrades.includes(q.trade))detailedTrades.push(q.trade);reconcile();
+  localIndex=localQueue.findIndex(function(item){return item.trade===q.trade&&(q.simple?item.optional:item.simple);});if(localIndex>=0)showLocal(true);
+ };options.append(detailLink);}
  var number=document.getElementById('local-value'),text=document.getElementById('local-text');number.hidden=q.type!=='number';text.hidden=q.type!=='text';document.getElementById('local-value-label').hidden=q.type!=='number';number.placeholder=localAnswers[q.id]===engine.UNKNOWN?'Je ne sais pas (réponse conservée)':'Ex. 6';text.placeholder=localAnswers[q.id]===engine.UNKNOWN?'Je ne sais pas (réponse conservée)':'Votre réponse…';number.value=q.type==='number'&&localAnswers[q.id]!==engine.UNKNOWN?localAnswers[q.id]||'':'';text.value=q.type==='text'&&localAnswers[q.id]!==engine.UNKNOWN?localAnswers[q.id]||'':'';
  document.getElementById('local-next').hidden=q.type==='single';showView('local',focus);if(restoreFocus)restoreFocus.focus();
 }
 function saveLocalDraft(edited){var q=currentLocal();if(!q)return;var input=q.type==='number'?document.getElementById('local-value'):q.type==='text'?document.getElementById('local-text'):null;if(input&&(edited||input.value!==''||localAnswers[q.id]!==engine.UNKNOWN))localAnswers[q.id]=input.value;}
-function advanceLocal(id){reconcile();if(document.getElementById('identity-error').textContent.includes('Répondez'))document.getElementById('identity-error').textContent='';var index=localQueue.findIndex(function(q){return q.id===id;});if(index<localQueue.length-1){localIndex=index+1;showLocal(true);}else if(!localDone()){localIndex=Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));showLocal(true);}else showView('local-complete',false);}
+function advanceLocal(id){
+ reconcile();if(document.getElementById('identity-error').textContent.includes('Répondez'))document.getElementById('identity-error').textContent='';
+ var index=localQueue.findIndex(function(q){return q.id===id;}),previous=localQueue[index],next=localQueue.findIndex(function(q,i){return i>index&&(previous.optional?q.optional&&q.trade===previous.trade:!q.optional);});
+ if(next>=0){localIndex=next;showLocal(true);}
+ else if(previous.optional){localIndex=localQueue.findIndex(function(q){return q.simple&&q.trade===previous.trade;});showLocal(true);}
+ else if(!localDone()){localIndex=Math.max(0,localQueue.findIndex(function(q){return !q.optional&&!engine.answered(q,localAnswers[q.id]);}));showLocal(true);}
+ else showView('local-complete',false);
+}
 document.getElementById('local-next').onclick=function(){if(busy||locked()||view!=='local')return;var now=Date.now();if(now-lastChoiceAt<300)return;saveLocalDraft();var q=currentLocal();if(!engine.answered(q,localAnswers[q.id])){document.getElementById('local-error').textContent='Ajoutez une réponse valide ou choisissez « Je ne sais pas ».';return;}if(acceptAdvance())advanceLocal(q.id);};
 document.getElementById('local-unknown').onclick=function(){if(busy||locked()||view!=='local'||!acceptAdvance())return;var q=currentLocal();localAnswers[q.id]=engine.UNKNOWN;advanceLocal(q.id);};
-document.getElementById('local-previous').onclick=function(){if(busy||locked()||view!=='local')return;saveLocalDraft();if(localIndex>0){localIndex--;showLocal(true);}else{document.getElementById('entry-details').open=true;document.getElementById('panel-title').focus();}};
+document.getElementById('local-previous').onclick=function(){if(busy||locked()||view!=='local')return;saveLocalDraft();var current=currentLocal(),previous=-1;localQueue.forEach(function(q,i){if(i<localIndex&&(current.optional?q.trade===current.trade:!q.optional))previous=i;});if(previous>=0){localIndex=previous;showLocal(true);}else{document.getElementById('entry-details').open=true;document.getElementById('panel-title').focus();}};
 document.getElementById('local-value').addEventListener('input',function(){if(!busy&&!locked()&&view==='local')saveLocalDraft(true);});
 document.getElementById('local-text').addEventListener('input',function(){if(!busy&&!locked()&&view==='local')saveLocalDraft(true);});
 document.getElementById('edit-local-answers').onclick=function(){if(busy||locked())return;localIndex=0;showLocal(true);};
@@ -153,7 +175,7 @@ document.getElementById('restart-project').onclick=requestRestart;
 document.getElementById('cancel-restart').onclick=function(){if(busy||locked()||view!=='restart')return;showView(previousView,true);};
 document.getElementById('confirm-restart').onclick=function(){
  if(busy||locked()||view!=='restart')return;
- orientation++;history=[];acceptedQA=[];questions=[];answers=[];questionIndex=0;request=null;result=null;categories=[];manualCategories=false;localAnswers={};localQueue=[];localIndex=0;categoryKey='';entrySignature=null;message.value='';answer.value='';refinement='';
+ orientation++;history=[];acceptedQA=[];questions=[];answers=[];questionIndex=0;request=null;result=null;categories=[];manualCategories=false;localAnswers={};localQueue=[];localIndex=0;detailedTrades=[];categoryKey='';entrySignature=null;message.value='';answer.value='';refinement='';
  editingOrientation=true;entrySummarized=false;resumeView='local';categoryInputs.forEach(function(input){input.checked=false;});document.getElementById('answers-review').replaceChildren();document.getElementById('estimate-result').replaceChildren();document.getElementById('entry-details').open=true;document.getElementById('project-attachments').open=false;document.getElementById('category-detection').hidden=true;showView('entry',true);summary();evaluateEntry();
 };
 function projectText(turn){
@@ -217,7 +239,6 @@ var landingCategories={'salle-de-bain':'Salle de bain','cuisine':'Cuisine','appa
 if(Object.prototype.hasOwnProperty.call(landingCategories,landingProject)){
  categories=[landingCategories[landingProject]];manualCategories=true;
  categoryInputs.forEach(function(input){input.checked=categories.includes(input.value);});
- if(landingProject==='appartement'||landingProject==='maison')localAnswers['general.property']=landingProject==='maison'?'house':'flat';
 }
 showView('entry',false);
 if(preview)document.getElementById('preview-note').hidden=false;
