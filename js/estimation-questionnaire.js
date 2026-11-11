@@ -9,17 +9,24 @@ function question(id,trade,label,type,entries){return{id:id,trade:trade,label:la
 function single(id,trade,label,entries){return question(id,trade,label,'single',entries);}
 function multi(id,trade,label,entries){return question(id,trade,label,'multi',entries);}
 function includes(value,key){return Array.isArray(value)&&value.includes(key);}
+function bathroomEquipment(){
+ var q=question('sdb.equipment','Salle de bain','Que souhaitez-vous faire pour les équipements concernés ?','equipment');
+ q.equipment=[{id:'bath',label:'Baignoire',picture:'bath'},{id:'shower',label:'Douche',picture:'shower'},{id:'basin',label:'Meuble vasque',picture:'basin'},{id:'wc',label:'WC',picture:'wc'}];
+ var actions={keep:['Conserver','conserver l’équipement existant'],remove:['Déposer uniquement','déposer uniquement, sans nouvel équipement'],replace:['Remplacer','déposer l’équipement existant et installer un équipement neuf'],add:['Ajouter','installer un équipement supplémentaire, sans dépose prévue'],shower:['Remplacer par une douche','déposer la baignoire et installer une douche à sa place, sans baignoire neuve'],none:['Absent / non concerné','absent ou non concerné par les travaux']};
+ q.equipment.forEach(function(item){var keys=item.id==='bath'?['keep','remove','replace','shower','none']:['keep','remove','replace','add','none'];keys.forEach(function(key){q.options.push({value:item.id+':'+key,label:item.label+' : '+actions[key][1]+'.',equipment:item.id,action:actions[key][0]});});});
+ return q;
+}
+function hasNewEquipment(values){return Array.isArray(values)&&values.some(function(value){return /:(replace|add|shower)$/.test(value);});}
 function queue(selected,answers){
  var out=[];answers=answers||{};
  categories.filter(function(trade){return selected.includes(trade);}).forEach(function(trade){
   if(trade==='Salle de bain'){
-   out.push(single('sdb.remove',trade,'Que faut-il déposer dans votre salle de bain ?',[['bath','Une baignoire'],['tray','Un bac à douche'],['both','Une baignoire et un bac à douche'],['none','Aucun de ces équipements']]));
-   out.push(multi('sdb.install',trade,'Quels équipements souhaitez-vous installer ?',[['shower','Une douche'],['bath','Une baignoire'],['basin','Un meuble vasque'],['wc','Un WC'],['keep','Conserver les équipements actuels']]));
-   if(includes(answers['sdb.install'],'shower'))out.push(single('sdb.shower',trade,'Quel type de douche souhaitez-vous ?',[['walkin','Une douche à l’italienne'],['lowtray','Un receveur extra-plat'],['standard','Un receveur classique']]));
+   var equipment= bathroomEquipment(),equipmentAnswers=answers['sdb.equipment'];out.push(equipment);if(!answered(equipment,equipmentAnswers))equipmentAnswers=[];
+   if(includes(equipmentAnswers,'bath:shower')||includes(equipmentAnswers,'shower:replace')||includes(equipmentAnswers,'shower:add'))out.push(single('sdb.shower',trade,'Quel type de douche souhaitez-vous ?',[['walkin','Une douche à l’italienne'],['lowtray','Un receveur extra-plat'],['standard','Un receveur classique']]));
    out.push(multi('sdb.cover',trade,'Quels revêtements faut-il reprendre ?',[['floor','Le sol'],['walls','Les murs / la faïence'],['ceiling','Le plafond'],['none','Aucun revêtement']]));
    out.push(single('sdb.area-known',trade,'Connaissez-vous la surface de la salle de bain ?',[['yes','Oui'],['no','Non']]));
    if(answers['sdb.area-known']==='yes')out.push(question('sdb.area',trade,'Quelle est la surface de la salle de bain en m² ?','number'));
-   if(includes(answers['sdb.install'],'shower')||includes(answers['sdb.install'],'bath')||includes(answers['sdb.install'],'basin')||includes(answers['sdb.install'],'wc'))out.push(single('sdb.layout',trade,'Les arrivées d’eau et évacuations doivent-elles changer de place ?',[['keep','Conserver les emplacements'],['move','Déplacer au moins un équipement']]));
+   if(hasNewEquipment(equipmentAnswers))out.push(single('sdb.layout',trade,'Les arrivées d’eau et évacuations doivent-elles changer de place ?',[['keep','Conserver les emplacements'],['move','Déplacer au moins un équipement']]));
   }else if(trade==='Cuisine'){
    out.push(single('kitchen.remove',trade,'Que faut-il déposer dans votre cuisine ?',[['all','Toute la cuisine existante'],['some','Certains meubles ou équipements'],['none','Aucune dépose']]));
    out.push(multi('kitchen.install',trade,'Que souhaitez-vous installer ou remplacer dans la cuisine ?',[['units','Les meubles'],['top','Le plan de travail'],['sink','L’évier et la robinetterie'],['appliances','L’électroménager']]));
@@ -50,17 +57,20 @@ function queue(selected,answers){
 function answered(q,value){
  if(value===UNKNOWN)return true;
  if(q.type==='single')return q.options.some(function(o){return o.value===value;});
+ if(q.type==='equipment')return Array.isArray(value)&&value.length>0&&value.every(function(v){return typeof v==='string';})&&new Set(value.map(function(v){return v.split(':')[0];})).size===value.length&&value.every(function(v){return q.options.some(function(o){return o.value===v;});});
  if(q.type==='multi')return Array.isArray(value)&&value.length>0&&value.every(function(v){return q.options.some(function(o){return o.value===v;});});
  if(q.type==='number'){var n=Number(String(value||'').replace(',','.'));return n>0&&Number.isFinite(n)&&n<=q.max;}
  return typeof value==='string'&&value.trim().length>0&&value.length<=q.max;
 }
 function prune(selected,answers){
  var clean=Object.assign({},answers),changed=true;
+ if(Object.hasOwn(clean,'sdb.equipment')&&!answered(bathroomEquipment(),clean['sdb.equipment']))delete clean['sdb.equipment'];
  while(changed){changed=false;var ids=queue(selected,clean).map(function(q){return q.id;});Object.keys(clean).forEach(function(id){if(!ids.includes(id)){delete clean[id];changed=true;}});}
  return clean;
 }
 function format(q,value){
  if(value===UNKNOWN)return 'Je ne sais pas.';
+ if(q.type==='equipment'){if(!answered(q,value))return 'Actions non précisées.';return q.equipment.map(function(item){var selected=q.options.find(function(o){return o.equipment===item.id&&value.includes(o.value);});return selected?selected.label:item.label+' : non précisé.';}).join('\n');}
  if(q.type==='multi')return q.options.filter(function(o){return value.includes(o.value);}).map(function(o){return o.label;}).join(' ; ');
  if(q.type==='single'){var o=q.options.find(function(o){return o.value===value;});return o?o.label:'';}
  return String(value).trim()+(q.unit?' '+q.unit:'');
