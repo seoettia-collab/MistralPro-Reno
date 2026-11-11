@@ -101,7 +101,7 @@ def page_url(path):
 
 def public_paths():
     candidates = list(ROOT.glob('*.html'))
-    for directory in ('blog', 'services', 'zh', 'devis-travaux', 'metiers'):
+    for directory in ('blog', 'services', 'zh', 'devis-travaux'):
         candidates.extend((ROOT / directory).rglob('*.html'))
     return sorted(str(p.relative_to(ROOT)) for p in candidates
                   if p.name != 'TEMPLATE.html' and not p.name.startswith('google'))
