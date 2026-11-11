@@ -1,4 +1,4 @@
-!function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="07 55 18 89 37",s="contact@mistralpro-reno.fr";let i=null;
+!function(t){"use strict";const e="Mistral Pro Reno",o="9 rue Anatole de la Forge",n="75017 Paris",a="06 09 10 90 69",s="contact@mistralpro-reno.fr";let i=null;
 
 // TOUS LES SELECTS PAR CATÉGORIE - V17
 const allSelects={
@@ -521,7 +521,7 @@ const L=y.internal.getNumberOfPages();for(let t=1;t<=L;t++)y.setPage(t),
 y.setDrawColor(74,144,226),y.setLineWidth(0.5),y.line(15,275,195,275),
 y.setFontSize(6),y.setTextColor(100,100,100),y.setFont(void 0,"normal"),
 y.text("capital de 1000 € - 85155888200029 RCS Paris - APE : 4120A",105,279,{align:"center"}),
-y.text("Tél : +33 (0) 7 55 18 89 37 - Email : contact@mistralpro-reno.fr - https://www.mistralpro-reno.fr/",105,283,{align:"center"}),
+y.text("Tél : +33 (0) 6 09 10 90 69 - Email : contact@mistralpro-reno.fr - https://www.mistralpro-reno.fr/",105,283,{align:"center"}),
 y.text("Assurance décennale & RC Pro - MIC Insurance Company (Groupe Leader) - Police n° LUNSMB2602366 - Couverture : France",105,287,{align:"center"}),
 y.text("Page "+t+" / "+L,185,287,{align:"right"});
 const A="Devis-"+P+"-"+c.replace(/[^a-zA-Z0-9]/g,"-").replace(/-+/g,"-").toUpperCase();y.setProperties({title:A,subject:"Devis travaux de rénovation",author:e,creator:e});
@@ -536,7 +536,7 @@ return sent;}catch(t){return console.error("Erreur envoi webhook:",t),!1}}
 const deliveryStatus=document.getElementById("quote-delivery-status");
 if(deliveryStatus){deliveryStatus.hidden=false;deliveryStatus.textContent="Votre estimation PDF est prête. Transmission de votre demande en cours…";}
 sendWebhook({nom:c,tel:h,email:g,adresse:f,cp:v,ville:x,quoteNum:P},j,{subtotal:E,vat:$,totalTTC:N}).then(function(sent){
-if(deliveryStatus){deliveryStatus.dataset.state=sent?"sent":"unconfirmed";deliveryStatus.textContent=sent?"Votre estimation a été transmise à Mistral Pro Reno.":"Votre estimation PDF est disponible, mais l’envoi de votre demande n’est pas confirmé. Appelez-nous au 07 55 18 89 37.";}
+if(deliveryStatus){deliveryStatus.dataset.state=sent?"sent":"unconfirmed";deliveryStatus.textContent=sent?"Votre estimation a été transmise à Mistral Pro Reno.":"Votre estimation PDF est disponible, mais l’envoi de votre demande n’est pas confirmé. Appelez-nous au 06 09 10 90 69.";}
 });
 const U=y.output("blob"),_=URL.createObjectURL(U),I=window.open(_,"_blank");I?I.onload=function(){I.document.title=A,I.print(),setTimeout(function(){URL.revokeObjectURL(_)},1e3)}:(y.save(A+".pdf"),URL.revokeObjectURL(_))}
 

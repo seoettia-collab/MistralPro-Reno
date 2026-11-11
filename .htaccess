@@ -20,6 +20,9 @@ RedirectMatch 301 ^/favicon\.ico$ /images/favicon.ico
 # Keep this rule only after /estimation-projet.html readiness is verified.
 # Retired portfolio: keep previously shared URLs useful.
 Redirect 301 /projets.html /travaux.html
+Redirect 301 /blog/cout-renovation-appartement-paris.html /blog/prix-renovation-appartement-paris-2026.html
+Redirect 301 /blog/renovation-salle-de-bain-guide-prix.html /blog/prix-renovation-salle-de-bain-paris-2026.html
+Redirect 301 /blog/prix-renovation-de-habitation-ile-de-france.html /blog/renovation-maison-ile-de-france-2026.html
 # Alias de la refonte déjà publiée : conserver les URL services historiques.
 Redirect 301 /metiers.html /services.html
 Redirect 301 /metiers/maconnerie.html /services/maconnerie.html
