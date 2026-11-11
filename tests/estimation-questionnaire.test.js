@@ -2,6 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const questionnaire = require('../js/estimation-questionnaire.js');
+questionnaire.setDetailed(true);
 
 const bath = ['Salle de bain'];
 const kitchen = ['Cuisine'];

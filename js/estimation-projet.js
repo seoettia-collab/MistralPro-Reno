@@ -219,6 +219,7 @@ if(Object.prototype.hasOwnProperty.call(landingCategories,landingProject)){
  categoryInputs.forEach(function(input){input.checked=categories.includes(input.value);});
  if(landingProject==='appartement'||landingProject==='maison')localAnswers['general.property']=landingProject==='maison'?'house':'flat';
 }
+var detailedLink=document.getElementById('local-detailed');if(detailedLink)detailedLink.onclick=function(){engine.setDetailed(!engine.isDetailed());detailedLink.textContent=engine.isDetailed()?'Revenir au formulaire simple':'Préciser mon projet (facultatif)';localIndex=0;reconcile();showLocal(true);};
 showView('entry',false);
 if(preview)document.getElementById('preview-note').hidden=false;
 // Browser/password-manager autofill may update values without dispatching input.
