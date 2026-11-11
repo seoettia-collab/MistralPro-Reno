@@ -1,0 +1,77 @@
+/* Refonte 2026 — Mistral Pro Reno */
+:root{--bg:#f3f2f2;--surface:#eae9e9;--ink:#201f1d;--ink-2:color-mix(in srgb,#201f1d 78%,transparent);--ink-3:color-mix(in srgb,#201f1d 70%,transparent);--gold:#b68235;--gold-deep:#7d5411;--night:#2d2b2b;--rule:color-mix(in srgb,#201f1d 16%,transparent);--rule-night:color-mix(in srgb,#f3f2f2 18%,transparent);--serif:"Cormorant Garamond",Georgia,serif;--text:"Lora",Georgia,serif;--edge:clamp(20px,5vw,72px)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:15.5px;line-height:1.65;text-wrap:pretty}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--gold-deep)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--edge)}
+.night{background:var(--night);color:var(--bg)}
+.night a:hover{color:var(--gold)}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-deep);margin:0 0 14px}
+.night .kicker{color:var(--gold)}
+.h2{font-size:clamp(34px,4vw,52px);line-height:1.08}
+.muted{color:var(--ink-2)}
+.hr{height:1px;border:0;margin:0;background:var(--rule)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border:1px solid var(--rule);border-radius:4px;font-family:var(--serif);font-size:17px;background:transparent;color:inherit;cursor:pointer;transition:background .15s}
+.btn-primary{border-color:var(--gold);color:var(--gold-deep)}
+.night .btn-primary{color:var(--bg)}
+.btn-primary:hover{background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.btn-ghost{border-color:transparent}
+.btn-ghost:hover{background:color-mix(in srgb,currentColor 8%,transparent)}
+.plate{margin:0;border:6px solid var(--surface);outline:1px solid var(--rule);filter:sepia(.22) saturate(.82) contrast(1.05);overflow:hidden}
+.plate img{width:100%;height:100%;object-fit:cover}
+/* en-tête */
+.topbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:10px 0;font-size:13px;letter-spacing:.04em;border-bottom:1px solid var(--rule-night)}
+.topbar a{color:var(--gold)}
+.site-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 32px;padding:18px 0}
+.brand{display:flex;flex-direction:column}
+.brand b{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.1;letter-spacing:.02em}
+.brand small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.site-nav{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;font-size:15px}
+.sticky-cta{position:fixed;right:12px;bottom:12px;z-index:50;display:flex;gap:8px}
+.sticky-cta .btn{background:var(--bg);box-shadow:0 3px 10px color-mix(in srgb,#2d2b2b 16%,transparent)}
+/* hero */
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:56px;align-items:center;padding:56px 0 88px}
+.hero h1{font-size:42px;line-height:1.02}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.badge{border:1px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:2px;font-size:14px}
+.hero p{font-size:17px;line-height:1.7;max-width:48ch;margin:28px 0 0;opacity:.85}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero .plate{aspect-ratio:5/4}
+/* sections */
+.section{padding:96px 0}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px 40px;margin-bottom:44px}
+.link-gold{font-size:15px;color:var(--gold-deep);border-bottom:1px solid var(--gold)}
+.grid-travaux{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));border-top:1px solid var(--rule)}
+.travail{display:flex;flex-direction:column;gap:10px;padding:28px 28px 32px 0;border-bottom:1px solid var(--rule)}
+.travail .n{font-family:var(--serif);font-size:16px;color:var(--gold-deep);font-feature-settings:"tnum" 1}
+.travail h3{font-size:26px;line-height:1.15}
+.travail p{margin:0;font-size:15px;line-height:1.65;color:var(--ink-2)}
+.travail .go{font-size:14px;color:var(--gold-deep)}
+.photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px;padding-bottom:96px}
+.photos figure{margin:0}
+.photos .plate{aspect-ratio:3/4}
+.photos figcaption{font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-top:12px;color:var(--ink-3)}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:40px 80px}
+.metiers{list-style:none;padding:0;margin:0;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));column-gap:32px}
+.metiers li{border-bottom:1px solid var(--rule)}
+.metiers a{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 0;font-family:var(--serif);font-size:22px}
+.metiers a span{font-size:16px;color:var(--gold-deep)}
+.engagements{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:40px;border-top:1px solid var(--ink);padding-top:32px}
+.engagements .n{font-family:var(--serif);font-size:56px;line-height:1;color:var(--gold);font-feature-settings:"tnum" 1}
+.engagements h3{font-weight:600;font-size:24px;line-height:1.2;margin:18px 0 10px}
+.engagements p{margin:0;font-size:15px;color:var(--ink-2)}
+.cta-card{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px 40px;padding:40px;border:1px solid var(--rule);border-radius:4px;margin-bottom:104px}
+.cta-card h2{font-size:clamp(28px,3vw,38px);line-height:1.15}
+/* pied */
+.site-footer{padding:88px 0 96px}
+.big-phone{display:block;font-family:var(--serif);font-size:clamp(25px,4.5vw,64px);line-height:1;font-feature-settings:"tnum" 1}
+.foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:32px;margin-top:56px;font-size:14.5px;line-height:1.65;opacity:.85}
+.foot-grid h2{font-family:var(--text);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+.foot-grid ul{list-style:none;margin:0;padding:0}
+.foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px;margin-top:64px;padding-top:22px;border-top:1px solid var(--rule-night);font-size:13px;opacity:.7}
+.foot-bottom div{display:flex;gap:20px}
