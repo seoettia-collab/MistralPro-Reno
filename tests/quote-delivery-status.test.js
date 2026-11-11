@@ -35,7 +35,7 @@ for (const sent of [true, false]) {
     if (sent) assert.match(status.textContent, /a été transmise/);
     else {
       assert.match(status.textContent, /n’est pas confirmé/);
-      assert.match(status.textContent, /07 55 18 89 37/);
+      assert.match(status.textContent, /06 09 10 90 69/);
     }
     assert.equal(calls, 1, 'Feedback never retries the production request');
   });
