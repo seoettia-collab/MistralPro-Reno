@@ -23,36 +23,41 @@
 /* Entrée unique et questionnaire métier automatique, avant tout appel serveur. */
 #entry-details>summary{min-height:48px;align-content:center;cursor:pointer;font-size:15px;font-weight:650;line-height:1.6;margin-bottom:20px;overflow-wrap:anywhere}#entry-details>summary:focus-visible{outline:3px solid #d0ad17;outline-offset:4px}#entry-details:not([open])>summary{margin-bottom:0}#identity-step{margin-bottom:24px}#entry-status{margin-bottom:0}.estimate-local-options{display:grid;grid-template-columns:1fr;gap:10px;margin:18px 0}.estimate-local-choice{border:1px solid #b8bdb2;border-radius:8px;background:#fffefa;color:#171c19;min-height:48px;padding:14px 16px;font:inherit;font-size:16px;line-height:1.5;text-align:left;cursor:pointer}.estimate-local-choice[aria-pressed=true]{background:#fcf5d9;border-color:#646b65;box-shadow:inset 0 0 0 1px #646b65}.estimate-local-choice:disabled{cursor:wait;opacity:.65}.estimate-review-description{white-space:pre-wrap;overflow-wrap:anywhere}.estimate-review-summary{overflow-wrap:anywhere}#local-value{max-width:240px}#local-question{margin-top:8px}#local-text{font-size:16px}#local-value-label{font-size:14px}#category-detection{padding:10px 12px;background:#f6f3eb;border-radius:6px}#identity-step .estimate-categories{margin-top:18px}.estimate-consent{min-height:44px}.estimate-consent span{display:block}#project-step .estimate-section-head{margin-top:22px}
 
-/* Compact estimation page: retain readable fields and comfortable touch targets. */
+/* Compact estimation page: readable fields, concise choices, no oversized cards. */
 .estimate-header{max-width:1224px;height:72px;padding:0 32px}
-.estimate-layout{max-width:1224px;box-sizing:border-box;margin:28px auto 48px;padding:0 32px;grid-template-columns:340px minmax(0,1fr);gap:32px}
-.estimate-intro{padding-top:12px}.estimate-intro h1{font-size:40px;margin:0 0 16px;line-height:1.08}
-.estimate-intro .estimate-eyebrow{margin-bottom:12px!important}.estimate-lead{font-size:16px;line-height:1.6;margin:0;color:#58615b}
-.estimate-visual{margin-top:24px}.estimate-visual img{height:160px;border-radius:10px}.estimate-trust{margin:12px 0 0}
-.estimate-panel{padding:24px;border-radius:14px;min-width:0}
-.estimate-steps{padding-bottom:16px;margin-bottom:20px;gap:12px}.estimate-steps li{font-size:11px;line-height:1.5}.estimate-steps span{display:inline;margin-right:6px}
-.estimate-panel h2{font-size:24px;margin-bottom:16px}.estimate-panel h3{font-size:17px;margin:18px 0 12px}
-.estimate-fields{gap:12px;margin-top:0}.estimate-fields label,.estimate-label{font-size:12px}
-.estimate-site input:not([type=checkbox]):not([type=file]),.estimate-site textarea{min-height:44px;padding:10px 12px;margin-top:5px;line-height:1.4}
-#identity-step .estimate-categories{margin:14px 0 18px;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
-.estimate-categories legend{font-size:12px;font-weight:650;margin-bottom:8px;color:#171c19}
-.estimate-categories label{font-size:14px;min-height:46px;padding:10px 12px;gap:10px}.estimate-categories input{width:18px;height:18px}
-#category-detection{margin:8px 0;font-size:12px!important;padding:8px 10px}
-.estimate-button{min-height:46px;padding:12px 16px}.estimate-privacy{font-size:11px!important;margin:10px 0 0}
+.estimate-layout{max-width:1224px;box-sizing:border-box;margin:24px auto 40px;padding:0 32px;grid-template-columns:280px minmax(0,1fr);gap:32px}
+.estimate-intro{padding-top:8px}.estimate-intro h1{font-size:38px;margin:0 0 14px;line-height:1.08}
+.estimate-intro .estimate-eyebrow{margin-bottom:10px!important}.estimate-lead{font-size:15px;line-height:1.6;margin:0;color:#58615b}
+.estimate-visual{margin-top:20px}.estimate-visual img{height:160px;border-radius:10px}.estimate-trust{margin:10px 0 0}
+.estimate-panel{padding:18px 20px;border-radius:12px;min-width:0}
+.estimate-steps{padding-bottom:12px;margin-bottom:14px;gap:12px}.estimate-steps li{font-size:11px;line-height:1.5}.estimate-steps span{display:inline;margin-right:6px}
+.estimate-panel h2{font-size:23px;margin-bottom:12px}.estimate-panel h3{font-size:16px;margin:12px 0 8px}
+.estimate-fields{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:0}.estimate-fields .full{grid-column:span 2}.estimate-fields label{min-width:0}.estimate-fields label,.estimate-label{font-size:12px}
+.estimate-site input:not([type=checkbox]):not([type=file]),.estimate-site textarea{min-height:36px;padding:7px 10px;margin-top:4px;font-size:14px;line-height:1.4}
+#project-message{height:52px;min-height:52px;padding:6px 10px;line-height:1.3}
+#identity-step .estimate-categories{display:flex;flex-wrap:nowrap;align-items:center;margin:10px 0 12px;gap:4px 18px}
+.estimate-categories legend{font-size:12px;font-weight:650;margin-bottom:4px;color:#171c19}
+.estimate-categories label{font-size:13px;min-height:32px;padding:0;gap:7px;border:0;border-radius:0;white-space:nowrap}
+.estimate-categories input{width:16px;height:16px;margin:0}.estimate-categories label:has(input:checked){background:transparent;border-color:transparent;font-weight:650}
+#category-detection{margin:6px 0;font-size:12px!important;padding:6px 8px}
+.estimate-button{min-height:42px;padding:10px 14px;margin-top:12px}.estimate-privacy{font-size:11px!important;margin:8px 0 0}
 .estimate-layout[data-step=identity-step] #entry-summary{display:none}#identity-step{margin-bottom:0}
 .estimate-layout[data-step=project-step] .estimate-intro,.estimate-layout[data-step=result-step] .estimate-intro{display:none}
 .estimate-layout[data-step=project-step],.estimate-layout[data-step=result-step]{grid-template-columns:minmax(0,720px);justify-content:center}
-#entry-details>summary{font-size:13px;margin-bottom:16px}#project-step .estimate-section-head{margin-top:12px}
+#entry-details>summary{font-size:13px;margin-bottom:12px}#project-step .estimate-section-head{margin-top:10px}
 .estimate-local-choice{min-height:44px;padding:10px 14px}.estimate-local-options{margin:12px 0}.estimate-active-question{margin:16px 0 12px}
-.estimate-footer{padding:20px 32px}
+.estimate-footer{padding:18px 32px}
+@media(max-width:1100px){#identity-step .estimate-categories{flex-wrap:wrap;column-gap:16px}}
 @media(max-width:900px){
- .estimate-header{height:64px;padding:0 16px}.estimate-layout{display:block;margin:20px auto 32px;padding:0 16px;max-width:680px}
- .estimate-intro{padding:0;margin-bottom:20px}.estimate-intro h1{font-size:30px;max-width:none;margin-bottom:10px}
+ .estimate-header{height:64px;padding:0 16px}.estimate-layout{display:block;margin:18px auto 28px;padding:0 16px;max-width:680px}
+ .estimate-intro{padding:0;margin-bottom:16px}.estimate-intro h1{font-size:30px;max-width:none;margin-bottom:8px}
  .estimate-lead{font-size:14px;line-height:1.55;margin:0}.estimate-intro .estimate-visual,.estimate-trust{display:none}
- .estimate-panel{padding:18px 16px;border-radius:12px}.estimate-panel h2{font-size:22px}
- .estimate-steps{margin-bottom:18px;padding-bottom:14px;gap:8px}.estimate-steps li{font-size:10px}.estimate-steps span{display:block;margin:0 0 3px}
- .estimate-fields{gap:12px 10px}.estimate-fields .mobile-full{grid-column:1/-1}
- #identity-step .estimate-categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
- .estimate-categories label{font-size:13px;min-height:48px;padding:10px 8px;gap:7px}
- .estimate-footer{padding:20px 16px;gap:12px}.estimate-header .premium-brand small{font-size:7px}
+ .estimate-panel{padding:16px;border-radius:12px}.estimate-panel h2{font-size:22px}
+ .estimate-steps{margin-bottom:14px;padding-bottom:12px;gap:8px}.estimate-steps li{font-size:10px}.estimate-steps span{display:block;margin:0 0 3px}
+ .estimate-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 8px}.estimate-fields .full,.estimate-fields .mobile-full{grid-column:1/-1}
+ .estimate-site input:not([type=checkbox]):not([type=file]),.estimate-site textarea{min-height:44px;font-size:16px;padding:10px}
+ #project-message{height:64px;min-height:52px;padding:8px 10px}
+ #identity-step .estimate-categories{display:flex;flex-wrap:wrap;gap:0 16px;margin:8px 0 10px}
+ .estimate-categories label{font-size:13px;min-height:44px;padding:0;gap:7px}
+ .estimate-button{min-height:44px}.estimate-footer{padding:18px 16px;gap:12px}.estimate-header .premium-brand small{font-size:7px}
 }
