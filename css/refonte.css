@@ -69,7 +69,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em
 .cta-card h2{font-size:clamp(28px,3vw,38px);line-height:1.15}
 /* pied */
 .site-footer{padding:88px 0 96px}
-.big-phone{display:block;font-family:var(--serif);font-size:clamp(25px,4.5vw,64px);line-height:1;font-feature-settings:"tnum" 1}
+.big-phone{display:block;font-family:Poppins,var(--serif);font-size:25px;line-height:1;font-feature-settings:"tnum" 1}
 .foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:32px;margin-top:56px;font-size:14.5px;line-height:1.65;opacity:.85}
 .foot-grid h2{font-family:var(--text);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
 .foot-grid ul{list-style:none;margin:0;padding:0}
