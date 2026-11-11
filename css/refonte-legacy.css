@@ -1,0 +1,30 @@
+/* Refonte 2026 : habillage des pages historiques services/* (contenu et adresses conservés). */
+body.refonte-legacy{--yellow:#b68235;--yellow-dark:#7d5411;--black:#201f1d}
+body.refonte-legacy main{display:block}
+body.refonte-legacy main .container{max-width:1280px;margin:0 auto;padding:0 var(--edge)}
+body.refonte-legacy main section{padding:80px 0;background:transparent;border-bottom:1px solid var(--rule)}
+body.refonte-legacy main .hero{display:block;background:var(--night);color:var(--bg);padding:56px 0 80px;text-align:left;border:0;height:auto;min-height:0}
+body.refonte-legacy main .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5vw,64px);line-height:1.05;max-width:20ch;margin:0;color:var(--bg)}
+body.refonte-legacy main .hero p{font-size:17px;line-height:1.7;max-width:56ch;margin:24px 0 0;opacity:.85;color:var(--bg)}
+body.refonte-legacy main .cta-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;justify-content:flex-start}
+body.refonte-legacy main h2,body.refonte-legacy main .section-title{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,46px);line-height:1.1;text-align:left;margin:0 0 28px;color:var(--ink)}
+body.refonte-legacy main h3{font-family:var(--serif);font-weight:600;font-size:22px!important;line-height:1.25;margin:0 0 8px;color:var(--ink)}
+body.refonte-legacy main p,body.refonte-legacy main li{font-size:15.5px;line-height:1.7;color:var(--ink-2)}
+body.refonte-legacy main a:not(.btn){color:var(--gold-deep)!important;font-weight:400!important;border-bottom:1px solid var(--gold)}
+body.refonte-legacy main .checkmark-list{list-style:none;padding:0;margin:0!important;max-width:none!important;border-top:1px solid var(--rule)}
+body.refonte-legacy main .checkmark-list li{padding:12px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px}
+body.refonte-legacy main .checkmark{color:var(--gold-deep)}
+body.refonte-legacy main .grid{display:grid;gap:24px}
+body.refonte-legacy main .grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+body.refonte-legacy main .grid-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+body.refonte-legacy main .card{background:transparent;border:1px solid var(--rule);border-radius:4px;box-shadow:none;padding:24px}
+body.refonte-legacy main .internal-link-block{background:transparent!important;border:0!important;border-top:1px solid var(--rule)!important;border-radius:0;padding:18px 0;margin:0}
+body.refonte-legacy main div[style*="max-width:800px"]{max-width:760px!important;margin:0!important}
+body.refonte-legacy main .article-cta{background:transparent;border:0}
+body.refonte-legacy main .article-cta .container{text-align:left!important;border:1px solid var(--rule);border-radius:4px;padding:40px;max-width:calc(1280px - 2*var(--edge))}
+body.refonte-legacy main .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border:1px solid var(--rule);border-radius:4px;font-family:var(--serif);font-size:17px;font-weight:400;background:transparent;color:inherit}
+body.refonte-legacy main .btn-primary{border-color:var(--gold);color:var(--gold-deep);background:transparent}
+body.refonte-legacy main .hero .btn-primary{color:var(--bg)}
+body.refonte-legacy main .btn-secondary{border-color:color-mix(in srgb,currentColor 30%,transparent);color:inherit}
+body.refonte-legacy main .btn:hover{background:color-mix(in srgb,var(--gold) 14%,transparent)}
+body.refonte-legacy main img{max-width:100%;height:auto}
