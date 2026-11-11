@@ -75,3 +75,18 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em
 .foot-grid ul{list-style:none;margin:0;padding:0}
 .foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px;margin-top:64px;padding-top:22px;border-top:1px solid var(--rule-night);font-size:13px;opacity:.7}
 .foot-bottom div{display:flex;gap:20px}
+/* pages intérieures */
+.page-hero{padding:48px 0 72px}
+.page-hero h1{font-size:clamp(38px,5vw,64px);line-height:1.05;max-width:20ch}
+.page-hero .lead{font-size:17px;line-height:1.7;max-width:56ch;margin:24px 0 0;opacity:.85}
+.toc{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:36px}
+.toc a{border:1px solid var(--rule-night);padding:6px 14px;border-radius:2px;font-size:14px}
+.toc a:hover{border-color:var(--gold);color:var(--gold)}
+.projet{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:40px 72px;align-items:center;padding:80px 0;scroll-margin-top:24px}
+.projet .plate{aspect-ratio:4/3}
+@media(min-width:900px){.projet-inverse .plate{order:2}}
+.projet .n{font-family:var(--serif);font-size:18px;color:var(--gold-deep);font-feature-settings:"tnum" 1}
+.projet h2{font-size:clamp(30px,3.4vw,44px);line-height:1.1;margin:8px 0 16px}
+.presta{list-style:none;padding:0;margin:24px 0 0;border-top:1px solid var(--rule)}
+.presta li{padding:12px 0 12px 28px;border-bottom:1px solid var(--rule);position:relative;font-size:15px}
+.presta li::before{content:"—";position:absolute;left:0;color:var(--gold-deep)}
