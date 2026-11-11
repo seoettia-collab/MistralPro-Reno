@@ -43,18 +43,19 @@ function syncControls(){
 }
 function setBusy(value){busy=value;syncControls();}
 function showView(next,focus){
- view=next;var isResult=view==='result';
+ view=next;var isResult=view==='result',inline=['entry','local','local-complete'].includes(view);
+ if(inline){entrySummarized=false;document.getElementById('entry-details').open=true;}
  document.getElementById('identity-step').hidden=isResult;
- document.getElementById('project-step').hidden=view==='entry'||isResult;
+ document.getElementById('project-step').hidden=inline||isResult;
  document.getElementById('result-step').hidden=!isResult;
  document.getElementById('page-content').setAttribute('data-step',isResult?'result-step':entrySummarized&&view!=='entry'?'project-step':'identity-step');
- ['local','question','review','restart','refine'].forEach(function(name){document.getElementById(name+'-screen').hidden=view!==name;});
+ ['local','local-complete','question','review','restart','refine'].forEach(function(name){document.getElementById(name+'-screen').hidden=view!==name;});
  document.getElementById('project-attachments').hidden=!['local','question','review','refine'].includes(view);
  document.getElementById('change-categories').hidden=!sessionUsed||view==='restart';
  document.getElementById('project-title').textContent=view==='local'?'Vos travaux':view==='review'?'Votre estimation':view==='restart'?'Une nouvelle orientation.':'Précisons votre projet.';
- document.querySelectorAll('.estimate-steps li').forEach(function(li,i){if(i===(isResult?2:view==='entry'?0:1))li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});
+ document.querySelectorAll('.estimate-steps li').forEach(function(li,i){if(i===(isResult?2:inline?0:1))li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});
  document.getElementById('project-error').textContent='';syncControls();
- if(focus){var id={local:'local-question',question:'active-question',review:'review-title',restart:'restart-title',refine:'refine-label',entry:'panel-title',result:'download-pdf'}[view];document.getElementById(id).focus();}
+ if(focus){var id={local:'local-question',question:'active-question',review:'review-title',restart:'restart-title',refine:'refine-label',entry:'panel-title','local-complete':'identity-continue',result:'download-pdf'}[view];document.getElementById(id).focus();}
 }
 function summary(){var data=sessionUsed?identity:contact();document.getElementById('entry-summary').textContent=entrySummarized?(categories.join(' / ')||'Votre projet')+' · '+data.first_name+' '+data.last_name+' · '+data.city+' — Voir les informations':'Votre projet et vos coordonnées';}
 function reconcile(){var old=currentLocal(),id=old&&old.id;localAnswers=engine.prune(trades(),localAnswers);localQueue=engine.queue(trades(),localAnswers);var found=localQueue.findIndex(function(q){return q.id===id;});localIndex=found>=0?found:Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));}
@@ -66,16 +67,19 @@ function evaluateEntry(proceed){
  if(!manualCategories){categories=engine.detect(message.value);categoryInputs.forEach(function(input){input.checked=categories.includes(input.value);});}
  var detected=document.getElementById('category-detection');detected.hidden=!categories.length&&!manualCategories;detected.textContent=manualCategories?(categories.length?'Votre choix : '+categories.join(' / ')+'.':''):'Repéré dans votre texte : '+categories.join(' / ')+'.';
  entrySignature=inputSignature();
- var nextKey=JSON.stringify(categories),changed=nextKey!==categoryKey;
- if(changed||!localQueue.length){reconcile();categoryKey=nextKey;}
+ var nextKey=JSON.stringify(categories),changed=nextKey!==categoryKey,oldCategories=categoryKey?JSON.parse(categoryKey):[];
+ if(changed||!localQueue.length){reconcile();categoryKey=nextKey;var added=categories.find(function(c){return !oldCategories.includes(c);});if(added){var addedIndex=localQueue.findIndex(function(q){return q.trade===added&&!engine.answered(q,localAnswers[q.id]);});if(addedIndex>=0)localIndex=addedIndex;}}
  summary();
- var eligible=entryValid();
- if(!eligible){if(['local','review'].includes(view)){resumeView=view;entrySummarized=false;document.getElementById('entry-details').open=true;showView('entry',false);}if(proceed){document.getElementById('identity-error').textContent='Complétez vos coordonnées : téléphone français, e-mail valide et code postal en Île-de-France. Décrivez vos travaux ou choisissez une catégorie.';form.reportValidity();}return;}
- document.getElementById('identity-error').textContent='';
- if(view==='entry'&&!proceed)return;
- if(view==='entry'){summarizeEntry();if(resumeView==='review'&&localDone()){reviewMode='local';renderReview(true);}else showLocal(true);}
- else if(view==='local'&&changed)showLocal(false);
- else if(view==='review'){if(!localDone()){localIndex=Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));showLocal(false);}else renderReview(false);}
+ if(entryValid())document.getElementById('identity-error').textContent='';
+ var hasProject=!!(categories.length||message.value.trim());
+ if(!hasProject){showView('entry',false);if(proceed){document.getElementById('identity-error').textContent='Décrivez vos travaux ou choisissez une catégorie.';message.focus();}return;}
+ if(proceed){
+  if(!localDone()){document.getElementById('identity-error').textContent='Répondez aux questions de votre projet ou choisissez « Je ne sais pas ».';localIndex=Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));showLocal(true);return;}
+  if(!entryValid()){document.getElementById('identity-error').textContent='Complétez vos coordonnées : téléphone français, e-mail valide et code postal en Île-de-France.';showView('local-complete',false);form.reportValidity();return;}
+  document.getElementById('identity-error').textContent='';reviewMode='local';summarizeEntry();renderReview(true);return;
+ }
+ if(view==='entry'||changed){if(localDone())showView('local-complete',false);else showLocal(false);}
+ else if(view==='review'){if(!entryValid())showView('local-complete',false);else renderReview(false);}
 }
 function scheduleEntry(){if(debounce!==null)clearTimeout(debounce);debounce=setTimeout(function(){debounce=null;evaluateEntry();},300);}
 form.addEventListener('input',scheduleEntry);
@@ -90,10 +94,11 @@ document.getElementById('edit-identity').onclick=function(){if(busy||locked())re
 function summarizeEntry(){if(entrySummarized)return;entrySummarized=true;document.getElementById('entry-details').open=false;summary();}
 function acceptAdvance(){var now=Date.now();if(now-lastChoiceAt<300)return false;lastChoiceAt=now;return true;}
 function showLocal(focus){
+ document.getElementById('local-error').textContent='';
  var q=currentLocal();if(!q)return;var options=document.getElementById('local-options');options.replaceChildren();
  document.getElementById('local-counter').textContent=(categories.length?q.trade:'Votre projet')+' · Question '+(localIndex+1)+' sur '+localQueue.length;
  document.getElementById('local-question').textContent=q.label;
- q.options.forEach(function(o){var button=node('button',o.label,'estimate-local-choice');button.type='button';button.setAttribute('aria-pressed',q.type==='multi'?String(Array.isArray(localAnswers[q.id])&&localAnswers[q.id].includes(o.value)):String(localAnswers[q.id]===o.value));button.onclick=function(){
+ q.options.forEach(function(o){var picture=q.id==='sdb.remove'?{bath:'bath',tray:'shower',both:'both',none:'none'}[o.value]:null;var button=node('button',o.label,'estimate-local-choice'+(picture?' estimate-illustrated-choice estimate-picture-'+picture:''));button.type='button';button.setAttribute('aria-pressed',q.type==='multi'?String(Array.isArray(localAnswers[q.id])&&localAnswers[q.id].includes(o.value)):String(localAnswers[q.id]===o.value));button.onclick=function(){
   if(busy||locked()||view!=='local'||!currentLocal()||currentLocal().id!==q.id)return;
   if(q.type==='single'){if(!acceptAdvance())return;localAnswers[q.id]=o.value;advanceLocal(q.id);}
   else{var values=Array.isArray(localAnswers[q.id])?localAnswers[q.id].slice():[];if(values.includes(o.value))values=values.filter(function(v){return v!==o.value;});else{if(['none','keep','whole'].includes(o.value))values=[];else values=values.filter(function(v){return !['none','keep','whole'].includes(v);});values.push(o.value);}localAnswers[q.id]=values;reconcile();showLocal(false);}
@@ -102,12 +107,13 @@ function showLocal(focus){
  document.getElementById('local-next').hidden=q.type==='single';showView('local',focus);
 }
 function saveLocalDraft(edited){var q=currentLocal();if(!q)return;var input=q.type==='number'?document.getElementById('local-value'):q.type==='text'?document.getElementById('local-text'):null;if(input&&(edited||input.value!==''||localAnswers[q.id]!==engine.UNKNOWN))localAnswers[q.id]=input.value;}
-function advanceLocal(id){reconcile();var index=localQueue.findIndex(function(q){return q.id===id;});summarizeEntry();if(index<localQueue.length-1){localIndex=index+1;showLocal(true);}else{reviewMode='local';renderReview(true);}}
-document.getElementById('local-next').onclick=function(){if(busy||locked()||view!=='local')return;var now=Date.now();if(now-lastChoiceAt<300)return;saveLocalDraft();var q=currentLocal();if(!engine.answered(q,localAnswers[q.id])){document.getElementById('project-error').textContent='Ajoutez une réponse valide ou choisissez « Je ne sais pas ».';return;}if(acceptAdvance())advanceLocal(q.id);};
+function advanceLocal(id){reconcile();if(document.getElementById('identity-error').textContent.includes('Répondez'))document.getElementById('identity-error').textContent='';var index=localQueue.findIndex(function(q){return q.id===id;});if(index<localQueue.length-1){localIndex=index+1;showLocal(true);}else if(!localDone()){localIndex=Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));showLocal(true);}else showView('local-complete',false);}
+document.getElementById('local-next').onclick=function(){if(busy||locked()||view!=='local')return;var now=Date.now();if(now-lastChoiceAt<300)return;saveLocalDraft();var q=currentLocal();if(!engine.answered(q,localAnswers[q.id])){document.getElementById('local-error').textContent='Ajoutez une réponse valide ou choisissez « Je ne sais pas ».';return;}if(acceptAdvance())advanceLocal(q.id);};
 document.getElementById('local-unknown').onclick=function(){if(busy||locked()||view!=='local'||!acceptAdvance())return;var q=currentLocal();localAnswers[q.id]=engine.UNKNOWN;advanceLocal(q.id);};
 document.getElementById('local-previous').onclick=function(){if(busy||locked()||view!=='local')return;saveLocalDraft();if(localIndex>0){localIndex--;showLocal(true);}else{document.getElementById('entry-details').open=true;document.getElementById('panel-title').focus();}};
 document.getElementById('local-value').addEventListener('input',function(){if(!busy&&!locked()&&view==='local')saveLocalDraft(true);});
 document.getElementById('local-text').addEventListener('input',function(){if(!busy&&!locked()&&view==='local')saveLocalDraft(true);});
+document.getElementById('edit-local-answers').onclick=function(){if(busy||locked())return;localIndex=0;showLocal(true);};
 function localQA(){return localQueue.filter(function(q){return engine.answered(q,localAnswers[q.id]);}).map(function(q){return{question:q.label,answer:engine.format(q,localAnswers[q.id]),trade:q.trade};});}
 function renderReview(focus){
  var data=sessionUsed?identity:contact();document.getElementById('review-contact').textContent=data.first_name+' '+data.last_name+' · '+data.phone+' · '+data.email+' · '+data.address+', '+data.postal_code+' '+data.city;
