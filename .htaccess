@@ -19,7 +19,20 @@ RedirectMatch 301 ^/favicon\.ico$ /images/favicon.ico
 # mod_alias preserves the original query string when the target has no query.
 # Keep this rule only after /estimation-projet.html readiness is verified.
 # Retired portfolio: keep previously shared URLs useful.
-Redirect 301 /projets.html /
+Redirect 301 /projets.html /travaux.html
+# Refonte 2026 : anciennes pages services remplacées par travaux.html et metiers/
+Redirect 301 /services.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/renovation-appartement.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/extension.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/salle-de-bain.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/cuisine.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/copropriete.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/bureaux-commerces.html https://www.mistralpro-reno.fr/travaux.html
+Redirect 301 /services/toiture.html https://www.mistralpro-reno.fr/metiers/couverture.html
+Redirect 301 /services/peinture.html https://www.mistralpro-reno.fr/metiers/peinture.html
+Redirect 301 /services/menuiserie.html https://www.mistralpro-reno.fr/metiers/menuiserie.html
+Redirect 301 /services/plomberie.html https://www.mistralpro-reno.fr/metiers/plomberie.html
+Redirect 301 /services/electricite.html https://www.mistralpro-reno.fr/metiers/electricite.html
 Redirect 301 /cost_calculator.html /estimation-projet.html
 Redirect 301 /landing.html /estimation-projet.html
 Redirect 301 /contact.html /estimation-projet.html
