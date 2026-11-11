@@ -109,3 +109,4 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em
 .liens-projets{display:flex;flex-wrap:wrap;gap:10px}
 .liens-projets a{border:1px solid var(--rule);padding:10px 16px;border-radius:2px;font-family:var(--serif);font-size:19px}
 .liens-projets a:hover{border-color:var(--gold)}
+.lp-promesse{font-size:19px!important;line-height:1.6;opacity:.9}
