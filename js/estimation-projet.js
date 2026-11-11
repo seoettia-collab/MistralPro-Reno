@@ -211,6 +211,14 @@ document.getElementById('retry-request').onclick=function(){return generate(true
 document.getElementById('continue-project').onclick=function(){if(busy||locked()||!result)return;if(validQuestions(result.questions))beginQuestions(result.questions);else{questions=[];answers=[];refinement='';document.getElementById('refine-message').value='';showView('refine',true);}};
 document.getElementById('download-pdf').onclick=async function(){if(busy||locked()||!session||!result)return;var error=document.getElementById('result-error');error.textContent='';setBusy(true);try{var r=await fetch(BASE+'/sessions/'+session.session_id+'/pdf',{method:'POST',headers:{'Content-Type':'application/json','X-Estimate-Token':session.token},body:'{}',signal:AbortSignal.timeout(115000),credentials:'omit',redirect:'error'});if(!r.ok||!(r.headers.get('content-type')||'').startsWith('application/pdf'))throw new Error('Le PDF n’a pas pu être généré. Votre demande reste enregistrée.');var blob=await r.blob();if(new TextDecoder().decode(await blob.slice(0,5).arrayBuffer())!=='%PDF-')throw new Error('Le fichier reçu n’est pas un PDF valide.');var url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download='estimation-mistral-pro-reno.pdf';a.click();setTimeout(function(){URL.revokeObjectURL(url);},60000);}catch(e){error.textContent=e.message||'Téléchargement non confirmé.';}finally{setBusy(false);}};
 
+// Preserve the visitor's explicit homepage choice without sending any data.
+var landingProject=new URLSearchParams(location.search).get('projet');
+var landingCategories={'salle-de-bain':'Salle de bain','cuisine':'Cuisine','appartement':'Rénovation générale','maison':'Rénovation générale'};
+if(Object.prototype.hasOwnProperty.call(landingCategories,landingProject)){
+ categories=[landingCategories[landingProject]];manualCategories=true;
+ categoryInputs.forEach(function(input){input.checked=categories.includes(input.value);});
+ if(landingProject==='appartement'||landingProject==='maison')localAnswers['general.property']=landingProject==='maison'?'house':'flat';
+}
 showView('entry',false);
 if(preview)document.getElementById('preview-note').hidden=false;
 // Browser/password-manager autofill may update values without dispatching input.

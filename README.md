@@ -12,7 +12,6 @@
 /MistralPro-Reno/
 ├── index.html              # Page d'accueil
 ├── services.html           # Page services
-├── projets.html            # Page réalisations
 ├── blog.html               # Liste des articles
 ├── cost_calculator.html    # Simulateur de devis
 ├── degat-des-eaux.html     # Landing page urgence
