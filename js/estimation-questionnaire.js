@@ -17,7 +17,7 @@ function bathroomEquipment(){
  return q;
 }
 function hasNewEquipment(values){return Array.isArray(values)&&values.some(function(value){return /:(replace|add|shower)$/.test(value);});}
-function queue(selected,answers){
+function detailedQueue(selected,answers){
  var out=[];answers=answers||{};
  categories.filter(function(trade){return selected.includes(trade);}).forEach(function(trade){
   if(trade==='Salle de bain'){
@@ -54,6 +54,37 @@ function queue(selected,answers){
  });
  return out;
 }
+// Le parcours court est la valeur par défaut. Les précisions ne sont jamais requises.
+var simpleDefinitions={
+ 'Salle de bain':{id:'sdb.simple',label:'Quels travaux souhaitez-vous réaliser dans votre salle de bain ?',entries:[['bath-to-shower','Remplacer la baignoire par une douche'],['shower','Remplacer la douche'],['wc','Remplacer le WC'],['basin','Remplacer le meuble vasque'],['tiling','Refaire le carrelage']]},
+ 'Cuisine':{id:'kitchen.simple',label:'Quels travaux souhaitez-vous réaliser dans votre cuisine ?',entries:[['complete','Installer une cuisine complète neuve'],['units','Remplacer les meubles'],['top','Remplacer le plan de travail'],['finish','Refaire les finitions']]},
+ 'Rénovation générale':{id:'general.simple',label:'Quel projet de rénovation envisagez-vous ?',entries:[['flat','Rénover un appartement complet'],['house','Rénover une maison complète'],['rooms','Rénover quelques pièces']]},
+ 'Autre projet':{id:'other.simple',label:'Quels travaux souhaitez-vous réaliser ?',entries:[['extension','Une extension'],['upper','Une surélévation'],['roof','Des travaux de toiture'],['facade','Des travaux de façade'],['other','Un autre projet']]}
+};
+function optionalDetails(trade,answers){
+ answers=answers||{};var context=Object.assign({},answers),covered=[];
+ if(trade==='Salle de bain'){
+  var simple=Array.isArray(answers['sdb.simple'])?answers['sdb.simple']:[],actions=[];
+  [['bath-to-shower','bath:shower'],['shower','shower:replace'],['wc','wc:replace'],['basin','basin:replace']].forEach(function(pair){if(simple.includes(pair[0])){actions.push(pair[1]);covered.push(pair[1].split(':')[0]);}});
+  var extra=Array.isArray(answers['sdb.equipment'])?answers['sdb.equipment'].filter(function(value){return typeof value==='string'&&!covered.includes(value.split(':')[0]);}):[];
+  context['sdb.equipment']=actions.concat(extra);
+ }
+ return detailedQueue([trade],context).filter(function(q){
+  if(q.type==='equipment'&&covered.length){q.equipment=q.equipment.filter(function(item){return !covered.includes(item.id);});q.options=q.options.filter(function(option){return !covered.includes(option.equipment);});q.label='Souhaitez-vous préciser les autres équipements de la salle de bain ?';return q.equipment.length>0;}
+  if(q.id==='general.property'&&Array.isArray(answers['general.simple'])&&answers['general.simple'].length===1&&['flat','house'].includes(answers['general.simple'][0]))return false;
+  return true;
+ });
+}
+function queue(selected,answers,settings){
+ settings=settings||{};
+ if(settings.detailedOnly)return detailedQueue(selected,answers);
+ var out=[];
+ categories.filter(function(trade){return selected.includes(trade);}).forEach(function(trade){
+  var definition=simpleDefinitions[trade],q=multi(definition.id,trade,definition.label,definition.entries);q.simple=true;out.push(q);
+  if(Array.isArray(settings.details)&&settings.details.includes(trade))optionalDetails(trade,answers).forEach(function(detail){detail.optional=true;out.push(detail);});
+ });
+ return out;
+}
 function answered(q,value){
  if(value===UNKNOWN)return true;
  if(q.type==='single')return q.options.some(function(o){return o.value===value;});
@@ -62,10 +93,10 @@ function answered(q,value){
  if(q.type==='number'){var n=Number(String(value||'').replace(',','.'));return n>0&&Number.isFinite(n)&&n<=q.max;}
  return typeof value==='string'&&value.trim().length>0&&value.length<=q.max;
 }
-function prune(selected,answers){
+function prune(selected,answers,settings){
  var clean=Object.assign({},answers),changed=true;
  if(Object.hasOwn(clean,'sdb.equipment')&&!answered(bathroomEquipment(),clean['sdb.equipment']))delete clean['sdb.equipment'];
- while(changed){changed=false;var ids=queue(selected,clean).map(function(q){return q.id;});Object.keys(clean).forEach(function(id){if(!ids.includes(id)){delete clean[id];changed=true;}});}
+ while(changed){changed=false;var questions=queue(selected,clean,settings),ids=questions.map(function(q){return q.id;});questions.forEach(function(q){if(q.type==='equipment'&&Array.isArray(clean[q.id])){var kept=clean[q.id].filter(function(value){return q.options.some(function(option){return option.value===value;});});if(kept.length!==clean[q.id].length){if(kept.length)clean[q.id]=kept;else delete clean[q.id];changed=true;}}});Object.keys(clean).forEach(function(id){if(!ids.includes(id)){delete clean[id];changed=true;}});}
  return clean;
 }
 function format(q,value){
@@ -80,7 +111,7 @@ function detect(text){
  // Only explicit work vocabulary: a bare “pièce”, “rénovation” or “maison” imposes no category.
  return categories.filter(function(c){var pattern={'Salle de bain':/\b(salles? de bains?|sdb|baignoire|douche)\b/,'Cuisine':/\bcuisines?\b/,'Rénovation générale':/\brenovation (complete|generale|globale)\b|\b(tout|tout l[’']appartement|toute la maison) a refaire\b/}[c];if(!pattern)return false;var matches=new RegExp(pattern.source,'g'),match;while((match=matches.exec(s))!==null){if(!/\b(pas de|sans|aucune)\s*$/.test(s.slice(Math.max(0,match.index-20),match.index)))return true;}return false;});
 }
-var api={UNKNOWN:UNKNOWN,categories:categories,queue:queue,prune:prune,answered:answered,format:format,detect:detect};
+var api={UNKNOWN:UNKNOWN,categories:categories,queue:queue,detailedQueue:detailedQueue,prune:prune,answered:answered,format:format,detect:detect};
 root.MPRQuestionnaire=api;
 if(typeof module==='object'&&module.exports)module.exports=api;
 }(typeof window==='object'?window:globalThis));
