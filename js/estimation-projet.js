@@ -59,9 +59,10 @@ function showView(next,focus){
 function summary(){var data=sessionUsed?identity:contact();document.getElementById('entry-summary').textContent=entrySummarized?(categories.join(' / ')||'Votre projet')+' · '+data.first_name+' '+data.last_name+' · '+data.city+' — Voir les informations':'Votre projet et vos coordonnées';}
 function reconcile(){var old=currentLocal(),id=old&&old.id;localAnswers=engine.prune(trades(),localAnswers);localQueue=engine.queue(trades(),localAnswers);var found=localQueue.findIndex(function(q){return q.id===id;});localIndex=found>=0?found:Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));}
 function inputSignature(){return JSON.stringify({contact:contact(),project:message.value,categories:categoryInputs.filter(function(input){return input.checked;}).map(function(input){return input.value;}),manual:manualCategories});}
-function evaluateEntry(){
+function evaluateEntry(proceed){
+ proceed=proceed===true;
  if(busy||locked()||sessionUsed&&!editingOrientation)return;
- var signature=inputSignature();if(signature===entrySignature)return;
+ var signature=inputSignature();if(signature===entrySignature&&!proceed)return;
  if(!manualCategories){categories=engine.detect(message.value);categoryInputs.forEach(function(input){input.checked=categories.includes(input.value);});}
  var detected=document.getElementById('category-detection');detected.hidden=!categories.length&&!manualCategories;detected.textContent=manualCategories?(categories.length?'Votre choix : '+categories.join(' / ')+'.':''):'Repéré dans votre texte : '+categories.join(' / ')+'.';
  entrySignature=inputSignature();
@@ -69,8 +70,10 @@ function evaluateEntry(){
  if(changed||!localQueue.length){reconcile();categoryKey=nextKey;}
  summary();
  var eligible=entryValid();
- if(!eligible){if(['local','review'].includes(view)){resumeView=view;showView('entry',false);}return;}
- if(view==='entry'){if(resumeView==='review'&&localDone()){reviewMode='local';renderReview(false);}else showLocal(false);}
+ if(!eligible){if(['local','review'].includes(view)){resumeView=view;entrySummarized=false;document.getElementById('entry-details').open=true;showView('entry',false);}if(proceed){document.getElementById('identity-error').textContent='Complétez vos coordonnées : téléphone français, e-mail valide et code postal en Île-de-France. Décrivez vos travaux ou choisissez une catégorie.';form.reportValidity();}return;}
+ document.getElementById('identity-error').textContent='';
+ if(view==='entry'&&!proceed)return;
+ if(view==='entry'){summarizeEntry();if(resumeView==='review'&&localDone()){reviewMode='local';renderReview(true);}else showLocal(true);}
  else if(view==='local'&&changed)showLocal(false);
  else if(view==='review'){if(!localDone()){localIndex=Math.max(0,localQueue.findIndex(function(q){return !engine.answered(q,localAnswers[q.id]);}));showLocal(false);}else renderReview(false);}
 }
@@ -81,7 +84,7 @@ form.addEventListener('focusout',evaluateEntry);
 function watchAutofill(){if(autofillTimer!==null)clearInterval(autofillTimer);autofillTicks=0;evaluateEntry();autofillTimer=setInterval(function(){evaluateEntry();autofillTicks++;if(autofillTicks>=75){clearInterval(autofillTimer);autofillTimer=null;}},800);}
 form.addEventListener('focusin',watchAutofill);
 window.addEventListener('pageshow',watchAutofill);
-form.addEventListener('submit',function(e){e.preventDefault();evaluateEntry();});
+form.addEventListener('submit',function(e){e.preventDefault();evaluateEntry(true);});
 categoryInputs.forEach(function(input){input.addEventListener('change',function(){if(busy||locked()||sessionUsed&&!editingOrientation)return;manualCategories=true;categories=categoryInputs.filter(function(el){return el.checked;}).map(function(el){return el.value;});evaluateEntry();});});
 document.getElementById('edit-identity').onclick=function(){if(busy||locked())return;document.getElementById('entry-details').open=true;if(sessionUsed)document.getElementById('identity-error').textContent='Pour corriger vos coordonnées après le début de l’estimation, contactez notre équipe au 07 55 18 89 37.';document.getElementById('panel-title').focus();};
 function summarizeEntry(){if(entrySummarized)return;entrySummarized=true;document.getElementById('entry-details').open=false;summary();}
