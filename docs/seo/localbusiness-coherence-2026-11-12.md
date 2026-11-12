@@ -66,3 +66,12 @@ autorisée. Retour arrière possible en annulant le commit de ce lot.
 Anomalie distincte repérée, non modifiée : les six pages `renovation-*.html`
 à la racine et `zones-intervention.html` déclarent encore l'ancien numéro dans
 leur balisage. À traiter dans un lot séparé de cohérence des coordonnées.
+
+## Mise à jour du 12 novembre 2026 : horaires confirmés par le gérant
+
+Horaires réels confirmés : **tous les jours, du lundi au dimanche, 08:00–20:00**.
+Ils remplacent les valeurs ci-dessus et l'ancien « lun-ven 8h-18h, sam 9h-12h ».
+Appliqué à toutes les propriétés `openingHoursSpecification` du site (ajoutées
+aux blocs entreprise des pages métiers, villes, arrondissements et dégât des eaux),
+à la page Contact, à la FAQ de `degat-des-eaux.html`, au gabarit blog et aux
+générateurs `seo-api`. La fiche Google Business doit être mise à jour à l'identique.
