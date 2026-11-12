@@ -163,7 +163,7 @@ function getTemplateParagraph2(title, keyword, index) {
     return `Tout au long des travaux, vous bénéficiez d'un interlocuteur dédié qui coordonne les différents corps de métier et vous tient informé de l'avancement. Notre objectif : vous garantir un chantier serein et bien organisé.`;
   }
   
-  return `N'hésitez pas à nous contacter pour discuter de votre projet. Nos conseillers sont à votre écoute du lundi au vendredi, de 8h à 18h.`;
+  return `N'hésitez pas à nous contacter pour discuter de votre projet. Nos conseillers sont à votre écoute tous les jours, du lundi au dimanche, de 8h à 20h.`;
 }
 
 /**
