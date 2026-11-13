@@ -6,9 +6,8 @@
   <meta name="robots" content="noindex">
   <title>Votre projet de salle de bain — Mistral Pro Reno</title>
   <link rel="stylesheet" href="/devis-travaux/form.css">
-  <link rel="stylesheet" href="/css/premium.css?v=20261111.1">
 </head>
-<body class="premium-site premium-quote">
+<body>
 <main class="layout">
   <section class="card" aria-label="Demande de rappel">
     <header class="intro">
@@ -46,27 +45,16 @@
       </fieldset>
       <p id="feedback" role="status" aria-live="polite" tabindex="-1"></p>
     </form>
-    <section class="measurement-choice" aria-label="Mesure publicitaire facultative">
-      <h2 class="measurement-title">Mesure des publicités — au choix</h2>
-      <label class="measurement-label"><input id="openai-measurement-consent" type="checkbox" aria-describedby="measurement-help"><span>J’accepte la mesure publicitaire OpenAI <span class="muted">(facultatif)</span></span></label>
-      <p id="measurement-help" class="privacy">Avec votre accord, OpenAI utilise des cookies et peut recevoir des coordonnées hachées pour mesurer les demandes issues des publicités. Vous pouvez demander un devis sans accepter.</p>
-      <details class="measurement-details">
-        <summary>Comprendre ce choix et retirer mon accord</summary>
-        <p class="privacy">Laissez la case vide pour refuser cette mesure. Sur cette page, vous pouvez retirer votre accord en décochant la case, y compris après l’envoi de votre demande.</p>
-      </details>
-    </section>
     <div class="form-actions">
       <button id="submit" type="submit" form="project-form">Demander mon devis gratuit <span aria-hidden="true">→</span></button>
       <p class="privacy">Gratuit et sans engagement. Vos coordonnées servent à répondre à votre demande.</p>
       <noscript><p>Activez JavaScript pour envoyer votre demande, ou appelez-nous au 06 09 10 90 69.</p></noscript>
     </div>
     <div id="confirmation" hidden tabindex="-1">
-      <div class="check" aria-hidden="true">✓</div>
-      <h2>Votre demande est enregistrée.</h2>
-      <p>Notre équipe vous recontactera pour parler de votre projet.</p>
+      <h2>Merci, votre demande est bien envoyée</h2>
       <p id="chosen-summary"></p>
       <a class="phone" href="tel:+33609109069">06 09 10 90 69</a>
-      <button id="new-request" type="button" class="secondary">Faire une autre demande</button>
+      <button id="new-request" type="button" class="new-request">Faire une autre demande</button>
     </div>
     <footer>
       <span>MISTRAL PRO RENO · SARL au capital de 1 000 € · 9 rue Anatole de la Forge, 75017 Paris</span>
@@ -76,7 +64,6 @@
   </section>
 </main>
 <script type="application/json" id="public-context">{"business":{"name":"Mistral Pro Reno","activity":"Entreprise générale du bâtiment","area":"Île-de-France","phone":"06 09 10 90 69"},"services":["Cuisine","Salle de bain","Peinture","Rénovation","Extension","Maison"]}</script>
-<script src="/devis-travaux/measure.js" defer></script>
 <script src="/devis-travaux/form.js" defer></script>
 </body>
 </html>

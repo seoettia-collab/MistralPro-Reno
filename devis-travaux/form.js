@@ -50,10 +50,6 @@
             ? 'La confirmation est indisponible. Réessayez avec les mêmes informations : votre demande ne sera pas enregistrée deux fois.'
             : 'La confirmation est indisponible. Réessayez avec les mêmes informations sans fermer ni recharger cette page.';
     }
-    function wMeasurement(receipt) {
-        if (typeof window !== 'undefined' && typeof window.MprAdsMeasurement?.recordStoredLead === 'function')
-            window.MprAdsMeasurement.recordStoredLead(receipt);
-    }
     function showConfirmation(services) {
         form.hidden = true; confirmation.hidden = false;
         document.getElementById('chosen-summary').textContent = 'Travaux : ' + services.join(' · ');
@@ -102,7 +98,6 @@
             const result = await response.json();
             if (response.ok && result.success === true && result.stored === true && result.receipt === record.id) {
                 saveRecord({ ...record, stored: true }); showConfirmation(services);
-                try { if (!record.stored) wMeasurement(record.id); } catch (_) { /* Measurement never blocks a saved request. */ }
                 return;
             }
             if ([400, 403, 413, 415].includes(response.status)) {
