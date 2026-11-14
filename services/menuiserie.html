@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-5MZSVPL');</script>
-  <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="index, follow">
@@ -29,17 +22,129 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&family=Poppins:wght@400&display=swap">
-  <link rel="stylesheet" href="../css/refonte.css?v=20261111">
   <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.mistralpro-reno.fr/"},{"@type":"ListItem","position":2,"name":"Nos métiers","item":"https://www.mistralpro-reno.fr/services.html"},{"@type":"ListItem","position":3,"name":"Menuiserie","item":"https://www.mistralpro-reno.fr/services/menuiserie.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Fabriquez-vous des bibliothèques sur mesure ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Nous concevons, fabriquons et posons des bibliothèques sur mesure : murale, autour d’une porte ou d’une fenêtre, sous escalier, sous comble, avec ou sans portes."}},{"@type":"Question","name":"Combien coûte une bibliothèque sur mesure ?","acceptedAnswer":{"@type":"Answer","text":"Le prix dépend des dimensions, du matériau (médium laqué, contreplaqué, bois massif), des portes, tiroirs et éclairages intégrés. Le devis est gratuit et établi après prise de mesures."}},{"@type":"Question","name":"Quel délai pour une bibliothèque sur mesure ?","acceptedAnswer":{"@type":"Answer","text":"Comptez quelques semaines entre la validation du plan et la pose, selon la fabrication et la finition choisie."}},{"@type":"Question","name":"Posez-vous aussi des dressings et placards ?","acceptedAnswer":{"@type":"Answer","text":"Oui : dressings, placards, rangements sous combles, meubles de salle de bain et habillages."}},{"@type":"Question","name":"Restaurez-vous les menuiseries anciennes ?","acceptedAnswer":{"@type":"Answer","text":"Oui, portes moulurées, doubles portes et boiseries d’appartements anciens, ou leur remplacement à l’identique."}}]},{"@type":"Service","name":"Menuiserie","provider":{"@type":"GeneralContractor","name":"Mistral Pro Reno","url":"https://www.mistralpro-reno.fr/","telephone":"+33609109069","email":"contact@mistralpro-reno.fr","address":{"@type":"PostalAddress","streetAddress":"9 rue Anatole de la Forge","addressLocality":"Paris","postalCode":"75017","addressRegion":"Île-de-France","addressCountry":"FR"},"areaServed":[{"@type":"City","name":"Paris"},{"@type":"AdministrativeArea","name":"Île-de-France"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"08:00","closes":"20:00"}]},"areaServed":"Île-de-France"}]}
   </script>
+  <link rel="preload" href="/fonts/refonte/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/refonte/lora-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <style id="refonte-css">@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 700;font-display:swap;src:url(/fonts/refonte/cormorant-garamond-latin.woff2) format('woff2')}@font-face{font-family:'Lora';font-style:normal;font-weight:400 700;font-display:swap;src:url(/fonts/refonte/lora-latin.woff2) format('woff2')}/* Refonte 2026 — Mistral Pro Reno */
+:root{--bg:#f3f2f2;--surface:#eae9e9;--ink:#201f1d;--ink-2:color-mix(in srgb,#201f1d 78%,transparent);--ink-3:color-mix(in srgb,#201f1d 70%,transparent);--gold:#b68235;--gold-deep:#7d5411;--gold-night:#d4a55c;--night:#2d2b2b;--rule:color-mix(in srgb,#201f1d 16%,transparent);--rule-night:color-mix(in srgb,#f3f2f2 18%,transparent);--serif:"Cormorant Garamond",Georgia,serif;--text:"Lora",Georgia,serif;--edge:clamp(20px,5vw,72px)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:15.5px;line-height:1.65;text-wrap:pretty}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--gold-deep)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--edge)}
+.night{background:var(--night);color:var(--bg)}
+.night a:hover{color:var(--gold)}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-deep);margin:0 0 14px}
+.night .kicker{color:var(--gold-night)}
+.h2{font-size:clamp(34px,4vw,52px);line-height:1.08}
+.muted{color:var(--ink-2)}
+.hr{height:1px;border:0;margin:0;background:var(--rule)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border:1px solid var(--rule);border-radius:4px;font-family:var(--serif);font-size:17px;background:transparent;color:inherit;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-primary{border-color:var(--gold);color:var(--gold-deep)}
+.night .btn-primary{color:var(--bg)}
+.btn-primary:hover{background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.btn-ghost{border-color:transparent}
+.btn-ghost:hover{background:color-mix(in srgb,currentColor 8%,transparent)}
+.plate{margin:0;border:6px solid var(--surface);outline:1px solid var(--rule);filter:sepia(.22) saturate(.82) contrast(1.05);overflow:hidden}
+.plate img{width:100%;height:100%;object-fit:cover}
+/* en-tête */
+.topbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:10px 0;font-size:13px;letter-spacing:.04em;border-bottom:1px solid var(--rule-night)}
+.topbar a{color:var(--gold-night)}
+.site-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 32px;padding:18px 0}
+.brand{display:flex;flex-direction:column}
+.brand b{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.1;letter-spacing:.02em}
+.brand small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.site-nav{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;font-size:15px}
+.sticky-cta{position:fixed;right:12px;bottom:12px;z-index:50;display:flex;gap:8px}
+.sticky-cta .btn{background:var(--bg);box-shadow:0 3px 10px color-mix(in srgb,#2d2b2b 16%,transparent)}
+/* hero */
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:56px;align-items:center;padding-block:56px 88px}
+.hero h1{font-size:42px;line-height:1.02}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.badge{border:1px solid var(--gold-night);color:var(--gold-night);padding:6px 14px;border-radius:2px;font-size:14px}
+.hero p{font-size:17px;line-height:1.7;max-width:48ch;margin:28px 0 0;opacity:.85}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero .plate{aspect-ratio:5/4}
+/* sections */
+.section{padding:96px 0}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px 40px;margin-bottom:44px}
+.link-gold{font-size:15px;color:var(--gold-deep);border-bottom:1px solid var(--gold)}
+.grid-travaux{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));border-top:1px solid var(--rule)}
+.travail{display:flex;flex-direction:column;gap:10px;padding:28px 28px 32px 0;border-bottom:1px solid var(--rule)}
+.travail .n{font-family:var(--serif);font-size:16px;color:var(--gold-deep);font-feature-settings:"tnum" 1}
+.travail h3{font-size:26px;line-height:1.15}
+.travail p{margin:0;font-size:15px;line-height:1.65;color:var(--ink-2)}
+.travail .go{font-size:14px;color:var(--gold-deep)}
+.photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px;padding-bottom:96px}
+.photos figure{margin:0}
+.photos .plate{aspect-ratio:3/4}
+.photos figcaption{font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-top:12px;color:var(--ink-3)}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:40px 80px}
+.metiers{list-style:none;padding:0;margin:0;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));column-gap:32px}
+.metiers li{border-bottom:1px solid var(--rule)}
+.metiers a{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 0;font-family:var(--serif);font-size:22px}
+.metiers a span{font-size:16px;color:var(--gold-deep)}
+.engagements{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:40px;border-top:1px solid var(--ink);padding-top:32px}
+.engagements .n{font-family:var(--serif);font-size:56px;line-height:1;color:var(--gold);font-feature-settings:"tnum" 1}
+.engagements h3{font-weight:600;font-size:24px;line-height:1.2;margin:18px 0 10px}
+.engagements p{margin:0;font-size:15px;color:var(--ink-2)}
+.cta-card{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px 40px;padding:40px;border:1px solid var(--rule);border-radius:4px;margin-bottom:104px}
+.cta-card h2{font-size:clamp(28px,3vw,38px);line-height:1.15}
+/* pied */
+.site-footer{padding-block:88px 96px}
+.big-phone{display:block;font-family:var(--serif);font-size:25px;line-height:1;font-feature-settings:"tnum" 1}
+.foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:32px;margin-top:56px;font-size:14.5px;line-height:1.65;opacity:.85}
+.foot-grid h2{font-family:var(--text);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-night);margin:0 0 10px}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}.foot-grid a,.foot-bottom a{display:inline-flex;align-items:center;min-height:48px}.foot-grid div>a{margin-right:8px}
+.foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px;margin-top:64px;padding-top:22px;border-top:1px solid var(--rule-night);font-size:13px;opacity:.7}
+.foot-bottom div{display:flex;flex-wrap:wrap;gap:8px 20px}
+/* pages intérieures */
+.page-hero{padding-block:48px 72px}
+.page-hero h1{font-size:clamp(38px,5vw,64px);line-height:1.05;max-width:20ch}
+.page-hero .lead{font-size:17px;line-height:1.7;max-width:56ch;margin:24px 0 0;opacity:.85}
+.toc{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:36px}
+.toc a{border:1px solid var(--rule-night);padding:6px 14px;border-radius:2px;font-size:14px}
+.toc a:hover{border-color:var(--gold);color:var(--gold)}
+.projet{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:40px 72px;align-items:center;padding:80px 0;scroll-margin-top:24px}
+.projet .plate{aspect-ratio:4/3}
+@media(min-width:900px){.projet-inverse .plate{order:2}}
+.projet .n{font-family:var(--serif);font-size:18px;color:var(--gold-deep);font-feature-settings:"tnum" 1}
+.projet h2{font-size:clamp(30px,3.4vw,44px);line-height:1.1;margin:8px 0 16px}
+.presta{list-style:none;padding:0;margin:24px 0 0;border-top:1px solid var(--rule)}
+.presta li{padding:12px 0 12px 28px;border-bottom:1px solid var(--rule);position:relative;font-size:15px}
+.presta li::before{content:"—";position:absolute;left:0;color:var(--gold-deep)}
+.grid-metiers{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:48px 32px}
+.carte-metier{display:flex;flex-direction:column;gap:8px}
+.carte-metier .plate{aspect-ratio:4/3;margin-bottom:10px}
+.carte-metier .n{font-family:var(--serif);font-size:16px;color:var(--gold-deep);font-feature-settings:"tnum" 1}
+.carte-metier h2{font-size:28px;line-height:1.15}
+.carte-metier p{margin:0;font-size:15px;color:var(--ink-2)}
+.carte-metier .go{font-size:14px;color:var(--gold-deep)}
+.metier-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:48px;align-items:center}
+.metier-hero .plate{aspect-ratio:4/3}
+.faq{border-top:1px solid var(--rule)}
+.faq details{border-bottom:1px solid var(--rule);padding:18px 0}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:24px;font-family:var(--serif);font-size:22px;line-height:1.25}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary span{color:var(--gold-deep)}
+.faq details[open] summary span{transform:rotate(45deg)}
+.faq p{margin:12px 0 0;color:var(--ink-2);max-width:60ch}
+.liens-projets{display:flex;flex-wrap:wrap;gap:10px}
+.liens-projets a{border:1px solid var(--rule);padding:10px 16px;border-radius:2px;font-family:var(--serif);font-size:19px}
+.liens-projets a:hover{border-color:var(--gold)}
+.lp-promesse{font-size:19px!important;line-height:1.6;opacity:.9}
+@media(max-width:600px){.btn{white-space:normal;text-align:center}}
+@media(max-width:600px){.topbar span{display:none}.topbar{justify-content:flex-end;padding:6px 0}.site-header{padding:12px 0 16px;row-gap:10px}.site-nav .btn{display:none}.site-nav{gap:20px}.brand b{font-size:22px}}
+.photos-paysage .plate{aspect-ratio:4/3}</style>
 </head>
 <body>
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5MZSVPL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <div class="night">
+<div class="night">
     <div class="wrap">
       <div class="topbar"><span>Paris &amp; Île-de-France · Devis gratuit · Assuré en décennale</span><a href="tel:0609109069" data-location="topbar">06 09 10 90 69</a></div>
       <header class="site-header">
@@ -63,7 +168,7 @@
         <p class="lead">Bibliothèques sur mesure, dressings, placards, portes intérieures et boiseries : nous concevons, fabriquons et posons vos menuiseries intérieures à Paris et en Île-de-France.</p>
         <div class="actions"><a href="/estimation-projet.html?projet=amenagement" class="btn btn-primary">Demander un devis</a><a href="tel:0609109069" class="btn btn-ghost" data-location="metier_menuiserie">06 09 10 90 69</a></div>
       </div>
-      <figure class="plate"><img src="../images/menuiserie.webp" alt="Menuiserie sur mesure en cours de pose" width="1200" height="800" fetchpriority="high"></figure>
+      <figure class="plate"><img src="/images/opt/menuiserie-1200.webp" srcset="/images/opt/menuiserie-640.webp 640w, /images/opt/menuiserie-1200.webp 1200w" sizes="(max-width: 760px) 92vw, 50vw" alt="Menuiserie sur mesure en cours de pose" width="1200" height="800" fetchpriority="high"></figure>
     </section>
   </div>
   <div class="wrap">
@@ -110,11 +215,12 @@
         <div><h2>Coordonnées</h2>9 rue Anatole de la Forge<br>75017 Paris<br><a href="mailto:contact@mistralpro-reno.fr">contact@mistralpro-reno.fr</a></div>
         <div><h2>Zone d'intervention</h2>Paris et Île-de-France<br><a href="/zones-intervention.html">Nos zones d’intervention</a><br><a href="/renovation-paris-17.html">Paris 17e</a> · <a href="/renovation-paris-8.html">Paris 8e</a> · <a href="/renovation-neuilly-sur-seine.html">Neuilly-sur-Seine</a> · <a href="/renovation-levallois-perret.html">Levallois-Perret</a> · <a href="/renovation-boulogne-billancourt.html">Boulogne-Billancourt</a> · <a href="/renovation-neuilly-sur-marne.html">Neuilly-sur-Marne</a></div>
         <div><h2>Assurance</h2>Garantie décennale<br>Attestation n° LUNSMB2602366<br>Disponible sur demande</div>
-        <div><h2>Plan du site</h2><ul><li><a href="/travaux.html">Nos travaux</a></li><li><a href="/services.html">Nos métiers</a></li><li><a href="/estimation-projet.html">Demander un devis</a></li><li><a href="/blog.html">Conseils</a></li></ul></div>
+        <div><h2>Plan du site</h2><ul><li><a href="/travaux.html">Nos travaux</a></li><li><a href="/services.html">Nos métiers</a></li><li><a href="/estimation-projet.html">Demander un devis</a></li><li><a href="/blog.html">Conseils</a></li><li><a href="/zh/" hreflang="zh-CN" lang="zh-CN">中文</a></li></ul></div>
       </div>
       <div class="foot-bottom"><span>© 2026 Mistral Pro Reno · Entreprise générale du bâtiment</span><div><a href="/mentions-legales.html">Mentions légales</a><a href="/conditions-utilisation.html">Conditions d’utilisation</a></div></div>
     </div>
   </footer>
   <div class="sticky-cta" aria-label="Nous contacter"><a href="tel:0609109069" class="btn" data-location="sticky">Appeler</a><a href="/estimation-projet.html" class="btn btn-primary">Demander un devis</a></div>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-S4F06V2C5C');(function(){var l=0;function g(){if(l)return;l=1;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-S4F06V2C5C';document.head.appendChild(s)}['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,g,{once:true,passive:true})});addEventListener('load',function(){setTimeout(g,4000)})})();</script>
 </body>
 </html>

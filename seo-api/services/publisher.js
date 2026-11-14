@@ -342,13 +342,6 @@ function generateHTMLFromBrief(brief, content) {
   const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-5MZSVPL');</script>
-  <!-- End Google Tag Manager -->
 
 <!-- BLOG_META
 title: ${escapeHTML(content.title)}
@@ -400,10 +393,7 @@ excerpt: ${escapeHTML(keyword)} - Guide complet par Mistral Pro Reno
   </script>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5MZSVPL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-
-  <header>
+<header>
     <div class="top-bar">
       <div class="container">
         <div class="top-bar-content">
@@ -543,6 +533,7 @@ ${articleBody}
   </footer>
 
   <script src="../js/main.js" defer></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-S4F06V2C5C');(function(){var l=0;function g(){if(l)return;l=1;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-S4F06V2C5C';document.head.appendChild(s)}['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,g,{once:true,passive:true})});addEventListener('load',function(){setTimeout(g,4000)})})();</script>
 </body>
 </html>`;
 

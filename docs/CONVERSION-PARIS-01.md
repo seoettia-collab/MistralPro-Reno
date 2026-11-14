@@ -1,6 +1,6 @@
 # CONVERSION-PARIS-01 — /estimation-projet.html
 
-Branche `feat/conversion-paris-01` (depuis main 0b18a1f, PR #26 non fusionnée). Backend associé : seoettia-collab/facebook-ads-backend, même nom de branche.
+Branche `feat/conversion-paris-01`, mise à jour avec main après fusion de la #26 (polices locales, GA4 différé, WebP conservés ; CSS du parcours inliné dans le head). Backend associé : seoettia-collab/facebook-ads-backend, même nom de branche.
 
 ## Parcours
 1. **Votre projet** : travaux (choix multiple), code postal du chantier, surface approximative. Aucune coordonnée.
@@ -20,7 +20,7 @@ Contrôle ville / code postal : navigateur (`js/estimation-flow.js`) et serveur 
 ## PR #16 et #17
 - #16 (/devis-travaux/, retrait OpenAI) : fichiers distincts, aucun conflit, reste indépendante.
 - #17 (questionnaire simple) : remplacée. Les réponses rapides couvrent le besoin ; `js/estimation-questionnaire.js` n'est plus chargé par la page (fichier et tests conservés). À fermer.
-- #26 : seule la ligne `<head>` de la page diffère (inchangée ici) ; fusion attendue sans conflit sur cette page.
+- #26 : fusionnée dans main ; conflit résolu en gardant le head #26 (polices locales, preload, GA4 différé, image WebP) et le nouveau parcours.
 
 ## Recette du 14/11/2026
 Banc local : la page réelle + les routes /public/site-estimates servies par le **vrai code serveur** de la branche backend (site-estimates.js, site-leads.js) sur SQLite ; seul le modèle IA est simulé. Aucun appel production, aucun client réel.

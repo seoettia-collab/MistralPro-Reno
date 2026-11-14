@@ -11,10 +11,8 @@ var money=new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximum
 var KEY='mpr-estimate-v10';
 function store(v){try{if(v)sessionStorage.setItem(KEY,JSON.stringify(v));else sessionStorage.removeItem(KEY);}catch(e){}}
 function stored(){try{return JSON.parse(sessionStorage.getItem(KEY)||'null');}catch(e){return null;}}
-/* Mesure : GA4 chargé en différé ; la conversion n'est envoyée qu'après reçu serveur confirmé. */
-window.dataLayer=window.dataLayer||[];if(typeof window.gtag!=='function'){window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-S4F06V2C5C',testMode?{debug_mode:true}:{});}
-var gaLoaded=false;function loadGA(){if(gaLoaded||preview)return;gaLoaded=true;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-S4F06V2C5C';document.head.appendChild(s);}
-['pointerdown','keydown','scroll'].forEach(function(e){window.addEventListener(e,loadGA,{once:true,passive:true});});setTimeout(loadGA,4000);
+/* Mesure : GA4 est chargé en différé par la page ; la conversion n'est envoyée qu'après reçu serveur confirmé. */
+window.dataLayer=window.dataLayer||[];if(typeof window.gtag!=='function')window.gtag=function(){window.dataLayer.push(arguments);};
 function track(name,params){try{window.gtag('event',testMode&&name==='generate_lead'?'generate_lead_test':name,Object.assign({parcours:zone,test_request:testMode?1:0},params||{}));}catch(e){}}
 function node(tag,text,cls){var el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
 function contact(){var c={};['first_name','last_name','phone','email','address','postal_code','city'].forEach(function(k){c[k]=String(form.elements[k].value||'');});return c;}
