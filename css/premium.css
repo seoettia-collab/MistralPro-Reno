@@ -1374,3 +1374,7 @@ body.premium-zh { font-family: 'Manrope', 'PingFang SC', 'Microsoft YaHei', sans
   .premium-zh .logo { font-size: 18px; }
   .premium-zh .lang-switch a { padding: 6px 9px; margin-left: 4px; }
 }
+
+/* SOCIAL-01 : icônes Facebook / Instagram dans l’en-tête premium */
+.premium-header .premium-social{flex:0 0 auto;color:var(--premium-ink)}
+@media (max-width:380px){.premium-header .premium-social{display:none}}
