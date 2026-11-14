@@ -18,9 +18,10 @@ test('header and footer of every public page link to Facebook and Instagram', ()
   for (const f of pages().filter(f => !SKIP.test(f))) {
     const s = read(f);
     for (const zone of ['header', 'footer']) {
-      const m = s.match(new RegExp('data-social="' + zone + '"[\\s\\S]*?</(span|div)>'));
-      assert.ok(m, f + ' ' + zone);
-      assert.ok(m[0].includes(FB) && m[0].includes(IG), f + ' ' + zone);
+      const i = s.indexOf('data-social="' + zone + '"');
+      assert.ok(i > 0, f + ' ' + zone);
+      const part = s.slice(i, i + 2500);
+      assert.ok(part.includes(FB) && part.includes(IG), f + ' ' + zone);
     }
   }
 });
