@@ -1,0 +1,40 @@
+name: Maillage boutique (generation)
+on:
+  push:
+    branches: [maillage-boutique]
+    paths: ['maillage/**', 'scripts/maillage-boutique.py', '.github/workflows/maillage-boutique.yml']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generer et verifier
+        run: |
+          set -e
+          test -f maillage/manifest.txt
+          cp maillage/manifest.txt /tmp/manifest.txt
+          cat maillage/premium.append >> css/premium.css
+          cat maillage/refonte.append >> css/refonte.css
+          cat maillage/refonte-legacy.append >> css/refonte-legacy.css
+          python3 scripts/maillage-boutique.py
+          python3 scripts/inline-css.py
+          grep -rl 'premium.css?v=20261114' --include=*.html . | xargs -r sed -i 's/premium\.css?v=20261114/premium.css?v=20261115/g'
+          git rm -rq maillage
+          ok=1
+          while read h f; do a=$(git hash-object "$f"); if [ "$a" != "$h" ]; then echo "DIFFERENT: $f"; ok=0; fi; done < /tmp/manifest.txt
+          git add -A
+          n=$(git diff --cached --name-only origin/main -- . ':!.github' | wc -l)
+          echo "fichiers modifies: $n"
+          git diff --cached --name-only origin/main -- . ':!.github'
+          [ "$ok" = 1 ] && [ "$n" = 66 ]
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -q -m "MAILLAGE-BOUTIQUE : fil d'Ariane, liens boutique et lien Boutique nav/pied"
+          git push
