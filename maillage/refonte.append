@@ -1,0 +1,16 @@
+/* MAILLAGE-BOUTIQUE : fil d'Ariane */
+.mpr-breadcrumb{font-size:13px;line-height:1.5;letter-spacing:.02em}
+.mpr-breadcrumb ol{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:0;list-style:none}
+.mpr-breadcrumb li{display:inline-flex;align-items:center}
+.mpr-breadcrumb li+li::before{content:"›";margin:0 .6em;opacity:.6}
+.mpr-breadcrumb a{display:inline-flex;align-items:center;min-height:32px;color:var(--gold-deep);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.mpr-breadcrumb [aria-current="page"]{opacity:.8}
+.night .mpr-breadcrumb a{color:var(--gold-night)}
+.wrap.mpr-breadcrumb{padding-top:20px}
+/* MAILLAGE-BOUTIQUE : liens et bloc boutique */
+.mpr-shop-link{color:var(--gold-deep);border-bottom:1px solid var(--gold)}
+.mpr-shop-links{padding:56px 0 72px;border-top:1px solid var(--rule)}
+.mpr-shop-links h2{font-size:clamp(28px,3vw,38px);line-height:1.15}
+.mpr-shop-links p{margin:10px 0 0;max-width:56ch;color:var(--ink-2)}
+.mpr-shop-links__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+@media(max-width:600px){.site-nav .nav-boutique{display:none}}
