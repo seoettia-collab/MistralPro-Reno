@@ -28,3 +28,10 @@ body.refonte-legacy main .hero .btn-primary{color:var(--bg)}
 body.refonte-legacy main .btn-secondary{border-color:color-mix(in srgb,currentColor 30%,transparent);color:inherit}
 body.refonte-legacy main .btn:hover{background:color-mix(in srgb,var(--gold) 14%,transparent)}
 body.refonte-legacy main img{max-width:100%;height:auto}
+/* MAILLAGE-BOUTIQUE : fil d'Ariane dans le hero sombre, bloc boutique */
+body.refonte-legacy main .hero .mpr-breadcrumb{margin:0 0 20px;color:var(--bg)}
+body.refonte-legacy main .mpr-breadcrumb li{font-size:13px;line-height:1.5;color:inherit}
+body.refonte-legacy main .mpr-breadcrumb a:not(.btn){color:var(--gold-night)!important;border-bottom:0}
+body.refonte-legacy main .mpr-shop-links{border-top:0}
+body.refonte-legacy main .mpr-shop-links__inner{max-width:1280px;margin:0 auto;padding:0 var(--edge)}
+body.refonte-legacy main .mpr-shop-links h2{margin:0}
