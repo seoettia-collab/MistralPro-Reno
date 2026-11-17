@@ -1,0 +1,36 @@
+name: Chantiers reels (generation)
+on:
+  push:
+    branches: [chantiers-reels]
+    paths: ['.github/workflows/chantiers.yml']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generer et verifier
+        run: |
+          set -e
+          pip install -q pillow==12.3.0
+          test "$(git hash-object scripts/chantiers-reels.py)" = 04fa31f7333eb4061381d6ae746cabd78033864a
+          for f in chantiers-src/*; do n="$(echo "$f" | tr ' ' '_')"; [ "$f" = "$n" ] || mv "$f" "$n"; done
+          ls chantiers-src
+          python3 scripts/chantiers-reels.py
+          git rm -rq --cached chantiers-src
+          rm -r chantiers-src
+          python3 scripts/check-seo.py
+          git add -A
+          git diff --cached --name-status origin/main -- . ':!.github'
+          n=$(git diff --cached --name-only origin/main -- . ':!.github' | wc -l)
+          [ "$n" = 30 ]
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -q -m "CHANTIERS-REELS : 4 chantiers réalisés avec photos et budgets, liens depuis les pages métiers"
+          git push
