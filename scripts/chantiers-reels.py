@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""CHANTIERS-REELS : ajoute trois chantiers réalisés (photos et budgets fournis
+"""CHANTIERS-REELS : ajoute quatre chantiers réalisés (photos et budgets fournis
 par Mistral Pro Reno) à travaux.html, et des liens depuis les pages cuisine,
-salle de bain et rénovation d'appartement.
+salle de bain, rénovation d'appartement et extension.
 
 Photos sources : chantiers-src/*.jpg -> images/chantiers/<nom>-{1200,640}.webp
 Usage : python3 scripts/chantiers-reels.py   (Pillow requis)
@@ -26,6 +26,9 @@ PHOTOS = {
     'salle-yoga-cloisons': ('Plaquiste_2_1.jpg', 'Chantier de la salle de yoga en cours : cloisons et plafonds en plaques de plâtre'),
     'salle-de-bain-avant': ('F_2_33.jpg', 'Salle de bain avant travaux : dépose, ossature de faux plafond et ventilation'),
     'salle-de-bain-apres': ('F_2_23.jpg', 'Salle de bain après travaux : double vasque, douche à l’italienne et carrelage effet marbre'),
+    'extension-interieur': ('20221108_083246.jpg', 'Extension terminée : pièce lumineuse avec fenêtre de toit, carrelage, kitchenette et porte'),
+    'extension-murs': ('20220710_132421.jpg', 'Extension en cours : dalle béton et murs en parpaings'),
+    'extension-fondations': ('20220614_103348.jpg', 'Extension, début du chantier : tranchée de fondation le long du mur'),
 }
 
 CHANTIERS = [
@@ -63,6 +66,17 @@ CHANTIERS = [
         'photos': ['salle-de-bain-apres', 'salle-de-bain-avant'],
         'lien': ('/services/salle-de-bain.html', 'La rénovation de salle de bain en détail →'),
     },
+    {
+        'id': 'chantier-extension-35000',
+        'titre': 'Extension de maison, des fondations aux finitions',
+        'budget': '35 000 €',
+        'texte': 'Construction d’une extension accolée à une maison : fondations, dalle, murs en parpaings, '
+                 'charpente et couverture, puis aménagement intérieur.',
+        'presta': ['Terrassement et fondations', 'Dalle béton et murs en parpaings', 'Charpente, couverture et fenêtre de toit',
+                   'Menuiseries, électricité, carrelage et peinture'],
+        'photos': ['extension-interieur', 'extension-murs', 'extension-fondations'],
+        'lien': ('/services/extension.html', 'L’extension de maison en détail →'),
+    },
 ]
 
 
@@ -85,13 +99,13 @@ def img(name, dims, big, ind):
                 f'/images/chantiers/{name}-1200.webp 1200w" sizes="(max-width: 760px) 92vw, 50vw" alt="{alt}" '
                 f'width="1200" height="{dims[(name, 1200)]}" loading="lazy" decoding="async">')
     return (f'{ind}<img src="/images/chantiers/{name}-640.webp" alt="{alt}" width="640" height="{dims[(name, 640)]}" '
-            f'loading="lazy" decoding="async" style="width:100%;height:auto;display:block">')
+            f'loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block">')
 
 
 def section(dims):
     out = ['    <section class="wrap section" id="chantiers-reels" aria-labelledby="t-chantiers-reels">',
-           '      <h2 id="t-chantiers-reels">Nos chantiers réalisés</h2>',
-           '      <p class="muted">Trois chantiers menés par nos équipes, avec leurs photos et le budget réel des travaux.</p>',
+           '      <h2 id="t-chantiers-reels" class="h2" style="margin-bottom:16px">Nos chantiers réalisés</h2>',
+           '      <p class="muted">Quatre chantiers menés par nos équipes, avec leurs photos et le budget réel des travaux.</p>',
            '    </section>']
     for k, c in enumerate(CHANTIERS):
         inv = ' projet-inverse' if k % 2 else ''
@@ -139,6 +153,8 @@ def run():
                                         '<p>Exemples réels : <a href="../travaux.html#chantier-appartement-60000">une salle de bain avant et après travaux</a> et <a href="../travaux.html#chantier-appartement-35000">une salle d’eau dans un appartement rénové pour 35 000 €</a>.</p>'),
         'services/renovation-appartement.html': ('préparez une première enveloppe avec notre <a href="../estimation-projet.html?projet=appartement">assistant d\'estimation</a>.</p>',
                                                  '<p>Exemples réels : <a href="../travaux.html#chantier-appartement-35000">un appartement rénové pour 35 000 €</a> (cuisine, chambre, salle d’eau) et <a href="../travaux.html#chantier-appartement-60000">un appartement rénové pour 60 000 €</a>.</p>'),
+        'services/extension.html': ('style="color:var(--yellow-dark);font-weight:600;">assistant d’estimation</a>.</p>',
+                                    '<p>Exemple réel : <a href="../travaux.html#chantier-extension-35000">une extension de maison réalisée pour 35 000 €</a>, des fondations aux finitions.</p>'),
     }
     for f, (after, para) in links.items():
         p = ROOT / f
