@@ -57,7 +57,7 @@ TEXT_LINK_PAGES = [
     'services/salle-de-bain.html', 'services/plomberie.html', 'services/carrelage.html',
     'services/renovation-appartement.html', 'travaux.html',
     'plombier-paris-9.html', 'plombier-paris-12.html', 'plombier-paris-13.html', 'plombier-paris-20.html',
-    'renovation-paris-5.html', 'renovation-paris-8.html', 'renovation-paris-15.html',
+    'renovation-paris-5.html', 'renovation-paris-7.html', 'renovation-paris-8.html', 'renovation-paris-15.html',
     'renovation-paris-16.html', 'renovation-paris-17.html', 'renovation-appartement-haussmannien-paris.html',
     'renovation-boulogne-billancourt.html', 'renovation-levallois-perret.html',
     'renovation-neuilly-sur-marne.html', 'renovation-neuilly-sur-seine.html',
@@ -75,7 +75,7 @@ BLOCK_ALWAYS = ['services/salle-de-bain.html', 'services/plomberie.html', 'servi
                 'blog/prix-renovation-salle-de-bain-paris-2026.html',
                 'blog/renovation-plomberie-paris-17-2026.html']
 BLOCK_IF_SDB = ['services/renovation-appartement.html', 'travaux.html',
-                'renovation-paris-5.html', 'renovation-paris-8.html', 'renovation-paris-15.html',
+                'renovation-paris-5.html', 'renovation-paris-7.html', 'renovation-paris-8.html', 'renovation-paris-15.html',
                 'renovation-paris-16.html', 'renovation-paris-17.html',
                 'renovation-appartement-haussmannien-paris.html', 'renovation-boulogne-billancourt.html',
                 'renovation-levallois-perret.html', 'renovation-neuilly-sur-marne.html',
